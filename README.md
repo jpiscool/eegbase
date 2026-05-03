@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EEGBase
 
-## Getting Started
+An open-source, self-hosted neurofeedback practice management platform for licensed clinicians. Built with Next.js 15 App Router, PostgreSQL (Drizzle ORM), and WebBluetooth.
 
-First, run the development server:
+---
+
+## Features
+
+- **Live session streaming** — Real-time fNIRS and EEG data via WebBluetooth (Mendi, Muse 2/S, simulator)
+- **Animated reward gauge** — Arc gauge with color-coded zones; audio feedback when score exceeds threshold
+- **Session analytics** — OxyHb/DeoxyHb trends, EEG band power charts, reward score replay
+- **AI clinical insight** — Claude-powered session summaries from neurophysiological data
+- **Pre/post questionnaires** — Focus, mood, anxiety, energy tracking every session
+- **Client management** — Protocol assignment, weekly heatmap, check-in history, messaging
+- **Progress reports** — Printable clinical reports with AI insight block
+- **Session comparison** — Side-by-side overlay of any two sessions
+- **REST ingestion API** — `POST /api/v1/sessions` for external tools
+- **Protocol presets** — Evidence-based presets for Mendi and Muse devices
+- **Self-hosted & private** — Patient data never leaves your servers
+
+---
+
+## Quick Start
+
+### 1. Clone and install
+
+```bash
+git clone https://github.com/trainbase/eegbase
+cd eegbase
+npm install
+```
+
+### 2. Environment
+
+```bash
+cp .env.local.example .env.local
+# Edit .env.local with your DATABASE_URL and AUTH_SECRET
+```
+
+### 3. Database
+
+```bash
+# Create tables
+npm run db:migrate
+
+# Create your clinic and clinician account
+npm run seed
+
+# Load demo clients, sessions, and realistic fNIRS/EEG data (~22k samples)
+npm run seed:demo
+```
+
+### 4. Run
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Open http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Device Support
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Device | Protocol | Status |
+|--------|----------|--------|
+| **Mendi** fNIRS headband | WebBluetooth GATT | Integrated (UUIDs pending SDK call) |
+| **Muse 2 / Muse S** | WebBluetooth GATT | Integrated (muse-lsl protocol, 256-pt FFT) |
+| Simulator | — | Built-in, no hardware needed |
 
-## Learn More
+> **Note:** WebBluetooth requires Chrome or Edge on desktop. iOS Safari is not supported.
 
-To learn more about Next.js, take a look at the following resources:
+### Mendi BLE Integration
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The adapter is in `src/lib/device/mendi.ts`. Placeholder GATT UUIDs are used until SDK access is confirmed. Replace `MENDI_SERVICE_UUID` and `MENDI_FNIRS_CHAR_UUID` with the real values. If Mendi exposes a JS SDK, swap the `connect()` body and keep the `DeviceSample` output shape unchanged.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## REST API
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+POST /api/v1/sessions
+Authorization: Bearer <your-clinic-id>
+Content-Type: application/json
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Returns `{ "sessionId": "uuid" }`. Your Clinic ID (API key) is shown on the Settings page.
+
+---
+
+## Stack
+
+- **Next.js 15** App Router (React 19)
+- **PostgreSQL** via Drizzle ORM
+- **NextAuth.js** v5 (credentials)
+- **Tailwind CSS**
+- **Anthropic Claude API** (optional, for AI session insights)
+- **Web Bluetooth API** (Chrome/Edge desktop)
+- **Web Audio API** (audio neurofeedback)
+
+---
+
+## License
+
+MIT
