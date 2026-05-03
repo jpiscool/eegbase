@@ -1,8 +1,8 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { clients, sessions, protocols } from "@/lib/db/schema";
-import { eq, and, gte, count, avg, desc } from "drizzle-orm";
-import { Users, Activity, BookOpen, TrendingUp } from "lucide-react";
+import { eq, and, gte, lt, count, avg, desc } from "drizzle-orm";
+import { Users, Activity, BookOpen, TrendingUp, UserPlus, Settings, Play, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { DailyActivityChart } from "@/components/DailyActivityChart";
 
@@ -10,42 +10,56 @@ export default async function DashboardPage() {
   const session = await auth();
   const clinicId = (session?.user as { clinicId?: string })?.clinicId ?? "";
 
-  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const now = Date.now();
+  const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+  const twoWeeksAgo = new Date(now - 14 * 24 * 60 * 60 * 1000);
+  const thirtyDaysAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
 
-  const [clientRows, sessionRows, protocolRows, avgScoreRows, recentSessions, last30Sessions] =
-    await Promise.all([
-      db.select({ count: count() }).from(clients).where(and(eq(clients.clinicId, clinicId), eq(clients.active, true))),
-      db
-        .select({ count: count() })
-        .from(sessions)
-        .innerJoin(clients, eq(sessions.clientId, clients.id))
-        .where(and(eq(clients.clinicId, clinicId), gte(sessions.startedAt, weekAgo))),
-      db.select({ count: count() }).from(protocols).where(eq(protocols.clinicId, clinicId)),
-      db
-        .select({ avg: avg(sessions.avgRewardScore) })
-        .from(sessions)
-        .innerJoin(clients, eq(sessions.clientId, clients.id))
-        .where(eq(clients.clinicId, clinicId)),
-      db
-        .select({
-          id: sessions.id,
-          clientName: clients.name,
-          deviceType: sessions.deviceType,
-          startedAt: sessions.startedAt,
-          durationSeconds: sessions.durationSeconds,
-        })
-        .from(sessions)
-        .innerJoin(clients, eq(sessions.clientId, clients.id))
-        .where(eq(clients.clinicId, clinicId))
-        .orderBy(desc(sessions.startedAt))
-        .limit(5),
-      db
-        .select({ startedAt: sessions.startedAt })
-        .from(sessions)
-        .innerJoin(clients, eq(sessions.clientId, clients.id))
-        .where(and(eq(clients.clinicId, clinicId), gte(sessions.startedAt, thirtyDaysAgo))),
-    ]);
+  const [
+    clientRows,
+    sessionRows,
+    prevWeekSessionRows,
+    protocolRows,
+    avgScoreRows,
+    recentSessions,
+    last30Sessions,
+  ] = await Promise.all([
+    db.select({ count: count() }).from(clients).where(and(eq(clients.clinicId, clinicId), eq(clients.active, true))),
+    db
+      .select({ count: count() })
+      .from(sessions)
+      .innerJoin(clients, eq(sessions.clientId, clients.id))
+      .where(and(eq(clients.clinicId, clinicId), gte(sessions.startedAt, weekAgo))),
+    db
+      .select({ count: count() })
+      .from(sessions)
+      .innerJoin(clients, eq(sessions.clientId, clients.id))
+      .where(and(eq(clients.clinicId, clinicId), gte(sessions.startedAt, twoWeeksAgo), lt(sessions.startedAt, weekAgo))),
+    db.select({ count: count() }).from(protocols).where(eq(protocols.clinicId, clinicId)),
+    db
+      .select({ avg: avg(sessions.avgRewardScore) })
+      .from(sessions)
+      .innerJoin(clients, eq(sessions.clientId, clients.id))
+      .where(eq(clients.clinicId, clinicId)),
+    db
+      .select({
+        id: sessions.id,
+        clientName: clients.name,
+        deviceType: sessions.deviceType,
+        startedAt: sessions.startedAt,
+        durationSeconds: sessions.durationSeconds,
+      })
+      .from(sessions)
+      .innerJoin(clients, eq(sessions.clientId, clients.id))
+      .where(eq(clients.clinicId, clinicId))
+      .orderBy(desc(sessions.startedAt))
+      .limit(5),
+    db
+      .select({ startedAt: sessions.startedAt })
+      .from(sessions)
+      .innerJoin(clients, eq(sessions.clientId, clients.id))
+      .where(and(eq(clients.clinicId, clinicId), gte(sessions.startedAt, thirtyDaysAgo))),
+  ]);
 
   // Build 30-day daily counts
   const countsByDate = new Map<string, number>();
@@ -59,10 +73,30 @@ export default async function DashboardPage() {
     return { date, count: countsByDate.get(date) ?? 0 };
   });
 
-  const stats = [
-    { label: "Active Clients", value: String(clientRows[0]?.count ?? 0), icon: Users },
-    { label: "Sessions This Week", value: String(sessionRows[0]?.count ?? 0), icon: Activity },
-    { label: "Protocols", value: String(protocolRows[0]?.count ?? 0), icon: BookOpen },
+  const totalClients = Number(clientRows[0]?.count ?? 0);
+  const totalProtocols = Number(protocolRows[0]?.count ?? 0);
+  const isNewAccount = totalClients === 0 && last30Sessions.length === 0;
+
+  const thisWeek = Number(sessionRows[0]?.count ?? 0);
+  const lastWeek = Number(prevWeekSessionRows[0]?.count ?? 0);
+  const sessionDelta = thisWeek - lastWeek;
+
+  const stats: Array<{
+    label: string;
+    value: string;
+    icon: typeof Users;
+    delta?: { value: number; label: string } | null;
+  }> = [
+    { label: "Active Clients", value: String(totalClients), icon: Users },
+    {
+      label: "Sessions This Week",
+      value: String(thisWeek),
+      icon: Activity,
+      delta: lastWeek > 0 || thisWeek > 0
+        ? { value: sessionDelta, label: `vs last week (${lastWeek})` }
+        : null,
+    },
+    { label: "Protocols", value: String(totalProtocols), icon: BookOpen },
     {
       label: "Avg. Reward Score",
       value: avgScoreRows[0]?.avg != null
@@ -79,18 +113,89 @@ export default async function DashboardPage() {
         Welcome back, {session?.user?.name ?? "Clinician"}.
       </p>
 
+      {/* Onboarding guide for new accounts */}
+      {isNewAccount && (
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-6 mb-8">
+          <h2 className="text-base font-semibold text-blue-900 mb-1">Welcome to EEGBase</h2>
+          <p className="text-sm text-blue-700 mb-5">
+            Get your clinic set up in 3 quick steps.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              {
+                step: 1,
+                icon: Settings,
+                title: "Set up a protocol",
+                desc: "Define session duration, device type, and parameters.",
+                href: "/protocols",
+                done: totalProtocols > 0,
+              },
+              {
+                step: 2,
+                icon: UserPlus,
+                title: "Add your first client",
+                desc: "Add a client to your roster and assign a protocol.",
+                href: "/clients",
+                done: totalClients > 0,
+              },
+              {
+                step: 3,
+                icon: Play,
+                title: "Run a session",
+                desc: "Start a live neurofeedback session and collect data.",
+                href: "/sessions/live",
+                done: false,
+              },
+            ].map(({ step, icon: Icon, title, desc, href, done }) => (
+              <Link
+                key={step}
+                href={href}
+                className={`flex items-start gap-3 p-4 rounded-xl border transition-colors ${
+                  done
+                    ? "bg-emerald-50 border-emerald-200 cursor-default"
+                    : "bg-white border-blue-100 hover:border-blue-300 hover:bg-white"
+                }`}
+              >
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                    done ? "bg-emerald-100" : "bg-blue-100"
+                  }`}
+                >
+                  {done ? (
+                    <CheckCircle size={16} className="text-emerald-600" />
+                  ) : (
+                    <Icon size={16} className="text-blue-600" />
+                  )}
+                </div>
+                <div>
+                  <p className={`text-xs font-semibold mb-0.5 ${done ? "text-emerald-700" : "text-gray-900"}`}>
+                    {title}
+                  </p>
+                  <p className="text-xs text-gray-500">{desc}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
-        {stats.map(({ label, value, icon: Icon }) => (
+        {stats.map(({ label, value, icon: Icon, delta }) => (
           <div
             key={label}
             className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4"
           >
-            <div className="p-2 rounded-lg bg-blue-50">
+            <div className="p-2 rounded-lg bg-blue-50 shrink-0">
               <Icon size={20} className="text-blue-600" />
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-xs text-gray-500 font-medium">{label}</p>
               <p className="text-2xl font-bold text-gray-900">{value}</p>
+              {delta != null && (
+                <p className={`text-xs mt-0.5 ${delta.value > 0 ? "text-emerald-600" : delta.value < 0 ? "text-red-500" : "text-gray-400"}`}>
+                  {delta.value > 0 ? "+" : ""}{delta.value} {delta.label}
+                </p>
+              )}
             </div>
           </div>
         ))}

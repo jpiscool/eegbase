@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { SessionNotesEditor } from "@/components/SessionNotesEditor";
 import { SessionReplayChart } from "@/components/SessionReplayChart";
+import { BandPowerChart } from "@/components/BandPowerChart";
 import { DeleteSessionButton } from "@/components/DeleteSessionButton";
 
 function ScoreDelta({
@@ -64,6 +65,11 @@ export default async function SessionDetailPage({
       .select({
         timestampMs: sessionDataPoints.timestampMs,
         rewardScore: sessionDataPoints.rewardScore,
+        delta: sessionDataPoints.delta,
+        theta: sessionDataPoints.theta,
+        alpha: sessionDataPoints.alpha,
+        beta: sessionDataPoints.beta,
+        gamma: sessionDataPoints.gamma,
       })
       .from(sessionDataPoints)
       .where(eq(sessionDataPoints.sessionId, id))
@@ -91,6 +97,21 @@ export default async function SessionDetailPage({
       timestampMs: dp.timestampMs,
       rewardScore: dp.rewardScore as number,
     }));
+
+  // Check if we have band power data
+  const hasBandData = dataPoints.some(
+    (dp) => dp.delta != null || dp.theta != null || dp.alpha != null || dp.beta != null || dp.gamma != null
+  );
+  const bandData = hasBandData
+    ? dataPoints.map((dp) => ({
+        timestampMs: dp.timestampMs,
+        delta: dp.delta ?? null,
+        theta: dp.theta ?? null,
+        alpha: dp.alpha ?? null,
+        beta: dp.beta ?? null,
+        gamma: dp.gamma ?? null,
+      }))
+    : [];
 
   return (
     <div className="max-w-3xl">
@@ -171,6 +192,16 @@ export default async function SessionDetailPage({
             Reward Score · Session Replay ({rewardTrend.length} samples)
           </h2>
           <SessionReplayChart data={rewardTrend} />
+        </div>
+      )}
+
+      {/* EEG Band Power */}
+      {hasBandData && bandData.length > 1 && (
+        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
+          <h2 className="text-sm font-semibold text-gray-700 mb-4">
+            EEG Band Power · Session ({bandData.length} samples)
+          </h2>
+          <BandPowerChart data={bandData} />
         </div>
       )}
 

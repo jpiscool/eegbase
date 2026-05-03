@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowLeft, Play, MessageSquare, ClipboardList, FileText, Download } from "lucide-react";
 import { AssignProtocolModal } from "@/components/AssignProtocolModal";
 import { TrendChart } from "@/components/TrendChart";
+import { SessionMetricTrend } from "@/components/SessionMetricChart";
 import { EditClientModal } from "@/components/EditClientModal";
 import { ToggleClientActiveButton } from "@/components/ToggleClientActiveButton";
 
@@ -197,58 +198,25 @@ export default async function ClientDetailPage({
         </div>
       )}
 
-      {/* Pre/Post questionnaire summary */}
+      {/* Pre/Post metric trend charts */}
       {sessionList.some((s) => s.preFocus != null || s.postFocus != null || s.preMood != null || s.preAnxiety != null) && (
         <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
           <h2 className="text-sm font-semibold text-gray-700 mb-4">
-            Symptom Tracking (latest 5 sessions)
+            Symptom Tracking · Pre vs Post Session
           </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="text-gray-400 border-b border-gray-100">
-                  <th className="text-left pb-2 font-medium">Date</th>
-                  {["Focus", "Mood", "Anxiety", "Energy"].map((m) => (
-                    <>
-                      <th key={`pre-${m}`} className="text-center pb-2 font-medium text-gray-400">
-                        Pre {m}
-                      </th>
-                      <th key={`post-${m}`} className="text-center pb-2 font-medium text-blue-400">
-                        Post {m}
-                      </th>
-                    </>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {sessionList
-                  .filter((s) => s.preFocus != null || s.postFocus != null || s.preMood != null || s.preAnxiety != null)
-                  .slice(0, 5)
-                  .map((s) => (
-                    <tr key={s.id} className="border-b border-gray-50">
-                      <td className="py-2 text-gray-500">
-                        {new Date(s.startedAt).toLocaleDateString()}
-                      </td>
-                      {[
-                        [s.preFocus, s.postFocus],
-                        [s.preMood, s.postMood],
-                        [s.preAnxiety, s.postAnxiety],
-                        [s.preEnergy, s.postEnergy],
-                      ].map(([pre, post], i) => (
-                        <>
-                          <td key={`pre-${i}`} className="text-center py-2 text-gray-500">
-                            {pre ?? "—"}
-                          </td>
-                          <td key={`post-${i}`} className="text-center py-2 font-medium text-blue-600">
-                            {post ?? "—"}
-                          </td>
-                        </>
-                      ))}
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
+          <SessionMetricTrend
+            sessions={sessionList.map((s) => ({
+              date: new Date(s.startedAt),
+              preFocus: s.preFocus ?? null,
+              postFocus: s.postFocus ?? null,
+              preMood: s.preMood ?? null,
+              postMood: s.postMood ?? null,
+              preAnxiety: s.preAnxiety ?? null,
+              postAnxiety: s.postAnxiety ?? null,
+              preEnergy: s.preEnergy ?? null,
+              postEnergy: s.postEnergy ?? null,
+            }))}
+          />
         </div>
       )}
 
