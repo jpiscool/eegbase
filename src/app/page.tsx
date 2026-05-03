@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Brain, BarChart3, Wifi, ShieldCheck, Users, Zap } from "lucide-react";
+import { Brain, BarChart3, Wifi, ShieldCheck, Users, Zap, Bluetooth, FileText, Share2, CheckCircle } from "lucide-react";
 import { LandingLivePreview } from "@/components/LandingLivePreview";
 
 const features = [
@@ -148,6 +148,96 @@ export default function LandingPage() {
               <p className="text-xs text-gray-500 leading-relaxed">{description}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Clinical workflow steps */}
+      <section className="max-w-5xl mx-auto px-6 pb-24">
+        <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
+          The complete clinical workflow
+        </h2>
+        <p className="text-sm text-gray-400 text-center mb-12">
+          From pairing a device to sharing results — all in one platform.
+        </p>
+        <div className="grid grid-cols-4 gap-4">
+          {[
+            { step: 1, icon: Bluetooth, title: "Pair device", desc: "Connect Mendi fNIRS or Muse EEG headband via WebBluetooth — no drivers, no middleware.", color: "bg-purple-100 text-purple-700" },
+            { step: 2, icon: Brain, title: "Stream session", desc: "Real-time reward score, OxyHb trends, and EEG bands update every 100ms with live audio feedback.", color: "bg-blue-100 text-blue-700" },
+            { step: 3, icon: FileText, title: "Review & annotate", desc: "AI-powered clinical summary, session replay, pre/post questionnaire deltas, and clinician notes.", color: "bg-indigo-100 text-indigo-700" },
+            { step: 4, icon: Share2, title: "Share progress", desc: "One-click shareable report link for clients and families. No account required to view.", color: "bg-emerald-100 text-emerald-700" },
+          ].map(({ step, icon: Icon, title, desc, color }) => (
+            <div key={step} className="relative">
+              <div className="bg-white border border-gray-100 rounded-2xl p-5 h-full">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${color}`}>
+                    <Icon size={16} />
+                  </div>
+                  <span className="text-xs font-bold text-gray-300 uppercase tracking-wider">Step {step}</span>
+                </div>
+                <h3 className="text-sm font-bold text-gray-900 mb-1.5">{title}</h3>
+                <p className="text-xs text-gray-500 leading-relaxed">{desc}</p>
+              </div>
+              {step < 4 && (
+                <div className="hidden lg:block absolute top-8 -right-3 z-10 text-gray-200 text-lg">→</div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Mendi spotlight */}
+      <section className="max-w-5xl mx-auto px-6 pb-24">
+        <div className="bg-gradient-to-br from-violet-600 to-purple-700 rounded-3xl p-8 text-white">
+          <div className="grid grid-cols-2 gap-8 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-xs font-medium text-violet-100 mb-4">
+                <Bluetooth size={11} />
+                First-class device integration
+              </div>
+              <h2 className="text-2xl font-bold mb-3 leading-tight">
+                Built specifically<br />for Mendi fNIRS
+              </h2>
+              <p className="text-violet-100 text-sm leading-relaxed mb-5">
+                EEGBase is the first open-source platform with a dedicated Mendi adapter. Stream OxyHb and DeoxyHb data directly to a full clinical dashboard — reward scoring, session history, longitudinal analytics, and shareable reports.
+              </p>
+              <div className="space-y-2">
+                {[
+                  "Web Bluetooth — no app install required",
+                  "Real-time reward scoring from fNIRS signals",
+                  "Automatic session recording to PostgreSQL",
+                  "AI clinical insight via Claude Haiku",
+                ].map((point) => (
+                  <div key={point} className="flex items-center gap-2 text-sm text-violet-100">
+                    <CheckCircle size={13} className="text-violet-300 shrink-0" />
+                    {point}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-white/10 rounded-2xl p-5 text-sm">
+              <p className="text-violet-200 text-xs font-semibold uppercase tracking-wider mb-3">Signals from Mendi</p>
+              <div className="space-y-3">
+                {[
+                  { label: "OxyHb Left", val: "Prefrontal cortex, left hemisphere" },
+                  { label: "OxyHb Right", val: "Prefrontal cortex, right hemisphere" },
+                  { label: "DeoxyHb Left", val: "Inverse oxygenation signal" },
+                  { label: "DeoxyHb Right", val: "Inverse oxygenation signal" },
+                  { label: "Reward score", val: "0–100 composite engagement metric" },
+                ].map(({ label, val }) => (
+                  <div key={label} className="flex justify-between gap-4 border-b border-white/10 pb-2">
+                    <span className="font-semibold text-white text-xs">{label}</span>
+                    <span className="text-violet-200 text-xs text-right">{val}</span>
+                  </div>
+                ))}
+              </div>
+              <Link
+                href="/demo"
+                className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white text-purple-700 text-sm font-bold rounded-xl hover:bg-violet-50 transition-colors"
+              >
+                Try with simulator →
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
