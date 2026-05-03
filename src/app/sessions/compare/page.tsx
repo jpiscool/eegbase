@@ -290,14 +290,14 @@ export default async function CompareSessionsPage({
         alpha: sessionDataPoints.alpha, beta: sessionDataPoints.beta, gamma: sessionDataPoints.gamma,
         oxyL: sessionDataPoints.oxyHbLeft, oxyR: sessionDataPoints.oxyHbRight })
       .from(sessionDataPoints).where(eq(sessionDataPoints.sessionId, idA))
-      .orderBy(asc(sessionDataPoints.timestampMs)).limit(500),
+      .orderBy(asc(sessionDataPoints.timestampMs)),
     db
       .select({ t: sessionDataPoints.timestampMs, r: sessionDataPoints.rewardScore,
         delta: sessionDataPoints.delta, theta: sessionDataPoints.theta,
         alpha: sessionDataPoints.alpha, beta: sessionDataPoints.beta, gamma: sessionDataPoints.gamma,
         oxyL: sessionDataPoints.oxyHbLeft, oxyR: sessionDataPoints.oxyHbRight })
       .from(sessionDataPoints).where(eq(sessionDataPoints.sessionId, idB))
-      .orderBy(asc(sessionDataPoints.timestampMs)).limit(500),
+      .orderBy(asc(sessionDataPoints.timestampMs)),
   ]);
 
   if (!rowB) notFound();
@@ -305,11 +305,21 @@ export default async function CompareSessionsPage({
   const sA = rowA.session;
   const sB = rowB.session;
 
-  // Reward series (t in ms from session start, v = score)
-  const rewardA = dpA.filter((d) => d.r != null).map((d) => ({ t: d.t, v: d.r as number }));
-  const rewardB = dpB.filter((d) => d.r != null).map((d) => ({ t: d.t, v: d.r as number }));
+  // Downsample both sets to 400 points each for clean chart overlay
+  const MAX_CMP_POINTS = 400;
+  function downsample<T>(arr: T[]): T[] {
+    if (arr.length <= MAX_CMP_POINTS) return arr;
+    const step = Math.floor(arr.length / MAX_CMP_POINTS);
+    return arr.filter((_, i) => i % step === 0);
+  }
+  const sampledA = downsample(dpA);
+  const sampledB = downsample(dpB);
 
-  // Average band powers
+  // Reward series (t in ms from session start, v = score)
+  const rewardA = sampledA.filter((d) => d.r != null).map((d) => ({ t: d.t, v: d.r as number }));
+  const rewardB = sampledB.filter((d) => d.r != null).map((d) => ({ t: d.t, v: d.r as number }));
+
+  // Average band powers (use full data for accuracy)
   const avgBand = (dps: typeof dpA, key: "delta" | "theta" | "alpha" | "beta" | "gamma") => {
     const vals = dps.filter((d) => d[key] != null).map((d) => d[key] as number);
     return vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
@@ -325,7 +335,7 @@ export default async function CompareSessionsPage({
   };
 
   const hasBands = Object.values(bandsA).some((v) => v != null) || Object.values(bandsB).some((v) => v != null);
-  const hasFnirs = dpA.some((d) => d.oxyL != null) || dpB.some((d) => d.oxyL != null);
+  const hasFnirs = sampledA.some((d) => d.oxyL != null) || sampledB.some((d) => d.oxyL != null);
 
   const labelA = `Session A · ${fmtDate(sA.startedAt)}`;
   const labelB = `Session B · ${fmtDate(sB.startedAt)}`;
@@ -452,8 +462,8 @@ export default async function CompareSessionsPage({
           <h2 className="text-sm font-semibold text-gray-700 mb-4">Avg fNIRS OxyHb (μM)</h2>
           <div className="grid grid-cols-2 gap-6">
             {[
-              { label: "Session A", dps: dpA, color: "text-blue-600" },
-              { label: "Session B", dps: dpB, color: "text-emerald-600" },
+              { label: "Session A", dps: sampledA, color: "text-blue-600" },
+              { label: "Session B", dps: sampledB, color: "text-emerald-600" },
             ].map(({ label, dps, color }) => {
               const oxyLVals = dps.filter((d) => d.oxyL != null).map((d) => d.oxyL as number);
               const oxyRVals = dps.filter((d) => d.oxyR != null).map((d) => d.oxyR as number);
