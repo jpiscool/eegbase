@@ -5,6 +5,7 @@ import { eq, and, gte, lt, count, avg, desc, max } from "drizzle-orm";
 import { Users, Activity, BookOpen, TrendingUp, UserPlus, Settings, Play, CheckCircle, ClipboardCheck } from "lucide-react";
 import Link from "next/link";
 import { DailyActivityChart } from "@/components/DailyActivityChart";
+import { RemindAllButton } from "@/components/RemindAllButton";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -264,9 +265,12 @@ export default async function DashboardPage() {
                 {attentionClients.length} client{attentionClients.length !== 1 ? "s" : ""} overdue
               </span>
             </div>
-            <Link href="/clients" className="text-xs text-amber-700 hover:underline font-medium">
-              View all clients →
-            </Link>
+            <div className="flex items-center gap-2">
+              <RemindAllButton />
+              <Link href="/clients" className="text-xs text-amber-700 hover:underline font-medium">
+                View all clients →
+              </Link>
+            </div>
           </div>
           <div className="divide-y divide-amber-100">
             {attentionClients.map((c) => {

@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
-import { clients, assignments, messages } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { clients, assignments, messages, sessions } from "@/lib/db/schema";
+import { eq, and, max } from "drizzle-orm";
 
 export async function addClient(formData: FormData) {
   const session = await auth();
@@ -188,6 +188,47 @@ export async function revokeReportToken(clientId: string): Promise<void> {
   await db.update(clients).set({ reportToken: null }).where(eq(clients.id, clientId));
   revalidatePath(`/clients/${clientId}`);
   revalidatePath(`/clients/${clientId}/report`);
+}
+
+export async function sendBulkReminders(): Promise<{ count: number }> {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const clinicId = (session.user as { clinicId?: string }).clinicId;
+  if (!clinicId) throw new Error("No clinic");
+
+  const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+
+  // Active clients with their last session date
+  const clientsWithSessions = await db
+    .select({ id: clients.id, name: clients.name, lastSessionAt: max(sessions.startedAt) })
+    .from(clients)
+    .leftJoin(sessions, eq(sessions.clientId, clients.id))
+    .where(and(eq(clients.clinicId, clinicId), eq(clients.active, true)))
+    .groupBy(clients.id, clients.name);
+
+  // Filter to those overdue: never had a session, or last was 14+ days ago
+  const overdue = clientsWithSessions.filter((c) => {
+    if (!c.lastSessionAt) return true;
+    return new Date(c.lastSessionAt).getTime() < twoWeeksAgo.getTime();
+  });
+
+  if (overdue.length === 0) return { count: 0 };
+
+  await db.insert(messages).values(
+    overdue.map((c) => ({
+      clientId: c.id,
+      clinicianId: session.user!.id!,
+      senderRole: "clinician" as const,
+      body: `Hi ${c.name.split(" ")[0]}, just checking in! It's been a while since your last neurofeedback session. When you're ready to schedule your next one, let us know.`,
+    }))
+  );
+
+  for (const c of overdue) {
+    revalidatePath(`/clients/${c.id}/messages`);
+  }
+
+  return { count: overdue.length };
 }
 
 export async function setClientActive(clientId: string, active: boolean) {
