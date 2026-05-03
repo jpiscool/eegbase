@@ -4,7 +4,7 @@ import { sessions, clients, protocols, sessionDataPoints } from "@/lib/db/schema
 import { eq, and, asc } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Download } from "lucide-react";
+import { ArrowLeft, Download, GitCompare } from "lucide-react";
 import { SessionNotesEditor } from "@/components/SessionNotesEditor";
 import { SessionReplayChart } from "@/components/SessionReplayChart";
 import { BandPowerChart } from "@/components/BandPowerChart";
@@ -236,6 +236,13 @@ export default async function SessionDetailPage({
             })}
           </p>
         </div>
+        <Link
+          href={`/sessions/compare?a=${s.id}`}
+          className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          <GitCompare size={15} />
+          Compare
+        </Link>
         <a
           href={`/api/sessions/${s.id}`}
           download={`session-${s.id.slice(0, 8)}.json`}
