@@ -1,8 +1,8 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
-import { clients, sessions, protocols } from "@/lib/db/schema";
+import { clients, sessions, protocols, checkIns } from "@/lib/db/schema";
 import { eq, and, gte, lt, count, avg, desc, max } from "drizzle-orm";
-import { Users, Activity, BookOpen, TrendingUp, UserPlus, Settings, Play, CheckCircle } from "lucide-react";
+import { Users, Activity, BookOpen, TrendingUp, UserPlus, Settings, Play, CheckCircle, ClipboardCheck } from "lucide-react";
 import Link from "next/link";
 import { DailyActivityChart } from "@/components/DailyActivityChart";
 
@@ -14,6 +14,7 @@ export default async function DashboardPage() {
   const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
   const twoWeeksAgo = new Date(now - 14 * 24 * 60 * 60 * 1000);
   const thirtyDaysAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
+  const fortyEightHoursAgo = new Date(now - 48 * 60 * 60 * 1000);
 
   const [
     clientRows,
@@ -24,6 +25,7 @@ export default async function DashboardPage() {
     recentSessions,
     last30Sessions,
     allActiveClients,
+    recentCheckIns,
   ] = await Promise.all([
     db.select({ count: count() }).from(clients).where(and(eq(clients.clinicId, clinicId), eq(clients.active, true))),
     db
@@ -72,6 +74,24 @@ export default async function DashboardPage() {
       .where(and(eq(clients.clinicId, clinicId), eq(clients.active, true)))
       .groupBy(clients.id)
       .orderBy(clients.name),
+    // Check-ins submitted in the last 48 hours (via public link)
+    db
+      .select({
+        id: checkIns.id,
+        clientId: checkIns.clientId,
+        clientName: clients.name,
+        date: checkIns.date,
+        mood: checkIns.mood,
+        anxiety: checkIns.anxiety,
+        focus: checkIns.focus,
+        energy: checkIns.energy,
+        sleepHours: checkIns.sleepHours,
+      })
+      .from(checkIns)
+      .innerJoin(clients, and(eq(checkIns.clientId, clients.id), eq(clients.clinicId, clinicId)))
+      .where(gte(checkIns.date, fortyEightHoursAgo))
+      .orderBy(desc(checkIns.date))
+      .limit(10),
   ]);
 
   // Build 30-day daily counts
@@ -274,6 +294,48 @@ export default async function DashboardPage() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Recent check-ins (48h) */}
+      {recentCheckIns.length > 0 && !isNewAccount && (
+        <div className="bg-blue-50 border border-blue-100 rounded-xl overflow-hidden mb-6">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-blue-100">
+            <div className="flex items-center gap-2">
+              <ClipboardCheck size={16} className="text-blue-600" />
+              <h2 className="text-sm font-semibold text-blue-900">New Check-Ins</h2>
+              <span className="text-xs text-blue-600 font-medium">
+                {recentCheckIns.length} in the last 48 hours
+              </span>
+            </div>
+          </div>
+          <div className="divide-y divide-blue-100">
+            {recentCheckIns.map((c) => (
+              <div key={c.id} className="flex items-center justify-between px-6 py-3 gap-4">
+                <div>
+                  <Link href={`/clients/${c.clientId}/checkins`} className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                    {c.clientName}
+                  </Link>
+                  <p className="text-xs text-blue-700 mt-0.5">
+                    {new Date(c.date).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 text-xs text-blue-700 shrink-0">
+                  {c.mood != null && <span>Mood <strong>{c.mood}</strong></span>}
+                  {c.focus != null && <span>Focus <strong>{c.focus}</strong></span>}
+                  {c.anxiety != null && <span>Anxiety <strong>{c.anxiety}</strong></span>}
+                  {c.energy != null && <span>Energy <strong>{c.energy}</strong></span>}
+                  {c.sleepHours != null && <span>Sleep <strong>{c.sleepHours}h</strong></span>}
+                </div>
+                <Link
+                  href={`/clients/${c.clientId}/checkins`}
+                  className="text-xs font-medium text-blue-600 hover:underline shrink-0"
+                >
+                  View →
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       )}
