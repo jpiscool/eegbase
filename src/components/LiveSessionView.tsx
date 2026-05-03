@@ -21,7 +21,7 @@ function createAdapter(deviceType: string, params?: unknown): DeviceAdapter {
   });
 }
 
-const MAX_POINTS = 60;
+const MAX_POINTS = 600; // 60 seconds at 10 Hz (Mendi/Simulator sample rate)
 
 interface Client { id: string; name: string }
 interface Protocol { id: string; name: string; deviceType: string; durationSeconds: number; parameters?: unknown }

@@ -54,14 +54,15 @@ export class SimulatorAdapter implements DeviceAdapter {
       // Trend: noiseLevel 0→0.5 trendStrength, 1→5× trendStrength
       const trendRate = this._trendStrength * 0.02 * (1 + this._noiseLevel);
       const trend = Math.min(elapsedMin * trendRate, this._trendStrength * 0.2);
-      // Noise: scales random walk step size
-      const noise = 0.02 + this._noiseLevel * 0.08;
+      // Noise: scales random walk step size. Divided by sqrt(10) for 10 Hz (vs 1 Hz baseline).
+      const noise = (0.02 + this._noiseLevel * 0.08) * 0.316;
 
-      this._oxyL = randWalk(this._oxyL + trend * 0.002, -0.3, 0.8, noise);
-      this._oxyR = randWalk(this._oxyR + trend * 0.002, -0.3, 0.8, noise);
+      // trend * 0.0002 = trend * 0.002 / 10 (10 samples per second now)
+      this._oxyL = randWalk(this._oxyL + trend * 0.0002, -0.3, 0.8, noise);
+      this._oxyR = randWalk(this._oxyR + trend * 0.0002, -0.3, 0.8, noise);
       // DeoxyHb inversely coupled (neurovascular coupling)
-      this._deoxyL = randWalk(this._deoxyL - trend * 0.001, -0.5, 0.3, noise * 0.8);
-      this._deoxyR = randWalk(this._deoxyR - trend * 0.001, -0.5, 0.3, noise * 0.8);
+      this._deoxyL = randWalk(this._deoxyL - trend * 0.0001, -0.5, 0.3, noise * 0.8);
+      this._deoxyR = randWalk(this._deoxyR - trend * 0.0001, -0.5, 0.3, noise * 0.8);
 
       this._delta = randWalk(this._delta, 0.1, 0.7, noise);
       this._theta = randWalk(this._theta, 0.1, 0.8, noise);
@@ -88,7 +89,7 @@ export class SimulatorAdapter implements DeviceAdapter {
       };
 
       this._callbacks.forEach((cb) => cb(sample));
-    }, 1000); // 1 Hz — matches Mendi's reported update rate
+    }, 100); // 10 Hz — matches Mendi sample rate
   }
 
   async disconnect(): Promise<void> {
