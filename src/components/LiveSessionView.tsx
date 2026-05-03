@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { SimulatorAdapter } from "@/lib/device/simulator";
 import { MendiAdapter } from "@/lib/device/mendi";
+import { MuseAdapter } from "@/lib/device/muse";
 import type { DeviceAdapter, DeviceSample } from "@/lib/device/adapter";
 import { LiveChart } from "@/components/LiveChart";
 import { saveSession, type SamplePayload, type Questionnaire } from "@/app/sessions/actions";
@@ -11,6 +12,7 @@ import { ArrowLeft, Wifi, WifiOff, StopCircle, CheckCircle } from "lucide-react"
 
 function createAdapter(deviceType: string, params?: unknown): DeviceAdapter {
   if (deviceType === "mendi") return new MendiAdapter();
+  if (deviceType === "muse") return new MuseAdapter();
   const simParams = params && typeof params === "object" ? (params as Record<string, unknown>) : {};
   return new SimulatorAdapter({
     noiseLevel: typeof simParams.noiseLevel === "number" ? simParams.noiseLevel : 0.3,
