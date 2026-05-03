@@ -10,14 +10,27 @@ function randWalk(prev: number, min: number, max: number, step = 0.02): number {
   return Math.max(min, Math.min(max, next));
 }
 
+interface SimulatorParams {
+  noiseLevel?: number;    // 0–1, scales random walk step size (default 0.3)
+  trendStrength?: number; // 0–1, scales OxyHb upward drift per minute (default 0.5)
+}
+
 export class SimulatorAdapter implements DeviceAdapter {
   readonly deviceType = "simulator";
   readonly displayName = "Simulator";
+
+  private _noiseLevel: number;
+  private _trendStrength: number;
 
   private _connected = false;
   private _interval: ReturnType<typeof setInterval> | null = null;
   private _callbacks: Array<(sample: DeviceSample) => void> = [];
   private _startMs = 0;
+
+  constructor(params: SimulatorParams = {}) {
+    this._noiseLevel = Math.max(0, Math.min(1, params.noiseLevel ?? 0.3));
+    this._trendStrength = Math.max(0, Math.min(1, params.trendStrength ?? 0.5));
+  }
 
   // fNIRS state — realistic μM values (functional range ~±0.5 μM)
   private _oxyL = 0.05;
@@ -38,20 +51,23 @@ export class SimulatorAdapter implements DeviceAdapter {
 
     this._interval = setInterval(() => {
       const elapsedMin = (Date.now() - this._startMs) / 60000;
-      // Slight positive drift in OxyHb simulating session engagement
-      const trend = Math.min(elapsedMin * 0.01, 0.1);
+      // Trend: noiseLevel 0→0.5 trendStrength, 1→5× trendStrength
+      const trendRate = this._trendStrength * 0.02 * (1 + this._noiseLevel);
+      const trend = Math.min(elapsedMin * trendRate, this._trendStrength * 0.2);
+      // Noise: scales random walk step size
+      const noise = 0.02 + this._noiseLevel * 0.08;
 
-      this._oxyL = randWalk(this._oxyL + trend * 0.001, -0.3, 0.8, 0.04);
-      this._oxyR = randWalk(this._oxyR + trend * 0.001, -0.3, 0.8, 0.04);
+      this._oxyL = randWalk(this._oxyL + trend * 0.002, -0.3, 0.8, noise);
+      this._oxyR = randWalk(this._oxyR + trend * 0.002, -0.3, 0.8, noise);
       // DeoxyHb inversely coupled (neurovascular coupling)
-      this._deoxyL = randWalk(this._deoxyL - trend * 0.001, -0.5, 0.3, 0.03);
-      this._deoxyR = randWalk(this._deoxyR - trend * 0.001, -0.5, 0.3, 0.03);
+      this._deoxyL = randWalk(this._deoxyL - trend * 0.001, -0.5, 0.3, noise * 0.8);
+      this._deoxyR = randWalk(this._deoxyR - trend * 0.001, -0.5, 0.3, noise * 0.8);
 
-      this._delta = randWalk(this._delta, 0.1, 0.7, 0.04);
-      this._theta = randWalk(this._theta, 0.1, 0.8, 0.04);
-      this._alpha = randWalk(this._alpha, 0.1, 0.9, 0.05);
-      this._beta = randWalk(this._beta, 0.05, 0.7, 0.035);
-      this._gamma = randWalk(this._gamma, 0.02, 0.5, 0.025);
+      this._delta = randWalk(this._delta, 0.1, 0.7, noise);
+      this._theta = randWalk(this._theta, 0.1, 0.8, noise);
+      this._alpha = randWalk(this._alpha, 0.1, 0.9, noise * 1.2);
+      this._beta = randWalk(this._beta, 0.05, 0.7, noise * 0.9);
+      this._gamma = randWalk(this._gamma, 0.02, 0.5, noise * 0.7);
 
       // Reward: prefrontal oxygenation-based (0–100)
       const oxyAvg = (this._oxyL + this._oxyR) / 2;

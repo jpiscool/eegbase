@@ -20,7 +20,7 @@ export default async function LiveSessionPage({
       .where(eq(clients.clinicId, clinicId))
       .orderBy(clients.name),
     db
-      .select({ id: protocols.id, name: protocols.name, deviceType: protocols.deviceType, durationSeconds: protocols.durationSeconds })
+      .select({ id: protocols.id, name: protocols.name, deviceType: protocols.deviceType, durationSeconds: protocols.durationSeconds, parameters: protocols.parameters })
       .from(protocols)
       .where(eq(protocols.clinicId, clinicId))
       .orderBy(protocols.name),

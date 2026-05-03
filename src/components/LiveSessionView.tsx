@@ -9,15 +9,19 @@ import { saveSession, type SamplePayload, type Questionnaire } from "@/app/sessi
 import Link from "next/link";
 import { ArrowLeft, Wifi, WifiOff, StopCircle, CheckCircle } from "lucide-react";
 
-function createAdapter(deviceType: string): DeviceAdapter {
+function createAdapter(deviceType: string, params?: unknown): DeviceAdapter {
   if (deviceType === "mendi") return new MendiAdapter();
-  return new SimulatorAdapter();
+  const simParams = params && typeof params === "object" ? (params as Record<string, unknown>) : {};
+  return new SimulatorAdapter({
+    noiseLevel: typeof simParams.noiseLevel === "number" ? simParams.noiseLevel : 0.3,
+    trendStrength: typeof simParams.trendStrength === "number" ? simParams.trendStrength : 0.5,
+  });
 }
 
 const MAX_POINTS = 60;
 
 interface Client { id: string; name: string }
-interface Protocol { id: string; name: string; deviceType: string; durationSeconds: number }
+interface Protocol { id: string; name: string; deviceType: string; durationSeconds: number; parameters?: unknown }
 
 interface Props {
   clients: Client[];
@@ -205,7 +209,7 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
     const deviceType = selectedProtocol?.deviceType ?? "simulator";
     deviceTypeRef.current = deviceType;
 
-    const adapter = createAdapter(deviceType);
+    const adapter = createAdapter(deviceType, selectedProtocol?.parameters);
     adapterRef.current = adapter;
 
     adapter.onSample((s) => {
