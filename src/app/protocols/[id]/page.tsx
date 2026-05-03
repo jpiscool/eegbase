@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { TrendChart } from "@/components/TrendChart";
+import { ProtocolParametersPanel } from "@/components/ProtocolParametersPanel";
 
 const DEVICE_LABELS: Record<string, string> = {
   mendi: "Mendi fNIRS",
@@ -234,6 +235,15 @@ export default async function ProtocolDetailPage({
             )}
           </div>
         </div>
+      </div>
+
+      {/* Training Parameters */}
+      <div className="mt-6">
+        <ProtocolParametersPanel
+          protocolId={protocol.id}
+          deviceType={protocol.deviceType}
+          savedParams={protocol.parameters}
+        />
       </div>
     </div>
   );

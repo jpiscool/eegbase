@@ -104,6 +104,21 @@ export async function updateProtocol(id: string, formData: FormData) {
   revalidatePath("/protocols");
 }
 
+export async function updateProtocolParameters(id: string, params: Record<string, unknown>) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const clinicId = (session.user as { clinicId?: string }).clinicId;
+  if (!clinicId) throw new Error("No clinic");
+
+  await db
+    .update(protocols)
+    .set({ parameters: params })
+    .where(and(eq(protocols.id, id), eq(protocols.clinicId, clinicId)));
+
+  revalidatePath(`/protocols/${id}`);
+}
+
 export async function deleteProtocol(id: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
