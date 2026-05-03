@@ -1,10 +1,10 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
-import { clients, sessions, assignments, protocols } from "@/lib/db/schema";
+import { clients, sessions, assignments, protocols, goals } from "@/lib/db/schema";
 import { eq, and, desc, avg, count } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Play, MessageSquare, ClipboardList, FileText, Download } from "lucide-react";
+import { ArrowLeft, Play, MessageSquare, ClipboardList, FileText, Download, Target } from "lucide-react";
 import { AssignProtocolModal } from "@/components/AssignProtocolModal";
 import { TrendChart } from "@/components/TrendChart";
 import { SessionMetricTrend } from "@/components/SessionMetricChart";
@@ -30,7 +30,7 @@ export default async function ClientDetailPage({
 
   if (!client) notFound();
 
-  const [sessionList, activeAssignment, protocolList, avgReward, totalSessionsRow] = await Promise.all([
+  const [sessionList, activeAssignment, protocolList, avgReward, totalSessionsRow, activeGoals] = await Promise.all([
     db
       .select({
         id: sessions.id,
@@ -70,6 +70,12 @@ export default async function ClientDetailPage({
       .select({ count: count() })
       .from(sessions)
       .where(eq(sessions.clientId, id)),
+    db
+      .select({ id: goals.id, title: goals.title, status: goals.status, targetDate: goals.targetDate })
+      .from(goals)
+      .where(and(eq(goals.clientId, id), eq(goals.status, "active")))
+      .orderBy(goals.targetDate)
+      .limit(3),
   ]);
 
   const assignedProtocol = activeAssignment[0]?.protocol ?? null;
@@ -183,6 +189,13 @@ export default async function ClientDetailPage({
             Print Report
           </Link>
           <Link
+            href={`/clients/${id}/goals`}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <Target size={15} />
+            Goals
+          </Link>
+          <Link
             href={`/clients/${id}/checkins`}
             className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
           >
@@ -294,6 +307,38 @@ export default async function ClientDetailPage({
               postEnergy: s.postEnergy ?? null,
             }))}
           />
+        </div>
+      )}
+
+      {/* Active goals mini-panel */}
+      {activeGoals.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <div className="flex items-center gap-2">
+              <Target size={14} className="text-emerald-600" />
+              <h2 className="text-sm font-semibold text-gray-900">Active Goals</h2>
+              <span className="text-xs px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full font-medium">{activeGoals.length}</span>
+            </div>
+            <Link href={`/clients/${id}/goals`} className="text-xs font-medium text-emerald-600 hover:text-emerald-800 transition-colors">
+              Manage →
+            </Link>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {activeGoals.map((g) => {
+              const isOverdue = g.targetDate != null && new Date(g.targetDate) < new Date();
+              return (
+                <div key={g.id} className="flex items-center gap-3 px-5 py-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                  <p className="text-sm text-gray-800 flex-1 truncate">{g.title}</p>
+                  {g.targetDate && (
+                    <span className={`text-xs shrink-0 ${isOverdue ? "text-red-500 font-medium" : "text-gray-400"}`}>
+                      {isOverdue ? "Overdue · " : ""}{new Date(g.targetDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 

@@ -128,6 +128,20 @@ export const sessionDataPoints = pgTable("session_data_points", {
   raw: jsonb("raw"),
 });
 
+// ── Client Goals / Milestones ─────────────────────────────────────────────────
+export const goals = pgTable("goals", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clientId: uuid("client_id")
+    .references(() => clients.id)
+    .notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  targetDate: timestamp("target_date"),
+  completedAt: timestamp("completed_at"),
+  status: text("status").notNull().default("active"), // active | achieved | paused | cancelled
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ── Client Messages ───────────────────────────────────────────────────────────
 export const messages = pgTable("messages", {
   id: uuid("id").primaryKey().defaultRandom(),

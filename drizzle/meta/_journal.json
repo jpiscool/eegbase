@@ -50,6 +50,13 @@
       "when": 1777826284725,
       "tag": "0006_giant_stone_men",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1777826395095,
+      "tag": "0007_narrow_loki",
+      "breakpoints": true
     }
   ]
 }
