@@ -183,6 +183,7 @@ async function main() {
         postEnergy: Math.min(10, 5 + Math.floor(i * 0.4)) as unknown as number,
         notes: i === 7 ? "Excellent session. Sarah reports significant improvement in daily focus. Consider stepping up threshold." : null,
         postNotes: i === 7 ? "Best session yet — felt the difference throughout the whole day." : null,
+        tags: i === 0 ? ["baseline"] : i === 3 ? ["week-4", "protocol-change"] : i === 7 ? ["high-performance"] : null,
       })
       .returning({ id: schema.sessions.id });
 
@@ -208,6 +209,7 @@ async function main() {
         preMood: 5, postMood: 6,
         preAnxiety: 6, postAnxiety: 5,
         preEnergy: 4, postEnergy: 5,
+        tags: i === 0 ? ["baseline"] : null,
       })
       .returning({ id: schema.sessions.id });
 
@@ -235,12 +237,69 @@ async function main() {
         preAnxiety: 8, postAnxiety: Math.max(3, 6 - i),
         preEnergy: 6, postEnergy: 7,
         postNotes: i === 4 ? "Performance was exceptional last week — client attributes it to the training." : null,
+        tags: i === 0 ? ["baseline"] : i === 4 ? ["high-performance", "post-tx"] : null,
       })
       .returning({ id: schema.sessions.id });
 
     await seedDataPoints(savedSession.id, 1800, 0.2 + i * 0.15, "simulator");
     process.stdout.write(`  Amara session ${i + 1}/5 ✓\n`);
   }
+
+  // ── Treatment goals ───────────────────────────────────────────────────────
+  const inSixWeeks = new Date(now);
+  inSixWeeks.setDate(inSixWeeks.getDate() + 42);
+  const inThreeMonths = new Date(now);
+  inThreeMonths.setDate(inThreeMonths.getDate() + 90);
+  const twoWeeksAgo = new Date(now);
+  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
+  await db.insert(schema.goals).values([
+    // Sarah's goals
+    {
+      clientId: inserted[0].id,
+      title: "Achieve avg reward score ≥ 70 for 3 consecutive sessions",
+      description: "Indicates sustained prefrontal upregulation. Primary outcome measure.",
+      targetDate: inSixWeeks,
+      status: "active",
+    },
+    {
+      clientId: inserted[0].id,
+      title: "Reduce daily anxiety check-in score below 4 consistently",
+      description: "7-day rolling average anxiety ≤ 4/10 on self-report.",
+      targetDate: inThreeMonths,
+      status: "active",
+    },
+    {
+      clientId: inserted[0].id,
+      title: "Complete 8 sessions within 4 weeks",
+      targetDate: twoWeeksAgo,
+      completedAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000),
+      status: "achieved",
+    },
+    // Marcus's goal
+    {
+      clientId: inserted[1].id,
+      title: "Return to baseline cognitive function — focus score ≥ 7 post-session",
+      description: "Compare against pre-concussion self-rating of 8.",
+      targetDate: inSixWeeks,
+      status: "active",
+    },
+    // Amara's goals
+    {
+      clientId: inserted[2].id,
+      title: "Reduce pre-performance anxiety from 8 to ≤ 4",
+      description: "Measured on self-report day of concert/audition.",
+      targetDate: inThreeMonths,
+      status: "active",
+    },
+    {
+      clientId: inserted[2].id,
+      title: "Complete 5 full alpha-theta sessions",
+      completedAt: new Date(),
+      status: "achieved",
+    },
+  ]);
+  console.log("  Goals seeded ✓");
 
   // ── Check-ins for Sarah (7 days) ─────────────────────────────────────────
   for (let i = 6; i >= 0; i--) {
@@ -255,6 +314,40 @@ async function main() {
       anxiety: Math.max(2, 7 - Math.floor((6 - i) * 0.6)) as unknown as number,
       focus: Math.min(10, 5 + Math.floor((6 - i) * 0.5)) as unknown as number,
       energy: Math.min(10, 5 + Math.floor((6 - i) * 0.3)) as unknown as number,
+    });
+  }
+
+  // ── Check-ins for Marcus (5 days) ─────────────────────────────────────────
+  for (let i = 4; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    await db.insert(schema.checkIns).values({
+      clientId: inserted[1].id,
+      date: d,
+      sleepHours: round(7 + Math.random() * 1, 1),
+      sleepQuality: Math.min(10, 5 + Math.floor((4 - i) * 0.4)) as unknown as number,
+      mood: Math.min(10, 5 + Math.floor((4 - i) * 0.3)) as unknown as number,
+      anxiety: Math.max(2, 6 - Math.floor((4 - i) * 0.4)) as unknown as number,
+      focus: Math.min(10, 4 + Math.floor((4 - i) * 0.6)) as unknown as number,
+      energy: Math.min(10, 4 + Math.floor((4 - i) * 0.4)) as unknown as number,
+      notes: i === 0 ? "Headaches less frequent this week. Feeling more like myself." : null,
+    });
+  }
+
+  // ── Check-ins for Amara (5 days) ──────────────────────────────────────────
+  for (let i = 4; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    await db.insert(schema.checkIns).values({
+      clientId: inserted[2].id,
+      date: d,
+      sleepHours: round(7.5 + Math.random() * 0.5, 1),
+      sleepQuality: 8 as unknown as number,
+      mood: Math.min(10, 6 + Math.floor((4 - i) * 0.3)) as unknown as number,
+      anxiety: Math.max(3, 8 - Math.floor((4 - i) * 0.8)) as unknown as number,
+      focus: 7 as unknown as number,
+      energy: 7 as unknown as number,
+      notes: i === 0 ? "Solo recital on Sunday — feeling much calmer than usual before a performance." : null,
     });
   }
 
@@ -285,6 +378,8 @@ async function main() {
   console.log("  Protocols:", p1.name, "/", p2.name, "/", p3.name);
   console.log("  Sessions: 8 (Sarah) + 3 (Marcus) + 5 (Amara) = 16 total");
   console.log("  Data points: ~22,200 fNIRS/EEG samples with realistic waveforms");
+  console.log("  Goals: 3 (Sarah) + 1 (Marcus) + 2 (Amara) = 6 total");
+  console.log("  Check-ins: 7 (Sarah) + 5 (Marcus) + 5 (Amara) = 17 total");
 
   await pool.end();
 }
