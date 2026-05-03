@@ -11,6 +11,7 @@ import { SessionMetricTrend } from "@/components/SessionMetricChart";
 import { EditClientModal } from "@/components/EditClientModal";
 import { ToggleClientActiveButton } from "@/components/ToggleClientActiveButton";
 import { SessionHeatmap } from "@/components/SessionHeatmap";
+import { ClientProgressPanel } from "@/components/ClientProgressPanel";
 
 export default async function ClientDetailPage({
   params,
@@ -295,6 +296,13 @@ export default async function ClientDetailPage({
           />
         </div>
       )}
+
+      {/* AI progress summary */}
+      <ClientProgressPanel
+        clientId={id}
+        initialSummary={client.aiSummary ?? null}
+        initialUpdatedAt={client.aiSummaryUpdatedAt ?? null}
+      />
 
       {/* Session history */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">

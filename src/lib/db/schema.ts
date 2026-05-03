@@ -48,6 +48,8 @@ export const clients = pgTable("clients", {
   active: boolean("active").notNull().default(true),
   reportToken: text("report_token").unique(),    // public share link token
   checkInToken: text("check_in_token").unique(), // public client check-in link token
+  aiSummary: text("ai_summary"),                 // AI-generated longitudinal progress summary
+  aiSummaryUpdatedAt: timestamp("ai_summary_updated_at"), // when the summary was last generated
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
