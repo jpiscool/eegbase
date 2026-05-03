@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
       id: p.id,
       label: p.name,
       sub: p.deviceType,
-      href: `/protocols`,
+      href: `/protocols/${p.id}`,
     })),
     sessions: sessionResults.map((s) => ({
       id: s.id,
