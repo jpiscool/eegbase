@@ -17,7 +17,7 @@ function createAdapter(deviceType: string): DeviceAdapter {
 const MAX_POINTS = 60;
 
 interface Client { id: string; name: string }
-interface Protocol { id: string; name: string; deviceType: string }
+interface Protocol { id: string; name: string; deviceType: string; durationSeconds: number }
 
 interface Props {
   clients: Client[];
@@ -289,6 +289,10 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
     : rewardVal >= 40 ? "text-amber-500"
     : "text-red-500";
 
+  const selectedProtocol = protocols.find((p) => p.id === selectedProtocolId);
+  const targetSeconds = selectedProtocol?.durationSeconds ?? 0;
+  const progressPct = targetSeconds > 0 ? Math.min(100, (elapsed / targetSeconds) * 100) : 0;
+
   const noClients = clients.length === 0;
   const running = phase === "running";
 
@@ -313,9 +317,26 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
         </div>
         {running && (
           <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">
-              <Wifi size={13} className="animate-pulse" />{fmt(elapsed)}
-            </span>
+            {targetSeconds > 0 ? (
+              <div className="flex flex-col items-end gap-1">
+                <div className="flex items-center gap-2">
+                  <Wifi size={13} className="animate-pulse text-emerald-600" />
+                  <span className="text-sm font-mono font-medium text-emerald-700 tabular-nums">
+                    {fmt(elapsed)} / {fmt(targetSeconds)}
+                  </span>
+                </div>
+                <div className="w-36 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500 rounded-full transition-all duration-1000"
+                    style={{ width: `${progressPct}%` }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <span className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">
+                <Wifi size={13} className="animate-pulse" />{fmt(elapsed)}
+              </span>
+            )}
             <button
               onClick={stopStream}
               className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition-colors"
