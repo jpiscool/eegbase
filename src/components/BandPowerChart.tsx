@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 interface BandPoint {
   timestampMs: number;
@@ -18,8 +18,19 @@ const BANDS: Array<{ key: keyof Omit<BandPoint, "timestampMs">; label: string; c
   { key: "gamma", label: "Gamma", color: "#EF4444" },
 ];
 
+// Normative awake resting-state ranges (normalized 0–1, relative to chart max).
+// Derived from published relative EEG band power literature (eyes-open resting).
+const NORMS: Record<string, { lo: number; hi: number }> = {
+  delta: { lo: 0.20, hi: 0.45 },
+  theta: { lo: 0.15, hi: 0.35 },
+  alpha: { lo: 0.30, hi: 0.60 },
+  beta:  { lo: 0.15, hi: 0.35 },
+  gamma: { lo: 0.05, hi: 0.20 },
+};
+
 export function BandPowerChart({ data }: { data: BandPoint[] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [showNorms, setShowNorms] = useState(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -70,7 +81,37 @@ export function BandPowerChart({ data }: { data: BandPoint[] }) {
     }
     ctx.setLineDash([]);
 
-    // Draw each band
+    // Normative reference bands — shaded zones + dashed midpoint lines
+    if (showNorms) {
+      for (const band of BANDS) {
+        const norm = NORMS[band.key];
+        if (!norm) continue;
+        const yHi = yScale(norm.hi * maxVal);
+        const yLo  = yScale(norm.lo  * maxVal);
+        const bandH = yLo - yHi;
+
+        // Shaded zone
+        ctx.fillStyle = band.color;
+        ctx.globalAlpha = 0.07;
+        ctx.fillRect(padL, yHi, innerW, bandH);
+        ctx.globalAlpha = 1;
+
+        // Midpoint dashed reference line
+        const yMid = yScale(((norm.lo + norm.hi) / 2) * maxVal);
+        ctx.setLineDash([4, 5]);
+        ctx.strokeStyle = band.color;
+        ctx.lineWidth = 0.8;
+        ctx.globalAlpha = 0.35;
+        ctx.beginPath();
+        ctx.moveTo(padL, yMid);
+        ctx.lineTo(padL + innerW, yMid);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.setLineDash([]);
+      }
+    }
+
+    // Draw each band line
     for (const band of BANDS) {
       const points = data
         .map((d) => ({ ms: d.timestampMs, v: d[band.key] }))
@@ -93,7 +134,7 @@ export function BandPowerChart({ data }: { data: BandPoint[] }) {
       ctx.globalAlpha = 1;
     }
 
-    // Time axis
+    // Time axis labels
     const totalMinutes = Math.ceil(maxMs / 60000);
     ctx.fillStyle = "#94A3B8";
     ctx.font = "9px Inter, system-ui";
@@ -105,7 +146,7 @@ export function BandPowerChart({ data }: { data: BandPoint[] }) {
       const x = xScale(Math.min(ms, maxMs));
       ctx.fillText(`${m}m`, x, padT + innerH + 16);
     }
-  }, [data]);
+  }, [data, showNorms]);
 
   return (
     <div>
@@ -116,7 +157,7 @@ export function BandPowerChart({ data }: { data: BandPoint[] }) {
         className="w-full rounded-lg"
         style={{ height: 180, display: "block" }}
       />
-      <div className="flex flex-wrap gap-4 mt-3">
+      <div className="flex flex-wrap items-center gap-4 mt-3">
         {BANDS.map((b) => (
           <span key={b.key} className="flex items-center gap-1.5 text-xs text-gray-500">
             <span
@@ -126,6 +167,16 @@ export function BandPowerChart({ data }: { data: BandPoint[] }) {
             {b.label}
           </span>
         ))}
+        <button
+          onClick={() => setShowNorms((v) => !v)}
+          className={`ml-auto text-xs px-2.5 py-1 rounded-md border transition-colors ${
+            showNorms
+              ? "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
+              : "bg-white text-gray-400 border-gray-200 hover:bg-gray-50"
+          }`}
+        >
+          {showNorms ? "Hide norms" : "Show norms"}
+        </button>
       </div>
     </div>
   );
