@@ -163,6 +163,60 @@ function QuestionnairePanel({
   );
 }
 
+// ── Audio feedback ───────────────────────────────────────────────────────────
+// Plays a short sine-wave blip when the reward score is above threshold.
+// Volume scales proportionally between threshold and 100.
+function useAudioFeedback(score: number | null, threshold: number, enabled: boolean) {
+  const ctxRef = useRef<AudioContext | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (!enabled || score == null || score < threshold) {
+      if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+      return;
+    }
+
+    function playBlip() {
+      if (!enabled || score == null || score < threshold) return;
+      if (!ctxRef.current || ctxRef.current.state === "closed") {
+        ctxRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      }
+      const ctx = ctxRef.current;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      // Pitch rises gently with score (400–800 Hz range)
+      osc.frequency.value = 400 + ((score - threshold) / (100 - threshold)) * 400;
+      osc.type = "sine";
+      const vol = 0.08 + ((score - threshold) / (100 - threshold)) * 0.12;
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.4);
+    }
+
+    // Rate of blips increases with score: 4s interval at threshold, 1.5s at 100
+    const interval = Math.max(1500, 4000 - ((score - threshold) / (100 - threshold)) * 2500);
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(playBlip, interval);
+    playBlip(); // immediate first blip
+
+    return () => {
+      if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [score, threshold, enabled]);
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      ctxRef.current?.close();
+    };
+  }, []);
+}
+
 export function LiveSessionView({ clients, protocols, defaultClientId, defaultProtocolId }: Props) {
   const router = useRouter();
   const adapterRef = useRef<DeviceAdapter | null>(null);
@@ -192,6 +246,7 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
   const [postQ, setPostQ] = useState<Questionnaire>(defaultQ());
   const [postNotes, setPostNotes] = useState("");
   const [liveNotes, setLiveNotes] = useState("");
+  const [audioEnabled, setAudioEnabled] = useState(false);
 
   const reward = useSlidingWindow(MAX_POINTS);
   const oxyL = useSlidingWindow(MAX_POINTS);
@@ -291,7 +346,18 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
     adapterRef.current?.disconnect();
   }, []);
 
-  const rewardVal = sample?.rewardScore;
+  const rewardVal = sample?.rewardScore ?? null;
+  // Derive threshold from selected protocol params (default 50)
+  const protocolThreshold = (() => {
+    const p = protocols.find((x) => x.id === selectedProtocolId);
+    if (!p?.parameters) return 50;
+    const params = p.parameters as Record<string, unknown>;
+    return typeof params.rewardThreshold === "number"
+      ? params.rewardThreshold * 100  // protocol stores 0-1, convert to 0-100
+      : 50;
+  })();
+  useAudioFeedback(rewardVal, protocolThreshold, audioEnabled && phase === "running");
+
   const rewardColor =
     rewardVal == null ? "text-gray-300"
     : rewardVal >= 70 ? "text-emerald-500"
@@ -346,6 +412,17 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
                 <Wifi size={13} className="animate-pulse" />{fmt(elapsed)}
               </span>
             )}
+            <button
+              onClick={() => setAudioEnabled((v) => !v)}
+              title={audioEnabled ? "Mute audio feedback" : "Enable audio feedback (plays when above threshold)"}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold border transition-colors ${
+                audioEnabled
+                  ? "bg-violet-50 text-violet-700 border-violet-200 hover:bg-violet-100"
+                  : "bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100"
+              }`}
+            >
+              {audioEnabled ? "🔊" : "🔇"} Audio
+            </button>
             <button
               onClick={stopStream}
               className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition-colors"
