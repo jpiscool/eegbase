@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { CheckInForm } from "@/components/CheckInForm";
 import { CheckInTrendChart } from "@/components/CheckInTrendChart";
+import { CheckInLinkButton } from "@/components/CheckInLinkButton";
 
 export default async function CheckInsPage({
   params,
@@ -46,6 +47,15 @@ export default async function CheckInsPage({
           <h1 className="text-xl font-bold text-gray-900">{client.name} — Daily Check-Ins</h1>
           <p className="text-sm text-gray-500">Lifestyle & symptom tracking</p>
         </div>
+      </div>
+
+      {/* Client check-in link */}
+      <div className="bg-white border border-gray-200 rounded-xl p-4 mb-6">
+        <div className="mb-2">
+          <p className="text-sm font-semibold text-gray-700">Client Self-Check-In Link</p>
+          <p className="text-xs text-gray-400">Send this link to your client so they can log daily check-ins from any device — no account needed.</p>
+        </div>
+        <CheckInLinkButton clientId={id} initialToken={client.checkInToken ?? null} />
       </div>
 
       {checkInList.length > 1 && (

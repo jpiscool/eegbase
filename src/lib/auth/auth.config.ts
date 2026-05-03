@@ -12,7 +12,9 @@ export const authConfig: NextAuthConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isAuthPage = nextUrl.pathname.startsWith("/login");
-      const isPublicPage = nextUrl.pathname.startsWith("/share/");
+      const isPublicPage =
+        nextUrl.pathname.startsWith("/share/") ||
+        nextUrl.pathname.startsWith("/checkin/");
 
       if (isPublicPage) return true;
       if (!isLoggedIn && !isAuthPage) return false;
