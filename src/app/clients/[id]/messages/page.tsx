@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { clients, messages, clinicians } from "@/lib/db/schema";
-import { eq, and, asc } from "drizzle-orm";
+import { eq, and, asc, isNull } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -30,11 +30,24 @@ export default async function MessagesPage({
     .where(eq(clinicians.id, session!.user!.id!))
     .limit(1);
 
-  const messageList = await db
-    .select()
-    .from(messages)
-    .where(eq(messages.clientId, id))
-    .orderBy(asc(messages.createdAt));
+  const [messageList] = await Promise.all([
+    db
+      .select()
+      .from(messages)
+      .where(eq(messages.clientId, id))
+      .orderBy(asc(messages.createdAt)),
+    // Mark all unread client messages as read when clinician opens the thread
+    db
+      .update(messages)
+      .set({ readAt: new Date() })
+      .where(
+        and(
+          eq(messages.clientId, id),
+          eq(messages.senderRole, "client"),
+          isNull(messages.readAt)
+        )
+      ),
+  ]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-120px)]">

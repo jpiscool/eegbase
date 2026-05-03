@@ -11,9 +11,11 @@ export interface SamplePayload {
   oxyHbRight?: number;
   deoxyHbLeft?: number;
   deoxyHbRight?: number;
+  delta?: number;
   theta?: number;
   alpha?: number;
   beta?: number;
+  gamma?: number;
   rewardScore?: number;
 }
 
@@ -76,9 +78,11 @@ export async function saveSession(data: {
         oxyHbRight: s.oxyHbRight,
         deoxyHbLeft: s.deoxyHbLeft,
         deoxyHbRight: s.deoxyHbRight,
+        delta: s.delta,
         theta: s.theta,
         alpha: s.alpha,
         beta: s.beta,
+        gamma: s.gamma,
         rewardScore: s.rewardScore,
       }))
     );

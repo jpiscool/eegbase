@@ -188,11 +188,15 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
   const reward = useSlidingWindow(MAX_POINTS);
   const oxyL = useSlidingWindow(MAX_POINTS);
   const oxyR = useSlidingWindow(MAX_POINTS);
+  const deoxyL = useSlidingWindow(MAX_POINTS);
+  const deoxyR = useSlidingWindow(MAX_POINTS);
   const theta = useSlidingWindow(MAX_POINTS);
   const alpha = useSlidingWindow(MAX_POINTS);
+  const beta = useSlidingWindow(MAX_POINTS);
 
   const startStream = useCallback(async () => {
-    reward.reset(); oxyL.reset(); oxyR.reset(); theta.reset(); alpha.reset();
+    reward.reset(); oxyL.reset(); oxyR.reset(); deoxyL.reset(); deoxyR.reset();
+    theta.reset(); alpha.reset(); beta.reset();
     setElapsed(0); setSample(null);
     allSamplesRef.current = [];
     startedAtRef.current = new Date().toISOString();
@@ -212,17 +216,22 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
         oxyHbRight: s.oxyHbRight,
         deoxyHbLeft: s.deoxyHbLeft,
         deoxyHbRight: s.deoxyHbRight,
+        delta: s.delta,
         theta: s.theta,
         alpha: s.alpha,
         beta: s.beta,
+        gamma: s.gamma,
         rewardScore: s.rewardScore,
       };
       allSamplesRef.current.push(p);
       if (s.rewardScore != null) reward.push(s.rewardScore / 100);
       if (s.oxyHbLeft != null) oxyL.push(s.oxyHbLeft);
       if (s.oxyHbRight != null) oxyR.push(s.oxyHbRight);
+      if (s.deoxyHbLeft != null) deoxyL.push(s.deoxyHbLeft);
+      if (s.deoxyHbRight != null) deoxyR.push(s.deoxyHbRight);
       if (s.theta != null) theta.push(s.theta);
       if (s.alpha != null) alpha.push(s.alpha);
+      if (s.beta != null) beta.push(s.beta);
     });
 
     try {
@@ -428,16 +437,25 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
             <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <LiveChart data={oxyL.data} color="#10B981" label="OxyHb · Left prefrontal" height={84} />
+              <LiveChart data={oxyL.data} color="#10B981" label="OxyHb Left · prefrontal (μM)" height={84} />
             </div>
             <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <LiveChart data={oxyR.data} color="#0EA5E9" label="OxyHb · Right prefrontal" height={84} />
+              <LiveChart data={oxyR.data} color="#0EA5E9" label="OxyHb Right · prefrontal (μM)" height={84} />
             </div>
             <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <LiveChart data={theta.data} color="#8B5CF6" label="Theta power" height={84} />
+              <LiveChart data={deoxyL.data} color="#6366F1" label="DeoxyHb Left (μM)" height={84} />
             </div>
             <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <LiveChart data={alpha.data} color="#F59E0B" label="Alpha power" height={84} />
+              <LiveChart data={deoxyR.data} color="#8B5CF6" label="DeoxyHb Right (μM)" height={84} />
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <LiveChart data={theta.data} color="#F59E0B" label="Theta power" height={84} />
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <LiveChart data={alpha.data} color="#EF4444" label="Alpha power" height={84} />
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-5 md:col-span-2">
+              <LiveChart data={beta.data} color="#EC4899" label="Beta power" height={84} />
             </div>
           </div>
 
