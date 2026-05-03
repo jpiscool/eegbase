@@ -1,0 +1,427 @@
+"use client";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { SimulatorAdapter } from "@/lib/device/simulator";
+import type { DeviceSample } from "@/lib/device/adapter";
+import { LiveChart } from "@/components/LiveChart";
+import { saveSession, type SamplePayload, type Questionnaire } from "@/app/sessions/actions";
+import Link from "next/link";
+import { ArrowLeft, Wifi, WifiOff, StopCircle, Play, CheckCircle } from "lucide-react";
+
+const MAX_POINTS = 60;
+
+interface Client { id: string; name: string }
+interface Protocol { id: string; name: string; deviceType: string }
+
+interface Props {
+  clients: Client[];
+  protocols: Protocol[];
+  defaultClientId?: string;
+}
+
+type Phase = "pre" | "running" | "post" | "saved";
+
+function useSlidingWindow(size: number) {
+  const [data, setData] = useState<number[]>([]);
+  const push = useCallback(
+    (v: number) =>
+      setData((prev) => {
+        const next = [...prev, v];
+        return next.length > size ? next.slice(next.length - size) : next;
+      }),
+    [size]
+  );
+  const reset = useCallback(() => setData([]), []);
+  return { data, push, reset };
+}
+
+function fmt(sec: number) {
+  return `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`;
+}
+
+const FIELDS: { key: keyof Questionnaire; label: string; desc: string }[] = [
+  { key: "focus", label: "Focus", desc: "How focused do you feel?" },
+  { key: "mood", label: "Mood", desc: "How would you rate your mood?" },
+  { key: "anxiety", label: "Anxiety", desc: "How anxious do you feel? (1 = very calm)" },
+  { key: "energy", label: "Energy", desc: "How energised do you feel?" },
+];
+
+function defaultQ(): Questionnaire {
+  return { focus: 5, mood: 5, anxiety: 5, energy: 5 };
+}
+
+function ScaleInput({
+  label,
+  desc,
+  value,
+  onChange,
+}: {
+  label: string;
+  desc: string;
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <div>
+      <div className="flex items-baseline justify-between mb-1.5">
+        <span className="text-sm font-medium text-gray-700">{label}</span>
+        <span className="text-xs text-gray-400">{desc}</span>
+      </div>
+      <div className="flex items-center gap-3">
+        <span className="text-xs text-gray-400 w-3 text-right">1</span>
+        <input
+          type="range"
+          min={1}
+          max={10}
+          value={value}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="flex-1 accent-blue-600"
+        />
+        <span className="text-xs text-gray-400 w-3">10</span>
+        <span className="w-8 text-center text-sm font-bold text-blue-600 tabular-nums">{value}</span>
+      </div>
+    </div>
+  );
+}
+
+function QuestionnairePanel({
+  title,
+  subtitle,
+  values,
+  onChange,
+  notes,
+  onNotesChange,
+  showNotes,
+  onSubmit,
+  submitLabel,
+  submitDisabled,
+}: {
+  title: string;
+  subtitle: string;
+  values: Questionnaire;
+  onChange: (q: Questionnaire) => void;
+  notes?: string;
+  onNotesChange?: (s: string) => void;
+  showNotes?: boolean;
+  onSubmit: () => void;
+  submitLabel: string;
+  submitDisabled?: boolean;
+}) {
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="mb-5">
+        <h2 className="text-base font-semibold text-gray-900">{title}</h2>
+        <p className="text-sm text-gray-500 mt-0.5">{subtitle}</p>
+      </div>
+      <div className="space-y-4 mb-5">
+        {FIELDS.map(({ key, label, desc }) => (
+          <ScaleInput
+            key={key}
+            label={label}
+            desc={desc}
+            value={values[key]}
+            onChange={(v) => onChange({ ...values, [key]: v })}
+          />
+        ))}
+        {showNotes && onNotesChange && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Session notes <span className="text-gray-400 font-normal">(optional)</span>
+            </label>
+            <textarea
+              value={notes}
+              onChange={(e) => onNotesChange(e.target.value)}
+              rows={3}
+              placeholder="Any observations about the session…"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            />
+          </div>
+        )}
+      </div>
+      <button
+        onClick={onSubmit}
+        disabled={submitDisabled}
+        className="w-full flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {submitLabel}
+      </button>
+    </div>
+  );
+}
+
+export function LiveSessionView({ clients, protocols, defaultClientId }: Props) {
+  const adapterRef = useRef<SimulatorAdapter | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const startedAtRef = useRef<string>("");
+  const allSamplesRef = useRef<SamplePayload[]>([]);
+
+  const [phase, setPhase] = useState<Phase>("pre");
+  const [elapsed, setElapsed] = useState(0);
+  const [sample, setSample] = useState<DeviceSample | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const [selectedClientId, setSelectedClientId] = useState(
+    defaultClientId && clients.some((c) => c.id === defaultClientId)
+      ? defaultClientId
+      : clients[0]?.id ?? ""
+  );
+  const [selectedProtocolId, setSelectedProtocolId] = useState(protocols[0]?.id ?? "");
+
+  const [preQ, setPreQ] = useState<Questionnaire>(defaultQ());
+  const [postQ, setPostQ] = useState<Questionnaire>(defaultQ());
+  const [postNotes, setPostNotes] = useState("");
+
+  const reward = useSlidingWindow(MAX_POINTS);
+  const oxyL = useSlidingWindow(MAX_POINTS);
+  const oxyR = useSlidingWindow(MAX_POINTS);
+  const theta = useSlidingWindow(MAX_POINTS);
+  const alpha = useSlidingWindow(MAX_POINTS);
+
+  const startStream = useCallback(async () => {
+    reward.reset(); oxyL.reset(); oxyR.reset(); theta.reset(); alpha.reset();
+    setElapsed(0); setSample(null);
+    allSamplesRef.current = [];
+    startedAtRef.current = new Date().toISOString();
+
+    const adapter = new SimulatorAdapter();
+    adapterRef.current = adapter;
+
+    adapter.onSample((s) => {
+      setSample(s);
+      const p: SamplePayload = {
+        timestampMs: s.timestampMs,
+        oxyHbLeft: s.oxyHbLeft,
+        oxyHbRight: s.oxyHbRight,
+        deoxyHbLeft: s.deoxyHbLeft,
+        deoxyHbRight: s.deoxyHbRight,
+        theta: s.theta,
+        alpha: s.alpha,
+        beta: s.beta,
+        rewardScore: s.rewardScore,
+      };
+      allSamplesRef.current.push(p);
+      if (s.rewardScore != null) reward.push(s.rewardScore / 100);
+      if (s.oxyHbLeft != null) oxyL.push(s.oxyHbLeft);
+      if (s.oxyHbRight != null) oxyR.push(s.oxyHbRight);
+      if (s.theta != null) theta.push(s.theta);
+      if (s.alpha != null) alpha.push(s.alpha);
+    });
+
+    await adapter.connect();
+    setPhase("running");
+    timerRef.current = setInterval(() => setElapsed((e) => e + 1), 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const stopStream = useCallback(async () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    await adapterRef.current?.disconnect();
+    adapterRef.current = null;
+    setPhase("post");
+  }, []);
+
+  const handleSave = useCallback(async () => {
+    if (!selectedClientId) return;
+    setSaving(true);
+    try {
+      await saveSession({
+        clientId: selectedClientId,
+        protocolId: selectedProtocolId || null,
+        deviceType: "simulator",
+        startedAt: startedAtRef.current,
+        durationSeconds: Math.round(allSamplesRef.current.length),
+        samples: allSamplesRef.current,
+        preSession: preQ,
+        postSession: { ...postQ, notes: postNotes || undefined },
+      });
+      setPhase("saved");
+    } finally {
+      setSaving(false);
+    }
+  }, [selectedClientId, selectedProtocolId, preQ, postQ, postNotes]);
+
+  useEffect(() => () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    adapterRef.current?.disconnect();
+  }, []);
+
+  const rewardVal = sample?.rewardScore;
+  const rewardColor =
+    rewardVal == null ? "text-gray-300"
+    : rewardVal >= 70 ? "text-emerald-500"
+    : rewardVal >= 40 ? "text-amber-500"
+    : "text-red-500";
+
+  const noClients = clients.length === 0;
+  const running = phase === "running";
+
+  return (
+    <div>
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-6">
+        <Link
+          href="/sessions"
+          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+        >
+          <ArrowLeft size={18} />
+        </Link>
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold text-gray-900">Live Session</h1>
+          <p className="text-sm text-gray-500">Simulator · Prefrontal fNIRS / EEG</p>
+        </div>
+        {running && (
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">
+              <Wifi size={13} className="animate-pulse" />{fmt(elapsed)}
+            </span>
+            <button
+              onClick={stopStream}
+              className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition-colors"
+            >
+              <StopCircle size={15} /> Stop Session
+            </button>
+          </div>
+        )}
+        {phase === "pre" && (
+          <span className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-full border bg-gray-50 text-gray-500 border-gray-200">
+            <WifiOff size={13} /> Idle
+          </span>
+        )}
+      </div>
+
+      {/* Client / Protocol selectors */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+            Client
+          </label>
+          {noClients ? (
+            <p className="text-sm text-amber-600">
+              No clients yet.{" "}
+              <Link href="/clients" className="underline">Add one first.</Link>
+            </p>
+          ) : (
+            <select
+              value={selectedClientId}
+              onChange={(e) => setSelectedClientId(e.target.value)}
+              disabled={phase !== "pre"}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
+            >
+              {clients.map((c) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+          )}
+        </div>
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+            Protocol <span className="text-gray-400 font-normal normal-case">(optional)</span>
+          </label>
+          <select
+            value={selectedProtocolId}
+            onChange={(e) => setSelectedProtocolId(e.target.value)}
+            disabled={phase !== "pre"}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
+          >
+            <option value="">— None —</option>
+            {protocols.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* PRE-SESSION questionnaire */}
+      {phase === "pre" && (
+        <QuestionnairePanel
+          title="Pre-Session Check-In"
+          subtitle="Rate how you feel before the session starts (1 = low · 10 = high)"
+          values={preQ}
+          onChange={setPreQ}
+          onSubmit={startStream}
+          submitLabel={noClients ? "Add a client to begin" : "▶ Start Session"}
+          submitDisabled={noClients}
+        />
+      )}
+
+      {/* POST-SESSION questionnaire */}
+      {phase === "post" && (
+        <QuestionnairePanel
+          title="Post-Session Check-In"
+          subtitle="How did you feel during and after the session?"
+          values={postQ}
+          onChange={setPostQ}
+          notes={postNotes}
+          onNotesChange={setPostNotes}
+          showNotes
+          onSubmit={handleSave}
+          submitLabel={saving ? "Saving…" : "Save Session"}
+          submitDisabled={saving}
+        />
+      )}
+
+      {/* Saved confirmation */}
+      {phase === "saved" && (
+        <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium px-4 py-3 rounded-xl mb-5">
+          <CheckCircle size={16} />
+          Session saved successfully.{" "}
+          <Link href="/sessions" className="underline ml-1">View all sessions →</Link>
+        </div>
+      )}
+
+      {/* Live data */}
+      {(running || phase === "post" || phase === "saved") && (
+        <>
+          <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5 flex items-center gap-6">
+            <div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                Reward Score
+              </p>
+              <p className={`text-6xl font-bold tabular-nums leading-none ${rewardColor}`}>
+                {rewardVal != null ? rewardVal.toFixed(1) : "—"}
+              </p>
+              <p className="text-xs text-gray-400 mt-1">out of 100</p>
+            </div>
+            <div className="flex-1">
+              <LiveChart data={reward.data} color="#2563EB" label="Reward score · last 60s" height={76} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <LiveChart data={oxyL.data} color="#10B981" label="OxyHb · Left prefrontal" height={84} />
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <LiveChart data={oxyR.data} color="#0EA5E9" label="OxyHb · Right prefrontal" height={84} />
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <LiveChart data={theta.data} color="#8B5CF6" label="Theta power" height={84} />
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <LiveChart data={alpha.data} color="#F59E0B" label="Alpha power" height={84} />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-200 px-6 py-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center text-sm">
+            {[
+              { label: "OxyHb L", val: sample?.oxyHbLeft, color: "#10B981" },
+              { label: "OxyHb R", val: sample?.oxyHbRight, color: "#0EA5E9" },
+              { label: "DeoxyHb L", val: sample?.deoxyHbLeft, color: "#6366F1" },
+              { label: "DeoxyHb R", val: sample?.deoxyHbRight, color: "#EC4899" },
+              { label: "Theta", val: sample?.theta, color: "#8B5CF6" },
+              { label: "Alpha", val: sample?.alpha, color: "#F59E0B" },
+              { label: "Beta", val: sample?.beta, color: "#EF4444" },
+              { label: "Elapsed", val: null, elapsed: fmt(elapsed), color: "#64748B" },
+            ].map(({ label, val, elapsed: elapsedFmt, color }) => (
+              <div key={label}>
+                <p className="text-xs text-gray-400 mb-0.5">{label}</p>
+                <p className="font-semibold tabular-nums" style={{ color }}>
+                  {elapsedFmt ?? (val != null ? val.toFixed(3) : "—")}
+                </p>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

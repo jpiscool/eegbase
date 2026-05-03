@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1777767440390,
+      "tag": "0000_jazzy_blue_shield",
+      "breakpoints": true
+    }
+  ]
+}
