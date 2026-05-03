@@ -103,6 +103,50 @@ export async function sendMessage(formData: FormData) {
   revalidatePath(`/clients/${clientId}/messages`);
 }
 
+export async function generateReportToken(clientId: string): Promise<string> {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const clinicId = (session.user as { clinicId?: string }).clinicId;
+
+  const [existing] = await db
+    .select({ id: clients.id })
+    .from(clients)
+    .where(and(eq(clients.id, clientId), eq(clients.clinicId, clinicId!)))
+    .limit(1);
+
+  if (!existing) throw new Error("Not found");
+
+  // Generate a cryptographically random token
+  const token = Array.from(crypto.getRandomValues(new Uint8Array(24)))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+
+  await db.update(clients).set({ reportToken: token }).where(eq(clients.id, clientId));
+  revalidatePath(`/clients/${clientId}`);
+  revalidatePath(`/clients/${clientId}/report`);
+  return token;
+}
+
+export async function revokeReportToken(clientId: string): Promise<void> {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const clinicId = (session.user as { clinicId?: string }).clinicId;
+
+  const [existing] = await db
+    .select({ id: clients.id })
+    .from(clients)
+    .where(and(eq(clients.id, clientId), eq(clients.clinicId, clinicId!)))
+    .limit(1);
+
+  if (!existing) throw new Error("Not found");
+
+  await db.update(clients).set({ reportToken: null }).where(eq(clients.id, clientId));
+  revalidatePath(`/clients/${clientId}`);
+  revalidatePath(`/clients/${clientId}/report`);
+}
+
 export async function setClientActive(clientId: string, active: boolean) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");

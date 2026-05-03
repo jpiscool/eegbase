@@ -1,12 +1,7 @@
-import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { clients, sessions, assignments, protocols, checkIns, clinicians } from "@/lib/db/schema";
 import { eq, and, desc, avg, count } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { PrintButton } from "@/components/PrintButton";
-import { ShareReportButton } from "@/components/ShareReportButton";
 
 function fmtDuration(sec: number | null) {
   if (sec == null) return "—";
@@ -19,19 +14,17 @@ function scoreColor(v: number): string {
   return "#DC2626";
 }
 
-export default async function ReportPage({
+export default async function SharedReportPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ token: string }>;
 }) {
-  const { id } = await params;
-  const session = await auth();
-  const clinicId = (session?.user as { clinicId?: string })?.clinicId ?? "";
+  const { token } = await params;
 
   const [client] = await db
     .select()
     .from(clients)
-    .where(and(eq(clients.id, id), eq(clients.clinicId, clinicId)))
+    .where(eq(clients.reportToken, token))
     .limit(1);
 
   if (!client) notFound();
@@ -39,7 +32,7 @@ export default async function ReportPage({
   const [clinician] = await db
     .select({ name: clinicians.name })
     .from(clinicians)
-    .where(eq(clinicians.id, session!.user!.id!))
+    .where(eq(clinicians.id, client.clinicianId))
     .limit(1);
 
   const [sessionList, activeAssignment, rewardAvg, totalCount, checkInList] = await Promise.all([
@@ -58,27 +51,27 @@ export default async function ReportPage({
         aiSummary: sessions.aiSummary,
       })
       .from(sessions)
-      .where(eq(sessions.clientId, id))
+      .where(eq(sessions.clientId, client.id))
       .orderBy(desc(sessions.startedAt))
       .limit(50),
     db
       .select({ name: protocols.name, deviceType: protocols.deviceType })
       .from(assignments)
       .innerJoin(protocols, eq(assignments.protocolId, protocols.id))
-      .where(and(eq(assignments.clientId, id), eq(assignments.active, true)))
+      .where(and(eq(assignments.clientId, client.id), eq(assignments.active, true)))
       .limit(1),
     db
       .select({ avg: avg(sessions.avgRewardScore) })
       .from(sessions)
-      .where(eq(sessions.clientId, id)),
+      .where(eq(sessions.clientId, client.id)),
     db
       .select({ count: count() })
       .from(sessions)
-      .where(eq(sessions.clientId, id)),
+      .where(eq(sessions.clientId, client.id)),
     db
       .select()
       .from(checkIns)
-      .where(eq(checkIns.clientId, id))
+      .where(eq(checkIns.clientId, client.id))
       .orderBy(desc(checkIns.date))
       .limit(10),
   ]);
@@ -99,41 +92,20 @@ export default async function ReportPage({
   const latestAiSummary = sessionList.find((s) => s.aiSummary)?.aiSummary ?? null;
 
   return (
-    <>
-      <style>{`
-        @media print {
-          nav, aside, [class*="sidebar"], [class*="Sidebar"] { display: none !important; }
-          main { padding: 0 !important; width: 100% !important; max-width: 100% !important; }
-          .no-print { display: none !important; }
-          body { background: white !important; }
-        }
-      `}</style>
-
-      <div style={{ maxWidth: 800, margin: "0 auto" }}>
-        {/* Screen nav */}
-        <div className="no-print mb-6">
-          <div className="flex items-center justify-between gap-4 mb-3">
-            <div className="flex items-center gap-3">
-              <Link href={`/clients/${id}`} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
-                <ArrowLeft size={18} />
-              </Link>
-              <span className="text-sm text-gray-500">Progress Report Preview</span>
-            </div>
-            <PrintButton />
-          </div>
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <div className="flex items-center justify-between gap-4 mb-2">
-              <div>
-                <p className="text-sm font-semibold text-gray-700">Share Report</p>
-                <p className="text-xs text-gray-400">Create a read-only link you can send to your client or their family.</p>
-              </div>
-            </div>
-            <ShareReportButton clientId={id} initialToken={client.reportToken ?? null} />
-          </div>
+    <div style={{ minHeight: "100vh", background: "#F8FAFC", padding: "32px 16px", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      {/* Public notice banner */}
+      <div style={{ maxWidth: 800, margin: "0 auto 16px" }}>
+        <div style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 10, padding: "10px 16px", display: "flex", alignItems: "center", gap: 10, fontSize: 12, color: "#1D4ED8" }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span>This is a shared progress report. The link was provided by your clinician.</span>
         </div>
+      </div>
 
-        {/* Report card */}
-        <div style={{ background: "white", border: "1px solid #E2E8F0", borderRadius: 16, padding: "40px 48px", fontFamily: "system-ui, -apple-system, sans-serif", fontSize: 13 }}>
+      {/* Report card */}
+      <div style={{ maxWidth: 800, margin: "0 auto" }}>
+        <div style={{ background: "white", border: "1px solid #E2E8F0", borderRadius: 16, padding: "40px 48px", fontSize: 13 }}>
 
           {/* Header */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 28, paddingBottom: 20, borderBottom: "2px solid #E2E8F0" }}>
@@ -157,7 +129,6 @@ export default async function ReportPage({
           <div style={{ marginBottom: 24 }}>
             <div style={{ fontSize: 22, fontWeight: 700, color: "#0F172A", marginBottom: 4 }}>{client.name}</div>
             <div style={{ fontSize: 12, color: "#64748B" }}>
-              {client.email && <span>{client.email} · </span>}
               Protocol: {protocol?.name ?? "None"} · Added {new Date(client.createdAt).toLocaleDateString()}
             </div>
             {client.goals && (
@@ -190,7 +161,7 @@ export default async function ReportPage({
               <table style={{ width: "100%", borderCollapse: "collapse" as const, fontSize: 11.5 }}>
                 <thead>
                   <tr style={{ background: "#F8FAFC" }}>
-                    {["Date", "Duration", "Avg Reward", "Pre Focus", "Post Focus", "Pre Mood", "Post Mood", "Client Notes", "Clinical Notes"].map((h) => (
+                    {["Date", "Duration", "Avg Reward", "Pre Focus", "Post Focus", "Pre Mood", "Post Mood"].map((h) => (
                       <th key={h} style={{ textAlign: "left" as const, padding: "7px 8px", fontWeight: 600, color: "#64748B", fontSize: 10, textTransform: "uppercase" as const, letterSpacing: "0.04em", borderBottom: "1px solid #E2E8F0" }}>{h}</th>
                     ))}
                   </tr>
@@ -209,8 +180,6 @@ export default async function ReportPage({
                       </td>
                       <td style={{ padding: "6px 8px", color: "#64748B" }}>{s.preMood ?? "—"}</td>
                       <td style={{ padding: "6px 8px", color: "#64748B" }}>{s.postMood ?? "—"}</td>
-                      <td style={{ padding: "6px 8px", color: "#94A3B8", maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>{s.postNotes ?? ""}</td>
-                      <td style={{ padding: "6px 8px", color: "#64748B", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>{s.notes ?? ""}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -227,7 +196,7 @@ export default async function ReportPage({
               <table style={{ width: "100%", borderCollapse: "collapse" as const, fontSize: 11.5 }}>
                 <thead>
                   <tr style={{ background: "#F8FAFC" }}>
-                    {["Date", "Sleep h", "Sleep Q", "Mood", "Anxiety", "Focus", "Energy", "Notes"].map((h) => (
+                    {["Date", "Sleep h", "Sleep Q", "Mood", "Anxiety", "Focus", "Energy"].map((h) => (
                       <th key={h} style={{ textAlign: "left" as const, padding: "7px 8px", fontWeight: 600, color: "#64748B", fontSize: 10, textTransform: "uppercase" as const, letterSpacing: "0.04em", borderBottom: "1px solid #E2E8F0" }}>{h}</th>
                     ))}
                   </tr>
@@ -242,7 +211,6 @@ export default async function ReportPage({
                       <td style={{ padding: "6px 8px", color: "#64748B" }}>{c.anxiety ?? "—"}</td>
                       <td style={{ padding: "6px 8px", color: "#64748B" }}>{c.focus ?? "—"}</td>
                       <td style={{ padding: "6px 8px", color: "#64748B" }}>{c.energy ?? "—"}</td>
-                      <td style={{ padding: "6px 8px", color: "#94A3B8" }}>{c.notes ?? ""}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -258,21 +226,18 @@ export default async function ReportPage({
             </div>
           )}
 
-          {/* Clinical notes */}
-          {client.notes && (
-            <div style={{ marginBottom: 24 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #F1F5F9" }}>Clinical Notes</div>
-              <div style={{ background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 8, padding: "12px 14px", fontSize: 12, color: "#92400E", lineHeight: 1.6 }}>{client.notes}</div>
-            </div>
-          )}
-
           {/* Footer */}
           <div style={{ marginTop: 32, paddingTop: 16, borderTop: "1px solid #E2E8F0", display: "flex", justifyContent: "space-between", fontSize: 10, color: "#94A3B8" }}>
             <span>EEGBase · eegbase.com · Open-source neurofeedback platform</span>
             <span>Confidential — For clinical use only</span>
           </div>
         </div>
+
+        {/* Powered by footer */}
+        <div style={{ textAlign: "center", marginTop: 20, fontSize: 11, color: "#94A3B8" }}>
+          Powered by <strong>EEGBase</strong> — the open-source neurofeedback platform
+        </div>
       </div>
-    </>
+    </div>
   );
 }

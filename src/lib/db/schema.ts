@@ -46,6 +46,7 @@ export const clients = pgTable("clients", {
   notes: text("notes"),
   goals: text("goals"),                          // client's training goals
   active: boolean("active").notNull().default(true),
+  reportToken: text("report_token").unique(),    // public share link token
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
