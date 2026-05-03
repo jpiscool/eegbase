@@ -1,12 +1,13 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { protocols, assignments, sessions, clients } from "@/lib/db/schema";
-import { eq, and, desc, avg, count } from "drizzle-orm";
+import { eq, and, desc, avg, count, asc } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { TrendChart } from "@/components/TrendChart";
 import { ProtocolParametersPanel } from "@/components/ProtocolParametersPanel";
+import { AssignClientToProtocolModal } from "@/components/AssignClientToProtocolModal";
 
 const DEVICE_LABELS: Record<string, string> = {
   mendi: "Mendi fNIRS",
@@ -42,7 +43,7 @@ export default async function ProtocolDetailPage({
 
   if (!protocol) notFound();
 
-  const [sessionList, assignedClients, avgRewardRow, totalCountRow] = await Promise.all([
+  const [sessionList, assignedClients, avgRewardRow, totalCountRow, allClients] = await Promise.all([
     db
       .select({
         id: sessions.id,
@@ -73,6 +74,11 @@ export default async function ProtocolDetailPage({
       .select({ count: count() })
       .from(sessions)
       .where(eq(sessions.protocolId, id)),
+    db
+      .select({ id: clients.id, name: clients.name })
+      .from(clients)
+      .where(and(eq(clients.clinicId, clinicId), eq(clients.active, true)))
+      .orderBy(asc(clients.name)),
   ]);
 
   const overallAvg = avgRewardRow[0]?.avg ? Number(avgRewardRow[0].avg) : null;
@@ -83,6 +89,8 @@ export default async function ProtocolDetailPage({
     .reverse()
     .slice(-30)
     .map((s) => ({ score: s.avgRewardScore ?? null, date: s.startedAt }));
+
+  const assignedClientIds = new Set(assignedClients.map((c) => c.clientId));
 
   return (
     <div>
@@ -209,8 +217,13 @@ export default async function ProtocolDetailPage({
         {/* Assigned clients panel */}
         <div>
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-100">
+            <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
               <h2 className="text-sm font-semibold text-gray-900">Currently Assigned</h2>
+              <AssignClientToProtocolModal
+                protocolId={protocol.id}
+                clients={allClients}
+                assignedClientIds={assignedClientIds}
+              />
             </div>
             {assignedClients.length === 0 ? (
               <p className="text-xs text-gray-400 text-center py-8">
