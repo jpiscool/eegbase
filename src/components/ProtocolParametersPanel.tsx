@@ -126,6 +126,97 @@ function Select({
   );
 }
 
+// ── Presets ───────────────────────────────────────────────────────────────────
+
+const MENDI_PRESETS: Array<{ label: string; desc: string; params: MendiParams }> = [
+  {
+    label: "Attention Training",
+    desc: "Standard prefrontal upregulation for focus and cognitive performance",
+    params: { rewardThreshold: 0.05, smoothingWindow: 8, baselineSeconds: 60, feedbackMode: "visual" },
+  },
+  {
+    label: "Relaxation",
+    desc: "Gentle threshold with extended baseline — for stress reduction and calm states",
+    params: { rewardThreshold: 0.02, smoothingWindow: 15, baselineSeconds: 90, feedbackMode: "both" },
+  },
+  {
+    label: "ADHD Protocol",
+    desc: "Responsive threshold, shorter baseline — optimised for sustained-attention training",
+    params: { rewardThreshold: 0.06, smoothingWindow: 5, baselineSeconds: 45, feedbackMode: "both" },
+  },
+  {
+    label: "Anxiety Reduction",
+    desc: "Low threshold with long baseline for anxious clients needing gentle feedback",
+    params: { rewardThreshold: 0.03, smoothingWindow: 12, baselineSeconds: 120, feedbackMode: "visual" },
+  },
+];
+
+const MUSE_PRESETS: Array<{ label: string; desc: string; params: MuseParams }> = [
+  {
+    label: "Alpha Relaxation",
+    desc: "Upregulate calm-alertness alpha while inhibiting active-thinking beta",
+    params: { targetBand: "alpha", inhibitBand: "beta", rewardThreshold: 1.1, smoothingWindow: 10, feedbackMode: "visual" },
+  },
+  {
+    label: "Focus / SMR",
+    desc: "Sensorimotor rhythm training for focus and motor inhibition",
+    params: { targetBand: "smr", inhibitBand: "theta", rewardThreshold: 1.2, smoothingWindow: 8, feedbackMode: "visual" },
+  },
+  {
+    label: "Theta Meditation",
+    desc: "Deep relaxation and creativity — theta upregulation without inhibition",
+    params: { targetBand: "theta", inhibitBand: "", rewardThreshold: 1.1, smoothingWindow: 15, feedbackMode: "both" },
+  },
+  {
+    label: "Peak Performance",
+    desc: "High-beta training for sustained cognitive output",
+    params: { targetBand: "beta", inhibitBand: "delta", rewardThreshold: 1.2, smoothingWindow: 6, feedbackMode: "audio" },
+  },
+];
+
+function PresetChips<T extends object>({
+  presets,
+  current,
+  onApply,
+}: {
+  presets: Array<{ label: string; desc: string; params: T }>;
+  current: T;
+  onApply: (p: T) => void;
+}) {
+  const [hovered, setHovered] = useState<string | null>(null);
+  return (
+    <div className="mb-5">
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Quick Presets</p>
+      <div className="flex flex-wrap gap-2">
+        {presets.map((p) => {
+          const isActive = JSON.stringify(current) === JSON.stringify(p.params);
+          return (
+            <button
+              key={p.label}
+              type="button"
+              onClick={() => onApply(p.params)}
+              onMouseEnter={() => setHovered(p.label)}
+              onMouseLeave={() => setHovered(null)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-all ${
+                isActive
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-blue-400 hover:text-blue-600"
+              }`}
+            >
+              {p.label}
+            </button>
+          );
+        })}
+      </div>
+      {hovered && (
+        <p className="text-xs text-gray-400 mt-2">
+          {presets.find((p) => p.label === hovered)?.desc}
+        </p>
+      )}
+    </div>
+  );
+}
+
 // ── Device-specific forms ────────────────────────────────────────────────────
 
 function MendiForm({
@@ -139,7 +230,9 @@ function MendiForm({
     onChange({ ...params, [key]: val });
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div>
+      <PresetChips presets={MENDI_PRESETS} current={params} onApply={onChange} />
+      <div className="grid grid-cols-2 gap-4">
       <Field
         label="Reward Threshold (μM)"
         hint="Minimum oxyHb increase required to trigger a reward signal."
@@ -188,6 +281,7 @@ function MendiForm({
           onChange={(v) => set("feedbackMode", v as MendiParams["feedbackMode"])}
         />
       </Field>
+      </div>
     </div>
   );
 }
@@ -212,7 +306,9 @@ function MuseForm({
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div>
+      <PresetChips presets={MUSE_PRESETS} current={params} onApply={onChange} />
+      <div className="grid grid-cols-2 gap-4">
       <Field label="Target Band (upregulate)" hint="Increase this frequency band amplitude.">
         <Select
           value={params.targetBand}
@@ -262,6 +358,7 @@ function MuseForm({
           onChange={(v) => set("feedbackMode", v as MuseParams["feedbackMode"])}
         />
       </Field>
+      </div>
     </div>
   );
 }
