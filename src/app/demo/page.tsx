@@ -39,6 +39,9 @@ export default function DemoPage() {
   const oxyR = useSlidingWindow(MAX_POINTS);
   const deoxyL = useSlidingWindow(MAX_POINTS);
   const deoxyR = useSlidingWindow(MAX_POINTS);
+  const thetaW = useSlidingWindow(MAX_POINTS);
+  const alphaW = useSlidingWindow(MAX_POINTS);
+  const betaW = useSlidingWindow(MAX_POINTS);
 
   const stop = useCallback(async () => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -49,6 +52,7 @@ export default function DemoPage() {
 
   const start = useCallback(async () => {
     reward.reset(); oxyL.reset(); oxyR.reset(); deoxyL.reset(); deoxyR.reset();
+    thetaW.reset(); alphaW.reset(); betaW.reset();
     setElapsed(0); setSample(null); setSampleCount(0);
 
     const adapter = new SimulatorAdapter();
@@ -62,6 +66,9 @@ export default function DemoPage() {
       if (s.oxyHbRight != null) oxyR.push(s.oxyHbRight);
       if (s.deoxyHbLeft != null) deoxyL.push(s.deoxyHbLeft);
       if (s.deoxyHbRight != null) deoxyR.push(s.deoxyHbRight);
+      if (s.theta != null) thetaW.push(s.theta);
+      if (s.alpha != null) alphaW.push(s.alpha);
+      if (s.beta != null) betaW.push(s.beta);
     });
 
     await adapter.connect();
@@ -143,6 +150,24 @@ export default function DemoPage() {
               >
                 ▶ Start Demo
               </button>
+              <div style={{ marginTop: 24, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 20px" }}>
+                {[
+                  "fNIRS OxyHb/DeoxyHb visualization",
+                  "EEG band power (θ α β δ γ)",
+                  "Real-time reward score",
+                  "Pre/post session questionnaires",
+                  "Client roster & progress tracking",
+                  "Symptom trend charts",
+                  "Clinical notes with autosave",
+                  "CSV + JSON data export",
+                  "Cmd+K global search",
+                  "Protocol template library",
+                ].map((f) => (
+                  <div key={f} style={{ fontSize: "0.8rem", color: "#475569", display: "flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ color: "#10B981", fontWeight: 700 }}>✓</span> {f}
+                  </div>
+                ))}
+              </div>
             </div>
             <div style={{ width: 280, flexShrink: 0 }}>
               <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#94A3B8", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 12 }}>
@@ -229,6 +254,19 @@ export default function DemoPage() {
               ].map(({ data, color, label }) => (
                 <div key={label} style={{ background: "white", border: "1px solid #E2E8F0", borderRadius: 14, padding: "20px 20px" }}>
                   <LiveChart data={data} color={color} label={label} height={88} />
+                </div>
+              ))}
+            </div>
+
+            {/* EEG band charts */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 20 }}>
+              {[
+                { data: thetaW.data, color: "#F59E0B", label: "Theta (4–8 Hz) · relaxed focus" },
+                { data: alphaW.data, color: "#EF4444", label: "Alpha (8–12 Hz) · calm alertness" },
+                { data: betaW.data, color: "#EC4899", label: "Beta (12–30 Hz) · active thinking" },
+              ].map(({ data, color, label }) => (
+                <div key={label} style={{ background: "white", border: "1px solid #E2E8F0", borderRadius: 14, padding: "20px 20px" }}>
+                  <LiveChart data={data} color={color} label={label} height={72} />
                 </div>
               ))}
             </div>
