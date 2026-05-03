@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { clients, sessions, assignments, protocols, checkIns, clinicians } from "@/lib/db/schema";
+import { clients, sessions, assignments, protocols, checkIns, clinicians, goals } from "@/lib/db/schema";
 import { eq, and, desc, avg, count } from "drizzle-orm";
 import { notFound } from "next/navigation";
 
@@ -35,7 +35,7 @@ export default async function SharedReportPage({
     .where(eq(clinicians.id, client.clinicianId))
     .limit(1);
 
-  const [sessionList, activeAssignment, rewardAvg, totalCount, checkInList] = await Promise.all([
+  const [sessionList, activeAssignment, rewardAvg, totalCount, checkInList, goalList] = await Promise.all([
     db
       .select({
         id: sessions.id,
@@ -74,6 +74,11 @@ export default async function SharedReportPage({
       .where(eq(checkIns.clientId, client.id))
       .orderBy(desc(checkIns.date))
       .limit(10),
+    db
+      .select({ id: goals.id, title: goals.title, status: goals.status, targetDate: goals.targetDate, completedAt: goals.completedAt })
+      .from(goals)
+      .where(eq(goals.clientId, client.id))
+      .orderBy(goals.createdAt),
   ]);
 
   const avgScore = rewardAvg[0]?.avg ? Number(rewardAvg[0].avg) : null;
@@ -215,6 +220,41 @@ export default async function SharedReportPage({
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {/* Treatment Goals */}
+          {goalList.length > 0 && (
+            <div style={{ marginBottom: 28 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#059669", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #D1FAE5" }}>
+                Treatment Goals
+              </div>
+              <div style={{ display: "flex", flexDirection: "column" as const, gap: 8 }}>
+                {goalList.map((g) => {
+                  const achieved = g.status === "achieved";
+                  const active = g.status === "active";
+                  const isOverdue = active && g.targetDate != null && new Date(g.targetDate) < new Date();
+                  return (
+                    <div key={g.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 12px", border: `1px solid ${achieved ? "#A7F3D0" : isOverdue ? "#FECACA" : "#E2E8F0"}`, borderRadius: 8, background: achieved ? "#F0FDF4" : isOverdue ? "#FFF5F5" : "#F8FAFC" }}>
+                      <span style={{ fontSize: 14, marginTop: 1 }}>{achieved ? "✅" : active ? "🎯" : "⏸"}</span>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: achieved ? "#065F46" : isOverdue ? "#991B1B" : "#0F172A", textDecoration: achieved ? "line-through" : "none" as const }}>{g.title}</div>
+                        {g.targetDate && !achieved && (
+                          <div style={{ fontSize: 10.5, color: isOverdue ? "#DC2626" : "#64748B", marginTop: 2 }}>
+                            {isOverdue ? "⚠ Overdue · " : "Target: "}
+                            {new Date(g.targetDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                          </div>
+                        )}
+                        {g.completedAt && (
+                          <div style={{ fontSize: 10.5, color: "#059669", marginTop: 2 }}>
+                            Achieved {new Date(g.completedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 
