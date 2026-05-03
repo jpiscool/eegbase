@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Brain, BarChart3, Wifi, ShieldCheck, Users, Zap } from "lucide-react";
+import { LandingLivePreview } from "@/components/LandingLivePreview";
 
 const features = [
   {
@@ -120,41 +121,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Fake dashboard preview */}
+      {/* Live animated preview */}
       <section className="max-w-5xl mx-auto px-6 pb-20">
-        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl overflow-hidden border border-gray-200 shadow-2xl">
-          {/* Browser chrome */}
-          <div className="flex items-center gap-2 px-4 py-3 bg-gray-800 border-b border-gray-700">
-            <div className="w-3 h-3 rounded-full bg-red-500 opacity-70" />
-            <div className="w-3 h-3 rounded-full bg-amber-400 opacity-70" />
-            <div className="w-3 h-3 rounded-full bg-green-500 opacity-70" />
-            <div className="flex-1 mx-4 bg-gray-700 rounded px-3 py-1 text-xs text-gray-400">
-              app.eegbase.io/sessions/live
-            </div>
-          </div>
-          <div className="p-6 grid grid-cols-3 gap-4">
-            {[
-              { label: "OxyHb Left", value: "+0.082 μM", color: "text-red-400" },
-              { label: "OxyHb Right", value: "+0.071 μM", color: "text-orange-400" },
-              { label: "Reward Score", value: "73.4", color: "text-emerald-400" },
-            ].map(({ label, value, color }) => (
-              <div key={label} className="bg-gray-700/50 rounded-xl p-4">
-                <p className="text-xs text-gray-400 mb-1">{label}</p>
-                <p className={`text-xl font-bold ${color}`}>{value}</p>
-              </div>
-            ))}
-            {/* Fake waveform bars */}
-            <div className="col-span-3 bg-gray-700/30 rounded-xl p-4 h-28 flex items-end gap-1">
-              {[42,55,38,60,72,58,45,63,70,54,48,66,75,62,50,68,80,65,52,74,60,47,64,78,56,43,69,77,59,46,71,82,67,53,76,84,61,49,72,58].map((h, i) => (
-                <div
-                  key={i}
-                  className="flex-1 bg-blue-500 rounded-sm opacity-70"
-                  style={{ height: `${h}%` }}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
+        <LandingLivePreview />
       </section>
 
       {/* Features grid */}
