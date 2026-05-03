@@ -13,6 +13,7 @@ interface ClientRow {
   sessionCount: number;
   avgRewardScore: string | null;
   lastSessionAt: Date | null;
+  trend?: "up" | "down" | "flat" | null;
 }
 
 type StatusFilter = "active" | "all" | "inactive";
@@ -187,17 +188,29 @@ export function ClientsTable({ clients }: { clients: ClientRow[] }) {
                     </td>
                     <td className="px-5 py-3.5">
                       {client.avgRewardScore != null ? (
-                        <span
-                          className={`text-sm font-semibold ${
-                            Number(client.avgRewardScore) >= 70
-                              ? "text-emerald-600"
-                              : Number(client.avgRewardScore) >= 40
-                              ? "text-amber-600"
-                              : "text-red-500"
-                          }`}
-                        >
-                          {Number(client.avgRewardScore).toFixed(1)}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`text-sm font-semibold ${
+                              Number(client.avgRewardScore) >= 70
+                                ? "text-emerald-600"
+                                : Number(client.avgRewardScore) >= 40
+                                ? "text-amber-600"
+                                : "text-red-500"
+                            }`}
+                          >
+                            {Number(client.avgRewardScore).toFixed(1)}
+                          </span>
+                          {client.trend === "up" && (
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600" title="Improving">
+                              <ChevronUp size={10} />↑
+                            </span>
+                          )}
+                          {client.trend === "down" && (
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-500" title="Declining">
+                              <ChevronDown size={10} />↓
+                            </span>
+                          )}
+                        </div>
                       ) : (
                         <span className="text-gray-300">—</span>
                       )}
