@@ -74,6 +74,45 @@ export default async function ClientDetailPage({
   const overallAvg = avgReward[0]?.avg ? Number(avgReward[0].avg).toFixed(1) : null;
   const totalSessions = Number(totalSessionsRow[0]?.count ?? 0);
 
+  // Attendance stats
+  const now = new Date();
+  const lastSessionDays =
+    sessionList.length > 0
+      ? Math.floor((now.getTime() - new Date(sessionList[0].startedAt).getTime()) / (1000 * 60 * 60 * 24))
+      : null;
+
+  // Weekly streak: count consecutive calendar weeks (Mon-start) ending at the current week that have ≥1 session
+  function isoWeek(d: Date) {
+    const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    const day = t.getUTCDay() || 7;
+    t.setUTCDate(t.getUTCDate() + 4 - day);
+    const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+    return { year: t.getUTCFullYear(), week: Math.ceil(((t.getTime() - yearStart.getTime()) / 86400000 + 1) / 7) };
+  }
+  const weeksWithSessions = new Set(
+    sessionList.map((s) => {
+      const w = isoWeek(new Date(s.startedAt));
+      return `${w.year}-${w.week}`;
+    })
+  );
+  let streak = 0;
+  const baseWeek = isoWeek(now);
+  for (let i = 0; i < 52; i++) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i * 7);
+    const w = isoWeek(d);
+    if (weeksWithSessions.has(`${w.year}-${w.week}`)) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  // Avg sessions per week over last 8 weeks
+  const eightWeeksAgo = new Date(now);
+  eightWeeksAgo.setDate(eightWeeksAgo.getDate() - 56);
+  const recentSessions = sessionList.filter((s) => new Date(s.startedAt) >= eightWeeksAgo);
+  const avgPerWeek = recentSessions.length > 0 ? (recentSessions.length / 8).toFixed(1) : null;
+
   // Build trend data for chart (oldest → newest, max 30 sessions)
   const trendData = [...sessionList]
     .reverse()
@@ -165,8 +204,8 @@ export default async function ClientDetailPage({
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-5 mb-6">
-        {/* Stats */}
+      <div className="grid grid-cols-5 gap-4 mb-6">
+        {/* Stats row */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <p className="text-xs font-medium text-gray-500 mb-1">Total Sessions</p>
           <p className="text-3xl font-bold text-gray-900">{totalSessions}</p>
@@ -176,16 +215,42 @@ export default async function ClientDetailPage({
           <p className="text-3xl font-bold text-gray-900">{overallAvg ?? "—"}</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-xs font-medium text-gray-500 mb-1">Assigned Protocol</p>
-          <p className="text-base font-semibold text-gray-900 truncate">
-            {assignedProtocol?.name ?? "None"}
+          <p className="text-xs font-medium text-gray-500 mb-1">Weekly Streak</p>
+          <p className="text-3xl font-bold text-gray-900">
+            {streak > 0 ? streak : "—"}
+            {streak > 0 && <span className="text-base font-normal text-gray-400 ml-1">wks</span>}
           </p>
-          <AssignProtocolModal
-            clientId={id}
-            protocols={protocolList}
-            currentProtocolId={assignedProtocol?.id ?? null}
-          />
         </div>
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <p className="text-xs font-medium text-gray-500 mb-1">Avg / Week</p>
+          <p className="text-3xl font-bold text-gray-900">
+            {avgPerWeek ?? "—"}
+            {avgPerWeek && <span className="text-base font-normal text-gray-400 ml-1">sess</span>}
+          </p>
+          {avgPerWeek && <p className="text-xs text-gray-400 mt-0.5">last 8 weeks</p>}
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <p className="text-xs font-medium text-gray-500 mb-1">Last Session</p>
+          <p className="text-3xl font-bold text-gray-900">
+            {lastSessionDays === null ? "—" : lastSessionDays === 0 ? "Today" : lastSessionDays === 1 ? "1" : lastSessionDays}
+            {lastSessionDays != null && lastSessionDays > 1 && (
+              <span className="text-base font-normal text-gray-400 ml-1">d ago</span>
+            )}
+          </p>
+        </div>
+      </div>
+
+      {/* Assigned Protocol (separated from stat grid) */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6 flex items-center justify-between">
+        <div>
+          <p className="text-xs font-medium text-gray-500 mb-0.5">Assigned Protocol</p>
+          <p className="text-base font-semibold text-gray-900">{assignedProtocol?.name ?? "None assigned"}</p>
+        </div>
+        <AssignProtocolModal
+          clientId={id}
+          protocols={protocolList}
+          currentProtocolId={assignedProtocol?.id ?? null}
+        />
       </div>
 
       {/* Trend chart */}

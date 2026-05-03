@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 
 type DeviceFilter = "all" | "mendi" | "simulator";
+type ProtocolFilter = "all" | string;
 
 interface SessionRow {
   id: string;
@@ -26,22 +27,32 @@ function fmtDuration(sec: number | null) {
 export function SessionsTable({ sessions }: { sessions: SessionRow[] }) {
   const [query, setQuery] = useState("");
   const [deviceFilter, setDeviceFilter] = useState<DeviceFilter>("all");
+  const [protocolFilter, setProtocolFilter] = useState<ProtocolFilter>("all");
 
   // Unique device types present
   const deviceTypes = Array.from(new Set(sessions.map((s) => s.deviceType))).sort();
+  // Unique protocol names present (excluding null)
+  const protocolNames = Array.from(
+    new Set(sessions.map((s) => s.protocolName).filter((p): p is string => p != null))
+  ).sort();
 
   const deviceFiltered =
     deviceFilter === "all"
       ? sessions
       : sessions.filter((s) => s.deviceType === deviceFilter);
 
+  const protocolFiltered =
+    protocolFilter === "all"
+      ? deviceFiltered
+      : deviceFiltered.filter((s) => s.protocolName === protocolFilter);
+
   const filtered = query.trim()
-    ? deviceFiltered.filter(
+    ? protocolFiltered.filter(
         (s) =>
           s.clientName.toLowerCase().includes(query.toLowerCase()) ||
           (s.protocolName ?? "").toLowerCase().includes(query.toLowerCase())
       )
-    : deviceFiltered;
+    : protocolFiltered;
 
   const mendiCount = sessions.filter((s) => s.deviceType === "mendi").length;
   const simCount = sessions.filter((s) => s.deviceType === "simulator").length;
@@ -71,6 +82,21 @@ export function SessionsTable({ sessions }: { sessions: SessionRow[] }) {
                 </button>
               ))}
             </div>
+          )}
+
+          {protocolNames.length > 1 && (
+            <select
+              value={protocolFilter}
+              onChange={(e) => setProtocolFilter(e.target.value)}
+              className="pl-3 pr-8 py-2 border border-gray-200 rounded-lg text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="all">All protocols</option>
+              {protocolNames.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
           )}
 
           <div className="relative flex-1">
@@ -181,7 +207,7 @@ export function SessionsTable({ sessions }: { sessions: SessionRow[] }) {
         </table>
       </div>
 
-      {(query || deviceFilter !== "all") && filtered.length > 0 && (
+      {(query || deviceFilter !== "all" || protocolFilter !== "all") && filtered.length > 0 && (
         <p className="text-xs text-gray-400 mt-2 text-right">
           {filtered.length} of {sessions.length} session{sessions.length !== 1 ? "s" : ""}
         </p>
