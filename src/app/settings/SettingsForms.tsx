@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updateProfile, changePassword, updateClinicName, updateWebhookUrl } from "./actions";
+import { updateProfile, changePassword, updateClinicName, updateWebhookUrl, testWebhook } from "./actions";
+import { Loader2, CheckCircle2, XCircle, Send } from "lucide-react";
 
 export function ClinicNameForm({ currentName }: { currentName: string }) {
   const [pending, startTransition] = useTransition();
@@ -149,14 +150,25 @@ export function WebhookForm({ currentUrl }: { currentUrl: string | null }) {
   const [pending, startTransition] = useTransition();
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [msg, setMsg] = useState("");
+  const [testPending, startTestTransition] = useTransition();
+  const [testResult, setTestResult] = useState<{ ok: boolean; status?: number; error?: string } | null>(null);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    setTestResult(null);
     startTransition(async () => {
       const res = await updateWebhookUrl(fd);
       if (res?.error) { setStatus("error"); setMsg(res.error); }
       else { setStatus("success"); setMsg("Webhook URL saved."); }
+    });
+  }
+
+  function handleTest() {
+    setTestResult(null);
+    startTestTransition(async () => {
+      const res = await testWebhook();
+      setTestResult(res);
     });
   }
 
@@ -172,13 +184,40 @@ export function WebhookForm({ currentUrl }: { currentUrl: string | null }) {
       {status !== "idle" && (
         <p className={`text-xs ${status === "success" ? "text-emerald-600" : "text-red-500"}`}>{msg}</p>
       )}
-      <button
-        type="submit"
-        disabled={pending}
-        className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
-      >
-        {pending ? "Saving…" : "Save Webhook URL"}
-      </button>
+      {testResult && (
+        <div className={`flex items-center gap-2 text-xs px-3 py-2 rounded-lg border ${
+          testResult.ok
+            ? "bg-emerald-50 border-emerald-100 text-emerald-700"
+            : "bg-red-50 border-red-100 text-red-600"
+        }`}>
+          {testResult.ok
+            ? <CheckCircle2 size={13} />
+            : <XCircle size={13} />}
+          {testResult.ok
+            ? `Test succeeded — server responded with HTTP ${testResult.status}`
+            : testResult.error ?? `HTTP ${testResult.status ?? "error"}`}
+        </div>
+      )}
+      <div className="flex items-center gap-2">
+        <button
+          type="submit"
+          disabled={pending}
+          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+        >
+          {pending ? "Saving…" : "Save Webhook URL"}
+        </button>
+        {currentUrl && (
+          <button
+            type="button"
+            onClick={handleTest}
+            disabled={testPending}
+            className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors"
+          >
+            {testPending ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
+            {testPending ? "Testing…" : "Send Test"}
+          </button>
+        )}
+      </div>
     </form>
   );
 }

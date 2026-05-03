@@ -77,6 +77,39 @@ export async function changePassword(formData: FormData) {
   return { success: true };
 }
 
+export async function testWebhook(): Promise<{ ok: boolean; status?: number; error?: string }> {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const clinicId = (session.user as { clinicId?: string }).clinicId;
+  if (!clinicId) return { ok: false, error: "No clinic" };
+
+  const [clinic] = await db
+    .select({ webhookUrl: clinics.webhookUrl })
+    .from(clinics)
+    .where(eq(clinics.id, clinicId))
+    .limit(1);
+
+  if (!clinic?.webhookUrl) return { ok: false, error: "No webhook URL configured" };
+
+  try {
+    const res = await fetch(clinic.webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "User-Agent": "EEGBase/1.0" },
+      body: JSON.stringify({
+        event: "test",
+        message: "EEGBase webhook test — your endpoint is correctly configured!",
+        clinicId,
+        timestamp: new Date().toISOString(),
+      }),
+      signal: AbortSignal.timeout(10000),
+    });
+    return { ok: res.ok, status: res.status };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Request failed" };
+  }
+}
+
 export async function updateWebhookUrl(formData: FormData) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
