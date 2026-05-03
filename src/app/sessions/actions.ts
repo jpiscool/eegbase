@@ -88,22 +88,24 @@ export async function saveSession(data: {
     .returning({ id: sessions.id });
 
   if (data.samples.length > 0) {
-    await db.insert(sessionDataPoints).values(
-      data.samples.map((s) => ({
-        sessionId: saved.id,
-        timestampMs: s.timestampMs,
-        oxyHbLeft: s.oxyHbLeft,
-        oxyHbRight: s.oxyHbRight,
-        deoxyHbLeft: s.deoxyHbLeft,
-        deoxyHbRight: s.deoxyHbRight,
-        delta: s.delta,
-        theta: s.theta,
-        alpha: s.alpha,
-        beta: s.beta,
-        gamma: s.gamma,
-        rewardScore: s.rewardScore,
-      }))
-    );
+    const rows = data.samples.map((s) => ({
+      sessionId: saved.id,
+      timestampMs: s.timestampMs,
+      oxyHbLeft: s.oxyHbLeft,
+      oxyHbRight: s.oxyHbRight,
+      deoxyHbLeft: s.deoxyHbLeft,
+      deoxyHbRight: s.deoxyHbRight,
+      delta: s.delta,
+      theta: s.theta,
+      alpha: s.alpha,
+      beta: s.beta,
+      gamma: s.gamma,
+      rewardScore: s.rewardScore,
+    }));
+    const BATCH = 1000;
+    for (let i = 0; i < rows.length; i += BATCH) {
+      await db.insert(sessionDataPoints).values(rows.slice(i, i + BATCH));
+    }
   }
 
   // Fire webhook (fire-and-forget)
