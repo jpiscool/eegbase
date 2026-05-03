@@ -1,7 +1,9 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { clinicians, clinics } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, count } from "drizzle-orm";
+import Link from "next/link";
+import { Users } from "lucide-react";
 import { ProfileForm, PasswordForm, ClinicNameForm } from "./SettingsForms";
 
 export default async function SettingsPage() {
@@ -20,6 +22,11 @@ export default async function SettingsPage() {
     .from(clinics)
     .where(eq(clinics.id, clinicId))
     .limit(1);
+
+  const [teamCountRow] = await db
+    .select({ count: count() })
+    .from(clinicians)
+    .where(eq(clinicians.clinicId, clinicId));
 
   return (
     <div className="max-w-2xl">
@@ -61,6 +68,25 @@ export default async function SettingsPage() {
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
         <h2 className="text-base font-semibold text-gray-900 mb-4">Change Password</h2>
         <PasswordForm />
+      </div>
+
+      {/* Team */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-base font-semibold text-gray-900 mb-1">Team</h2>
+            <p className="text-sm text-gray-500">
+              {Number(teamCountRow?.count ?? 0)} member{Number(teamCountRow?.count ?? 0) !== 1 ? "s" : ""} in this clinic
+            </p>
+          </div>
+          <Link
+            href="/settings/team"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <Users size={15} />
+            Manage Team
+          </Link>
+        </div>
       </div>
 
       {/* Device Integrations */}

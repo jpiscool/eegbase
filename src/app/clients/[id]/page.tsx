@@ -10,6 +10,7 @@ import { TrendChart } from "@/components/TrendChart";
 import { SessionMetricTrend } from "@/components/SessionMetricChart";
 import { EditClientModal } from "@/components/EditClientModal";
 import { ToggleClientActiveButton } from "@/components/ToggleClientActiveButton";
+import { SessionHeatmap } from "@/components/SessionHeatmap";
 
 export default async function ClientDetailPage({
   params,
@@ -260,6 +261,16 @@ export default async function ClientDetailPage({
             Reward Score Trend · Last {trendData.length} sessions
           </h2>
           <TrendChart data={trendData} />
+        </div>
+      )}
+
+      {/* Session attendance heatmap */}
+      {sessionList.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+          <h2 className="text-sm font-semibold text-gray-700 mb-4">
+            Session Attendance · Last 16 weeks
+          </h2>
+          <SessionHeatmap sessionDates={sessionList.map((s) => new Date(s.startedAt))} />
         </div>
       )}
 

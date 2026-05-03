@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { protocols, assignments, sessions } from "@/lib/db/schema";
 import { eq, count, avg } from "drizzle-orm";
+import Link from "next/link";
 import { CreateProtocolModal } from "@/components/CreateProtocolModal";
 import { DeleteProtocolButton } from "@/components/DeleteProtocolButton";
 import { EditProtocolModal } from "@/components/EditProtocolModal";
@@ -73,7 +74,7 @@ export default async function ProtocolsPage() {
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <h3 className="font-semibold text-gray-900 text-sm">{p.name}</h3>
+                    <Link href={`/protocols/${p.id}`} className="font-semibold text-gray-900 text-sm hover:text-blue-600 transition-colors">{p.name}</Link>
                     <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">
                       {DEVICE_LABELS[p.deviceType] ?? p.deviceType}
                     </span>
