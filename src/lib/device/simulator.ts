@@ -19,41 +19,56 @@ export class SimulatorAdapter implements DeviceAdapter {
   private _callbacks: Array<(sample: DeviceSample) => void> = [];
   private _startMs = 0;
 
-  // Simulated state
-  private _oxyL = 0.5;
-  private _oxyR = 0.5;
-  private _deoxyL = 0.3;
-  private _deoxyR = 0.3;
-  private _theta = 0.4;
-  private _alpha = 0.5;
-  private _beta = 0.3;
+  // fNIRS state — realistic μM values (functional range ~±0.5 μM)
+  private _oxyL = 0.05;
+  private _oxyR = 0.04;
+  private _deoxyL = -0.02;
+  private _deoxyR = -0.03;
+
+  // EEG band powers — relative normalized (0–1)
+  private _delta = 0.35;
+  private _theta = 0.40;
+  private _alpha = 0.50;
+  private _beta = 0.30;
+  private _gamma = 0.15;
 
   async connect(): Promise<void> {
     this._connected = true;
     this._startMs = Date.now();
 
     this._interval = setInterval(() => {
-      // Random-walk all channels
-      this._oxyL = randWalk(this._oxyL, 0, 1, 0.03);
-      this._oxyR = randWalk(this._oxyR, 0, 1, 0.03);
-      this._deoxyL = randWalk(this._deoxyL, 0, 1, 0.02);
-      this._deoxyR = randWalk(this._deoxyR, 0, 1, 0.02);
-      this._theta = randWalk(this._theta, 0, 1, 0.04);
-      this._alpha = randWalk(this._alpha, 0, 1, 0.04);
-      this._beta = randWalk(this._beta, 0, 1, 0.03);
+      const elapsedMin = (Date.now() - this._startMs) / 60000;
+      // Slight positive drift in OxyHb simulating session engagement
+      const trend = Math.min(elapsedMin * 0.01, 0.1);
 
-      const reward = ((this._oxyL + this._oxyR) / 2) * 100;
+      this._oxyL = randWalk(this._oxyL + trend * 0.001, -0.3, 0.8, 0.04);
+      this._oxyR = randWalk(this._oxyR + trend * 0.001, -0.3, 0.8, 0.04);
+      // DeoxyHb inversely coupled (neurovascular coupling)
+      this._deoxyL = randWalk(this._deoxyL - trend * 0.001, -0.5, 0.3, 0.03);
+      this._deoxyR = randWalk(this._deoxyR - trend * 0.001, -0.5, 0.3, 0.03);
+
+      this._delta = randWalk(this._delta, 0.1, 0.7, 0.04);
+      this._theta = randWalk(this._theta, 0.1, 0.8, 0.04);
+      this._alpha = randWalk(this._alpha, 0.1, 0.9, 0.05);
+      this._beta = randWalk(this._beta, 0.05, 0.7, 0.035);
+      this._gamma = randWalk(this._gamma, 0.02, 0.5, 0.025);
+
+      // Reward: prefrontal oxygenation-based (0–100)
+      const oxyAvg = (this._oxyL + this._oxyR) / 2;
+      const reward = Math.max(0, Math.min(100, 50 + oxyAvg * 80 + trend * 15));
 
       const sample: DeviceSample = {
         timestampMs: Date.now() - this._startMs,
-        oxyHbLeft: this._oxyL,
-        oxyHbRight: this._oxyR,
-        deoxyHbLeft: this._deoxyL,
-        deoxyHbRight: this._deoxyR,
-        theta: this._theta,
-        alpha: this._alpha,
-        beta: this._beta,
-        rewardScore: reward,
+        oxyHbLeft: Math.round(this._oxyL * 1000) / 1000,
+        oxyHbRight: Math.round(this._oxyR * 1000) / 1000,
+        deoxyHbLeft: Math.round(this._deoxyL * 1000) / 1000,
+        deoxyHbRight: Math.round(this._deoxyR * 1000) / 1000,
+        delta: Math.round(this._delta * 100) / 100,
+        theta: Math.round(this._theta * 100) / 100,
+        alpha: Math.round(this._alpha * 100) / 100,
+        beta: Math.round(this._beta * 100) / 100,
+        gamma: Math.round(this._gamma * 100) / 100,
+        rewardScore: Math.round(reward * 10) / 10,
       };
 
       this._callbacks.forEach((cb) => cb(sample));

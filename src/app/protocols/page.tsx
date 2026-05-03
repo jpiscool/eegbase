@@ -5,6 +5,7 @@ import { eq, count, avg } from "drizzle-orm";
 import { CreateProtocolModal } from "@/components/CreateProtocolModal";
 import { DeleteProtocolButton } from "@/components/DeleteProtocolButton";
 import { EditProtocolModal } from "@/components/EditProtocolModal";
+import { LoadTemplatesButton } from "@/components/LoadTemplatesButton";
 
 const DEVICE_LABELS: Record<string, string> = {
   mendi: "Mendi",
@@ -44,13 +45,22 @@ export default async function ProtocolsPage() {
             {protocolList.length} protocol{protocolList.length !== 1 ? "s" : ""} defined
           </p>
         </div>
-        <CreateProtocolModal />
+        <div className="flex items-center gap-3">
+          {protocolList.length > 0 && <LoadTemplatesButton />}
+          <CreateProtocolModal />
+        </div>
       </div>
 
       {protocolList.length === 0 ? (
-        <div className="bg-blue-50 rounded-xl border border-blue-100 p-10 text-center">
-          <p className="text-sm font-medium text-blue-700 mb-1">No protocols yet</p>
-          <p className="text-sm text-blue-500">Create a protocol to assign to clients.</p>
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 p-10 text-center">
+          <p className="text-sm font-semibold text-blue-900 mb-1">No protocols yet</p>
+          <p className="text-sm text-blue-600 mb-6 max-w-sm mx-auto">
+            Protocols define session duration, device type, and training parameters. Create your own or start with our pre-built templates.
+          </p>
+          <div className="flex items-center justify-center gap-3">
+            <LoadTemplatesButton />
+            <CreateProtocolModal />
+          </div>
         </div>
       ) : (
         <div className="grid gap-4">

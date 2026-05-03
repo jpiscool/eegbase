@@ -8,6 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { SessionNotesEditor } from "@/components/SessionNotesEditor";
 import { SessionReplayChart } from "@/components/SessionReplayChart";
 import { BandPowerChart } from "@/components/BandPowerChart";
+import { FNIRSChart } from "@/components/FNIRSChart";
 import { DeleteSessionButton } from "@/components/DeleteSessionButton";
 
 function ScoreDelta({
@@ -70,6 +71,10 @@ export default async function SessionDetailPage({
         alpha: sessionDataPoints.alpha,
         beta: sessionDataPoints.beta,
         gamma: sessionDataPoints.gamma,
+        oxyHbLeft: sessionDataPoints.oxyHbLeft,
+        oxyHbRight: sessionDataPoints.oxyHbRight,
+        deoxyHbLeft: sessionDataPoints.deoxyHbLeft,
+        deoxyHbRight: sessionDataPoints.deoxyHbRight,
       })
       .from(sessionDataPoints)
       .where(eq(sessionDataPoints.sessionId, id))
@@ -97,6 +102,20 @@ export default async function SessionDetailPage({
       timestampMs: dp.timestampMs,
       rewardScore: dp.rewardScore as number,
     }));
+
+  // Check if we have fNIRS data
+  const hasFNIRSData = dataPoints.some(
+    (dp) => dp.oxyHbLeft != null || dp.oxyHbRight != null || dp.deoxyHbLeft != null || dp.deoxyHbRight != null
+  );
+  const fnirsData = hasFNIRSData
+    ? dataPoints.map((dp) => ({
+        timestampMs: dp.timestampMs,
+        oxyHbLeft: dp.oxyHbLeft ?? null,
+        oxyHbRight: dp.oxyHbRight ?? null,
+        deoxyHbLeft: dp.deoxyHbLeft ?? null,
+        deoxyHbRight: dp.deoxyHbRight ?? null,
+      }))
+    : [];
 
   // Check if we have band power data
   const hasBandData = dataPoints.some(
@@ -192,6 +211,21 @@ export default async function SessionDetailPage({
             Reward Score · Session Replay ({rewardTrend.length} samples)
           </h2>
           <SessionReplayChart data={rewardTrend} />
+        </div>
+      )}
+
+      {/* fNIRS Hemodynamics (Mendi) */}
+      {hasFNIRSData && fnirsData.length > 1 && (
+        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
+          <div className="flex items-center gap-2 mb-4">
+            <h2 className="text-sm font-semibold text-gray-700">
+              fNIRS Hemodynamics · Session ({fnirsData.length} samples)
+            </h2>
+            <span className="px-2 py-0.5 text-xs font-medium bg-violet-50 text-violet-600 rounded-full border border-violet-100">
+              Mendi
+            </span>
+          </div>
+          <FNIRSChart data={fnirsData} />
         </div>
       )}
 
