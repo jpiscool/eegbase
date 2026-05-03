@@ -1,4 +1,6 @@
 import { db } from "@/lib/db";
+import { t, type Lang } from "@/lib/i18n";
+import { ShareLangToggle } from "@/components/ShareLangToggle";
 import { clients, sessions, assignments, protocols, checkIns, clinicians, goals } from "@/lib/db/schema";
 import { eq, and, desc, avg, count } from "drizzle-orm";
 import { notFound } from "next/navigation";
@@ -16,10 +18,14 @@ function scoreColor(v: number): string {
 
 export default async function SharedReportPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ token: string }>;
+  searchParams: Promise<{ lang?: string }>;
 }) {
   const { token } = await params;
+  const sp = await searchParams;
+  const lang: Lang = sp.lang === "es" ? "es" : "en";
 
   const [client] = await db
     .select()
@@ -100,6 +106,9 @@ export default async function SharedReportPage({
     <div style={{ minHeight: "100vh", background: "#F8FAFC", padding: "32px 16px", fontFamily: "system-ui, -apple-system, sans-serif" }}>
       {/* Public notice banner */}
       <div style={{ maxWidth: 800, margin: "0 auto 16px" }}>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <ShareLangToggle />
+        </div>
         <div style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 10, padding: "10px 16px", display: "flex", alignItems: "center", gap: 10, fontSize: 12, color: "#1D4ED8" }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -121,7 +130,7 @@ export default async function SharedReportPage({
               <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>Clinician Neurofeedback Platform</div>
             </div>
             <div style={{ textAlign: "right", fontSize: 11, color: "#64748B", lineHeight: 1.8 }}>
-              <div style={{ fontWeight: 600, color: "#0F172A" }}>Progress Report</div>
+              <div style={{ fontWeight: 600, color: "#0F172A" }}>{t("shareHeader", lang)}</div>
               <div>Generated {reportDate}</div>
               {clinician && <div>Clinician: {clinician.name}</div>}
               {firstSession && lastSession && (
@@ -144,8 +153,8 @@ export default async function SharedReportPage({
           {/* Stats */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 28 }}>
             {[
-              { label: "Total Sessions", val: String(totalSessions), sub: "", color: "#0F172A" },
-              { label: "Avg Reward", val: avgScore != null ? avgScore.toFixed(1) : "—", sub: "/ 100", color: avgScore != null ? scoreColor(avgScore) : "#CBD5E1" },
+              { label: t("shareSessions", lang), val: String(totalSessions), sub: "", color: "#0F172A" },
+              { label: t("shareAvgReward", lang), val: avgScore != null ? avgScore.toFixed(1) : "—", sub: "/ 100", color: avgScore != null ? scoreColor(avgScore) : "#CBD5E1" },
               { label: "Focus Change", val: avgFocusDelta == null ? "—" : `${avgFocusDelta > 0 ? "+" : ""}${avgFocusDelta.toFixed(1)}`, sub: "pre→post avg", color: avgFocusDelta == null ? "#CBD5E1" : avgFocusDelta > 0 ? "#059669" : avgFocusDelta < 0 ? "#DC2626" : "#0F172A" },
               { label: "Device", val: protocol?.deviceType ?? "—", sub: "", color: "#0F172A" },
             ].map(({ label, val, sub, color }) => (
@@ -227,7 +236,7 @@ export default async function SharedReportPage({
           {goalList.length > 0 && (
             <div style={{ marginBottom: 28 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: "#059669", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #D1FAE5" }}>
-                Treatment Goals
+                {t("shareGoals", lang)}
               </div>
               <div style={{ display: "flex", flexDirection: "column" as const, gap: 8 }}>
                 {goalList.map((g) => {
@@ -269,7 +278,7 @@ export default async function SharedReportPage({
           {/* Footer */}
           <div style={{ marginTop: 32, paddingTop: 16, borderTop: "1px solid #E2E8F0", display: "flex", justifyContent: "space-between", fontSize: 10, color: "#94A3B8" }}>
             <span>EEGBase · eegbase.com · Open-source neurofeedback platform</span>
-            <span>Confidential — For clinical use only</span>
+            <span>{t("shareFooter", lang)}</span>
           </div>
         </div>
 

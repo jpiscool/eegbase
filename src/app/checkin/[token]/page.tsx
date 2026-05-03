@@ -1,19 +1,23 @@
 "use client";
 
-import { use, useActionState, useState } from "react";
+import { use, useActionState, useState, useEffect } from "react";
 import { submitPublicCheckIn } from "./actions";
+import { t, type Lang, detectLang } from "@/lib/i18n";
 
-const SCALE_LABELS: Record<string, [string, string]> = {
-  sleepQuality: ["Poor", "Excellent"],
-  mood: ["Very low", "Very high"],
-  anxiety: ["None", "Severe"],
-  focus: ["Scattered", "Sharp"],
-  energy: ["Exhausted", "Energised"],
-};
-
-function ScaleInput({ name, label, emoji }: { name: string; label: string; emoji: string }) {
+function ScaleInput({
+  name,
+  label,
+  emoji,
+  lo,
+  hi,
+}: {
+  name: string;
+  label: string;
+  emoji: string;
+  lo: string;
+  hi: string;
+}) {
   const [val, setVal] = useState<number | null>(null);
-  const [lo, hi] = SCALE_LABELS[name] ?? ["Low", "High"];
 
   return (
     <div>
@@ -66,19 +70,30 @@ export default function PublicCheckInPage({
 }) {
   const { token } = use(params);
   const [state, action, pending] = useActionState(formAction, null);
+  const [lang, setLang] = useState<Lang>("en");
+
+  useEffect(() => {
+    setLang(detectLang());
+  }, []);
+
+  function toggleLang() {
+    const next: Lang = lang === "en" ? "es" : "en";
+    setLang(next);
+    localStorage.setItem("lang", next);
+  }
 
   if (state?.success) {
     return (
       <div style={{ minHeight: "100vh", background: "#F0FDF4", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
         <div style={{ background: "white", borderRadius: 20, padding: "48px 40px", maxWidth: 420, width: "100%", textAlign: "center", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#14532D", marginBottom: 8 }}>Check-in recorded!</h1>
-          <p style={{ color: "#64748B", fontSize: 14 }}>Your clinician can now see this entry. You can close this tab.</p>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#14532D", marginBottom: 8 }}>{t("successTitle", lang)}</h1>
+          <p style={{ color: "#64748B", fontSize: 14 }}>{t("successBody", lang)}</p>
           <button
             onClick={() => window.location.reload()}
             style={{ marginTop: 24, padding: "10px 24px", background: "#16A34A", color: "white", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer" }}
           >
-            Submit another
+            {t("submitAnother", lang)}
           </button>
         </div>
       </div>
@@ -91,13 +106,27 @@ export default function PublicCheckInPage({
     <div style={{ minHeight: "100vh", background: "#F8FAFC", padding: "32px 16px" }}>
       <div style={{ maxWidth: 480, margin: "0 auto" }}>
 
+        {/* Language toggle */}
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
+          <button
+            onClick={toggleLang}
+            style={{
+              fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 99,
+              border: "1px solid #E2E8F0", background: "white", cursor: "pointer", color: "#64748B",
+              letterSpacing: "0.05em",
+            }}
+          >
+            {lang === "en" ? "🇪🇸 ES" : "🇺🇸 EN"}
+          </button>
+        </div>
+
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em", color: "#0F172A", marginBottom: 8 }}>
             EEG<span style={{ color: "#2563EB" }}>Base</span>
           </div>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#0F172A", margin: "0 0 8px" }}>Daily Check-In</h1>
-          <p style={{ fontSize: 13, color: "#64748B" }}>How are you feeling today? Takes about 60 seconds.</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#0F172A", margin: "0 0 8px" }}>{t("checkinTitle", lang)}</h1>
+          <p style={{ fontSize: 13, color: "#64748B" }}>{t("checkinSubtitle", lang)}</p>
         </div>
 
         <form
@@ -109,7 +138,7 @@ export default function PublicCheckInPage({
           {/* Date */}
           <div>
             <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
-              📅 Date
+              {t("dateLabel", lang)}
             </label>
             <input
               type="date"
@@ -122,7 +151,7 @@ export default function PublicCheckInPage({
           {/* Sleep hours */}
           <div>
             <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
-              🌙 Hours of sleep last night
+              {t("sleepHoursLabel", lang)}
             </label>
             <input
               type="number"
@@ -130,26 +159,26 @@ export default function PublicCheckInPage({
               min={0}
               max={24}
               step={0.5}
-              placeholder="e.g. 7.5"
+              placeholder={t("sleepHoursPlaceholder", lang)}
               style={{ width: "100%", padding: "9px 12px", border: "1px solid #E2E8F0", borderRadius: 10, fontSize: 14, color: "#0F172A", boxSizing: "border-box" }}
             />
           </div>
 
-          <ScaleInput name="sleepQuality" label="Sleep quality" emoji="😴" />
-          <ScaleInput name="mood" label="Mood" emoji="🙂" />
-          <ScaleInput name="anxiety" label="Anxiety level" emoji="😰" />
-          <ScaleInput name="focus" label="Focus & concentration" emoji="🎯" />
-          <ScaleInput name="energy" label="Energy level" emoji="⚡" />
+          <ScaleInput name="sleepQuality" label={t("sleepQualityLabel", lang)} emoji="😴" lo={t("poorExcellent", lang)[0]} hi={t("poorExcellent", lang)[1]} />
+          <ScaleInput name="mood" label={t("moodLabel", lang)} emoji="🙂" lo={t("veryLowHigh", lang)[0]} hi={t("veryLowHigh", lang)[1]} />
+          <ScaleInput name="anxiety" label={t("anxietyLabel", lang)} emoji="😰" lo={t("noneServerely", lang)[0]} hi={t("noneServerely", lang)[1]} />
+          <ScaleInput name="focus" label={t("focusLabel", lang)} emoji="🎯" lo={t("scatteredSharp", lang)[0]} hi={t("scatteredSharp", lang)[1]} />
+          <ScaleInput name="energy" label={t("energyLabel", lang)} emoji="⚡" lo={t("exhaustedEnergised", lang)[0]} hi={t("exhaustedEnergised", lang)[1]} />
 
           {/* Notes */}
           <div>
             <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
-              📝 Notes <span style={{ fontWeight: 400, color: "#9CA3AF" }}>(optional)</span>
+              {t("notesLabel", lang)} <span style={{ fontWeight: 400, color: "#9CA3AF" }}>{t("notesOptional", lang)}</span>
             </label>
             <textarea
               name="notes"
               rows={3}
-              placeholder="Anything else you'd like your clinician to know…"
+              placeholder={t("notesPlaceholder", lang)}
               style={{ width: "100%", padding: "9px 12px", border: "1px solid #E2E8F0", borderRadius: 10, fontSize: 14, color: "#0F172A", resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }}
             />
           </div>
@@ -176,12 +205,12 @@ export default function PublicCheckInPage({
               transition: "opacity 0.15s",
             }}
           >
-            {pending ? "Submitting…" : "Submit check-in"}
+            {pending ? t("submittingButton", lang) : t("submitButton", lang)}
           </button>
         </form>
 
         <p style={{ textAlign: "center", marginTop: 20, fontSize: 11, color: "#94A3B8" }}>
-          Your data is shared only with your clinician via EEGBase.
+          {t("footerNote", lang)}
         </p>
       </div>
     </div>
