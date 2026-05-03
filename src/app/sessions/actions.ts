@@ -1,7 +1,9 @@
 "use server";
+import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
-import { sessions, sessionDataPoints } from "@/lib/db/schema";
+import { sessions, sessionDataPoints, clients } from "@/lib/db/schema";
+import { eq, and } from "drizzle-orm";
 
 export interface SamplePayload {
   timestampMs: number;
@@ -83,4 +85,29 @@ export async function saveSession(data: {
   }
 
   return saved.id;
+}
+
+export async function updateSessionNotes(sessionId: string, notes: string) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const clinicId = (session.user as { clinicId?: string }).clinicId;
+  if (!clinicId) throw new Error("No clinic");
+
+  // Verify ownership via clients join
+  const [existing] = await db
+    .select({ id: sessions.id })
+    .from(sessions)
+    .innerJoin(clients, and(eq(sessions.clientId, clients.id), eq(clients.clinicId, clinicId)))
+    .where(eq(sessions.id, sessionId))
+    .limit(1);
+
+  if (!existing) throw new Error("Not found");
+
+  await db
+    .update(sessions)
+    .set({ notes: notes.trim() || null })
+    .where(eq(sessions.id, sessionId));
+
+  revalidatePath(`/sessions/${sessionId}`);
 }

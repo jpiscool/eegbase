@@ -1,11 +1,12 @@
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { SimulatorAdapter } from "@/lib/device/simulator";
 import type { DeviceSample } from "@/lib/device/adapter";
 import { LiveChart } from "@/components/LiveChart";
 import { saveSession, type SamplePayload, type Questionnaire } from "@/app/sessions/actions";
 import Link from "next/link";
-import { ArrowLeft, Wifi, WifiOff, StopCircle, Play, CheckCircle } from "lucide-react";
+import { ArrowLeft, Wifi, WifiOff, StopCircle, CheckCircle } from "lucide-react";
 
 const MAX_POINTS = 60;
 
@@ -18,7 +19,7 @@ interface Props {
   defaultClientId?: string;
 }
 
-type Phase = "pre" | "running" | "post" | "saved";
+type Phase = "pre" | "running" | "post";
 
 function useSlidingWindow(size: number) {
   const [data, setData] = useState<number[]>([]);
@@ -149,6 +150,7 @@ function QuestionnairePanel({
 }
 
 export function LiveSessionView({ clients, protocols, defaultClientId }: Props) {
+  const router = useRouter();
   const adapterRef = useRef<SimulatorAdapter | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startedAtRef = useRef<string>("");
@@ -223,7 +225,7 @@ export function LiveSessionView({ clients, protocols, defaultClientId }: Props) 
     if (!selectedClientId) return;
     setSaving(true);
     try {
-      await saveSession({
+      const sessionId = await saveSession({
         clientId: selectedClientId,
         protocolId: selectedProtocolId || null,
         deviceType: "simulator",
@@ -233,11 +235,11 @@ export function LiveSessionView({ clients, protocols, defaultClientId }: Props) 
         preSession: preQ,
         postSession: { ...postQ, notes: postNotes || undefined },
       });
-      setPhase("saved");
+      router.push(`/sessions/${sessionId}`);
     } finally {
       setSaving(false);
     }
-  }, [selectedClientId, selectedProtocolId, preQ, postQ, postNotes]);
+  }, [selectedClientId, selectedProtocolId, preQ, postQ, postNotes, router]);
 
   useEffect(() => () => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -359,17 +361,16 @@ export function LiveSessionView({ clients, protocols, defaultClientId }: Props) 
         />
       )}
 
-      {/* Saved confirmation */}
-      {phase === "saved" && (
-        <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium px-4 py-3 rounded-xl mb-5">
-          <CheckCircle size={16} />
-          Session saved successfully.{" "}
-          <Link href="/sessions" className="underline ml-1">View all sessions →</Link>
+      {/* Saving indicator */}
+      {saving && (
+        <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 text-sm font-medium px-4 py-3 rounded-xl mb-5">
+          <CheckCircle size={16} className="animate-pulse" />
+          Saving session…
         </div>
       )}
 
       {/* Live data */}
-      {(running || phase === "post" || phase === "saved") && (
+      {(running || phase === "post") && (
         <>
           <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5 flex items-center gap-6">
             <div>

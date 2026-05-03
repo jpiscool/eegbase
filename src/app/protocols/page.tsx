@@ -4,6 +4,7 @@ import { protocols, assignments } from "@/lib/db/schema";
 import { eq, count } from "drizzle-orm";
 import { CreateProtocolModal } from "@/components/CreateProtocolModal";
 import { DeleteProtocolButton } from "@/components/DeleteProtocolButton";
+import { EditProtocolModal } from "@/components/EditProtocolModal";
 
 const DEVICE_LABELS: Record<string, string> = {
   mendi: "Mendi",
@@ -74,7 +75,10 @@ export default async function ProtocolsPage() {
                     <p className="text-sm text-gray-500 mt-0.5">{p.description}</p>
                   )}
                 </div>
-                <DeleteProtocolButton id={p.id} name={p.name} />
+                <div className="flex items-center gap-1">
+                  <EditProtocolModal protocol={p} />
+                  <DeleteProtocolButton id={p.id} name={p.name} />
+                </div>
               </div>
             );
           })}

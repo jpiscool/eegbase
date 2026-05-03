@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { sessions, clients, protocols } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
-import { Play } from "lucide-react";
+import { Play, Download } from "lucide-react";
 
 function fmtDuration(sec: number | null) {
   if (sec == null) return "—";
@@ -45,13 +45,25 @@ export default async function SessionsPage() {
             {sessionList.length} session{sessionList.length !== 1 ? "s" : ""} recorded
           </p>
         </div>
-        <Link
-          href="/sessions/live"
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <Play size={15} />
-          Start Live Session
-        </Link>
+        <div className="flex items-center gap-3">
+          {sessionList.length > 0 && (
+            <a
+              href="/api/sessions/export"
+              download
+              className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <Download size={15} />
+              Export CSV
+            </a>
+          )}
+          <Link
+            href="/sessions/live"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Play size={15} />
+            Start Live Session
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -70,7 +82,7 @@ export default async function SessionsPage() {
           <tbody className="divide-y divide-gray-100">
             {sessionList.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-5 py-12 text-center text-gray-400">
+                <td colSpan={7} className="px-5 py-12 text-center text-gray-400">
                   No sessions recorded yet.{" "}
                   <Link href="/sessions/live" className="text-blue-600 hover:underline">
                     Start a live session

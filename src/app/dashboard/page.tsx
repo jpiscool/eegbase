@@ -4,40 +4,60 @@ import { clients, sessions, protocols } from "@/lib/db/schema";
 import { eq, and, gte, count, avg, desc } from "drizzle-orm";
 import { Users, Activity, BookOpen, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { DailyActivityChart } from "@/components/DailyActivityChart";
 
 export default async function DashboardPage() {
   const session = await auth();
   const clinicId = (session?.user as { clinicId?: string })?.clinicId ?? "";
 
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-  const [clientRows, sessionRows, protocolRows, avgScoreRows, recentSessions] = await Promise.all([
-    db.select({ count: count() }).from(clients).where(eq(clients.clinicId, clinicId)),
-    db
-      .select({ count: count() })
-      .from(sessions)
-      .innerJoin(clients, eq(sessions.clientId, clients.id))
-      .where(and(eq(clients.clinicId, clinicId), gte(sessions.startedAt, weekAgo))),
-    db.select({ count: count() }).from(protocols).where(eq(protocols.clinicId, clinicId)),
-    db
-      .select({ avg: avg(sessions.avgRewardScore) })
-      .from(sessions)
-      .innerJoin(clients, eq(sessions.clientId, clients.id))
-      .where(eq(clients.clinicId, clinicId)),
-    db
-      .select({
-        id: sessions.id,
-        clientName: clients.name,
-        deviceType: sessions.deviceType,
-        startedAt: sessions.startedAt,
-        durationSeconds: sessions.durationSeconds,
-      })
-      .from(sessions)
-      .innerJoin(clients, eq(sessions.clientId, clients.id))
-      .where(eq(clients.clinicId, clinicId))
-      .orderBy(desc(sessions.startedAt))
-      .limit(5),
-  ]);
+  const [clientRows, sessionRows, protocolRows, avgScoreRows, recentSessions, last30Sessions] =
+    await Promise.all([
+      db.select({ count: count() }).from(clients).where(eq(clients.clinicId, clinicId)),
+      db
+        .select({ count: count() })
+        .from(sessions)
+        .innerJoin(clients, eq(sessions.clientId, clients.id))
+        .where(and(eq(clients.clinicId, clinicId), gte(sessions.startedAt, weekAgo))),
+      db.select({ count: count() }).from(protocols).where(eq(protocols.clinicId, clinicId)),
+      db
+        .select({ avg: avg(sessions.avgRewardScore) })
+        .from(sessions)
+        .innerJoin(clients, eq(sessions.clientId, clients.id))
+        .where(eq(clients.clinicId, clinicId)),
+      db
+        .select({
+          id: sessions.id,
+          clientName: clients.name,
+          deviceType: sessions.deviceType,
+          startedAt: sessions.startedAt,
+          durationSeconds: sessions.durationSeconds,
+        })
+        .from(sessions)
+        .innerJoin(clients, eq(sessions.clientId, clients.id))
+        .where(eq(clients.clinicId, clinicId))
+        .orderBy(desc(sessions.startedAt))
+        .limit(5),
+      db
+        .select({ startedAt: sessions.startedAt })
+        .from(sessions)
+        .innerJoin(clients, eq(sessions.clientId, clients.id))
+        .where(and(eq(clients.clinicId, clinicId), gte(sessions.startedAt, thirtyDaysAgo))),
+    ]);
+
+  // Build 30-day daily counts
+  const countsByDate = new Map<string, number>();
+  for (const s of last30Sessions) {
+    const day = new Date(s.startedAt).toISOString().split("T")[0];
+    countsByDate.set(day, (countsByDate.get(day) ?? 0) + 1);
+  }
+  const activityData = Array.from({ length: 30 }, (_, i) => {
+    const d = new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000);
+    const date = d.toISOString().split("T")[0];
+    return { date, count: countsByDate.get(date) ?? 0 };
+  });
 
   const stats = [
     { label: "Active Clients", value: String(clientRows[0]?.count ?? 0), icon: Users },
@@ -59,7 +79,7 @@ export default async function DashboardPage() {
         Welcome back, {session?.user?.name ?? "Clinician"}.
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
         {stats.map(({ label, value, icon: Icon }) => (
           <div
             key={label}
@@ -74,6 +94,17 @@ export default async function DashboardPage() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* 30-day activity chart */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold text-gray-700">Session Activity · Last 30 Days</h2>
+          <span className="text-xs text-gray-400">
+            {last30Sessions.length} session{last30Sessions.length !== 1 ? "s" : ""} total
+          </span>
+        </div>
+        <DailyActivityChart data={activityData} />
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">

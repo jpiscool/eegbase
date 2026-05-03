@@ -1,10 +1,12 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
-import { sessions, clients, protocols } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { sessions, clients, protocols, sessionDataPoints } from "@/lib/db/schema";
+import { eq, and, asc } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { SessionNotesEditor } from "@/components/SessionNotesEditor";
+import { SessionReplayChart } from "@/components/SessionReplayChart";
 
 function ScoreDelta({
   pre,
@@ -44,18 +46,29 @@ export default async function SessionDetailPage({
   const clinicId = (session?.user as { clinicId?: string })?.clinicId ?? "";
 
   // Fetch session joined with client (for clinic ownership check) and protocol
-  const [row] = await db
-    .select({
-      session: sessions,
-      clientName: clients.name,
-      clientId: clients.id,
-      protocolName: protocols.name,
-    })
-    .from(sessions)
-    .innerJoin(clients, and(eq(sessions.clientId, clients.id), eq(clients.clinicId, clinicId)))
-    .leftJoin(protocols, eq(sessions.protocolId, protocols.id))
-    .where(eq(sessions.id, id))
-    .limit(1);
+  const [[row], dataPoints] = await Promise.all([
+    db
+      .select({
+        session: sessions,
+        clientName: clients.name,
+        clientId: clients.id,
+        protocolName: protocols.name,
+      })
+      .from(sessions)
+      .innerJoin(clients, and(eq(sessions.clientId, clients.id), eq(clients.clinicId, clinicId)))
+      .leftJoin(protocols, eq(sessions.protocolId, protocols.id))
+      .where(eq(sessions.id, id))
+      .limit(1),
+    db
+      .select({
+        timestampMs: sessionDataPoints.timestampMs,
+        rewardScore: sessionDataPoints.rewardScore,
+      })
+      .from(sessionDataPoints)
+      .where(eq(sessionDataPoints.sessionId, id))
+      .orderBy(asc(sessionDataPoints.timestampMs))
+      .limit(500),
+  ]);
 
   if (!row) notFound();
 
@@ -69,6 +82,14 @@ export default async function SessionDetailPage({
     { label: "Anxiety", pre: s.preAnxiety, post: s.postAnxiety, invert: true },
     { label: "Energy", pre: s.preEnergy, post: s.postEnergy },
   ];
+
+  // Build reward score chart data from raw data points
+  const rewardTrend = dataPoints
+    .filter((dp) => dp.rewardScore != null)
+    .map((dp) => ({
+      timestampMs: dp.timestampMs,
+      rewardScore: dp.rewardScore as number,
+    }));
 
   return (
     <div className="max-w-3xl">
@@ -142,6 +163,16 @@ export default async function SessionDetailPage({
         ))}
       </div>
 
+      {/* Reward score replay chart */}
+      {rewardTrend.length > 1 && (
+        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
+          <h2 className="text-sm font-semibold text-gray-700 mb-4">
+            Reward Score · Session Replay ({rewardTrend.length} samples)
+          </h2>
+          <SessionReplayChart data={rewardTrend} />
+        </div>
+      )}
+
       {/* Pre / Post questionnaire */}
       {metrics.some((m) => m.pre != null || m.post != null) && (
         <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
@@ -171,23 +202,19 @@ export default async function SessionDetailPage({
       )}
 
       {/* Notes */}
-      {(s.postNotes || s.notes) && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
-          <h2 className="text-sm font-semibold text-gray-700 mb-3">Session Notes</h2>
-          {s.postNotes && (
-            <div className="mb-3">
-              <p className="text-xs text-gray-400 font-medium mb-1">Post-Session Notes</p>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">{s.postNotes}</p>
-            </div>
-          )}
-          {s.notes && (
-            <div>
-              <p className="text-xs text-gray-400 font-medium mb-1">General Notes</p>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">{s.notes}</p>
-            </div>
-          )}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
+        <h2 className="text-sm font-semibold text-gray-700 mb-3">Session Notes</h2>
+        {s.postNotes && (
+          <div className="mb-4">
+            <p className="text-xs text-gray-400 font-medium mb-1">Client Post-Session Notes</p>
+            <p className="text-sm text-gray-700 whitespace-pre-wrap">{s.postNotes}</p>
+          </div>
+        )}
+        <div>
+          <p className="text-xs text-gray-400 font-medium mb-2">Clinical Notes</p>
+          <SessionNotesEditor sessionId={s.id} initialNotes={s.notes ?? null} />
         </div>
-      )}
+      </div>
 
       {/* Timestamps */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">

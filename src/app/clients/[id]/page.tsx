@@ -4,10 +4,11 @@ import { clients, sessions, assignments, protocols } from "@/lib/db/schema";
 import { eq, and, desc, avg } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Play, MessageSquare, ClipboardList, FileText } from "lucide-react";
+import { ArrowLeft, Play, MessageSquare, ClipboardList, FileText, Download } from "lucide-react";
 import { AssignProtocolModal } from "@/components/AssignProtocolModal";
 import { TrendChart } from "@/components/TrendChart";
 import { EditClientModal } from "@/components/EditClientModal";
+import { ToggleClientActiveButton } from "@/components/ToggleClientActiveButton";
 
 export default async function ClientDetailPage({
   params,
@@ -38,6 +39,10 @@ export default async function ClientDetailPage({
         postFocus: sessions.postFocus,
         preMood: sessions.preMood,
         postMood: sessions.postMood,
+        preAnxiety: sessions.preAnxiety,
+        postAnxiety: sessions.postAnxiety,
+        preEnergy: sessions.preEnergy,
+        postEnergy: sessions.postEnergy,
       })
       .from(sessions)
       .where(eq(sessions.clientId, id))
@@ -92,11 +97,27 @@ export default async function ClientDetailPage({
               }}
             />
           </div>
-          <p className="text-sm text-gray-500">
-            {client.email ?? "No email"} · Added {new Date(client.createdAt).toLocaleDateString()}
+          <p className="text-sm text-gray-500 flex items-center gap-3">
+            <span>{client.email ?? "No email"} · Added {new Date(client.createdAt).toLocaleDateString()}</span>
+            {!client.active && (
+              <span className="px-2 py-0.5 text-xs font-medium bg-red-50 text-red-600 rounded-full border border-red-100">
+                Inactive
+              </span>
+            )}
           </p>
+          <div className="mt-1">
+            <ToggleClientActiveButton clientId={client.id} active={client.active} />
+          </div>
         </div>
         <div className="flex items-center gap-3">
+          <a
+            href={`/api/clients/${id}/export`}
+            download
+            className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <Download size={15} />
+            Export CSV
+          </a>
           <Link
             href={`/clients/${id}/report`}
             target="_blank"
@@ -163,7 +184,7 @@ export default async function ClientDetailPage({
       )}
 
       {/* Pre/Post questionnaire summary */}
-      {sessionList.some((s) => s.preFocus != null || s.postFocus != null) && (
+      {sessionList.some((s) => s.preFocus != null || s.postFocus != null || s.preMood != null || s.preAnxiety != null) && (
         <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
           <h2 className="text-sm font-semibold text-gray-700 mb-4">
             Symptom Tracking (latest 5 sessions)
@@ -173,7 +194,7 @@ export default async function ClientDetailPage({
               <thead>
                 <tr className="text-gray-400 border-b border-gray-100">
                   <th className="text-left pb-2 font-medium">Date</th>
-                  {["Focus", "Mood", "Anxiety"].map((m) => (
+                  {["Focus", "Mood", "Anxiety", "Energy"].map((m) => (
                     <>
                       <th key={`pre-${m}`} className="text-center pb-2 font-medium text-gray-400">
                         Pre {m}
@@ -187,7 +208,7 @@ export default async function ClientDetailPage({
               </thead>
               <tbody>
                 {sessionList
-                  .filter((s) => s.preFocus != null || s.postFocus != null)
+                  .filter((s) => s.preFocus != null || s.postFocus != null || s.preMood != null || s.preAnxiety != null)
                   .slice(0, 5)
                   .map((s) => (
                     <tr key={s.id} className="border-b border-gray-50">
@@ -197,7 +218,8 @@ export default async function ClientDetailPage({
                       {[
                         [s.preFocus, s.postFocus],
                         [s.preMood, s.postMood],
-                        [null, null],
+                        [s.preAnxiety, s.postAnxiety],
+                        [s.preEnergy, s.postEnergy],
                       ].map(([pre, post], i) => (
                         <>
                           <td key={`pre-${i}`} className="text-center py-2 text-gray-500">
