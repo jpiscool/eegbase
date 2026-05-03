@@ -118,6 +118,38 @@ export default async function SessionDetailPage({
     : sessionQuality === "Fair" ? "text-amber-700 bg-amber-50 border-amber-200"
     : "text-red-700 bg-red-50 border-red-200";
 
+  // ── Narrative insights ────────────────────────────────────────────────────
+  const insights: string[] = [];
+  if (sessionQuality === "Excellent") {
+    insights.push(`Exceptional session — average reward of ${s.avgRewardScore!.toFixed(1)} indicates strong prefrontal engagement throughout.`);
+  } else if (sessionQuality === "Good") {
+    insights.push(`Good session — average reward of ${s.avgRewardScore!.toFixed(1)} with consistent activation above target.`);
+  } else if (sessionQuality === "Fair") {
+    insights.push(`Fair performance (avg reward ${s.avgRewardScore!.toFixed(1)}). Consider reviewing pre-session state or adjusting protocol parameters.`);
+  } else if (sessionQuality === "Below Target") {
+    insights.push(`Below-target session (avg reward ${s.avgRewardScore!.toFixed(1)}). Review protocol fit and whether baseline measurements are calibrated.`);
+  }
+  const focusDelta = s.preFocus != null && s.postFocus != null ? s.postFocus - s.preFocus : null;
+  const anxietyDelta = s.preAnxiety != null && s.postAnxiety != null ? s.postAnxiety - s.preAnxiety : null;
+  const moodDelta = s.preMood != null && s.postMood != null ? s.postMood - s.preMood : null;
+  const energyDelta = s.preEnergy != null && s.postEnergy != null ? s.postEnergy - s.preEnergy : null;
+  if (focusDelta != null && focusDelta > 0)
+    insights.push(`Focus improved by +${focusDelta} point${focusDelta !== 1 ? "s" : ""} (${s.preFocus} → ${s.postFocus}) — aligned with expected protocol outcome.`);
+  else if (focusDelta != null && focusDelta < 0)
+    insights.push(`Focus decreased by ${Math.abs(focusDelta)} post-session (${s.preFocus} → ${s.postFocus}). This may reflect normal post-effort fatigue.`);
+  if (anxietyDelta != null && anxietyDelta < 0)
+    insights.push(`Anxiety reduced by ${Math.abs(anxietyDelta)} point${Math.abs(anxietyDelta) !== 1 ? "s" : ""} post-session (${s.preAnxiety} → ${s.postAnxiety}).`);
+  else if (anxietyDelta != null && anxietyDelta > 0)
+    insights.push(`Anxiety increased post-session (${s.preAnxiety} → ${s.postAnxiety}). Follow up to assess session stress load.`);
+  if (moodDelta != null && Math.abs(moodDelta) >= 2)
+    insights.push(`Mood ${moodDelta > 0 ? `improved by +${moodDelta}` : `decreased by ${Math.abs(moodDelta)}`} post-session (${s.preMood} → ${s.postMood}).`);
+  if (energyDelta != null && energyDelta >= 2)
+    insights.push(`Energy improved by +${energyDelta} post-session (${s.preEnergy} → ${s.postEnergy}), suggesting positive arousal regulation.`);
+  if (s.durationSeconds != null && s.durationSeconds < 600) {
+    const actualMin = Math.round(s.durationSeconds / 60);
+    insights.push(`Session was ${actualMin} min — shorter than typical. A full 20-minute session is recommended for optimal neuroplasticity effects.`);
+  }
+
   // Check if we have fNIRS data
   const hasFNIRSData = dataPoints.some(
     (dp) => dp.oxyHbLeft != null || dp.oxyHbRight != null || dp.deoxyHbLeft != null || dp.deoxyHbRight != null
@@ -146,6 +178,38 @@ export default async function SessionDetailPage({
         gamma: dp.gamma ?? null,
       }))
     : [];
+
+  // fNIRS trend insight
+  if (hasFNIRSData && fnirsData.length > 10) {
+    const oxyVals = fnirsData.filter((d) => d.oxyHbLeft != null).map((d) => d.oxyHbLeft!);
+    if (oxyVals.length >= 10) {
+      const firstAvg = oxyVals.slice(0, 5).reduce((a, b) => a + b, 0) / 5;
+      const lastAvg = oxyVals.slice(-5).reduce((a, b) => a + b, 0) / 5;
+      if (lastAvg > firstAvg + 0.03)
+        insights.push("fNIRS shows an upward OxyHb trend — consistent with sustained prefrontal activation and engagement.");
+      else if (lastAvg < firstAvg - 0.03)
+        insights.push("fNIRS OxyHb declined toward session end, suggesting fatigue. Consider reducing session length.");
+    }
+  }
+
+  // EEG dominant band insight
+  if (hasBandData && bandData.length > 5) {
+    const avgBand = (key: keyof typeof bandData[0]) => {
+      const vals = bandData.filter((d) => d[key] != null).map((d) => d[key] as number);
+      return vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+    };
+    const bands = { delta: avgBand("delta"), theta: avgBand("theta"), alpha: avgBand("alpha"), beta: avgBand("beta"), gamma: avgBand("gamma") };
+    const dominant = (Object.entries(bands) as [string, number][]).sort((a, b) => b[1] - a[1])[0]?.[0];
+    const bandDescriptions: Record<string, string> = {
+      delta: "slow-wave delta activity dominance, typical in deeply relaxed or drowsy states",
+      theta: "theta dominance — associated with relaxed focus, creativity, and memory consolidation",
+      alpha: "alpha rhythm dominance — reflecting a calm, alert cognitive state",
+      beta: "beta dominance — indicating active processing and sustained task focus",
+      gamma: "high gamma activity — suggesting intensive cognitive engagement",
+    };
+    if (dominant && (bands as Record<string, number>)[dominant] > 0.05)
+      insights.push(`EEG shows ${bandDescriptions[dominant] ?? dominant}.`);
+  }
 
   return (
     <div className="max-w-3xl">
@@ -194,6 +258,24 @@ export default async function SessionDetailPage({
             {peakReward != null && <span>Peak: <strong>{peakReward.toFixed(1)}</strong></span>}
             <span>Samples: <strong>{dataPoints.length}</strong></span>
           </div>
+        </div>
+      )}
+
+      {/* Narrative insights */}
+      {insights.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Session Insights</h2>
+          </div>
+          <ul className="space-y-2">
+            {insights.map((text, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                <span className="mt-1.5 w-1 h-1 rounded-full bg-gray-300 shrink-0" />
+                {text}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
