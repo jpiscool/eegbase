@@ -103,6 +103,21 @@ export default async function SessionDetailPage({
       rewardScore: dp.rewardScore as number,
     }));
 
+  // Compute session insights
+  const rewardValues = rewardTrend.map((d) => d.rewardScore);
+  const peakReward = rewardValues.length > 0 ? Math.max(...rewardValues) : null;
+  const sessionQuality =
+    s.avgRewardScore == null ? null
+    : s.avgRewardScore >= 70 ? "Excellent"
+    : s.avgRewardScore >= 55 ? "Good"
+    : s.avgRewardScore >= 40 ? "Fair"
+    : "Below Target";
+  const qualityColor =
+    sessionQuality === "Excellent" ? "text-emerald-700 bg-emerald-50 border-emerald-200"
+    : sessionQuality === "Good" ? "text-blue-700 bg-blue-50 border-blue-200"
+    : sessionQuality === "Fair" ? "text-amber-700 bg-amber-50 border-amber-200"
+    : "text-red-700 bg-red-50 border-red-200";
+
   // Check if we have fNIRS data
   const hasFNIRSData = dataPoints.some(
     (dp) => dp.oxyHbLeft != null || dp.oxyHbRight != null || dp.deoxyHbLeft != null || dp.deoxyHbRight != null
@@ -166,6 +181,21 @@ export default async function SessionDetailPage({
           Export JSON
         </a>
       </div>
+
+      {/* Session quality banner */}
+      {sessionQuality && (
+        <div className={`flex items-center justify-between px-5 py-3 rounded-xl border mb-4 ${qualityColor}`}>
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-bold">{sessionQuality}</span>
+            <span className="text-xs opacity-70">session quality</span>
+          </div>
+          <div className="flex items-center gap-6 text-xs">
+            <span>Avg: <strong>{s.avgRewardScore!.toFixed(1)}</strong></span>
+            {peakReward != null && <span>Peak: <strong>{peakReward.toFixed(1)}</strong></span>}
+            <span>Samples: <strong>{dataPoints.length}</strong></span>
+          </div>
+        </div>
+      )}
 
       {/* Summary stats */}
       <div className="grid grid-cols-4 gap-4 mb-6">
