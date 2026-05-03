@@ -157,6 +157,24 @@ export const messages = pgTable("messages", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// ── CPT (Continuous Performance Test) Results ─────────────────────────────────
+export const cptResults = pgTable("cpt_results", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clientId: uuid("client_id")
+    .references(() => clients.id)
+    .notNull(),
+  administeredAt: timestamp("administered_at").defaultNow().notNull(),
+  durationSeconds: integer("duration_seconds").notNull(),
+  totalStimuli: integer("total_stimuli").notNull(),
+  targetCount: integer("target_count").notNull(),
+  hits: integer("hits").notNull(),
+  misses: integer("misses").notNull(),
+  falseAlarms: integer("false_alarms").notNull(),
+  avgReactionTimeMs: integer("avg_reaction_time_ms"),
+  accuracy: real("accuracy").notNull(),
+  notes: text("notes"),
+});
+
 // ── Symptom Check-ins (daily lifestyle tracking) ──────────────────────────────
 export const checkIns = pgTable("check_ins", {
   id: uuid("id").primaryKey().defaultRandom(),

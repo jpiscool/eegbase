@@ -57,6 +57,13 @@
       "when": 1777826395095,
       "tag": "0007_narrow_loki",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1777830006567,
+      "tag": "0008_wonderful_argent",
+      "breakpoints": true
     }
   ]
 }

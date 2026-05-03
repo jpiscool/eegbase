@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
-import { clients, sessions, assignments, protocols, goals } from "@/lib/db/schema";
+import { clients, sessions, assignments, protocols, goals, cptResults } from "@/lib/db/schema";
 import { eq, and, desc, avg, count } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -77,6 +77,14 @@ export default async function ClientDetailPage({
       .orderBy(goals.targetDate)
       .limit(3),
   ]);
+
+  // CPT history (last 5 assessments)
+  const cptHistory = await db
+    .select()
+    .from(cptResults)
+    .where(eq(cptResults.clientId, id))
+    .orderBy(desc(cptResults.administeredAt))
+    .limit(5);
 
   const assignedProtocol = activeAssignment[0]?.protocol ?? null;
   const overallAvg = avgReward[0]?.avg ? Number(avgReward[0].avg).toFixed(1) : null;
@@ -421,6 +429,55 @@ export default async function ClientDetailPage({
                       View →
                     </Link>
                   </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* CPT Assessment History */}
+      <div className="mt-5 bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h2 className="text-sm font-semibold text-gray-900">Cognitive Performance (CPT)</h2>
+          <Link
+            href={`/clients/${id}/cpt`}
+            className="text-xs font-semibold bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            + Run New Assessment
+          </Link>
+        </div>
+        {cptHistory.length === 0 ? (
+          <div className="px-6 py-8 text-center text-sm text-gray-400">
+            No assessments yet.{" "}
+            <Link href={`/clients/${id}/cpt`} className="text-blue-600 hover:underline">
+              Run the first CPT
+            </Link>{" "}
+            to establish a cognitive baseline.
+          </div>
+        ) : (
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50 border-b border-gray-100">
+              <tr>
+                <th className="text-left px-6 py-2.5 font-medium text-gray-500">Date</th>
+                <th className="text-left px-6 py-2.5 font-medium text-gray-500">Accuracy</th>
+                <th className="text-left px-6 py-2.5 font-medium text-gray-500">Avg RT</th>
+                <th className="text-left px-6 py-2.5 font-medium text-gray-500">Hits</th>
+                <th className="text-left px-6 py-2.5 font-medium text-gray-500">Misses</th>
+                <th className="text-left px-6 py-2.5 font-medium text-gray-500">False Alarms</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {cptHistory.map((c) => (
+                <tr key={c.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-3 text-gray-600">{new Date(c.administeredAt).toLocaleDateString()}</td>
+                  <td className={`px-6 py-3 font-semibold tabular-nums ${c.accuracy >= 80 ? "text-emerald-600" : c.accuracy >= 60 ? "text-amber-600" : "text-red-600"}`}>
+                    {c.accuracy.toFixed(1)}%
+                  </td>
+                  <td className="px-6 py-3 text-blue-600 tabular-nums">{c.avgReactionTimeMs != null ? `${c.avgReactionTimeMs} ms` : "—"}</td>
+                  <td className="px-6 py-3 text-emerald-600 tabular-nums">{c.hits}</td>
+                  <td className="px-6 py-3 text-amber-600 tabular-nums">{c.misses}</td>
+                  <td className="px-6 py-3 text-red-600 tabular-nums">{c.falseAlarms}</td>
                 </tr>
               ))}
             </tbody>
