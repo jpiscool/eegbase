@@ -105,6 +105,7 @@ export const sessions = pgTable("sessions", {
   postEnergy: smallint("post_energy"),
   postNotes: text("post_notes"),
   aiSummary: text("ai_summary"),
+  tags: text("tags").array(),  // clinician-assigned labels, e.g. ["baseline","week-4"]
 });
 
 // ── Session Data Points ───────────────────────────────────────────────────────

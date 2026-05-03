@@ -23,6 +23,7 @@ export default async function SessionsPage() {
       protocolName: protocols.name,
       preFocus: sessions.preFocus,
       postFocus: sessions.postFocus,
+      tags: sessions.tags,
     })
     .from(sessions)
     .innerJoin(clients, eq(sessions.clientId, clients.id))

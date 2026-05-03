@@ -11,6 +11,7 @@ import { BandPowerChart } from "@/components/BandPowerChart";
 import { FNIRSChart } from "@/components/FNIRSChart";
 import { DeleteSessionButton } from "@/components/DeleteSessionButton";
 import { AiInsightPanel } from "@/components/AiInsightPanel";
+import { SessionTagEditor } from "@/components/SessionTagEditor";
 
 function ScoreDelta({
   pre,
@@ -398,7 +399,7 @@ export default async function SessionDetailPage({
         </div>
       )}
 
-      {/* Notes */}
+      {/* Tags + Notes */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
         <h2 className="text-sm font-semibold text-gray-700 mb-3">Session Notes</h2>
         {s.postNotes && (
@@ -407,9 +408,12 @@ export default async function SessionDetailPage({
             <p className="text-sm text-gray-700 whitespace-pre-wrap">{s.postNotes}</p>
           </div>
         )}
-        <div>
+        <div className="mb-5">
           <p className="text-xs text-gray-400 font-medium mb-2">Clinical Notes</p>
           <SessionNotesEditor sessionId={s.id} initialNotes={s.notes ?? null} />
+        </div>
+        <div className="border-t border-gray-100 pt-5">
+          <SessionTagEditor sessionId={s.id} initialTags={s.tags ?? null} />
         </div>
       </div>
 

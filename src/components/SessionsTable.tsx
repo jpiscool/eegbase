@@ -48,6 +48,7 @@ interface SessionRow {
   protocolName: string | null;
   preFocus: number | null;
   postFocus: number | null;
+  tags?: string[] | null;
 }
 
 function fmtDuration(sec: number | null) {
@@ -87,7 +88,8 @@ export function SessionsTable({
     ? protocolFiltered.filter(
         (s) =>
           s.clientName.toLowerCase().includes(query.toLowerCase()) ||
-          (s.protocolName ?? "").toLowerCase().includes(query.toLowerCase())
+          (s.protocolName ?? "").toLowerCase().includes(query.toLowerCase()) ||
+          (s.tags ?? []).some((t) => t.includes(query.toLowerCase()))
       )
     : protocolFiltered;
 
@@ -182,6 +184,15 @@ export function SessionsTable({
                     >
                       {s.clientName}
                     </Link>
+                    {s.tags && s.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {s.tags.map((tag) => (
+                          <span key={tag} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </td>
                   <td className="px-5 py-3.5 text-gray-500">
                     {s.protocolName ?? <span className="text-gray-300">—</span>}

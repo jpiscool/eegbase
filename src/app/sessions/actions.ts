@@ -179,3 +179,26 @@ export async function updateSessionNotes(sessionId: string, notes: string) {
 
   revalidatePath(`/sessions/${sessionId}`);
 }
+
+export async function updateSessionTags(sessionId: string, tags: string[]) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const clinicId = (session.user as { clinicId?: string }).clinicId;
+  if (!clinicId) throw new Error("No clinic");
+
+  const [existing] = await db
+    .select({ id: sessions.id })
+    .from(sessions)
+    .innerJoin(clients, and(eq(sessions.clientId, clients.id), eq(clients.clinicId, clinicId)))
+    .where(eq(sessions.id, sessionId))
+    .limit(1);
+
+  if (!existing) throw new Error("Not found");
+
+  const cleaned = tags.map((t) => t.trim().toLowerCase()).filter(Boolean);
+  await db.update(sessions).set({ tags: cleaned.length ? cleaned : null }).where(eq(sessions.id, sessionId));
+
+  revalidatePath(`/sessions/${sessionId}`);
+  revalidatePath("/sessions");
+}
