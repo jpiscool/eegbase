@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { clients, sessions } from "@/lib/db/schema";
-import { eq, count, avg } from "drizzle-orm";
+import { eq, count, avg, max } from "drizzle-orm";
 import { AddClientModal } from "@/components/AddClientModal";
 import { ClientsTable } from "@/components/ClientsTable";
 
@@ -19,6 +19,7 @@ export default async function ClientsPage() {
       createdAt: clients.createdAt,
       sessionCount: count(sessions.id),
       avgRewardScore: avg(sessions.avgRewardScore),
+      lastSessionAt: max(sessions.startedAt),
     })
     .from(clients)
     .leftJoin(sessions, eq(sessions.clientId, clients.id))
