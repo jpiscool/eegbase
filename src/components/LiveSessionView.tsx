@@ -9,6 +9,7 @@ import { LiveChart } from "@/components/LiveChart";
 import { saveSession, type SamplePayload, type Questionnaire } from "@/app/sessions/actions";
 import Link from "next/link";
 import { ArrowLeft, Wifi, WifiOff, StopCircle, CheckCircle } from "lucide-react";
+import { RewardGauge } from "@/components/RewardGauge";
 
 function createAdapter(deviceType: string, params?: unknown): DeviceAdapter {
   if (deviceType === "mendi") return new MendiAdapter();
@@ -450,17 +451,14 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
       {(running || phase === "post") && (
         <>
           <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5 flex items-center gap-6">
-            <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                Reward Score
-              </p>
-              <p className={`text-6xl font-bold tabular-nums leading-none ${rewardColor}`}>
-                {rewardVal != null ? rewardVal.toFixed(1) : "—"}
-              </p>
-              <p className="text-xs text-gray-400 mt-1">out of 100</p>
+            <div className="shrink-0">
+              <RewardGauge score={rewardVal ?? null} />
             </div>
             <div className="flex-1">
-              <LiveChart data={reward.data} color="#2563EB" label="Reward score · last 60s" height={76} />
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                Reward Score · Last 60s
+              </p>
+              <LiveChart data={reward.data} color="#2563EB" label="" height={100} />
             </div>
           </div>
 
