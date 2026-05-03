@@ -154,12 +154,18 @@ export default function DemoPage() {
                 {[
                   "fNIRS OxyHb/DeoxyHb visualization",
                   "EEG band power (θ α β δ γ)",
-                  "Real-time reward score",
+                  "Real-time reward score gauge",
+                  "AI session & progress summaries",
                   "Pre/post session questionnaires",
                   "Client roster & progress tracking",
-                  "Symptom trend charts",
+                  "Reward score trajectory sparklines",
+                  "Session tagging + search",
+                  "Treatment goals tracking",
+                  "Outbound webhooks (session events)",
+                  "Public client share reports",
+                  "Session comparison (A vs B overlay)",
                   "Clinical notes with autosave",
-                  "CSV + JSON data export",
+                  "JSON + CSV data export",
                   "Cmd+K global search",
                   "Protocol template library",
                 ].map((f) => (
@@ -273,7 +279,7 @@ export default function DemoPage() {
 
             {/* Footer note */}
             <div style={{ textAlign: "center", fontSize: "0.8rem", color: "#94A3B8" }}>
-              Simulated data · Mendi integration pending API access ·{" "}
+              Simulated data · Mendi BLE adapter built — UUIDs confirmed post-May 11 call ·{" "}
               <a href="https://eegbase.com" style={{ color: "#2563EB" }}>eegbase.com</a>{" "}
               ·{" "}
               <a href="https://github.com/trainbase/eegbase" style={{ color: "#2563EB" }}>github.com/trainbase/eegbase</a>
