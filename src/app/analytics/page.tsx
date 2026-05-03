@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { clients, sessions, protocols, assignments } from "@/lib/db/schema";
-import { eq, and, gte, count, avg, desc } from "drizzle-orm";
+import { eq, and, gte, count, avg, desc, asc } from "drizzle-orm";
 import Link from "next/link";
 import { BarChart3, Users, TrendingUp, Calendar } from "lucide-react";
 
@@ -63,6 +63,7 @@ export default async function AnalyticsPage() {
     deviceStats,
     questionnaireSessions,
     clientEngagement,
+    rewardTrajectoryRaw,
   ] = await Promise.all([
     // All-time totals
     db
@@ -133,6 +134,19 @@ export default async function AnalyticsPage() {
       .groupBy(clients.id, clients.name)
       .orderBy(desc(count(sessions.id)))
       .limit(10),
+
+    // Reward trajectory — all sessions with scores from last 6 months, ordered by date
+    db
+      .select({
+        clientId: sessions.clientId,
+        clientName: clients.name,
+        startedAt: sessions.startedAt,
+        avgRewardScore: sessions.avgRewardScore,
+      })
+      .from(sessions)
+      .innerJoin(clients, eq(sessions.clientId, clients.id))
+      .where(and(eq(clients.clinicId, clinicId), gte(sessions.startedAt, sixMonthsAgo)))
+      .orderBy(asc(sessions.startedAt)),
   ]);
 
   const totalSessions = Number(allTimeSessions[0]?.count ?? 0);
@@ -177,6 +191,28 @@ export default async function AnalyticsPage() {
 
   // ── Device breakdown ─────────────────────────────────────────────────────────
   const totalDeviceSessions = deviceStats.reduce((a, d) => a + Number(d.sessionCount), 0) || 1;
+
+  // ── Reward trajectory per client ─────────────────────────────────────────────
+  // Group sessions by client, compute first-3 avg, last-3 avg, and sparkline points
+  const trajectoryMap = new Map<string, { name: string; points: number[] }>();
+  for (const row of rewardTrajectoryRaw) {
+    if (row.avgRewardScore == null) continue;
+    const key = row.clientId;
+    if (!trajectoryMap.has(key)) {
+      trajectoryMap.set(key, { name: row.clientName, points: [] });
+    }
+    trajectoryMap.get(key)!.points.push(Number(row.avgRewardScore));
+  }
+  const trajectoryClients = Array.from(trajectoryMap.entries())
+    .filter(([, v]) => v.points.length >= 3)
+    .map(([clientId, { name, points }]) => {
+      const firstAvg = points.slice(0, 3).reduce((a, b) => a + b, 0) / 3;
+      const lastAvg = points.slice(-3).reduce((a, b) => a + b, 0) / 3;
+      const delta = lastAvg - firstAvg;
+      return { clientId, name, points, firstAvg, lastAvg, delta };
+    })
+    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta)) // biggest movers first
+    .slice(0, 6);
 
   const hasData = totalSessions > 0;
 
@@ -390,6 +426,68 @@ export default async function AnalyticsPage() {
               </div>
             </div>
           </div>
+
+          {/* ── Reward Score Trajectory ──────────────────────────────────── */}
+          {trajectoryClients.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
+              <div className="flex items-center gap-2 mb-1">
+                <TrendingUp size={15} className="text-emerald-600" />
+                <h2 className="text-sm font-semibold text-gray-700">Reward Score Trajectory</h2>
+              </div>
+              <p className="text-xs text-gray-400 mb-5">
+                First 3 sessions avg vs. last 3 sessions avg · clients with ≥ 3 sessions in the last 6 months · sorted by largest change
+              </p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                {trajectoryClients.map(({ clientId, name, points, firstAvg, lastAvg, delta }) => {
+                  const sparkMax = Math.max(...points, 1);
+                  const improved = delta >= 0;
+                  return (
+                    <div key={clientId} className="border border-gray-100 rounded-xl p-4 hover:border-gray-200 transition-colors">
+                      <div className="flex items-start justify-between gap-2 mb-3">
+                        <Link href={`/clients/${clientId}`} className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors truncate">
+                          {name}
+                        </Link>
+                        <span
+                          className={`shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${
+                            improved ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"
+                          }`}
+                        >
+                          {delta >= 0 ? "+" : ""}{delta.toFixed(1)}
+                        </span>
+                      </div>
+
+                      {/* SVG sparkline */}
+                      <svg viewBox={`0 0 ${points.length * 10} 30`} className="w-full h-8 mb-2" preserveAspectRatio="none">
+                        <polyline
+                          points={points.map((v, i) => `${i * 10 + 5},${30 - (v / sparkMax) * 26}`).join(" ")}
+                          fill="none"
+                          stroke={improved ? "#059669" : "#DC2626"}
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        {points.map((v, i) => (
+                          <circle
+                            key={i}
+                            cx={i * 10 + 5}
+                            cy={30 - (v / sparkMax) * 26}
+                            r="2"
+                            fill={improved ? "#059669" : "#DC2626"}
+                          />
+                        ))}
+                      </svg>
+
+                      <div className="flex items-center justify-between text-xs text-gray-400">
+                        <span>First avg <strong style={{ color: scoreColor(firstAvg) }}>{firstAvg.toFixed(1)}</strong></span>
+                        <span>{points.length} sessions</span>
+                        <span>Recent avg <strong style={{ color: scoreColor(lastAvg) }}>{lastAvg.toFixed(1)}</strong></span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* ── Questionnaire Improvement + Client Engagement ────────────── */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
