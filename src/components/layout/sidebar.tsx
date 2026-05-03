@@ -12,6 +12,7 @@ import {
   Search,
   BarChart3,
   Bluetooth,
+  FileText,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { SignOutButton } from "./SignOutButton";
@@ -23,6 +24,7 @@ const nav = [
   { href: "/analytics", label: "Analytics", icon: BarChart3, badge: null as string | null },
   { href: "/protocols", label: "Protocols", icon: BookOpen, badge: null as string | null },
   { href: "/devices", label: "Devices", icon: Bluetooth, badge: null as string | null },
+  { href: "/docs", label: "API Docs", icon: FileText, badge: null as string | null },
   { href: "/settings", label: "Settings", icon: Settings, badge: null as string | null },
 ];
 
