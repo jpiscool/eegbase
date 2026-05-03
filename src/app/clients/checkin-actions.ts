@@ -16,8 +16,12 @@ export async function logCheckIn(formData: FormData) {
     return isNaN(v) ? null : v;
   };
 
+  const dateStr = (formData.get("date") as string)?.trim();
+  const date = dateStr ? new Date(dateStr + "T12:00:00") : new Date();
+
   await db.insert(checkIns).values({
     clientId,
+    date,
     sleepHours: get("sleepHours"),
     sleepQuality: get("sleepQuality") as number,
     mood: get("mood") as number,

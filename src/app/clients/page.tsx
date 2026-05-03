@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { clients, sessions } from "@/lib/db/schema";
-import { eq, count } from "drizzle-orm";
+import { eq, count, avg } from "drizzle-orm";
 import { AddClientModal } from "@/components/AddClientModal";
 import { ClientsTable } from "@/components/ClientsTable";
 
@@ -9,7 +9,6 @@ export default async function ClientsPage() {
   const session = await auth();
   const clinicId = (session?.user as { clinicId?: string })?.clinicId ?? "";
 
-  // Fetch clients with session counts in one query
   const clientList = await db
     .select({
       id: clients.id,
@@ -19,6 +18,7 @@ export default async function ClientsPage() {
       active: clients.active,
       createdAt: clients.createdAt,
       sessionCount: count(sessions.id),
+      avgRewardScore: avg(sessions.avgRewardScore),
     })
     .from(clients)
     .leftJoin(sessions, eq(sessions.clientId, clients.id))

@@ -1,7 +1,47 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updateProfile, changePassword } from "./actions";
+import { updateProfile, changePassword, updateClinicName } from "./actions";
+
+export function ClinicNameForm({ currentName }: { currentName: string }) {
+  const [pending, startTransition] = useTransition();
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [msg, setMsg] = useState("");
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    startTransition(async () => {
+      const res = await updateClinicName(fd);
+      if (res?.error) { setStatus("error"); setMsg(res.error); }
+      else { setStatus("success"); setMsg("Clinic name updated."); }
+    });
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Clinic Name</label>
+        <input
+          name="clinicName"
+          defaultValue={currentName}
+          required
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      {status !== "idle" && (
+        <p className={`text-sm ${status === "success" ? "text-emerald-600" : "text-red-500"}`}>{msg}</p>
+      )}
+      <button
+        type="submit"
+        disabled={pending}
+        className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+      >
+        {pending ? "Saving…" : "Save"}
+      </button>
+    </form>
+  );
+}
 
 export function ProfileForm({ name, email }: { name: string; email: string }) {
   const [pending, startTransition] = useTransition();

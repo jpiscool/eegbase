@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { clients, sessions, assignments, protocols } from "@/lib/db/schema";
-import { eq, and, desc, avg } from "drizzle-orm";
+import { eq, and, desc, avg, count } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Play, MessageSquare, ClipboardList, FileText, Download } from "lucide-react";
@@ -27,7 +27,7 @@ export default async function ClientDetailPage({
 
   if (!client) notFound();
 
-  const [sessionList, activeAssignment, protocolList, avgReward] = await Promise.all([
+  const [sessionList, activeAssignment, protocolList, avgReward, totalSessionsRow] = await Promise.all([
     db
       .select({
         id: sessions.id,
@@ -63,10 +63,15 @@ export default async function ClientDetailPage({
       .select({ avg: avg(sessions.avgRewardScore) })
       .from(sessions)
       .where(eq(sessions.clientId, id)),
+    db
+      .select({ count: count() })
+      .from(sessions)
+      .where(eq(sessions.clientId, id)),
   ]);
 
   const assignedProtocol = activeAssignment[0]?.protocol ?? null;
   const overallAvg = avgReward[0]?.avg ? Number(avgReward[0].avg).toFixed(1) : null;
+  const totalSessions = Number(totalSessionsRow[0]?.count ?? 0);
 
   // Build trend data for chart (oldest → newest, max 30 sessions)
   const trendData = [...sessionList]
@@ -163,7 +168,7 @@ export default async function ClientDetailPage({
         {/* Stats */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <p className="text-xs font-medium text-gray-500 mb-1">Total Sessions</p>
-          <p className="text-3xl font-bold text-gray-900">{sessionList.length}</p>
+          <p className="text-3xl font-bold text-gray-900">{totalSessions}</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <p className="text-xs font-medium text-gray-500 mb-1">Avg Reward Score</p>

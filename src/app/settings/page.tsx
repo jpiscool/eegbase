@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { clinicians, clinics } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { ProfileForm, PasswordForm } from "./SettingsForms";
+import { ProfileForm, PasswordForm, ClinicNameForm } from "./SettingsForms";
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -29,11 +29,7 @@ export default async function SettingsPage() {
       {/* Clinic info */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
         <h2 className="text-base font-semibold text-gray-900 mb-4">Clinic</h2>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <p className="text-xs text-gray-400 font-medium mb-0.5">Clinic Name</p>
-            <p className="text-gray-900 font-medium">{clinic?.name ?? "—"}</p>
-          </div>
+        <div className="grid grid-cols-2 gap-4 text-sm mb-5">
           <div>
             <p className="text-xs text-gray-400 font-medium mb-0.5">Your Role</p>
             <p className="text-gray-900 font-medium capitalize">{clinician?.role ?? "—"}</p>
@@ -48,6 +44,10 @@ export default async function SettingsPage() {
             <p className="text-xs text-gray-400 font-medium mb-0.5">Clinic ID</p>
             <p className="text-gray-400 font-mono text-xs truncate">{clinicId}</p>
           </div>
+        </div>
+        <div className="border-t border-gray-100 pt-5">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Clinic Name</p>
+          <ClinicNameForm currentName={clinic?.name ?? ""} />
         </div>
       </div>
 

@@ -2,10 +2,26 @@
 
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
-import { clinicians } from "@/lib/db/schema";
+import { clinicians, clinics } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
+
+export async function updateClinicName(formData: FormData) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const clinicId = (session.user as { clinicId?: string }).clinicId;
+  if (!clinicId) return { error: "No clinic" };
+
+  const name = (formData.get("clinicName") as string).trim();
+  if (!name) return { error: "Clinic name is required" };
+
+  await db.update(clinics).set({ name }).where(eq(clinics.id, clinicId));
+
+  revalidatePath("/settings");
+  return { success: true };
+}
 
 export async function updateProfile(formData: FormData) {
   const session = await auth();

@@ -37,6 +37,17 @@ export function CheckInForm({ clientId }: { clientId: string }) {
       <form onSubmit={handleSubmit} className="space-y-4">
         <input type="hidden" name="clientId" value={clientId} />
 
+        {/* Date */}
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-1">Date</label>
+          <input
+            name="date"
+            type="date"
+            defaultValue={new Date().toISOString().split("T")[0]}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
         {/* Sleep hours */}
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">

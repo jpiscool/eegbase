@@ -11,6 +11,7 @@ interface ClientRow {
   active: boolean;
   createdAt: Date;
   sessionCount: number;
+  avgRewardScore: string | null;
 }
 
 type StatusFilter = "active" | "all" | "inactive";
@@ -89,6 +90,7 @@ export function ClientsTable({ clients }: { clients: ClientRow[] }) {
               <th className="text-left px-5 py-3 font-medium text-gray-500">Name</th>
               <th className="text-left px-5 py-3 font-medium text-gray-500">Goals</th>
               <th className="text-left px-5 py-3 font-medium text-gray-500">Sessions</th>
+              <th className="text-left px-5 py-3 font-medium text-gray-500">Avg Reward</th>
               <th className="text-left px-5 py-3 font-medium text-gray-500">Email</th>
               <th className="text-left px-5 py-3 font-medium text-gray-500">Added</th>
               <th className="text-left px-5 py-3 font-medium text-gray-500">Status</th>
@@ -97,7 +99,7 @@ export function ClientsTable({ clients }: { clients: ClientRow[] }) {
           <tbody className="divide-y divide-gray-100">
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-5 py-12 text-center text-gray-400">
+                <td colSpan={7} className="px-5 py-12 text-center text-gray-400">
                   {query ? `No clients match "${query}".` : "No clients yet. Click \"Add Client\" to get started."}
                 </td>
               </tr>
@@ -120,6 +122,19 @@ export function ClientsTable({ clients }: { clients: ClientRow[] }) {
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
                       {client.sessionCount} session{client.sessionCount !== 1 ? "s" : ""}
                     </span>
+                  </td>
+                  <td className="px-5 py-3.5">
+                    {client.avgRewardScore != null ? (
+                      <span className={`text-sm font-semibold ${
+                        Number(client.avgRewardScore) >= 70 ? "text-emerald-600"
+                        : Number(client.avgRewardScore) >= 40 ? "text-amber-600"
+                        : "text-red-500"
+                      }`}>
+                        {Number(client.avgRewardScore).toFixed(1)}
+                      </span>
+                    ) : (
+                      <span className="text-gray-300">—</span>
+                    )}
                   </td>
                   <td className="px-5 py-3.5 text-gray-500">{client.email ?? "—"}</td>
                   <td className="px-5 py-3.5 text-gray-500">

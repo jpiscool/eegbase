@@ -8,6 +8,7 @@ import {
   Activity,
   BookOpen,
   Settings,
+  Play,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { SignOutButton } from "./SignOutButton";
@@ -34,6 +35,13 @@ export function Sidebar({ userName, userEmail }: { userName?: string; userEmail?
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-1">
+        <Link
+          href="/sessions/live"
+          className="flex items-center gap-2 w-full px-3 py-2 mb-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Play size={15} />
+          Start Session
+        </Link>
         {nav.map(({ href, label, icon: Icon }) => (
           <Link
             key={href}
