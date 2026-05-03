@@ -188,6 +188,7 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
   const [preQ, setPreQ] = useState<Questionnaire>(defaultQ());
   const [postQ, setPostQ] = useState<Questionnaire>(defaultQ());
   const [postNotes, setPostNotes] = useState("");
+  const [liveNotes, setLiveNotes] = useState("");
 
   const reward = useSlidingWindow(MAX_POINTS);
   const oxyL = useSlidingWindow(MAX_POINTS);
@@ -274,12 +275,13 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
         samples: allSamplesRef.current,
         preSession: preQ,
         postSession: { ...postQ, notes: postNotes || undefined },
+        clinicalNotes: liveNotes.trim() || undefined,
       });
       router.push(`/sessions/${sessionId}`);
     } finally {
       setSaving(false);
     }
-  }, [selectedClientId, selectedProtocolId, preQ, postQ, postNotes, router]);
+  }, [selectedClientId, selectedProtocolId, preQ, postQ, postNotes, liveNotes, router]);
 
   useEffect(() => () => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -483,6 +485,23 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
               <LiveChart data={beta.data} color="#EC4899" label="Beta power" height={84} />
             </div>
           </div>
+
+          {/* Live observation notes (clinician-only, visible during session) */}
+          {running && (
+            <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                Clinical Observation Notes
+              </label>
+              <textarea
+                value={liveNotes}
+                onChange={(e) => setLiveNotes(e.target.value)}
+                placeholder="Type real-time observations (e.g. 'client seems distracted at 5:00', 'technique shifted')…"
+                rows={3}
+                className="w-full text-sm text-gray-700 border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none placeholder:text-gray-300"
+              />
+              <p className="text-xs text-gray-400 mt-1">Saved as clinical notes when you end the session.</p>
+            </div>
+          )}
 
           <div className="bg-white rounded-xl border border-gray-200 px-6 py-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center text-sm">
             {[

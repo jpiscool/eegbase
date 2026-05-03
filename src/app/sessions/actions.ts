@@ -35,6 +35,7 @@ export async function saveSession(data: {
   samples: SamplePayload[];
   preSession?: Questionnaire;
   postSession?: Questionnaire & { notes?: string };
+  clinicalNotes?: string;
 }): Promise<string> {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -65,6 +66,7 @@ export async function saveSession(data: {
       postMood: data.postSession?.mood,
       postAnxiety: data.postSession?.anxiety,
       postEnergy: data.postSession?.energy,
+      notes: data.clinicalNotes || undefined,
       postNotes: data.postSession?.notes,
     })
     .returning({ id: sessions.id });
