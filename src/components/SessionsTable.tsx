@@ -3,6 +3,37 @@ import { useState } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
 
+function Sparkline({ data }: { data: number[] }) {
+  if (data.length < 2) return null;
+  const W = 64, H = 24, pad = 2;
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  const pts = data.map((v, i) => {
+    const x = pad + (i / (data.length - 1)) * (W - pad * 2);
+    const y = H - pad - ((v - min) / range) * (H - pad * 2);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  const last = data[data.length - 1];
+  const dotColor = last >= 70 ? "#059669" : last >= 40 ? "#D97706" : "#DC2626";
+  const lineColor = last >= 70 ? "#10B981" : last >= 40 ? "#F59E0B" : "#EF4444";
+  const [lx, ly] = pts[pts.length - 1].split(",").map(Number);
+  return (
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="overflow-visible">
+      <polyline
+        points={pts.join(" ")}
+        fill="none"
+        stroke={lineColor}
+        strokeWidth={1.5}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        opacity={0.7}
+      />
+      <circle cx={lx} cy={ly} r={2.5} fill={dotColor} />
+    </svg>
+  );
+}
+
 type DeviceFilter = "all" | "mendi" | "simulator";
 type ProtocolFilter = "all" | string;
 
@@ -24,7 +55,13 @@ function fmtDuration(sec: number | null) {
   return `${Math.floor(sec / 60)}m ${sec % 60}s`;
 }
 
-export function SessionsTable({ sessions }: { sessions: SessionRow[] }) {
+export function SessionsTable({
+  sessions,
+  sparklines = {},
+}: {
+  sessions: SessionRow[];
+  sparklines?: Record<string, number[]>;
+}) {
   const [query, setQuery] = useState("");
   const [deviceFilter, setDeviceFilter] = useState<DeviceFilter>("all");
   const [protocolFilter, setProtocolFilter] = useState<ProtocolFilter>("all");
@@ -120,6 +157,7 @@ export function SessionsTable({ sessions }: { sessions: SessionRow[] }) {
               <th className="text-left px-5 py-3 font-medium text-gray-500">Protocol</th>
               <th className="text-left px-5 py-3 font-medium text-gray-500">Date</th>
               <th className="text-left px-5 py-3 font-medium text-gray-500">Duration</th>
+              <th className="text-left px-5 py-3 font-medium text-gray-500">Trend</th>
               <th className="text-left px-5 py-3 font-medium text-gray-500">Avg Reward</th>
               <th className="text-left px-5 py-3 font-medium text-gray-500">Focus Δ</th>
               <th className="px-5 py-3" />
@@ -128,7 +166,7 @@ export function SessionsTable({ sessions }: { sessions: SessionRow[] }) {
           <tbody className="divide-y divide-gray-100">
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-5 py-12 text-center text-gray-400">
+                <td colSpan={8} className="px-5 py-12 text-center text-gray-400">
                   {query
                     ? `No sessions match "${query}".`
                     : <>No sessions recorded yet.{" "}<Link href="/sessions/live" className="text-blue-600 hover:underline">Start a live session</Link> to begin.</>}
@@ -158,6 +196,9 @@ export function SessionsTable({ sessions }: { sessions: SessionRow[] }) {
                     </span>
                   </td>
                   <td className="px-5 py-3.5 text-gray-500">{fmtDuration(s.durationSeconds)}</td>
+                  <td className="px-5 py-3.5">
+                    <Sparkline data={sparklines[s.id] ?? []} />
+                  </td>
                   <td className="px-5 py-3.5">
                     {s.avgRewardScore != null ? (
                       <span

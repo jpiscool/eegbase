@@ -1,7 +1,8 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
-import { sessions, clients, protocols } from "@/lib/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { sessions, clients, protocols, sessionDataPoints } from "@/lib/db/schema";
+import { eq, desc, inArray, and, isNotNull } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import Link from "next/link";
 import { Play, Download } from "lucide-react";
 import { SessionsTable } from "@/components/SessionsTable";
@@ -29,6 +30,37 @@ export default async function SessionsPage() {
     .where(eq(clients.clinicId, clinicId))
     .orderBy(desc(sessions.startedAt))
     .limit(200);
+
+  // Fetch downsampled reward scores for sparklines (1 point per 90s bucket)
+  const sparklineMap = new Map<string, number[]>();
+  if (sessionList.length > 0) {
+    const ids = sessionList.map((s) => s.id);
+    const rows = await db
+      .select({
+        sessionId: sessionDataPoints.sessionId,
+        bucket: sql<number>`floor(${sessionDataPoints.timestampMs} / 90000)`.as("bucket"),
+        avg: sql<number>`avg(${sessionDataPoints.rewardScore})`.as("avg"),
+      })
+      .from(sessionDataPoints)
+      .where(
+        and(
+          inArray(sessionDataPoints.sessionId, ids),
+          isNotNull(sessionDataPoints.rewardScore)
+        )
+      )
+      .groupBy(sessionDataPoints.sessionId, sql`floor(${sessionDataPoints.timestampMs} / 90000)`)
+      .orderBy(sessionDataPoints.sessionId, sql`floor(${sessionDataPoints.timestampMs} / 90000)`);
+
+    for (const row of rows) {
+      const arr = sparklineMap.get(row.sessionId) ?? [];
+      arr.push(Number(row.avg));
+      sparklineMap.set(row.sessionId, arr);
+    }
+  }
+
+  const sparklines = Object.fromEntries(
+    sessionList.map((s) => [s.id, sparklineMap.get(s.id) ?? []])
+  );
 
   return (
     <div>
@@ -60,7 +92,7 @@ export default async function SessionsPage() {
         </div>
       </div>
 
-      <SessionsTable sessions={sessionList} />
+      <SessionsTable sessions={sessionList} sparklines={sparklines} />
     </div>
   );
 }
