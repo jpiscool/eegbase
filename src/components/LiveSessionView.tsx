@@ -226,6 +226,9 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
     setPhase("post");
   }, []);
 
+  const elapsedRef = useRef(0);
+  useEffect(() => { elapsedRef.current = elapsed; }, [elapsed]);
+
   const handleSave = useCallback(async () => {
     if (!selectedClientId) return;
     setSaving(true);
@@ -235,7 +238,7 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
         protocolId: selectedProtocolId || null,
         deviceType: "simulator",
         startedAt: startedAtRef.current,
-        durationSeconds: Math.round(allSamplesRef.current.length),
+        durationSeconds: elapsedRef.current,
         samples: allSamplesRef.current,
         preSession: preQ,
         postSession: { ...postQ, notes: postNotes || undefined },

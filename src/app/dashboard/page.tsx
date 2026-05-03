@@ -15,7 +15,7 @@ export default async function DashboardPage() {
 
   const [clientRows, sessionRows, protocolRows, avgScoreRows, recentSessions, last30Sessions] =
     await Promise.all([
-      db.select({ count: count() }).from(clients).where(eq(clients.clinicId, clinicId)),
+      db.select({ count: count() }).from(clients).where(and(eq(clients.clinicId, clinicId), eq(clients.active, true))),
       db
         .select({ count: count() })
         .from(sessions)

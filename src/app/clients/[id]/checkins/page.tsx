@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { CheckInForm } from "@/components/CheckInForm";
+import { CheckInTrendChart } from "@/components/CheckInTrendChart";
 
 export default async function CheckInsPage({
   params,
@@ -46,6 +47,24 @@ export default async function CheckInsPage({
           <p className="text-sm text-gray-500">Lifestyle & symptom tracking</p>
         </div>
       </div>
+
+      {checkInList.length > 1 && (
+        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+          <h2 className="text-sm font-semibold text-gray-700 mb-4">
+            Symptom Trends · Last {checkInList.length} check-ins
+          </h2>
+          <CheckInTrendChart
+            data={[...checkInList].reverse().map((c) => ({
+              date: new Date(c.date),
+              mood: c.mood,
+              anxiety: c.anxiety,
+              focus: c.focus,
+              energy: c.energy,
+              sleepQuality: c.sleepQuality,
+            }))}
+          />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Log a check-in */}

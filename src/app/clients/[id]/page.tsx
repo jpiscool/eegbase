@@ -94,11 +94,20 @@ export default async function ClientDetailPage({
                 email: client.email ?? null,
                 notes: client.notes ?? null,
                 goals: client.goals ?? null,
+                dateOfBirth: client.dateOfBirth ?? null,
               }}
             />
           </div>
           <p className="text-sm text-gray-500 flex items-center gap-3">
-            <span>{client.email ?? "No email"} · Added {new Date(client.createdAt).toLocaleDateString()}</span>
+            <span>
+              {client.email ?? "No email"} · Added {new Date(client.createdAt).toLocaleDateString()}
+              {client.dateOfBirth && (() => {
+                const dob = new Date(client.dateOfBirth!);
+                const ageDiff = Date.now() - dob.getTime();
+                const age = Math.floor(ageDiff / (365.25 * 24 * 60 * 60 * 1000));
+                return ` · Age ${age}`;
+              })()}
+            </span>
             {!client.active && (
               <span className="px-2 py-0.5 text-xs font-medium bg-red-50 text-red-600 rounded-full border border-red-100">
                 Inactive

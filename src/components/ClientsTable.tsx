@@ -13,31 +13,72 @@ interface ClientRow {
   sessionCount: number;
 }
 
+type StatusFilter = "active" | "all" | "inactive";
+
 export function ClientsTable({ clients }: { clients: ClientRow[] }) {
   const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("active");
+
+  const statusFiltered =
+    statusFilter === "all"
+      ? clients
+      : clients.filter((c) => (statusFilter === "active" ? c.active : !c.active));
 
   const filtered = query.trim()
-    ? clients.filter(
+    ? statusFiltered.filter(
         (c) =>
           c.name.toLowerCase().includes(query.toLowerCase()) ||
           (c.email ?? "").toLowerCase().includes(query.toLowerCase()) ||
           (c.goals ?? "").toLowerCase().includes(query.toLowerCase())
       )
-    : clients;
+    : statusFiltered;
+
+  const activeCount = clients.filter((c) => c.active).length;
+  const inactiveCount = clients.filter((c) => !c.active).length;
 
   return (
     <div>
-      {/* Search bar */}
+      {/* Status filter tabs + search */}
       {clients.length > 0 && (
-        <div className="relative mb-4">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search clients by name, email, or goals…"
-            className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-          />
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center bg-gray-100 rounded-lg p-0.5 text-sm">
+            {(
+              [
+                ["active", "Active", activeCount],
+                ["all", "All", clients.length],
+                ["inactive", "Inactive", inactiveCount],
+              ] as [StatusFilter, string, number][]
+            ).map(([value, label, count]) => (
+              <button
+                key={value}
+                onClick={() => setStatusFilter(value)}
+                className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
+                  statusFilter === value
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                {label}
+                <span
+                  className={`ml-1.5 text-xs ${
+                    statusFilter === value ? "text-gray-500" : "text-gray-400"
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            ))}
+          </div>
+          <div className="relative flex-1">
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by name, email, or goals…"
+              className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+            />
+          </div>
         </div>
       )}
 
@@ -102,7 +143,7 @@ export function ClientsTable({ clients }: { clients: ClientRow[] }) {
         </table>
       </div>
 
-      {query && filtered.length > 0 && (
+      {(query || statusFilter !== "all") && filtered.length > 0 && (
         <p className="text-xs text-gray-400 mt-2 text-right">
           {filtered.length} of {clients.length} client{clients.length !== 1 ? "s" : ""}
         </p>

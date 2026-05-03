@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { SessionNotesEditor } from "@/components/SessionNotesEditor";
 import { SessionReplayChart } from "@/components/SessionReplayChart";
+import { DeleteSessionButton } from "@/components/DeleteSessionButton";
 
 function ScoreDelta({
   pre,
@@ -245,6 +246,15 @@ export default async function SessionDetailPage({
             <p className="text-gray-400 font-mono text-xs truncate">{s.id}</p>
           </div>
         </div>
+      </div>
+
+      {/* Danger zone */}
+      <div className="bg-white rounded-xl border border-red-100 p-5 flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-700">Delete Session</p>
+          <p className="text-xs text-gray-400 mt-0.5">Permanently removes this session and all its data.</p>
+        </div>
+        <DeleteSessionButton sessionId={s.id} clientId={row.clientId} />
       </div>
     </div>
   );

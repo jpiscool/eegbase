@@ -17,6 +17,8 @@ export async function addClient(formData: FormData) {
   const email = (formData.get("email") as string).trim() || null;
   const goals = (formData.get("goals") as string).trim() || null;
   const notes = (formData.get("notes") as string).trim() || null;
+  const dobStr = (formData.get("dateOfBirth") as string).trim() || null;
+  const dateOfBirth = dobStr ? new Date(dobStr) : null;
 
   if (!name) throw new Error("Client name is required");
 
@@ -27,6 +29,7 @@ export async function addClient(formData: FormData) {
     email,
     goals,
     notes,
+    ...(dateOfBirth ? { dateOfBirth } : {}),
   });
 
   redirect("/clients");
@@ -62,6 +65,8 @@ export async function updateClient(formData: FormData) {
   const email = (formData.get("email") as string).trim() || null;
   const notes = (formData.get("notes") as string).trim() || null;
   const goals = (formData.get("goals") as string).trim() || null;
+  const dobStr = (formData.get("dateOfBirth") as string)?.trim() || null;
+  const dateOfBirth = dobStr ? new Date(dobStr) : null;
 
   if (!name || !id) throw new Error("Missing required fields");
 
@@ -74,7 +79,7 @@ export async function updateClient(formData: FormData) {
 
   if (!existing) throw new Error("Not found");
 
-  await db.update(clients).set({ name, email, notes, goals }).where(eq(clients.id, id));
+  await db.update(clients).set({ name, email, notes, goals, dateOfBirth }).where(eq(clients.id, id));
 
   revalidatePath(`/clients/${id}`);
   revalidatePath("/clients");
