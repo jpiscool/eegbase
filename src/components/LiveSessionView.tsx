@@ -17,6 +17,7 @@ interface Props {
   clients: Client[];
   protocols: Protocol[];
   defaultClientId?: string;
+  defaultProtocolId?: string;
 }
 
 type Phase = "pre" | "running" | "post";
@@ -149,7 +150,7 @@ function QuestionnairePanel({
   );
 }
 
-export function LiveSessionView({ clients, protocols, defaultClientId }: Props) {
+export function LiveSessionView({ clients, protocols, defaultClientId, defaultProtocolId }: Props) {
   const router = useRouter();
   const adapterRef = useRef<SimulatorAdapter | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -166,7 +167,11 @@ export function LiveSessionView({ clients, protocols, defaultClientId }: Props) 
       ? defaultClientId
       : clients[0]?.id ?? ""
   );
-  const [selectedProtocolId, setSelectedProtocolId] = useState(protocols[0]?.id ?? "");
+  const [selectedProtocolId, setSelectedProtocolId] = useState(
+    defaultProtocolId && protocols.some((p) => p.id === defaultProtocolId)
+      ? defaultProtocolId
+      : protocols[0]?.id ?? ""
+  );
 
   const [preQ, setPreQ] = useState<Questionnaire>(defaultQ());
   const [postQ, setPostQ] = useState<Questionnaire>(defaultQ());
@@ -268,7 +273,12 @@ export function LiveSessionView({ clients, protocols, defaultClientId }: Props) 
         </Link>
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-gray-900">Live Session</h1>
-          <p className="text-sm text-gray-500">Simulator · Prefrontal fNIRS / EEG</p>
+          <p className="text-sm text-gray-500 capitalize">
+            {protocols.find((p) => p.id === selectedProtocolId)?.deviceType ?? "simulator"} device
+            {protocols.find((p) => p.id === selectedProtocolId)?.name
+              ? ` · ${protocols.find((p) => p.id === selectedProtocolId)!.name}`
+              : ""}
+          </p>
         </div>
         {running && (
           <div className="flex items-center gap-3">

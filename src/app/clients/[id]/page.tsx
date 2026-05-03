@@ -141,7 +141,7 @@ export default async function ClientDetailPage({
             Messages
           </Link>
           <Link
-            href={`/sessions/live?clientId=${id}`}
+            href={`/sessions/live?clientId=${id}${assignedProtocol ? `&protocolId=${assignedProtocol.id}` : ""}`}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
           >
             <Play size={15} />

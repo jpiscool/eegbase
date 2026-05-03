@@ -7,11 +7,11 @@ import { LiveSessionView } from "@/components/LiveSessionView";
 export default async function LiveSessionPage({
   searchParams,
 }: {
-  searchParams: Promise<{ clientId?: string }>;
+  searchParams: Promise<{ clientId?: string; protocolId?: string }>;
 }) {
   const session = await auth();
   const clinicId = (session?.user as { clinicId?: string })?.clinicId ?? "";
-  const { clientId: defaultClientId } = await searchParams;
+  const { clientId: defaultClientId, protocolId: defaultProtocolId } = await searchParams;
 
   const [clientList, protocolList] = await Promise.all([
     db
@@ -31,6 +31,7 @@ export default async function LiveSessionPage({
       clients={clientList}
       protocols={protocolList}
       defaultClientId={defaultClientId}
+      defaultProtocolId={defaultProtocolId}
     />
   );
 }
