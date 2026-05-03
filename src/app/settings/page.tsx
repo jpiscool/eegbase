@@ -4,7 +4,7 @@ import { clinicians, clinics } from "@/lib/db/schema";
 import { eq, count } from "drizzle-orm";
 import Link from "next/link";
 import { Users } from "lucide-react";
-import { ProfileForm, PasswordForm, ClinicNameForm } from "./SettingsForms";
+import { ProfileForm, PasswordForm, ClinicNameForm, WebhookForm } from "./SettingsForms";
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -18,7 +18,7 @@ export default async function SettingsPage() {
     .limit(1);
 
   const [clinic] = await db
-    .select({ name: clinics.name, createdAt: clinics.createdAt })
+    .select({ name: clinics.name, webhookUrl: clinics.webhookUrl, createdAt: clinics.createdAt })
     .from(clinics)
     .where(eq(clinics.id, clinicId))
     .limit(1);
@@ -145,6 +145,32 @@ export default async function SettingsPage() {
           <p className="font-semibold text-gray-700">Ingestion endpoint:</p>
           <p className="font-mono bg-gray-50 border border-gray-200 rounded px-3 py-2 text-gray-700">POST /api/v1/sessions</p>
           <p>Accepts completed session JSON with <code className="bg-gray-100 px-1 rounded">samples</code>, <code className="bg-gray-100 px-1 rounded">preSession</code>, and <code className="bg-gray-100 px-1 rounded">postSession</code> questionnaire data. Returns <code className="bg-gray-100 px-1 rounded">{"{ sessionId }"}</code>.</p>
+        </div>
+      </div>
+
+      {/* Webhooks */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
+        <h2 className="text-base font-semibold text-gray-900 mb-1">Webhooks</h2>
+        <p className="text-sm text-gray-400 mb-4">
+          EEGBase will POST a JSON payload to this URL every time a session is saved. Useful for syncing with external systems, Zapier, or Mendi cloud.
+        </p>
+        <WebhookForm currentUrl={clinic?.webhookUrl ?? null} />
+        <div className="mt-4 text-xs text-gray-500 space-y-1">
+          <p className="font-semibold text-gray-600">Payload shape:</p>
+          <pre className="bg-gray-50 border border-gray-200 rounded p-3 font-mono text-[11px] text-gray-700 overflow-x-auto">{`{
+  "event": "session.saved",
+  "sessionId": "uuid",
+  "clientName": "Sarah Mitchell",
+  "clinicianName": "Dr. Jordan Lee",
+  "deviceType": "mendi",
+  "startedAt": "2026-05-11T09:00:00Z",
+  "durationSeconds": 1200,
+  "avgRewardScore": 68.4,
+  "sampleCount": 1200,
+  "preSession": { "focus": 5, "mood": 6, "anxiety": 4, "energy": 6 },
+  "postSession": { "focus": 8, "mood": 7, "anxiety": 3, "energy": 7 },
+  "timestamp": "2026-05-11T09:21:04Z"
+}`}</pre>
         </div>
       </div>
 

@@ -14,6 +14,7 @@ import {
 export const clinics = pgTable("clinics", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
+  webhookUrl: text("webhook_url"),  // POSTed after each session is saved
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

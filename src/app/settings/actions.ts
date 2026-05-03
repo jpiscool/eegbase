@@ -76,3 +76,20 @@ export async function changePassword(formData: FormData) {
 
   return { success: true };
 }
+
+export async function updateWebhookUrl(formData: FormData) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const clinicId = (session.user as { clinicId?: string }).clinicId;
+  if (!clinicId) return { error: "No clinic" };
+
+  const url = (formData.get("webhookUrl") as string).trim();
+  if (url && !url.startsWith("https://") && !url.startsWith("http://")) {
+    return { error: "Webhook URL must start with http:// or https://" };
+  }
+
+  await db.update(clinics).set({ webhookUrl: url || null }).where(eq(clinics.id, clinicId));
+  revalidatePath("/settings");
+  return { success: true };
+}

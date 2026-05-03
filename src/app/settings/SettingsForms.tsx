@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updateProfile, changePassword, updateClinicName } from "./actions";
+import { updateProfile, changePassword, updateClinicName, updateWebhookUrl } from "./actions";
 
 export function ClinicNameForm({ currentName }: { currentName: string }) {
   const [pending, startTransition] = useTransition();
@@ -140,6 +140,44 @@ export function PasswordForm() {
         className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
       >
         {pending ? "Updating…" : "Change Password"}
+      </button>
+    </form>
+  );
+}
+
+export function WebhookForm({ currentUrl }: { currentUrl: string | null }) {
+  const [pending, startTransition] = useTransition();
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [msg, setMsg] = useState("");
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    startTransition(async () => {
+      const res = await updateWebhookUrl(fd);
+      if (res?.error) { setStatus("error"); setMsg(res.error); }
+      else { setStatus("success"); setMsg("Webhook URL saved."); }
+    });
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-3">
+      <input
+        name="webhookUrl"
+        type="url"
+        defaultValue={currentUrl ?? ""}
+        placeholder="https://your-server.com/hooks/eegbase"
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      {status !== "idle" && (
+        <p className={`text-xs ${status === "success" ? "text-emerald-600" : "text-red-500"}`}>{msg}</p>
+      )}
+      <button
+        type="submit"
+        disabled={pending}
+        className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+      >
+        {pending ? "Saving…" : "Save Webhook URL"}
       </button>
     </form>
   );
