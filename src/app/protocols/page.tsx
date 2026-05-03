@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
-import { protocols, assignments } from "@/lib/db/schema";
-import { eq, count } from "drizzle-orm";
+import { protocols, assignments, sessions } from "@/lib/db/schema";
+import { eq, count, avg } from "drizzle-orm";
 import { CreateProtocolModal } from "@/components/CreateProtocolModal";
 import { DeleteProtocolButton } from "@/components/DeleteProtocolButton";
 import { EditProtocolModal } from "@/components/EditProtocolModal";
@@ -25,9 +25,12 @@ export default async function ProtocolsPage() {
       durationSeconds: protocols.durationSeconds,
       createdAt: protocols.createdAt,
       assignedCount: count(assignments.id),
+      sessionCount: count(sessions.id),
+      avgReward: avg(sessions.avgRewardScore),
     })
     .from(protocols)
     .leftJoin(assignments, eq(assignments.protocolId, protocols.id))
+    .leftJoin(sessions, eq(sessions.protocolId, protocols.id))
     .where(eq(protocols.clinicId, clinicId))
     .groupBy(protocols.id)
     .orderBy(protocols.createdAt);
@@ -74,6 +77,24 @@ export default async function ProtocolsPage() {
                   {p.description && (
                     <p className="text-sm text-gray-500 mt-0.5">{p.description}</p>
                   )}
+                  <div className="flex items-center gap-4 mt-2">
+                    <span className="text-xs text-gray-400">
+                      <span className="font-medium text-gray-700">{p.sessionCount}</span>{" "}
+                      session{p.sessionCount !== 1 ? "s" : ""}
+                    </span>
+                    {p.avgReward != null && (
+                      <span className="text-xs text-gray-400">
+                        avg reward{" "}
+                        <span className={`font-semibold ${
+                          Number(p.avgReward) >= 70 ? "text-emerald-600"
+                          : Number(p.avgReward) >= 40 ? "text-amber-600"
+                          : "text-red-500"
+                        }`}>
+                          {Number(p.avgReward).toFixed(1)}
+                        </span>
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center gap-1">
                   <EditProtocolModal protocol={p} />

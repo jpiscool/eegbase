@@ -52,6 +52,7 @@ export default async function ReportPage({
         postFocus: sessions.postFocus,
         preMood: sessions.preMood,
         postMood: sessions.postMood,
+        notes: sessions.notes,
         postNotes: sessions.postNotes,
       })
       .from(sessions)
@@ -175,7 +176,7 @@ export default async function ReportPage({
               <table style={{ width: "100%", borderCollapse: "collapse" as const, fontSize: 11.5 }}>
                 <thead>
                   <tr style={{ background: "#F8FAFC" }}>
-                    {["Date", "Duration", "Avg Reward", "Pre Focus", "Post Focus", "Pre Mood", "Post Mood", "Notes"].map((h) => (
+                    {["Date", "Duration", "Avg Reward", "Pre Focus", "Post Focus", "Pre Mood", "Post Mood", "Client Notes", "Clinical Notes"].map((h) => (
                       <th key={h} style={{ textAlign: "left" as const, padding: "7px 8px", fontWeight: 600, color: "#64748B", fontSize: 10, textTransform: "uppercase" as const, letterSpacing: "0.04em", borderBottom: "1px solid #E2E8F0" }}>{h}</th>
                     ))}
                   </tr>
@@ -194,7 +195,8 @@ export default async function ReportPage({
                       </td>
                       <td style={{ padding: "6px 8px", color: "#64748B" }}>{s.preMood ?? "—"}</td>
                       <td style={{ padding: "6px 8px", color: "#64748B" }}>{s.postMood ?? "—"}</td>
-                      <td style={{ padding: "6px 8px", color: "#94A3B8", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>{s.postNotes ?? ""}</td>
+                      <td style={{ padding: "6px 8px", color: "#94A3B8", maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>{s.postNotes ?? ""}</td>
+                      <td style={{ padding: "6px 8px", color: "#64748B", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>{s.notes ?? ""}</td>
                     </tr>
                   ))}
                 </tbody>
