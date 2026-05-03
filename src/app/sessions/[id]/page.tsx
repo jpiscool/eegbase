@@ -80,11 +80,21 @@ export default async function SessionDetailPage({
       })
       .from(sessionDataPoints)
       .where(eq(sessionDataPoints.sessionId, id))
-      .orderBy(asc(sessionDataPoints.timestampMs))
-      .limit(500),
+      .orderBy(asc(sessionDataPoints.timestampMs)),
   ]);
 
   if (!row) notFound();
+
+  // Downsample to at most 600 evenly-spaced points for chart rendering
+  // (preserves full coverage even for high-frequency Mendi sessions)
+  const MAX_CHART_POINTS = 600;
+  const sampledPoints =
+    dataPoints.length <= MAX_CHART_POINTS
+      ? dataPoints
+      : (() => {
+          const step = Math.floor(dataPoints.length / MAX_CHART_POINTS);
+          return dataPoints.filter((_, i) => i % step === 0);
+        })();
 
   const s = row.session;
   const durationMin = s.durationSeconds != null ? Math.floor(s.durationSeconds / 60) : null;
@@ -97,8 +107,8 @@ export default async function SessionDetailPage({
     { label: "Energy", pre: s.preEnergy, post: s.postEnergy },
   ];
 
-  // Build reward score chart data from raw data points
-  const rewardTrend = dataPoints
+  // Build reward score chart data from downsampled points
+  const rewardTrend = sampledPoints
     .filter((dp) => dp.rewardScore != null)
     .map((dp) => ({
       timestampMs: dp.timestampMs,
@@ -153,11 +163,11 @@ export default async function SessionDetailPage({
   }
 
   // Check if we have fNIRS data
-  const hasFNIRSData = dataPoints.some(
+  const hasFNIRSData = sampledPoints.some(
     (dp) => dp.oxyHbLeft != null || dp.oxyHbRight != null || dp.deoxyHbLeft != null || dp.deoxyHbRight != null
   );
   const fnirsData = hasFNIRSData
-    ? dataPoints.map((dp) => ({
+    ? sampledPoints.map((dp) => ({
         timestampMs: dp.timestampMs,
         oxyHbLeft: dp.oxyHbLeft ?? null,
         oxyHbRight: dp.oxyHbRight ?? null,
@@ -167,11 +177,11 @@ export default async function SessionDetailPage({
     : [];
 
   // Check if we have band power data
-  const hasBandData = dataPoints.some(
+  const hasBandData = sampledPoints.some(
     (dp) => dp.delta != null || dp.theta != null || dp.alpha != null || dp.beta != null || dp.gamma != null
   );
   const bandData = hasBandData
-    ? dataPoints.map((dp) => ({
+    ? sampledPoints.map((dp) => ({
         timestampMs: dp.timestampMs,
         delta: dp.delta ?? null,
         theta: dp.theta ?? null,
@@ -266,6 +276,9 @@ export default async function SessionDetailPage({
             <span>Avg: <strong>{s.avgRewardScore!.toFixed(1)}</strong></span>
             {peakReward != null && <span>Peak: <strong>{peakReward.toFixed(1)}</strong></span>}
             <span>Samples: <strong>{dataPoints.length}</strong></span>
+            {dataPoints.length > MAX_CHART_POINTS && (
+              <span className="opacity-60">({MAX_CHART_POINTS} displayed)</span>
+            )}
           </div>
         </div>
       )}
