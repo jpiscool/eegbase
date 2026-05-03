@@ -99,6 +99,7 @@ export const sessions = pgTable("sessions", {
   postAnxiety: smallint("post_anxiety"),
   postEnergy: smallint("post_energy"),
   postNotes: text("post_notes"),
+  aiSummary: text("ai_summary"),
 });
 
 // ── Session Data Points ───────────────────────────────────────────────────────

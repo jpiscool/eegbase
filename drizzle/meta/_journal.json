@@ -8,6 +8,13 @@
       "when": 1777767440390,
       "tag": "0000_jazzy_blue_shield",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777774788631,
+      "tag": "0001_little_sister_grimm",
+      "breakpoints": true
     }
   ]
 }

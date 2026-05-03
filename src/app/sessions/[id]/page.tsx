@@ -10,6 +10,7 @@ import { SessionReplayChart } from "@/components/SessionReplayChart";
 import { BandPowerChart } from "@/components/BandPowerChart";
 import { FNIRSChart } from "@/components/FNIRSChart";
 import { DeleteSessionButton } from "@/components/DeleteSessionButton";
+import { AiInsightPanel } from "@/components/AiInsightPanel";
 
 function ScoreDelta({
   pre,
@@ -285,6 +286,9 @@ export default async function SessionDetailPage({
           </ul>
         </div>
       )}
+
+      {/* AI Clinical Insight */}
+      <AiInsightPanel sessionId={s.id} initialSummary={s.aiSummary ?? null} />
 
       {/* Summary stats */}
       <div className="grid grid-cols-4 gap-4 mb-6">

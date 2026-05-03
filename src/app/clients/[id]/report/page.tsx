@@ -54,6 +54,7 @@ export default async function ReportPage({
         postMood: sessions.postMood,
         notes: sessions.notes,
         postNotes: sessions.postNotes,
+        aiSummary: sessions.aiSummary,
       })
       .from(sessions)
       .where(eq(sessions.clientId, id))
@@ -94,6 +95,7 @@ export default async function ReportPage({
   const reportDate = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   const firstSession = sessionList[sessionList.length - 1]?.startedAt;
   const lastSession = sessionList[0]?.startedAt;
+  const latestAiSummary = sessionList.find((s) => s.aiSummary)?.aiSummary ?? null;
 
   return (
     <>
@@ -233,6 +235,14 @@ export default async function ReportPage({
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {/* AI Clinical Insight */}
+          {latestAiSummary && (
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#7C3AED", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #EDE9FE" }}>✦ AI Clinical Insight (Claude)</div>
+              <div style={{ background: "#F5F3FF", border: "1px solid #DDD6FE", borderRadius: 8, padding: "12px 14px", fontSize: 12, color: "#4C1D95", lineHeight: 1.7 }}>{latestAiSummary}</div>
             </div>
           )}
 
