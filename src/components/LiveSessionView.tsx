@@ -10,6 +10,7 @@ import { saveSession, type SamplePayload, type Questionnaire } from "@/app/sessi
 import Link from "next/link";
 import { ArrowLeft, Wifi, WifiOff, StopCircle, CheckCircle } from "lucide-react";
 import { RewardGauge } from "@/components/RewardGauge";
+import { GameFeedback } from "@/components/GameFeedback";
 
 function createAdapter(deviceType: string, params?: unknown): DeviceAdapter {
   if (deviceType === "mendi") return new MendiAdapter();
@@ -247,6 +248,7 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
   const [postNotes, setPostNotes] = useState("");
   const [liveNotes, setLiveNotes] = useState("");
   const [audioEnabled, setAudioEnabled] = useState(false);
+  const [viewMode, setViewMode] = useState<"charts" | "game">("charts");
 
   // ── Low-reward alert tracking ────────────────────────────────────────────────
   // Count consecutive below-threshold samples and show warning after 20 seconds (200 samples at 10Hz)
@@ -565,76 +567,101 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
       {/* Live data */}
       {(running || phase === "post") && (
         <>
-          <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5 flex items-center gap-6">
-            <div className="shrink-0">
-              <RewardGauge score={rewardVal ?? null} />
-            </div>
-            <div className="flex-1">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                Reward Score · Last 60s
-              </p>
-              <LiveChart data={reward.data} color="#2563EB" label="" height={100} />
-            </div>
+          {/* View mode tabs: Charts ↔ Game */}
+          <div className="flex items-center gap-1 bg-white rounded-xl border border-gray-200 p-1 mb-4">
+            {(["charts", "game"] as const).map((mode) => (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-colors ${
+                  viewMode === mode
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                {mode === "charts" ? "📊 Charts" : "🎮 Game"}
+              </button>
+            ))}
           </div>
 
-          {/* Bilateral asymmetry indicator */}
-          {sample?.oxyHbLeft != null && sample?.oxyHbRight != null && (
-            <div className="bg-white rounded-xl border border-gray-200 px-5 py-4 mb-4">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                fNIRS Bilateral Asymmetry · OxyHb
-              </p>
-              <div className="flex items-center gap-3">
-                <span className="text-xs text-gray-500 w-8 text-right">L</span>
-                <div className="flex-1 relative h-3 bg-gray-100 rounded-full overflow-hidden">
-                  {(() => {
-                    const l = sample.oxyHbLeft!;
-                    const r = sample.oxyHbRight!;
-                    const diff = l - r;
-                    const maxAbs = Math.max(Math.abs(l), Math.abs(r), 0.001);
-                    const asymPct = Math.min(100, (Math.abs(diff) / maxAbs) * 100);
-                    const leftDominant = diff > 0;
-                    return (
-                      <div
-                        className={`absolute h-full rounded-full ${leftDominant ? "bg-emerald-400 right-1/2" : "bg-sky-400 left-1/2"}`}
-                        style={{ width: `${asymPct / 2}%` }}
-                      />
-                    );
-                  })()}
-                  <div className="absolute inset-y-0 left-1/2 w-px bg-gray-300" />
+          {viewMode === "game" ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-8 mb-5 flex flex-col items-center">
+              <GameFeedback score={rewardVal} threshold={protocolThreshold} />
+            </div>
+          ) : (
+            <>
+              <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5 flex items-center gap-6">
+                <div className="shrink-0">
+                  <RewardGauge score={rewardVal ?? null} />
                 </div>
-                <span className="text-xs text-gray-500 w-8">R</span>
-                <span className="text-xs text-gray-400 w-24 text-right tabular-nums">
-                  {sample.oxyHbLeft! >= sample.oxyHbRight! ? "L dominant" : "R dominant"}
-                  {" · "}
-                  {Math.abs(sample.oxyHbLeft! - sample.oxyHbRight!).toFixed(4)} μM
-                </span>
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    Reward Score · Last 60s
+                  </p>
+                  <LiveChart data={reward.data} color="#2563EB" label="" height={100} />
+                </div>
               </div>
-            </div>
-          )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <LiveChart data={oxyL.data} color="#10B981" label="OxyHb Left · prefrontal (μM)" height={84} />
-            </div>
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <LiveChart data={oxyR.data} color="#0EA5E9" label="OxyHb Right · prefrontal (μM)" height={84} />
-            </div>
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <LiveChart data={deoxyL.data} color="#6366F1" label="DeoxyHb Left (μM)" height={84} />
-            </div>
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <LiveChart data={deoxyR.data} color="#8B5CF6" label="DeoxyHb Right (μM)" height={84} />
-            </div>
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <LiveChart data={theta.data} color="#F59E0B" label="Theta power" height={84} />
-            </div>
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <LiveChart data={alpha.data} color="#EF4444" label="Alpha power" height={84} />
-            </div>
-            <div className="bg-white rounded-xl border border-gray-200 p-5 md:col-span-2">
-              <LiveChart data={beta.data} color="#EC4899" label="Beta power" height={84} />
-            </div>
-          </div>
+              {/* Bilateral asymmetry indicator */}
+              {sample?.oxyHbLeft != null && sample?.oxyHbRight != null && (
+                <div className="bg-white rounded-xl border border-gray-200 px-5 py-4 mb-4">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    fNIRS Bilateral Asymmetry · OxyHb
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-gray-500 w-8 text-right">L</span>
+                    <div className="flex-1 relative h-3 bg-gray-100 rounded-full overflow-hidden">
+                      {(() => {
+                        const l = sample.oxyHbLeft!;
+                        const r = sample.oxyHbRight!;
+                        const diff = l - r;
+                        const maxAbs = Math.max(Math.abs(l), Math.abs(r), 0.001);
+                        const asymPct = Math.min(100, (Math.abs(diff) / maxAbs) * 100);
+                        const leftDominant = diff > 0;
+                        return (
+                          <div
+                            className={`absolute h-full rounded-full ${leftDominant ? "bg-emerald-400 right-1/2" : "bg-sky-400 left-1/2"}`}
+                            style={{ width: `${asymPct / 2}%` }}
+                          />
+                        );
+                      })()}
+                      <div className="absolute inset-y-0 left-1/2 w-px bg-gray-300" />
+                    </div>
+                    <span className="text-xs text-gray-500 w-8">R</span>
+                    <span className="text-xs text-gray-400 w-24 text-right tabular-nums">
+                      {sample.oxyHbLeft! >= sample.oxyHbRight! ? "L dominant" : "R dominant"}
+                      {" · "}
+                      {Math.abs(sample.oxyHbLeft! - sample.oxyHbRight!).toFixed(4)} μM
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                <div className="bg-white rounded-xl border border-gray-200 p-5">
+                  <LiveChart data={oxyL.data} color="#10B981" label="OxyHb Left · prefrontal (μM)" height={84} />
+                </div>
+                <div className="bg-white rounded-xl border border-gray-200 p-5">
+                  <LiveChart data={oxyR.data} color="#0EA5E9" label="OxyHb Right · prefrontal (μM)" height={84} />
+                </div>
+                <div className="bg-white rounded-xl border border-gray-200 p-5">
+                  <LiveChart data={deoxyL.data} color="#6366F1" label="DeoxyHb Left (μM)" height={84} />
+                </div>
+                <div className="bg-white rounded-xl border border-gray-200 p-5">
+                  <LiveChart data={deoxyR.data} color="#8B5CF6" label="DeoxyHb Right (μM)" height={84} />
+                </div>
+                <div className="bg-white rounded-xl border border-gray-200 p-5">
+                  <LiveChart data={theta.data} color="#F59E0B" label="Theta power" height={84} />
+                </div>
+                <div className="bg-white rounded-xl border border-gray-200 p-5">
+                  <LiveChart data={alpha.data} color="#EF4444" label="Alpha power" height={84} />
+                </div>
+                <div className="bg-white rounded-xl border border-gray-200 p-5 md:col-span-2">
+                  <LiveChart data={beta.data} color="#EC4899" label="Beta power" height={84} />
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Live observation notes (clinician-only, visible during session) */}
           {running && (
