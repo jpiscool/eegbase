@@ -248,6 +248,11 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
   const [liveNotes, setLiveNotes] = useState("");
   const [audioEnabled, setAudioEnabled] = useState(false);
 
+  // ── Low-reward alert tracking ────────────────────────────────────────────────
+  // Count consecutive below-threshold samples and show warning after 20 seconds (200 samples at 10Hz)
+  const belowThresholdCountRef = useRef(0);
+  const [showLowRewardAlert, setShowLowRewardAlert] = useState(false);
+
   const reward = useSlidingWindow(MAX_POINTS);
   const oxyL = useSlidingWindow(MAX_POINTS);
   const oxyR = useSlidingWindow(MAX_POINTS);
@@ -273,6 +278,22 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
 
     adapter.onSample((s) => {
       setSample(s);
+      // Track consecutive below-threshold samples for alert
+      const threshold = (() => {
+        const prot = protocols.find((x) => x.id === selectedProtocolId);
+        if (!prot?.parameters) return 50;
+        const params = prot.parameters as Record<string, unknown>;
+        return typeof params.rewardThreshold === "number" ? params.rewardThreshold * 100 : 50;
+      })();
+      if (s.rewardScore != null) {
+        if (s.rewardScore < threshold) {
+          belowThresholdCountRef.current += 1;
+          if (belowThresholdCountRef.current >= 200) setShowLowRewardAlert(true); // 20s at 10Hz
+        } else {
+          belowThresholdCountRef.current = 0;
+          setShowLowRewardAlert(false);
+        }
+      }
       const p: SamplePayload = {
         timestampMs: s.timestampMs,
         oxyHbLeft: s.oxyHbLeft,
@@ -524,6 +545,23 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
         </div>
       )}
 
+      {/* Low reward alert banner */}
+      {running && showLowRewardAlert && (
+        <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 text-amber-800 text-sm px-4 py-3 rounded-xl mb-4 animate-pulse">
+          <span className="text-base">⚠</span>
+          <div className="flex-1">
+            <span className="font-semibold">Reward score below threshold for 20+ seconds.</span>
+            {" "}Consider pausing to check client comfort, adjusting the session difficulty, or prompting a brief reset breath.
+          </div>
+          <button
+            onClick={() => { belowThresholdCountRef.current = 0; setShowLowRewardAlert(false); }}
+            className="text-amber-600 hover:text-amber-800 text-xs font-medium shrink-0"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Live data */}
       {(running || phase === "post") && (
         <>
@@ -538,6 +576,41 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
               <LiveChart data={reward.data} color="#2563EB" label="" height={100} />
             </div>
           </div>
+
+          {/* Bilateral asymmetry indicator */}
+          {sample?.oxyHbLeft != null && sample?.oxyHbRight != null && (
+            <div className="bg-white rounded-xl border border-gray-200 px-5 py-4 mb-4">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                fNIRS Bilateral Asymmetry · OxyHb
+              </p>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-gray-500 w-8 text-right">L</span>
+                <div className="flex-1 relative h-3 bg-gray-100 rounded-full overflow-hidden">
+                  {(() => {
+                    const l = sample.oxyHbLeft!;
+                    const r = sample.oxyHbRight!;
+                    const diff = l - r;
+                    const maxAbs = Math.max(Math.abs(l), Math.abs(r), 0.001);
+                    const asymPct = Math.min(100, (Math.abs(diff) / maxAbs) * 100);
+                    const leftDominant = diff > 0;
+                    return (
+                      <div
+                        className={`absolute h-full rounded-full ${leftDominant ? "bg-emerald-400 right-1/2" : "bg-sky-400 left-1/2"}`}
+                        style={{ width: `${asymPct / 2}%` }}
+                      />
+                    );
+                  })()}
+                  <div className="absolute inset-y-0 left-1/2 w-px bg-gray-300" />
+                </div>
+                <span className="text-xs text-gray-500 w-8">R</span>
+                <span className="text-xs text-gray-400 w-24 text-right tabular-nums">
+                  {sample.oxyHbLeft! >= sample.oxyHbRight! ? "L dominant" : "R dominant"}
+                  {" · "}
+                  {Math.abs(sample.oxyHbLeft! - sample.oxyHbRight!).toFixed(4)} μM
+                </span>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
             <div className="bg-white rounded-xl border border-gray-200 p-5">
