@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { clients, sessions, protocols } from "@/lib/db/schema";
-import { eq, and, gte, lt, count, avg, desc } from "drizzle-orm";
+import { eq, and, gte, lt, count, avg, desc, max } from "drizzle-orm";
 import { Users, Activity, BookOpen, TrendingUp, UserPlus, Settings, Play, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { DailyActivityChart } from "@/components/DailyActivityChart";
@@ -23,6 +23,7 @@ export default async function DashboardPage() {
     avgScoreRows,
     recentSessions,
     last30Sessions,
+    allActiveClients,
   ] = await Promise.all([
     db.select({ count: count() }).from(clients).where(and(eq(clients.clinicId, clinicId), eq(clients.active, true))),
     db
@@ -59,6 +60,18 @@ export default async function DashboardPage() {
       .from(sessions)
       .innerJoin(clients, eq(sessions.clientId, clients.id))
       .where(and(eq(clients.clinicId, clinicId), gte(sessions.startedAt, thirtyDaysAgo))),
+    // Active clients with their last session date (for "needs attention" widget)
+    db
+      .select({
+        id: clients.id,
+        name: clients.name,
+        lastSessionAt: max(sessions.startedAt),
+      })
+      .from(clients)
+      .leftJoin(sessions, eq(sessions.clientId, clients.id))
+      .where(and(eq(clients.clinicId, clinicId), eq(clients.active, true)))
+      .groupBy(clients.id)
+      .orderBy(clients.name),
   ]);
 
   // Build 30-day daily counts
@@ -76,6 +89,15 @@ export default async function DashboardPage() {
   const totalClients = Number(clientRows[0]?.count ?? 0);
   const totalProtocols = Number(protocolRows[0]?.count ?? 0);
   const isNewAccount = totalClients === 0 && last30Sessions.length === 0;
+
+  // Clients that need attention: active, no session in 14+ days (or never)
+  const attentionClients = allActiveClients
+    .filter((c) => {
+      if (!c.lastSessionAt) return true; // never had a session
+      const daysSince = (now - new Date(c.lastSessionAt).getTime()) / (1000 * 60 * 60 * 24);
+      return daysSince >= 14;
+    })
+    .slice(0, 5); // show max 5
 
   const thisWeek = Number(sessionRows[0]?.count ?? 0);
   const lastWeek = Number(prevWeekSessionRows[0]?.count ?? 0);
@@ -211,6 +233,50 @@ export default async function DashboardPage() {
         </div>
         <DailyActivityChart data={activityData} />
       </div>
+
+      {attentionClients.length > 0 && !isNewAccount && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl overflow-hidden mb-6">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-amber-100">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-amber-500" />
+              <h2 className="text-sm font-semibold text-amber-900">Needs Attention</h2>
+              <span className="text-xs text-amber-600 font-medium">
+                {attentionClients.length} client{attentionClients.length !== 1 ? "s" : ""} overdue
+              </span>
+            </div>
+            <Link href="/clients" className="text-xs text-amber-700 hover:underline font-medium">
+              View all clients →
+            </Link>
+          </div>
+          <div className="divide-y divide-amber-100">
+            {attentionClients.map((c) => {
+              const daysSince = c.lastSessionAt
+                ? Math.floor((now - new Date(c.lastSessionAt).getTime()) / (1000 * 60 * 60 * 24))
+                : null;
+              return (
+                <div key={c.id} className="flex items-center justify-between px-6 py-3">
+                  <div>
+                    <Link href={`/clients/${c.id}`} className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                      {c.name}
+                    </Link>
+                    <p className="text-xs text-amber-700 mt-0.5">
+                      {daysSince === null
+                        ? "No sessions yet"
+                        : `Last session ${daysSince} day${daysSince !== 1 ? "s" : ""} ago`}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/sessions/live?clientId=${c.id}`}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <Play size={11} /> Schedule
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
