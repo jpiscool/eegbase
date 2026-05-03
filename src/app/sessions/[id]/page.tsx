@@ -12,6 +12,7 @@ import { FNIRSChart } from "@/components/FNIRSChart";
 import { DeleteSessionButton } from "@/components/DeleteSessionButton";
 import { AiInsightPanel } from "@/components/AiInsightPanel";
 import { SessionTagEditor } from "@/components/SessionTagEditor";
+import { BrainMapPanel } from "@/components/BrainMapPanel";
 
 function ScoreDelta({
   pre,
@@ -190,6 +191,20 @@ export default async function SessionDetailPage({
         gamma: dp.gamma ?? null,
       }))
     : [];
+
+  // Compute session-average values for brain map
+  function avg(arr: (number | null)[]): number | null {
+    const vals = arr.filter((v): v is number => v != null);
+    return vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+  }
+  const mapOxyL = avg(fnirsData.map((d) => d.oxyHbLeft));
+  const mapOxyR = avg(fnirsData.map((d) => d.oxyHbRight));
+  const mapDeoxyL = avg(fnirsData.map((d) => d.deoxyHbLeft));
+  const mapDeoxyR = avg(fnirsData.map((d) => d.deoxyHbRight));
+  const mapAlpha = avg(bandData.map((d) => d.alpha));
+  const mapTheta = avg(bandData.map((d) => d.theta));
+  const mapBeta  = avg(bandData.map((d) => d.beta));
+  const showBrainMap = (hasFNIRSData || hasBandData) && (mapOxyL != null || mapAlpha != null);
 
   // fNIRS trend insight
   if (hasFNIRSData && fnirsData.length > 10) {
@@ -371,6 +386,22 @@ export default async function SessionDetailPage({
             </span>
           </div>
           <FNIRSChart data={fnirsData} />
+        </div>
+      )}
+
+      {/* Brain Activity Map */}
+      {showBrainMap && (
+        <div className="mb-5">
+          <BrainMapPanel
+            oxyHbLeft={mapOxyL}
+            oxyHbRight={mapOxyR}
+            deoxyHbLeft={mapDeoxyL}
+            deoxyHbRight={mapDeoxyR}
+            alpha={mapAlpha}
+            theta={mapTheta}
+            beta={mapBeta}
+            title="Brain Activity Map · Session Average"
+          />
         </div>
       )}
 

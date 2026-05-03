@@ -11,6 +11,7 @@ import Link from "next/link";
 import { ArrowLeft, Wifi, WifiOff, StopCircle, CheckCircle } from "lucide-react";
 import { RewardGauge } from "@/components/RewardGauge";
 import { GameFeedback } from "@/components/GameFeedback";
+import { BrainMapPanel } from "@/components/BrainMapPanel";
 
 function createAdapter(deviceType: string, params?: unknown): DeviceAdapter {
   if (deviceType === "mendi") return new MendiAdapter();
@@ -634,6 +635,22 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
                       {Math.abs(sample.oxyHbLeft! - sample.oxyHbRight!).toFixed(4)} μM
                     </span>
                   </div>
+                </div>
+              )}
+
+              {/* Real-time brain activity map */}
+              {(sample?.oxyHbLeft != null || sample?.alpha != null) && (
+                <div className="mb-4">
+                  <BrainMapPanel
+                    oxyHbLeft={sample?.oxyHbLeft ?? null}
+                    oxyHbRight={sample?.oxyHbRight ?? null}
+                    deoxyHbLeft={sample?.deoxyHbLeft ?? null}
+                    deoxyHbRight={sample?.deoxyHbRight ?? null}
+                    alpha={sample?.alpha ?? null}
+                    theta={sample?.theta ?? null}
+                    beta={sample?.beta ?? null}
+                    title="Brain Activity Map · Live"
+                  />
                 </div>
               )}
 
