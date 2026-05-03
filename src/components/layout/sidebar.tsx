@@ -9,6 +9,7 @@ import {
   BookOpen,
   Settings,
   Play,
+  Search,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { SignOutButton } from "./SignOutButton";
@@ -42,6 +43,18 @@ export function Sidebar({ userName, userEmail }: { userName?: string; userEmail?
           <Play size={15} />
           Start Session
         </Link>
+
+        {/* Search trigger */}
+        <button
+          onClick={() => {
+            window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true }));
+          }}
+          className="flex items-center gap-2 w-full px-3 py-2 mb-1 text-gray-400 text-sm rounded-lg hover:bg-gray-100 hover:text-gray-600 transition-colors border border-dashed border-gray-200"
+        >
+          <Search size={14} />
+          <span className="flex-1 text-left text-xs">Search…</span>
+          <kbd className="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">⌘K</kbd>
+        </button>
         {nav.map(({ href, label, icon: Icon }) => (
           <Link
             key={href}

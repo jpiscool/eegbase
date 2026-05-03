@@ -1,7 +1,9 @@
 "use client";
-import { useState, useTransition } from "react";
-import { Pencil, Check, X } from "lucide-react";
+import { useState, useEffect, useRef, useTransition } from "react";
+import { Pencil, Check } from "lucide-react";
 import { updateSessionNotes } from "@/app/sessions/actions";
+
+type SaveState = "idle" | "saving" | "saved" | "error";
 
 export function SessionNotesEditor({
   sessionId,
@@ -12,20 +14,50 @@ export function SessionNotesEditor({
 }) {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(initialNotes ?? "");
-  const [saved, setSaved] = useState(initialNotes ?? "");
+  const [saveState, setSaveState] = useState<SaveState>("idle");
   const [isPending, startTransition] = useTransition();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const savedRef = useRef(initialNotes ?? "");
 
-  function handleSave() {
-    startTransition(async () => {
-      await updateSessionNotes(sessionId, value);
-      setSaved(value);
-      setEditing(false);
-    });
-  }
+  // Autosave: debounce 1.5s after typing stops
+  useEffect(() => {
+    if (!editing) return;
+    if (value === savedRef.current) {
+      setSaveState("idle");
+      return;
+    }
+    setSaveState("idle");
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setSaveState("saving");
+      startTransition(async () => {
+        try {
+          await updateSessionNotes(sessionId, value);
+          savedRef.current = value;
+          setSaveState("saved");
+          setTimeout(() => setSaveState("idle"), 2000);
+        } catch {
+          setSaveState("error");
+        }
+      });
+    }, 1500);
 
-  function handleCancel() {
-    setValue(saved);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [value, editing, sessionId]);
+
+  function handleDone() {
+    // Flush any pending save immediately
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (value !== savedRef.current) {
+      startTransition(async () => {
+        await updateSessionNotes(sessionId, value);
+        savedRef.current = value;
+      });
+    }
     setEditing(false);
+    setSaveState("idle");
   }
 
   if (editing) {
@@ -39,22 +71,28 @@ export function SessionNotesEditor({
           placeholder="Add clinical notes…"
           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none mb-2"
         />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
-            onClick={handleSave}
+            onClick={handleDone}
             disabled={isPending}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
             <Check size={12} />
-            {isPending ? "Saving…" : "Save"}
+            Done
           </button>
-          <button
-            onClick={handleCancel}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-gray-500 text-xs font-medium rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            <X size={12} />
-            Cancel
-          </button>
+          <span className="text-xs text-gray-400">
+            {saveState === "saving" && (
+              <span className="flex items-center gap-1">
+                <span className="w-3 h-3 border-2 border-gray-300 border-t-blue-400 rounded-full animate-spin inline-block" />
+                Saving…
+              </span>
+            )}
+            {saveState === "saved" && <span className="text-emerald-600">✓ Saved</span>}
+            {saveState === "error" && <span className="text-red-500">Save failed</span>}
+            {saveState === "idle" && value !== savedRef.current && (
+              <span className="text-amber-500">Unsaved changes</span>
+            )}
+          </span>
         </div>
       </div>
     );
@@ -63,10 +101,10 @@ export function SessionNotesEditor({
   return (
     <div className="group flex items-start gap-3">
       <div className="flex-1">
-        {saved ? (
-          <p className="text-sm text-gray-700 whitespace-pre-wrap">{saved}</p>
+        {savedRef.current ? (
+          <p className="text-sm text-gray-700 whitespace-pre-wrap">{savedRef.current}</p>
         ) : (
-          <p className="text-sm text-gray-400 italic">No clinical notes.</p>
+          <p className="text-sm text-gray-400 italic">No clinical notes yet. Click to add.</p>
         )}
       </div>
       <button
