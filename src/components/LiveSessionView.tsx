@@ -2,11 +2,17 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { SimulatorAdapter } from "@/lib/device/simulator";
-import type { DeviceSample } from "@/lib/device/adapter";
+import { MendiAdapter } from "@/lib/device/mendi";
+import type { DeviceAdapter, DeviceSample } from "@/lib/device/adapter";
 import { LiveChart } from "@/components/LiveChart";
 import { saveSession, type SamplePayload, type Questionnaire } from "@/app/sessions/actions";
 import Link from "next/link";
 import { ArrowLeft, Wifi, WifiOff, StopCircle, CheckCircle } from "lucide-react";
+
+function createAdapter(deviceType: string): DeviceAdapter {
+  if (deviceType === "mendi") return new MendiAdapter();
+  return new SimulatorAdapter();
+}
 
 const MAX_POINTS = 60;
 
@@ -152,7 +158,8 @@ function QuestionnairePanel({
 
 export function LiveSessionView({ clients, protocols, defaultClientId, defaultProtocolId }: Props) {
   const router = useRouter();
-  const adapterRef = useRef<SimulatorAdapter | null>(null);
+  const adapterRef = useRef<DeviceAdapter | null>(null);
+  const deviceTypeRef = useRef<string>("simulator");
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startedAtRef = useRef<string>("");
   const allSamplesRef = useRef<SamplePayload[]>([]);
@@ -161,6 +168,7 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
   const [elapsed, setElapsed] = useState(0);
   const [sample, setSample] = useState<DeviceSample | null>(null);
   const [saving, setSaving] = useState(false);
+  const [connectError, setConnectError] = useState<string | null>(null);
 
   const [selectedClientId, setSelectedClientId] = useState(
     defaultClientId && clients.some((c) => c.id === defaultClientId)
@@ -189,7 +197,11 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
     allSamplesRef.current = [];
     startedAtRef.current = new Date().toISOString();
 
-    const adapter = new SimulatorAdapter();
+    const selectedProtocol = protocols.find((p) => p.id === selectedProtocolId);
+    const deviceType = selectedProtocol?.deviceType ?? "simulator";
+    deviceTypeRef.current = deviceType;
+
+    const adapter = createAdapter(deviceType);
     adapterRef.current = adapter;
 
     adapter.onSample((s) => {
@@ -213,11 +225,18 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
       if (s.alpha != null) alpha.push(s.alpha);
     });
 
-    await adapter.connect();
+    try {
+      await adapter.connect();
+    } catch (err) {
+      setConnectError(err instanceof Error ? err.message : "Failed to connect to device.");
+      adapterRef.current = null;
+      return;
+    }
+    setConnectError(null);
     setPhase("running");
     timerRef.current = setInterval(() => setElapsed((e) => e + 1), 1000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedProtocolId]);
 
   const stopStream = useCallback(async () => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -236,7 +255,7 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
       const sessionId = await saveSession({
         clientId: selectedClientId,
         protocolId: selectedProtocolId || null,
-        deviceType: "simulator",
+        deviceType: deviceTypeRef.current,
         startedAt: startedAtRef.current,
         durationSeconds: elapsedRef.current,
         samples: allSamplesRef.current,
@@ -344,6 +363,13 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
           </select>
         </div>
       </div>
+
+      {/* Connect error */}
+      {connectError && (
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl mb-5">
+          <span className="font-semibold">Device error:</span> {connectError}
+        </div>
+      )}
 
       {/* PRE-SESSION questionnaire */}
       {phase === "pre" && (
