@@ -3,6 +3,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
 
+type DeviceFilter = "all" | "mendi" | "simulator";
+
 interface SessionRow {
   id: string;
   startedAt: Date;
@@ -23,27 +25,64 @@ function fmtDuration(sec: number | null) {
 
 export function SessionsTable({ sessions }: { sessions: SessionRow[] }) {
   const [query, setQuery] = useState("");
+  const [deviceFilter, setDeviceFilter] = useState<DeviceFilter>("all");
+
+  // Unique device types present
+  const deviceTypes = Array.from(new Set(sessions.map((s) => s.deviceType))).sort();
+
+  const deviceFiltered =
+    deviceFilter === "all"
+      ? sessions
+      : sessions.filter((s) => s.deviceType === deviceFilter);
 
   const filtered = query.trim()
-    ? sessions.filter(
+    ? deviceFiltered.filter(
         (s) =>
           s.clientName.toLowerCase().includes(query.toLowerCase()) ||
           (s.protocolName ?? "").toLowerCase().includes(query.toLowerCase())
       )
-    : sessions;
+    : deviceFiltered;
+
+  const mendiCount = sessions.filter((s) => s.deviceType === "mendi").length;
+  const simCount = sessions.filter((s) => s.deviceType === "simulator").length;
 
   return (
     <div>
       {sessions.length > 0 && (
-        <div className="relative mb-4">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Filter by client or protocol…"
-            className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-          />
+        <div className="flex items-center gap-3 mb-4">
+          {/* Device filter tabs */}
+          {deviceTypes.length > 1 && (
+            <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+              {([
+                { key: "all", label: `All (${sessions.length})` },
+                ...(mendiCount > 0 ? [{ key: "mendi", label: `Mendi (${mendiCount})` }] : []),
+                ...(simCount > 0 ? [{ key: "simulator", label: `Sim (${simCount})` }] : []),
+              ] as Array<{ key: DeviceFilter; label: string }>).map(({ key, label }) => (
+                <button
+                  key={key}
+                  onClick={() => setDeviceFilter(key)}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                    deviceFilter === key
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="relative flex-1">
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Filter by client or protocol…"
+              className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+            />
+          </div>
         </div>
       )}
 
@@ -142,7 +181,7 @@ export function SessionsTable({ sessions }: { sessions: SessionRow[] }) {
         </table>
       </div>
 
-      {query && filtered.length > 0 && (
+      {(query || deviceFilter !== "all") && filtered.length > 0 && (
         <p className="text-xs text-gray-400 mt-2 text-right">
           {filtered.length} of {sessions.length} session{sessions.length !== 1 ? "s" : ""}
         </p>
