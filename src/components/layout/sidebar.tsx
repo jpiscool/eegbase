@@ -15,15 +15,32 @@ import { clsx } from "clsx";
 import { SignOutButton } from "./SignOutButton";
 
 const nav = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/clients", label: "Clients", icon: Users },
-  { href: "/sessions", label: "Sessions", icon: Activity },
-  { href: "/protocols", label: "Protocols", icon: BookOpen },
-  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, badge: null as string | null },
+  { href: "/clients", label: "Clients", icon: Users, badge: null as string | null },
+  { href: "/sessions", label: "Sessions", icon: Activity, badge: null as string | null },
+  { href: "/protocols", label: "Protocols", icon: BookOpen, badge: null as string | null },
+  { href: "/settings", label: "Settings", icon: Settings, badge: null as string | null },
 ];
 
-export function Sidebar({ userName, userEmail }: { userName?: string; userEmail?: string }) {
+export function Sidebar({
+  userName,
+  userEmail,
+  unreadMessages = 0,
+}: {
+  userName?: string;
+  userEmail?: string;
+  unreadMessages?: number;
+}) {
   const pathname = usePathname();
+
+  // Inject badges dynamically
+  const navWithBadges = nav.map((item) => ({
+    ...item,
+    badge:
+      item.href === "/clients" && unreadMessages > 0
+        ? String(unreadMessages > 99 ? "99+" : unreadMessages)
+        : null,
+  }));
 
   return (
     <aside className="w-60 shrink-0 border-r border-gray-200 bg-white flex flex-col min-h-screen">
@@ -55,7 +72,7 @@ export function Sidebar({ userName, userEmail }: { userName?: string; userEmail?
           <span className="flex-1 text-left text-xs">Search…</span>
           <kbd className="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">⌘K</kbd>
         </button>
-        {nav.map(({ href, label, icon: Icon }) => (
+        {navWithBadges.map(({ href, label, icon: Icon, badge }) => (
           <Link
             key={href}
             href={href}
@@ -67,7 +84,12 @@ export function Sidebar({ userName, userEmail }: { userName?: string; userEmail?
             )}
           >
             <Icon size={18} />
-            {label}
+            <span className="flex-1">{label}</span>
+            {badge && (
+              <span className="ml-auto min-w-[18px] h-[18px] px-1 text-xs font-bold text-white bg-red-500 rounded-full flex items-center justify-center">
+                {badge}
+              </span>
+            )}
           </Link>
         ))}
       </nav>

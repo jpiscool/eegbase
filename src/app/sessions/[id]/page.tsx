@@ -4,7 +4,7 @@ import { sessions, clients, protocols, sessionDataPoints } from "@/lib/db/schema
 import { eq, and, asc } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { SessionNotesEditor } from "@/components/SessionNotesEditor";
 import { SessionReplayChart } from "@/components/SessionReplayChart";
 import { BandPowerChart } from "@/components/BandPowerChart";
@@ -142,7 +142,7 @@ export default async function SessionDetailPage({
         >
           <ArrowLeft size={18} />
         </Link>
-        <div>
+        <div className="flex-1">
           <h1 className="text-2xl font-bold text-gray-900">Session Details</h1>
           <p className="text-sm text-gray-500">
             <Link href={`/clients/${row.clientId}`} className="text-blue-600 hover:underline">
@@ -157,6 +157,14 @@ export default async function SessionDetailPage({
             })}
           </p>
         </div>
+        <a
+          href={`/api/sessions/${s.id}`}
+          download={`session-${s.id.slice(0, 8)}.json`}
+          className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          <Download size={15} />
+          Export JSON
+        </a>
       </div>
 
       {/* Summary stats */}
