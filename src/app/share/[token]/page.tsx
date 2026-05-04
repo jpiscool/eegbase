@@ -1,8 +1,8 @@
 import { db } from "@/lib/db";
 import { t, type Lang } from "@/lib/i18n";
 import { ShareLangToggle } from "@/components/ShareLangToggle";
-import { clients, sessions, assignments, protocols, checkIns, clinicians, goals } from "@/lib/db/schema";
-import { eq, and, desc, avg, count } from "drizzle-orm";
+import { clients, sessions, assignments, protocols, checkIns, clinicians, goals, sessionDataPoints, soapNotes } from "@/lib/db/schema";
+import { eq, and, desc, avg, count, inArray } from "drizzle-orm";
 import { notFound } from "next/navigation";
 
 function fmtDuration(sec: number | null) {
@@ -16,6 +16,66 @@ function scoreColor(v: number): string {
   return "#DC2626";
 }
 
+// ── Prefrontal Activation Trend helpers ────────────────────────────────────────
+
+interface TrendPoint {
+  sessionIndex: number;
+  score: number;
+}
+
+function RewardTrendChart({ points }: { points: TrendPoint[] }) {
+  if (points.length < 2) return null;
+  const W = 480;
+  const H = 90;
+  const PAD = { top: 8, right: 12, bottom: 20, left: 32 };
+  const chartW = W - PAD.left - PAD.right;
+  const chartH = H - PAD.top - PAD.bottom;
+
+  const scores = points.map((p) => p.score);
+  const minVal = Math.max(0, Math.min(...scores) - 5);
+  const maxVal = Math.min(100, Math.max(...scores) + 5);
+  const range = maxVal - minVal || 1;
+
+  const toX = (i: number) => PAD.left + (i / (points.length - 1)) * chartW;
+  const toY = (v: number) => PAD.top + chartH - ((v - minVal) / range) * chartH;
+
+  const pathD = points.map((p, i) => `${i === 0 ? "M" : "L"} ${toX(i).toFixed(1)} ${toY(p.score).toFixed(1)}`).join(" ");
+  const areaD = `${pathD} L ${toX(points.length - 1).toFixed(1)} ${(PAD.top + chartH).toFixed(1)} L ${toX(0).toFixed(1)} ${(PAD.top + chartH).toFixed(1)} Z`;
+
+  const trending = points[points.length - 1].score >= points[0].score;
+  const lineColor = trending ? "#059669" : "#D97706";
+  const areaColor = trending ? "rgba(5,150,105,0.10)" : "rgba(217,119,6,0.10)";
+
+  // y-axis labels
+  const yLabels = [minVal, (minVal + maxVal) / 2, maxVal].map((v) => Math.round(v));
+
+  return (
+    <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow: "visible", maxWidth: "100%" }}>
+      {/* y-axis labels */}
+      {yLabels.map((v, i) => {
+        const y = toY(v);
+        return (
+          <g key={i}>
+            <line x1={PAD.left - 4} y1={y} x2={W - PAD.right} y2={y} stroke="#E2E8F0" strokeWidth={0.8} strokeDasharray="3 3" />
+            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize={8} fill="#94A3B8">{v}</text>
+          </g>
+        );
+      })}
+      {/* area fill */}
+      <path d={areaD} fill={areaColor} />
+      {/* line */}
+      <path d={pathD} fill="none" stroke={lineColor} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+      {/* dots + x labels */}
+      {points.map((p, i) => (
+        <g key={i}>
+          <circle cx={toX(i)} cy={toY(p.score)} r={3} fill={lineColor} stroke="white" strokeWidth={1.5} />
+          <text x={toX(i)} y={H - 4} textAnchor="middle" fontSize={8} fill="#94A3B8">S{p.sessionIndex}</text>
+        </g>
+      ))}
+    </svg>
+  );
+}
+
 export default async function SharedReportPage({
   params,
   searchParams,
@@ -25,7 +85,7 @@ export default async function SharedReportPage({
 }) {
   const { token } = await params;
   const sp = await searchParams;
-  const lang: Lang = sp.lang === "es" ? "es" : "en";
+  const lang: Lang = sp.lang === "es" ? "es" : sp.lang === "sv" ? "sv" : "en";
 
   const [client] = await db
     .select()
@@ -102,6 +162,80 @@ export default async function SharedReportPage({
   const lastSession = sessionList[0]?.startedAt;
   const latestAiSummary = sessionList.find((s) => s.aiSummary)?.aiSummary ?? null;
 
+  // ── Client first name (for personalised header) ───────────────────────────
+  const clientFirstName = client.name.trim().split(/\s+/)[0];
+
+  // ── Most recent SOAP note assessment ─────────────────────────────────────
+  // Join sessions → soapNotes, pick the latest session that has a SOAP note.
+  let latestSoapAssessment: string | null = null;
+  {
+    const soapRows = await db
+      .select({ assessment: soapNotes.assessment, updatedAt: soapNotes.updatedAt })
+      .from(soapNotes)
+      .innerJoin(sessions, eq(soapNotes.sessionId, sessions.id))
+      .where(eq(sessions.clientId, client.id))
+      .orderBy(desc(sessions.startedAt))
+      .limit(1);
+    latestSoapAssessment = soapRows[0]?.assessment ?? null;
+  }
+
+  // ── Prefrontal Activation Trend data ──────────────────────────────────────────
+  // Build reward trend from the last 10 sessions that have avgRewardScore
+  const scoredSessions = [...sessionList]
+    .reverse() // oldest first for the chart
+    .filter((s) => s.avgRewardScore != null)
+    .slice(-10);
+
+  const trendPoints: TrendPoint[] = scoredSessions.map((s, i) => ({
+    sessionIndex: i + 1,
+    score: s.avgRewardScore!,
+  }));
+
+  // Query fNIRS data from the last 3 scored sessions
+  let oxyHbLeft: number | null = null;
+  let oxyHbRight: number | null = null;
+  let hasFnirs = false;
+
+  const last3Sessions = scoredSessions.slice(-3);
+  if (last3Sessions.length > 0) {
+    const sessionIds = last3Sessions.map((s) => s.id);
+    const fnirsSummary = await db
+      .select({
+        avgOxyHbLeft: avg(sessionDataPoints.oxyHbLeft),
+        avgOxyHbRight: avg(sessionDataPoints.oxyHbRight),
+      })
+      .from(sessionDataPoints)
+      .where(inArray(sessionDataPoints.sessionId, sessionIds));
+
+    const leftVal = fnirsSummary[0]?.avgOxyHbLeft ? Number(fnirsSummary[0].avgOxyHbLeft) : null;
+    const rightVal = fnirsSummary[0]?.avgOxyHbRight ? Number(fnirsSummary[0].avgOxyHbRight) : null;
+
+    if (leftVal != null && rightVal != null) {
+      oxyHbLeft = leftVal;
+      oxyHbRight = rightVal;
+      hasFnirs = true;
+    }
+  }
+
+  let bilateralLabel = "";
+  let bilateralColor = "#334155";
+  if (hasFnirs && oxyHbLeft != null && oxyHbRight != null) {
+    if (oxyHbLeft > oxyHbRight + 0.05) {
+      bilateralLabel = "Left-dominant prefrontal activation";
+      bilateralColor = "#7C3AED";
+    } else if (oxyHbRight > oxyHbLeft + 0.05) {
+      bilateralLabel = "Right-dominant prefrontal activation";
+      bilateralColor = "#2563EB";
+    } else {
+      bilateralLabel = "Bilateral balance";
+      bilateralColor = "#059669";
+    }
+  }
+
+  const overallAvg = trendPoints.length > 0
+    ? trendPoints.reduce((a, b) => a + b.score, 0) / trendPoints.length
+    : null;
+
   return (
     <div style={{ minHeight: "100vh", background: "#F8FAFC", padding: "32px 16px", fontFamily: "system-ui, -apple-system, sans-serif" }}>
       {/* Public notice banner */}
@@ -130,8 +264,8 @@ export default async function SharedReportPage({
               <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>Clinician Neurofeedback Platform</div>
             </div>
             <div style={{ textAlign: "right", fontSize: 11, color: "#64748B", lineHeight: 1.8 }}>
-              <div style={{ fontWeight: 600, color: "#0F172A" }}>{t("shareHeader", lang)}</div>
-              <div>Generated {reportDate}</div>
+              <div style={{ fontWeight: 600, color: "#0F172A" }}>{clientFirstName}&apos;s Progress Report</div>
+              <div>Generated {reportDate} · Confidential</div>
               {clinician && <div>Clinician: {clinician.name}</div>}
               {firstSession && lastSession && (
                 <div>Period: {new Date(firstSession).toLocaleDateString()} – {new Date(lastSession).toLocaleDateString()}</div>
@@ -166,6 +300,67 @@ export default async function SharedReportPage({
             ))}
           </div>
 
+          {/* ── Prefrontal Activation Trend ────────────────────────────────────── */}
+          <div style={{ marginBottom: 28 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#7C3AED", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #EDE9FE" }}>
+              Prefrontal Activation Trend
+            </div>
+
+            {trendPoints.length === 0 ? (
+              <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 10, padding: "20px 16px", textAlign: "center" as const }}>
+                <div style={{ fontSize: 12, color: "#94A3B8" }}>No fNIRS data yet</div>
+                <div style={{ fontSize: 10, color: "#CBD5E1", marginTop: 4 }}>Reward scores will appear here once sessions are recorded with scored data.</div>
+              </div>
+            ) : (
+              <>
+                {/* SVG line chart */}
+                <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 10, padding: "16px 16px 8px", marginBottom: 14 }}>
+                  <RewardTrendChart points={trendPoints} />
+                  <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 4 }}>
+                    Reward score (0–100) across last {trendPoints.length} session{trendPoints.length !== 1 ? "s" : ""}
+                    {trendPoints.length >= 2 && (
+                      <span style={{ marginLeft: 8, fontWeight: 600, color: trendPoints[trendPoints.length - 1].score >= trendPoints[0].score ? "#059669" : "#D97706" }}>
+                        {trendPoints[trendPoints.length - 1].score >= trendPoints[0].score ? "↑ Trending up" : "↓ Trending down"}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Stats row */}
+                <div style={{ display: "grid", gridTemplateColumns: hasFnirs ? "1fr 1fr" : "1fr", gap: 12 }}>
+                  {/* Avg activation */}
+                  <div style={{ border: "1px solid #E2E8F0", borderRadius: 10, padding: "14px 16px" }}>
+                    <div style={{ fontSize: 10, fontWeight: 600, color: "#94A3B8", textTransform: "uppercase" as const, letterSpacing: "0.06em", marginBottom: 4 }}>Avg. prefrontal activation</div>
+                    {overallAvg != null ? (
+                      <>
+                        <div style={{ fontSize: 22, fontWeight: 700, lineHeight: 1, color: scoreColor(overallAvg) }}>{overallAvg.toFixed(1)}</div>
+                        <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 3 }}>/ 100 reward score</div>
+                      </>
+                    ) : (
+                      <div style={{ fontSize: 18, fontWeight: 700, color: "#CBD5E1" }}>—</div>
+                    )}
+                  </div>
+
+                  {/* Bilateral balance */}
+                  {hasFnirs ? (
+                    <div style={{ border: "1px solid #E2E8F0", borderRadius: 10, padding: "14px 16px" }}>
+                      <div style={{ fontSize: 10, fontWeight: 600, color: "#94A3B8", textTransform: "uppercase" as const, letterSpacing: "0.06em", marginBottom: 4 }}>Bilateral Balance</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.3, color: bilateralColor }}>{bilateralLabel}</div>
+                      <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 4 }}>
+                        OxyHb L: {oxyHbLeft!.toFixed(3)} μM · R: {oxyHbRight!.toFixed(3)} μM (last 3 sessions)
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ border: "1px solid #E2E8F0", borderRadius: 10, padding: "14px 16px" }}>
+                      <div style={{ fontSize: 10, fontWeight: 600, color: "#94A3B8", textTransform: "uppercase" as const, letterSpacing: "0.06em", marginBottom: 4 }}>Bilateral Balance</div>
+                      <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>fNIRS data not available for this client</div>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+
           {/* Sessions table */}
           {sessionList.length > 0 && (
             <div style={{ marginBottom: 28 }}>
@@ -198,6 +393,19 @@ export default async function SharedReportPage({
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {/* Clinician Notes (most recent SOAP note assessment) */}
+          {latestSoapAssessment && (
+            <div style={{ marginBottom: 28 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#0F172A", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #E2E8F0" }}>
+                Clinician Notes
+              </div>
+              <div style={{ border: "1px solid #E2E8F0", borderRadius: 10, padding: "16px 18px", background: "#FAFAFA" }}>
+                <div style={{ fontSize: 10, fontWeight: 600, color: "#94A3B8", textTransform: "uppercase" as const, letterSpacing: "0.06em", marginBottom: 8 }}>Assessment (most recent SOAP note)</div>
+                <p style={{ fontSize: 12.5, color: "#334155", lineHeight: 1.7, margin: 0 }}>{latestSoapAssessment}</p>
+              </div>
             </div>
           )}
 

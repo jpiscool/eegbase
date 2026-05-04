@@ -61,7 +61,7 @@ export function SessionHeatmap({ sessionDates }: Props) {
         {grid.map((_, col) => {
           const ml = monthLabels.find((m) => m.col === col);
           return (
-            <div key={col} className="text-xs text-gray-400" style={{ width: 14, minWidth: 14, marginRight: 2 }}>
+            <div key={col} className="text-xs" style={{ width: 14, minWidth: 14, marginRight: 2, color: "var(--text-tertiary)" }}>
               {ml ? ml.label : ""}
             </div>
           );
@@ -74,8 +74,8 @@ export function SessionHeatmap({ sessionDates }: Props) {
           {DAY_LABELS.map((label, i) => (
             <div
               key={label}
-              className="text-xs text-gray-400 flex items-center justify-end"
-              style={{ height: 12, lineHeight: "12px", width: 28, fontSize: 9 }}
+              className="text-xs flex items-center justify-end"
+              style={{ color: "var(--text-tertiary)", height: 12, lineHeight: "12px", width: 28, fontSize: 9 }}
             >
               {i % 2 === 0 ? label : ""}
             </div>
@@ -100,9 +100,9 @@ export function SessionHeatmap({ sessionDates }: Props) {
                       backgroundColor: isFuture
                         ? "transparent"
                         : hasSession
-                        ? "#2563EB"
-                        : "#E5E7EB",
-                      border: isToday ? "1.5px solid #2563EB" : "none",
+                        ? "var(--brand)"
+                        : "var(--surface-sunken)",
+                      border: isToday ? "1.5px solid var(--brand)" : "none",
                       opacity: isFuture ? 0 : 1,
                     }}
                   />
@@ -113,11 +113,11 @@ export function SessionHeatmap({ sessionDates }: Props) {
         </div>
       </div>
       <div className="flex items-center gap-2 mt-3 justify-end">
-        <span className="text-xs text-gray-400">Less</span>
-        {["#E5E7EB", "#93C5FD", "#2563EB"].map((c) => (
+        <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>Less</span>
+        {(["var(--surface-sunken)", "color-mix(in srgb, var(--brand) 40%, transparent)", "var(--brand)"] as string[]).map((c) => (
           <div key={c} className="w-3 h-3 rounded-sm" style={{ backgroundColor: c }} />
         ))}
-        <span className="text-xs text-gray-400">More</span>
+        <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>More</span>
       </div>
     </div>
   );

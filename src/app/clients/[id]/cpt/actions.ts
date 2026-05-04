@@ -1,11 +1,9 @@
 "use server";
-import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
-import { cptResults, clients } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { cptResults } from "@/lib/db/schema";
+import { revalidatePath } from "next/cache";
 
-interface CptPayload {
+export async function saveCptResult(data: {
   clientId: string;
   durationSeconds: number;
   totalStimuli: number;
@@ -16,39 +14,19 @@ interface CptPayload {
   avgReactionTimeMs: number | null;
   accuracy: number;
   notes?: string;
-}
-
-export async function saveCptResult(payload: CptPayload): Promise<string> {
-  const session = await auth();
-  if (!session?.user) throw new Error("Unauthorized");
-
-  const clinicId = (session.user as { clinicId?: string }).clinicId;
-
-  // Ownership check
-  const [existing] = await db
-    .select({ id: clients.id })
-    .from(clients)
-    .where(and(eq(clients.id, payload.clientId), eq(clients.clinicId, clinicId!)))
-    .limit(1);
-
-  if (!existing) throw new Error("Client not found");
-
-  const [row] = await db
-    .insert(cptResults)
-    .values({
-      clientId: payload.clientId,
-      durationSeconds: payload.durationSeconds,
-      totalStimuli: payload.totalStimuli,
-      targetCount: payload.targetCount,
-      hits: payload.hits,
-      misses: payload.misses,
-      falseAlarms: payload.falseAlarms,
-      avgReactionTimeMs: payload.avgReactionTimeMs ?? undefined,
-      accuracy: payload.accuracy,
-      notes: payload.notes ?? null,
-    })
-    .returning({ id: cptResults.id });
-
-  revalidatePath(`/clients/${payload.clientId}`);
-  return row.id;
+}): Promise<{ id: string }> {
+  const [row] = await db.insert(cptResults).values({
+    clientId: data.clientId,
+    durationSeconds: data.durationSeconds,
+    totalStimuli: data.totalStimuli,
+    targetCount: data.targetCount,
+    hits: data.hits,
+    misses: data.misses,
+    falseAlarms: data.falseAlarms,
+    avgReactionTimeMs: data.avgReactionTimeMs ?? null,
+    accuracy: data.accuracy,
+    notes: data.notes ?? null,
+  }).returning({ id: cptResults.id });
+  revalidatePath(`/clients/${data.clientId}`);
+  return { id: row.id };
 }

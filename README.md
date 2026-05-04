@@ -4,6 +4,31 @@ An open-source, self-hosted neurofeedback practice management platform for licen
 
 ---
 
+## Quick Demo
+
+```bash
+# 1. Clone and install
+git clone https://github.com/eegbase/eegbase && cd eegbase
+npm install
+
+# 2. Set up the database
+cp .env.example .env.local
+# Edit .env.local: set DATABASE_URL and NEXTAUTH_SECRET
+
+# 3. Run migrations and seed the demo clinic
+npm run db:migrate
+npm run seed:demo
+
+# 4. Start the server
+npm run dev
+
+# 5. Open the demo
+# http://localhost:3000/login
+# Email: demo@eegbase.io  Password: demo2026
+```
+
+---
+
 ## Features
 
 - **Live session streaming** — Real-time fNIRS and EEG data via WebBluetooth (Mendi, Muse 2/S, simulator)

@@ -33,11 +33,11 @@ export function AiInsightPanel({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
+    <div className="rounded-xl p-6 mb-5" style={{ background: "var(--surface-raised)", border: "1px solid var(--border-subtle)" }}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Sparkles size={15} className="text-violet-500" />
-          <h2 className="text-sm font-semibold text-gray-700">AI Clinical Insight</h2>
+          <h2 className="text-sm font-semibold" style={{ color: "var(--text-secondary)" }}>AI Clinical Insight</h2>
           <span className="px-2 py-0.5 text-[10px] font-semibold bg-violet-50 text-violet-600 rounded-full border border-violet-100 uppercase tracking-wide">
             Claude
           </span>
@@ -59,26 +59,26 @@ export function AiInsightPanel({
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-4 py-3">
+        <p className="text-sm rounded-lg px-4 py-3" style={{ color: "var(--danger)", background: "var(--danger-subtle)", border: "1px solid color-mix(in srgb, var(--danger) 20%, transparent)" }}>
           {error}
         </p>
       )}
 
       {!error && !summary && !isPending && (
-        <p className="text-sm text-gray-400 italic">
+        <p className="text-sm italic" style={{ color: "var(--text-tertiary)" }}>
           Click &ldquo;Generate Insight&rdquo; to create an AI-powered clinical summary of this session based on the neurophysiological data and questionnaire responses.
         </p>
       )}
 
       {isPending && (
-        <div className="flex items-center gap-3 text-sm text-gray-500">
+        <div className="flex items-center gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
           <Loader2 size={14} className="animate-spin text-violet-500" />
           Analyzing session data with Claude…
         </div>
       )}
 
       {summary && !isPending && (
-        <p className="text-sm text-gray-700 leading-relaxed">{summary}</p>
+        <p className="text-sm leading-relaxed" style={{ color: "var(--text-primary)" }}>{summary}</p>
       )}
     </div>
   );

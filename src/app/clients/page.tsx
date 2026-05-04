@@ -67,8 +67,8 @@ export default async function ClientsPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Clients</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-2xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>Clients</h1>
+          <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
             {clientList.length} client{clientList.length !== 1 ? "s" : ""} in your roster
           </p>
         </div>

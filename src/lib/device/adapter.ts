@@ -15,6 +15,8 @@ export interface DeviceSample {
   beta?: number;
   gamma?: number;
   rewardScore?: number;
+  heartRate?: number;   // BPM
+  hrvRmssd?: number;    // RMSSD in ms
   raw?: Record<string, unknown>;
 }
 

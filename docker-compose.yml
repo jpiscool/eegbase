@@ -1,15 +1,72 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# EEGBase — Docker Compose (full-stack local deployment)
+#
+# Required .env file (copy .env.example → .env and fill in):
+#
+#   DATABASE_URL=postgresql://eegbase:${POSTGRES_PASSWORD}@postgres:5432/eegbase
+#   NEXTAUTH_URL=http://localhost:3000
+#   NEXTAUTH_SECRET=your-secret-here-min-32-chars
+#   ANTHROPIC_API_KEY=sk-ant-...
+#   POSTGRES_PASSWORD=your-postgres-password
+#   API_KEY=your-api-key
+#   API_CLINIC_ID=your-clinic-uuid
+# ─────────────────────────────────────────────────────────────────────────────
+
 services:
-  db:
+
+  # ── PostgreSQL 16 ──────────────────────────────────────────────────────────
+  postgres:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
       POSTGRES_DB: eegbase
+      POSTGRES_USER: eegbase
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eegbase -d eegbase"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # ── Drizzle migration runner ───────────────────────────────────────────────
+  # Runs once on startup, pushes the schema to the database, then exits.
+  # restart: on-failure ensures it retries if postgres isn't ready yet.
+  migrate:
+    build:
+      context: .
+    command: npx drizzle-kit push
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://eegbase:${POSTGRES_PASSWORD}@postgres:5432/eegbase
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    restart: on-failure
+
+  # ── Next.js application ────────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://eegbase:${POSTGRES_PASSWORD}@postgres:5432/eegbase
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      API_KEY: ${API_KEY}
+      API_CLINIC_ID: ${API_CLINIC_ID}
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
 
 volumes:
   pgdata:

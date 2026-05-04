@@ -17,14 +17,31 @@ interface ClientRow {
 }
 
 type StatusFilter = "active" | "all" | "inactive";
-type SortKey = "name" | "sessionCount" | "avgRewardScore" | "lastSessionAt" | "createdAt";
+type SortKey = "name" | "sessionCount" | "avgRewardScore" | "lastSessionAt" | "createdAt" | "risk";
 type SortDir = "asc" | "desc";
 
+function computeRisk(client: ClientRow): { score: number; label: string; color: string; bg: string } {
+  const days = client.lastSessionAt
+    ? Math.floor((Date.now() - new Date(client.lastSessionAt).getTime()) / (86400000))
+    : null;
+  let pts = 0;
+  if (days === null || days > 60) pts += 3;
+  else if (days > 21) pts += 2;
+  else if (days > 7) pts += 1;
+  if (client.sessionCount < 5) pts += 3;
+  else if (client.sessionCount < 10) pts += 2;
+  else if (client.sessionCount < 15) pts += 1;
+  if (client.trend === "down") pts += 1;
+  if (pts <= 1) return { score: pts, label: "Low", color: "var(--success)", bg: "var(--success-subtle)" };
+  if (pts <= 3) return { score: pts, label: "Med", color: "var(--warning)", bg: "var(--warning-subtle)" };
+  return { score: pts, label: "High", color: "var(--danger)", bg: "var(--danger-subtle)" };
+}
+
 function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; sortDir: SortDir }) {
-  if (col !== sortKey) return <ChevronUp size={12} className="ml-1 text-gray-300" />;
+  if (col !== sortKey) return <ChevronUp size={12} className="ml-1" style={{ color: "var(--border-default)" }} />;
   return sortDir === "asc"
-    ? <ChevronUp size={12} className="ml-1 text-blue-500" />
-    : <ChevronDown size={12} className="ml-1 text-blue-500" />;
+    ? <ChevronUp size={12} className="ml-1" style={{ color: "var(--brand)" }} />
+    : <ChevronDown size={12} className="ml-1" style={{ color: "var(--brand)" }} />;
 }
 
 export function ClientsTable({ clients }: { clients: ClientRow[] }) {
@@ -70,6 +87,8 @@ export function ClientsTable({ clients }: { clients: ClientRow[] }) {
       cmp = ta - tb;
     } else if (sortKey === "createdAt") {
       cmp = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    } else if (sortKey === "risk") {
+      cmp = computeRisk(a).score - computeRisk(b).score;
     }
     return sortDir === "asc" ? cmp : -cmp;
   });
@@ -80,7 +99,8 @@ export function ClientsTable({ clients }: { clients: ClientRow[] }) {
   function Th({ label, col }: { label: string; col: SortKey }) {
     return (
       <th
-        className="text-left px-5 py-3 font-medium text-gray-500 cursor-pointer select-none hover:text-gray-700 whitespace-nowrap"
+        className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider cursor-pointer select-none whitespace-nowrap"
+        style={{ color: "var(--text-tertiary)" }}
         onClick={() => toggleSort(col)}
       >
         <span className="inline-flex items-center">
@@ -95,7 +115,7 @@ export function ClientsTable({ clients }: { clients: ClientRow[] }) {
     <div>
       {clients.length > 0 && (
         <div className="flex items-center gap-3 mb-4">
-          <div className="flex items-center bg-gray-100 rounded-lg p-0.5 text-sm">
+          <div className="flex items-center rounded-lg p-0.5 text-sm" style={{ background: "var(--surface-sunken)" }}>
             {(
               [
                 ["active", "Active", activeCount],
@@ -106,54 +126,49 @@ export function ClientsTable({ clients }: { clients: ClientRow[] }) {
               <button
                 key={value}
                 onClick={() => setStatusFilter(value)}
-                className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
-                  statusFilter === value
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
+                className="px-3 py-1.5 rounded-md font-medium transition-colors text-sm"
+                style={statusFilter === value
+                  ? { background: "var(--surface-raised)", color: "var(--text-primary)", boxShadow: "var(--shadow-card)" }
+                  : { color: "var(--text-tertiary)" }}
               >
                 {label}
-                <span
-                  className={`ml-1.5 text-xs ${
-                    statusFilter === value ? "text-gray-500" : "text-gray-400"
-                  }`}
-                >
-                  {cnt}
-                </span>
+                <span className="ml-1.5 text-xs" style={{ color: "var(--text-tertiary)" }}>{cnt}</span>
               </button>
             ))}
           </div>
           <div className="relative flex-1">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "var(--text-tertiary)" }} />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by name, email, or goals…"
-              className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+              className="w-full pl-9 pr-4 py-2 rounded-lg text-sm focus:outline-none"
+              style={{ background: "var(--surface-raised)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }}
             />
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="rounded-xl border overflow-hidden" style={{ background: "var(--surface-raised)", borderColor: "var(--border-subtle)" }}>
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="border-b" style={{ background: "var(--surface-sunken)", borderColor: "var(--border-subtle)" }}>
             <tr>
               <Th label="Name" col="name" />
-              <th className="text-left px-5 py-3 font-medium text-gray-500">Goals</th>
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>Goals</th>
               <Th label="Sessions" col="sessionCount" />
               <Th label="Avg Reward" col="avgRewardScore" />
               <Th label="Last Session" col="lastSessionAt" />
-              <th className="text-left px-5 py-3 font-medium text-gray-500">Email</th>
+              <Th label="Risk" col="risk" />
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>Email</th>
               <Th label="Added" col="createdAt" />
-              <th className="text-left px-5 py-3 font-medium text-gray-500">Status</th>
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y" style={{ borderColor: "var(--border-subtle)" }}>
             {sorted.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-5 py-12 text-center text-gray-400">
+                <td colSpan={9} className="px-5 py-12 text-center" style={{ color: "var(--text-tertiary)" }}>
                   {query
                     ? `No clients match "${query}".`
                     : 'No clients yet. Click "Add Client" to get started.'}
@@ -162,84 +177,88 @@ export function ClientsTable({ clients }: { clients: ClientRow[] }) {
             ) : (
               sorted.map((client) => {
                 const lastSessionDays = client.lastSessionAt
-                  ? Math.floor(
-                      (Date.now() - new Date(client.lastSessionAt).getTime()) /
-                        (1000 * 60 * 60 * 24)
-                    )
+                  ? Math.floor((Date.now() - new Date(client.lastSessionAt).getTime()) / (1000 * 60 * 60 * 24))
                   : null;
                 return (
-                  <tr key={client.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-5 py-3.5 font-medium text-gray-900">
-                      <Link href={`/clients/${client.id}`} className="hover:text-blue-600 transition-colors">
+                  <tr key={client.id} className="transition-colors">
+                    <td className="px-5 py-3.5 font-medium">
+                      <Link href={`/clients/${client.id}`} className="hover:underline transition-colors" style={{ color: "var(--text-primary)" }}>
                         {client.name}
                       </Link>
                     </td>
                     <td className="px-5 py-3.5 max-w-xs">
                       {client.goals ? (
-                        <span className="truncate block text-sm text-gray-600">{client.goals}</span>
+                        <span className="truncate block text-sm" style={{ color: "var(--text-secondary)" }}>{client.goals}</span>
                       ) : (
-                        <span className="text-gray-300">—</span>
+                        <span style={{ color: "var(--text-tertiary)" }}>—</span>
                       )}
                     </td>
-                    <td className="px-5 py-3.5 text-gray-500">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                    <td className="px-5 py-3.5">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: "var(--surface-sunken)", color: "var(--text-secondary)" }}>
                         {client.sessionCount}
                       </span>
                     </td>
                     <td className="px-5 py-3.5">
                       {client.avgRewardScore != null ? (
                         <div className="flex items-center gap-2">
-                          <span
-                            className={`text-sm font-semibold ${
-                              Number(client.avgRewardScore) >= 70
-                                ? "text-emerald-600"
-                                : Number(client.avgRewardScore) >= 40
-                                ? "text-amber-600"
-                                : "text-red-500"
-                            }`}
-                          >
+                          <span className="text-sm font-semibold" style={{
+                            color: Number(client.avgRewardScore) >= 70 ? "var(--success)"
+                              : Number(client.avgRewardScore) >= 40 ? "var(--warning)"
+                              : "var(--danger)"
+                          }}>
                             {Number(client.avgRewardScore).toFixed(1)}
                           </span>
                           {client.trend === "up" && (
-                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600" title="Improving">
-                              <ChevronUp size={10} />↑
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold" style={{ background: "var(--success-subtle)", color: "var(--success)" }} title="Improving">
+                              ↑
                             </span>
                           )}
                           {client.trend === "down" && (
-                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-500" title="Declining">
-                              <ChevronDown size={10} />↓
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold" style={{ background: "var(--danger-subtle)", color: "var(--danger)" }} title="Declining">
+                              ↓
                             </span>
                           )}
                         </div>
                       ) : (
-                        <span className="text-gray-300">—</span>
+                        <span style={{ color: "var(--text-tertiary)" }}>—</span>
                       )}
                     </td>
                     <td className="px-5 py-3.5 whitespace-nowrap">
                       {lastSessionDays === null ? (
-                        <span className="text-gray-300">Never</span>
+                        <span style={{ color: "var(--text-tertiary)" }}>Never</span>
                       ) : lastSessionDays === 0 ? (
-                        <span className="text-emerald-600 font-medium">Today</span>
+                        <span className="font-medium" style={{ color: "var(--success)" }}>Today</span>
                       ) : lastSessionDays <= 7 ? (
-                        <span className="text-emerald-600">{lastSessionDays}d ago</span>
+                        <span style={{ color: "var(--success)" }}>{lastSessionDays}d ago</span>
                       ) : lastSessionDays <= 21 ? (
-                        <span className="text-amber-600">{lastSessionDays}d ago</span>
+                        <span style={{ color: "var(--warning)" }}>{lastSessionDays}d ago</span>
                       ) : (
-                        <span className="text-red-500">{lastSessionDays}d ago</span>
+                        <span style={{ color: "var(--danger)" }}>{lastSessionDays}d ago</span>
                       )}
                     </td>
-                    <td className="px-5 py-3.5 text-gray-500">{client.email ?? "—"}</td>
-                    <td className="px-5 py-3.5 text-gray-500">
+                    <td className="px-5 py-3.5">
+                      {client.active ? (
+                        (() => {
+                          const risk = computeRisk(client);
+                          return (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                              style={{ background: risk.bg, color: risk.color }}
+                              title={`Retention risk score: ${risk.score}`}>
+                              {risk.label}
+                            </span>
+                          );
+                        })()
+                      ) : <span style={{ color: "var(--text-tertiary)" }}>—</span>}
+                    </td>
+                    <td className="px-5 py-3.5" style={{ color: "var(--text-secondary)" }}>{client.email ?? "—"}</td>
+                    <td className="px-5 py-3.5" style={{ color: "var(--text-secondary)" }}>
                       {new Date(client.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-5 py-3.5">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          client.active
-                            ? "bg-emerald-50 text-emerald-700"
-                            : "bg-gray-100 text-gray-500"
-                        }`}
-                      >
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                        style={client.active
+                          ? { background: "var(--success-subtle)", color: "var(--success)" }
+                          : { background: "var(--surface-sunken)", color: "var(--text-tertiary)" }}>
                         {client.active ? "Active" : "Inactive"}
                       </span>
                     </td>
@@ -252,7 +271,7 @@ export function ClientsTable({ clients }: { clients: ClientRow[] }) {
       </div>
 
       {(query || statusFilter !== "all") && sorted.length > 0 && (
-        <p className="text-xs text-gray-400 mt-2 text-right">
+        <p className="text-xs mt-2 text-right" style={{ color: "var(--text-tertiary)" }}>
           {sorted.length} of {clients.length} client{clients.length !== 1 ? "s" : ""}
         </p>
       )}

@@ -10,20 +10,22 @@ export function DeleteProtocolButton({ id, name }: { id: string; name: string })
   if (confirming) {
     return (
       <div className="flex items-center gap-2 shrink-0">
-        <span className="text-xs text-gray-500">Delete &ldquo;{name}&rdquo;?</span>
+        <span className="text-xs" style={{ color: "var(--text-secondary)" }}>Delete &ldquo;{name}&rdquo;?</span>
         <button
           onClick={async () => {
             setPending(true);
             await deleteProtocol(id);
           }}
           disabled={pending}
-          className="text-xs font-semibold text-red-600 hover:text-red-700 disabled:opacity-50"
+          className="text-xs font-semibold transition-colors disabled:opacity-50"
+          style={{ color: "var(--danger)" }}
         >
           {pending ? "Deleting…" : "Yes, delete"}
         </button>
         <button
           onClick={() => setConfirming(false)}
-          className="text-xs text-gray-400 hover:text-gray-600"
+          className="text-xs transition-colors"
+          style={{ color: "var(--text-tertiary)" }}
         >
           Cancel
         </button>
@@ -34,7 +36,8 @@ export function DeleteProtocolButton({ id, name }: { id: string; name: string })
   return (
     <button
       onClick={() => setConfirming(true)}
-      className="shrink-0 p-1.5 text-gray-300 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"
+      className="shrink-0 p-1.5 transition-colors rounded-lg"
+      style={{ color: "var(--text-tertiary)" }}
       title="Delete protocol"
     >
       <Trash2 size={15} />

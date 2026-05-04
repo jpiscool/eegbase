@@ -4,7 +4,11 @@ import { clinicians, clinics } from "@/lib/db/schema";
 import { eq, count } from "drizzle-orm";
 import Link from "next/link";
 import { Users } from "lucide-react";
-import { ProfileForm, PasswordForm, ClinicNameForm, WebhookForm } from "./SettingsForms";
+import { ProfileForm, PasswordForm, ClinicNameForm, WebhookForm, ApiKeyDisplay } from "./SettingsForms";
+
+const card = "rounded-xl border p-6 mb-5";
+const cardSt = { background: "var(--surface-raised)", borderColor: "var(--border-subtle)" };
+const h2Cl = "text-base font-semibold mb-4";
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -28,60 +32,59 @@ export default async function SettingsPage() {
     .from(clinicians)
     .where(eq(clinicians.clinicId, clinicId));
 
+  const teamCount = Number(teamCountRow?.count ?? 0);
+
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold text-gray-900 mb-1">Settings</h1>
-      <p className="text-sm text-gray-500 mb-8">Manage your profile and account security.</p>
+      <h1 className="text-2xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>Settings</h1>
+      <p className="text-sm mb-8" style={{ color: "var(--text-secondary)" }}>Manage your profile and account security.</p>
 
       {/* Clinic info */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
-        <h2 className="text-base font-semibold text-gray-900 mb-4">Clinic</h2>
+      <div className={card} style={cardSt}>
+        <h2 className={h2Cl} style={{ color: "var(--text-primary)" }}>Clinic</h2>
         <div className="grid grid-cols-2 gap-4 text-sm mb-5">
-          <div>
-            <p className="text-xs text-gray-400 font-medium mb-0.5">Your Role</p>
-            <p className="text-gray-900 font-medium capitalize">{clinician?.role ?? "—"}</p>
-          </div>
-          <div>
-            <p className="text-xs text-gray-400 font-medium mb-0.5">Account Created</p>
-            <p className="text-gray-900">
-              {clinician?.createdAt ? new Date(clinician.createdAt).toLocaleDateString() : "—"}
-            </p>
-          </div>
-          <div>
-            <p className="text-xs text-gray-400 font-medium mb-0.5">Clinic ID</p>
-            <p className="text-gray-400 font-mono text-xs truncate">{clinicId}</p>
-          </div>
+          {[
+            { label: "Your Role", value: <span className="font-medium capitalize">{clinician?.role ?? "—"}</span> },
+            { label: "Account Created", value: clinician?.createdAt ? new Date(clinician.createdAt).toLocaleDateString() : "—" },
+            { label: "Clinic ID", value: <span className="font-mono text-xs" style={{ color: "var(--text-tertiary)" }}>{clinicId}</span> },
+          ].map(({ label, value }) => (
+            <div key={label}>
+              <p className="text-xs font-medium mb-0.5" style={{ color: "var(--text-tertiary)" }}>{label}</p>
+              <p style={{ color: "var(--text-primary)" }}>{value}</p>
+            </div>
+          ))}
         </div>
-        <div className="border-t border-gray-100 pt-5">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Clinic Name</p>
+        <div className="border-t pt-5" style={{ borderColor: "var(--border-subtle)" }}>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--text-secondary)" }}>Clinic Name</p>
           <ClinicNameForm currentName={clinic?.name ?? ""} />
         </div>
       </div>
 
       {/* Profile */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
-        <h2 className="text-base font-semibold text-gray-900 mb-4">Profile</h2>
+      <div className={card} style={cardSt}>
+        <h2 className={h2Cl} style={{ color: "var(--text-primary)" }}>Profile</h2>
         <ProfileForm name={clinician?.name ?? ""} email={clinician?.email ?? ""} />
       </div>
 
       {/* Password */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
-        <h2 className="text-base font-semibold text-gray-900 mb-4">Change Password</h2>
+      <div className={card} style={cardSt}>
+        <h2 className={h2Cl} style={{ color: "var(--text-primary)" }}>Change Password</h2>
         <PasswordForm />
       </div>
 
       {/* Team */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
+      <div className={card} style={cardSt}>
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-base font-semibold text-gray-900 mb-1">Team</h2>
-            <p className="text-sm text-gray-500">
-              {Number(teamCountRow?.count ?? 0)} member{Number(teamCountRow?.count ?? 0) !== 1 ? "s" : ""} in this clinic
+            <h2 className="text-base font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Team</h2>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+              {teamCount} member{teamCount !== 1 ? "s" : ""} in this clinic
             </p>
           </div>
           <Link
             href="/settings/team"
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium border rounded-lg transition-colors"
+            style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)", background: "var(--surface-raised)" }}
           >
             <Users size={15} />
             Manage Team
@@ -90,40 +93,25 @@ export default async function SettingsPage() {
       </div>
 
       {/* Device Integrations */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
-        <h2 className="text-base font-semibold text-gray-900 mb-1">Device Integrations</h2>
-        <p className="text-sm text-gray-400 mb-4">Supported neurofeedback hardware</p>
+      <div className={card} style={cardSt}>
+        <h2 className="text-base font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Device Integrations</h2>
+        <p className="text-sm mb-4" style={{ color: "var(--text-tertiary)" }}>Supported neurofeedback hardware</p>
         <div className="space-y-3">
           {[
-            {
-              name: "Mendi",
-              description: "fNIRS prefrontal cortex monitor (oxyHb / deoxyHb)",
-              status: "active",
-              note: "WebBluetooth live session + REST ingestion API",
-            },
-            {
-              name: "Muse EEG",
-              description: "Multi-channel EEG headband (TP9, AF7, AF8, TP10) — delta/theta/alpha/beta/gamma",
-              status: "active",
-              note: "WebBluetooth live session — Muse 2 and Muse S supported",
-            },
-            {
-              name: "Simulator",
-              description: "Built-in signal simulator for development and demos",
-              status: "active",
-              note: "Always available — noise level and trend strength configurable per protocol",
-            },
-          ].map(({ name, description, status, note }) => (
-            <div key={name} className="flex items-start gap-4 p-4 border border-gray-100 rounded-xl">
+            { name: "Mendi", description: "fNIRS prefrontal cortex monitor (oxyHb / deoxyHb)", note: "WebBluetooth live session + REST ingestion API" },
+            { name: "Muse EEG", description: "Multi-channel EEG headband (TP9, AF7, AF8, TP10) — delta/theta/alpha/beta/gamma", note: "WebBluetooth live session — Muse 2 and Muse S supported" },
+            { name: "Simulator", description: "Built-in signal simulator for development and demos", note: "Always available — noise level and trend strength configurable per protocol" },
+          ].map(({ name, description, note }) => (
+            <div key={name} className="flex items-start gap-4 p-4 rounded-xl border" style={{ borderColor: "var(--border-subtle)" }}>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <p className="text-sm font-semibold text-gray-900">{name}</p>
-                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
+                  <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>{name}</p>
+                  <span className="px-2 py-0.5 text-xs font-medium rounded-full" style={{ background: "var(--success-subtle)", color: "var(--success)" }}>
                     Active
                   </span>
                 </div>
-                <p className="text-xs text-gray-500">{description}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{note}</p>
+                <p className="text-xs" style={{ color: "var(--text-secondary)" }}>{description}</p>
+                <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>{note}</p>
               </div>
             </div>
           ))}
@@ -131,33 +119,36 @@ export default async function SettingsPage() {
       </div>
 
       {/* API Access */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
-        <h2 className="text-base font-semibold text-gray-900 mb-1">API Access</h2>
-        <p className="text-sm text-gray-400 mb-4">
+      <div className={card} style={cardSt}>
+        <h2 className="text-base font-semibold mb-1" style={{ color: "var(--text-primary)" }}>API Access</h2>
+        <p className="text-sm mb-4" style={{ color: "var(--text-tertiary)" }}>
           Use the REST API to ingest session data from external systems (e.g. Mendi cloud, research pipelines).
         </p>
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Your API Key (Clinic ID)</p>
-          <p className="font-mono text-sm text-gray-800 break-all">{clinicId}</p>
-          <p className="text-xs text-gray-400 mt-1">Keep this secret. Include it as <code className="bg-gray-200 px-1 rounded">Authorization: Bearer &lt;key&gt;</code> on all API requests.</p>
-        </div>
-        <div className="text-xs text-gray-500 space-y-1.5">
-          <p className="font-semibold text-gray-700">Ingestion endpoint:</p>
-          <p className="font-mono bg-gray-50 border border-gray-200 rounded px-3 py-2 text-gray-700">POST /api/v1/sessions</p>
-          <p>Accepts completed session JSON with <code className="bg-gray-100 px-1 rounded">samples</code>, <code className="bg-gray-100 px-1 rounded">preSession</code>, and <code className="bg-gray-100 px-1 rounded">postSession</code> questionnaire data. Returns <code className="bg-gray-100 px-1 rounded">{"{ sessionId }"}</code>.</p>
+        <ApiKeyDisplay clinicId={clinicId} />
+        <div className="text-xs space-y-1.5" style={{ color: "var(--text-secondary)" }}>
+          <p className="font-semibold" style={{ color: "var(--text-primary)" }}>Ingestion endpoint:</p>
+          <p className="font-mono rounded px-3 py-2 border" style={{ background: "var(--surface-sunken)", borderColor: "var(--border-default)", color: "var(--text-secondary)" }}>POST /api/v1/sessions</p>
+          <p style={{ color: "var(--text-tertiary)" }}>
+            Accepts completed session JSON with{" "}
+            <code className="rounded px-1" style={{ background: "var(--surface-sunken)" }}>samples</code>,{" "}
+            <code className="rounded px-1" style={{ background: "var(--surface-sunken)" }}>preSession</code>, and{" "}
+            <code className="rounded px-1" style={{ background: "var(--surface-sunken)" }}>postSession</code>{" "}
+            questionnaire data. Returns{" "}
+            <code className="rounded px-1" style={{ background: "var(--surface-sunken)" }}>{"{ sessionId }"}</code>.
+          </p>
         </div>
       </div>
 
       {/* Webhooks */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-5">
-        <h2 className="text-base font-semibold text-gray-900 mb-1">Webhooks</h2>
-        <p className="text-sm text-gray-400 mb-4">
+      <div className={card} style={cardSt}>
+        <h2 className="text-base font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Webhooks</h2>
+        <p className="text-sm mb-4" style={{ color: "var(--text-tertiary)" }}>
           EEGBase will POST a JSON payload to this URL every time a session is saved. Useful for syncing with external systems, Zapier, or Mendi cloud.
         </p>
         <WebhookForm currentUrl={clinic?.webhookUrl ?? null} />
-        <div className="mt-4 text-xs text-gray-500 space-y-1">
-          <p className="font-semibold text-gray-600">Payload shape:</p>
-          <pre className="bg-gray-50 border border-gray-200 rounded p-3 font-mono text-[11px] text-gray-700 overflow-x-auto">{`{
+        <div className="mt-4 text-xs space-y-1" style={{ color: "var(--text-secondary)" }}>
+          <p className="font-semibold" style={{ color: "var(--text-primary)" }}>Payload shape:</p>
+          <pre className="rounded p-3 font-mono text-[11px] overflow-x-auto border" style={{ background: "var(--surface-sunken)", borderColor: "var(--border-default)", color: "var(--text-secondary)" }}>{`{
   "event": "session.saved",
   "sessionId": "uuid",
   "clientName": "Sarah Mitchell",
@@ -175,13 +166,13 @@ export default async function SettingsPage() {
       </div>
 
       {/* Subscription */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="rounded-xl border p-6" style={{ background: "var(--surface-raised)", borderColor: "var(--border-subtle)" }}>
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-base font-semibold text-gray-900 mb-1">Subscription</h2>
-            <p className="text-sm text-gray-500">Current plan and usage</p>
+            <h2 className="text-base font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Subscription</h2>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Current plan and usage</p>
           </div>
-          <span className="px-3 py-1 text-sm font-semibold bg-blue-50 text-blue-700 rounded-full border border-blue-100">
+          <span className="px-3 py-1 text-sm font-semibold rounded-full" style={{ background: "color-mix(in srgb, var(--brand) 10%, transparent)", color: "var(--brand)" }}>
             Pro Plan
           </span>
         </div>
@@ -191,21 +182,22 @@ export default async function SettingsPage() {
             { label: "Sessions / month", current: "—", limit: "Unlimited" },
             { label: "Storage", current: "—", limit: "10 GB" },
           ].map(({ label, current, limit }) => (
-            <div key={label} className="border border-gray-100 rounded-lg p-3">
-              <p className="text-xs text-gray-400 mb-1">{label}</p>
-              <p className="text-sm font-semibold text-gray-900">{current}</p>
-              <p className="text-xs text-gray-400">of {limit}</p>
+            <div key={label} className="rounded-lg p-3 border" style={{ borderColor: "var(--border-subtle)" }}>
+              <p className="text-xs mb-1" style={{ color: "var(--text-tertiary)" }}>{label}</p>
+              <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>{current}</p>
+              <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>of {limit}</p>
             </div>
           ))}
         </div>
-        <div className="mt-5 pt-4 border-t border-gray-100 flex items-center justify-between">
+        <div className="mt-5 pt-4 border-t flex items-center justify-between" style={{ borderColor: "var(--border-subtle)" }}>
           <div>
-            <p className="text-xs text-gray-500">Next billing date</p>
-            <p className="text-sm font-medium text-gray-700">Billing managed by your admin</p>
+            <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>Next billing date</p>
+            <p className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>Billing managed by your admin</p>
           </div>
           <button
             disabled
-            className="px-4 py-2 text-sm border border-gray-200 rounded-lg text-gray-400 cursor-not-allowed"
+            className="px-4 py-2 text-sm border rounded-lg cursor-not-allowed"
+            style={{ borderColor: "var(--border-default)", color: "var(--text-tertiary)" }}
           >
             Manage Billing
           </button>

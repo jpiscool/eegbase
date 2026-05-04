@@ -29,7 +29,7 @@ function MiniWave({ data, color, label }: { data: number[]; color: string; label
   });
   return (
     <div>
-      <p className="text-[10px] text-gray-500 mb-1">{label}</p>
+      <p className="text-[10px] mb-1" style={{ color: "#94A3B8" }}>{label}</p>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="overflow-visible">
         <polyline
           points={pts.join(" ")}

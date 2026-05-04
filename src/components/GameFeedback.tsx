@@ -2,160 +2,120 @@
 
 interface Props {
   score: number | null;
-  threshold?: number;
+  threshold: number;
 }
 
-function getColor(score: number): string {
-  if (score >= 70) return "#10B981";
-  if (score >= 40) return "#F59E0B";
-  return "#EF4444";
+function orbColor(score: number): string {
+  if (score < 40) return "#EF4444";
+  if (score < 70) return "#F59E0B";
+  return "#10B981";
 }
 
-function getLabel(score: number): string {
-  if (score >= 80) return "Peak engagement";
-  if (score >= 70) return "Great — above target";
-  if (score >= 55) return "On track";
-  if (score >= 40) return "Building up…";
-  return "Below target";
+function zoneLabel(score: number, threshold: number): string {
+  if (score < threshold) return "Below target";
+  if (score < 55) return "Building up";
+  if (score < 70) return "On track";
+  if (score < 85) return "Great";
+  return "Peak";
 }
 
-export function GameFeedback({ score, threshold = 50 }: Props) {
+export function GameFeedback({ score, threshold }: Props) {
   const s = score ?? 0;
-  const color = score == null ? "#CBD5E1" : getColor(s);
-  const label = score == null ? "Waiting for signal…" : getLabel(s);
+  const color = score == null ? "#94A3B8" : orbColor(s);
 
-  // Orb diameter: 80px at 0 → 240px at 100
-  const minDiam = 80;
-  const maxDiam = 240;
-  const diam = score == null ? minDiam : minDiam + ((s / 100) * (maxDiam - minDiam));
+  // Orb diameter: lerp from 60 (score=0) to 220 (score=100)
+  const diam = score == null ? 60 : 60 + (s / 100) * (220 - 60);
 
-  // Pulse speed: 4s at 0 → 0.6s at 100
-  const pulseSpeed = score == null ? 3 : Math.max(0.6, 4 - (s / 100) * 3.4);
+  // Pulse animation duration: 4s at 0, faster at higher scores
+  const pulseDuration = score == null ? 4 : Math.max(0.64, 4 - s * 0.032);
 
-  // Ring size (outer glow ring): orb + 32–80px
-  const ringDiam = diam + 32 + (s / 100) * 48;
-
-  const aboveThreshold = score != null && s >= threshold;
+  const label = score == null ? "—" : String(Math.round(s));
+  const zone = score == null ? "" : zoneLabel(s, threshold);
 
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: 360,
-        userSelect: "none",
-        position: "relative",
-        overflow: "hidden",
+        width: "100%",
+        background: "var(--surface-raised)",
       }}
     >
       <style>{`
-        @keyframes orb-pulse {
-          0%, 100% { transform: scale(1); opacity: 0.18; }
-          50% { transform: scale(1.18); opacity: 0.05; }
-        }
-        @keyframes orb-breathe {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.04); }
+        @keyframes pulse-ring {
+          0% { opacity: 0.4; r: ${(diam / 2 + 4).toFixed(1)}; }
+          100% { opacity: 0; r: ${(diam / 2 + 28).toFixed(1)}; }
         }
       `}</style>
 
-      {/* Outer glow ring */}
-      <div
-        style={{
-          position: "absolute",
-          width: ringDiam,
-          height: ringDiam,
-          borderRadius: "50%",
-          background: color,
-          opacity: 0,
-          animation: `orb-pulse ${pulseSpeed}s ease-in-out infinite`,
-          transition: "width 0.6s ease, height 0.6s ease, background 0.6s ease",
-        }}
-      />
+      <svg
+        viewBox="0 0 300 300"
+        width="100%"
+        style={{ display: "block" }}
+        aria-label={`Neurofeedback score: ${label}`}
+      >
+        {/* Defs for pulsing ring keyframes scoped to this SVG instance */}
+        <defs>
+          <style>{`
+            .pulse-ring-${Math.round(s)} {
+              animation: pulse-ring-anim-${Math.round(s)} ${pulseDuration.toFixed(3)}s ease-out infinite;
+            }
+            @keyframes pulse-ring-anim-${Math.round(s)} {
+              0% { opacity: 0.4; }
+              100% { opacity: 0; }
+            }
+          `}</style>
+        </defs>
 
-      {/* Second glow ring (offset phase) */}
-      {aboveThreshold && (
-        <div
+        {/* Pulsing outer ring — dashed circle */}
+        <circle
+          cx="150"
+          cy="150"
+          r={diam / 2 + 16}
+          fill="none"
+          stroke={color}
+          strokeWidth="2"
+          strokeDasharray="6 5"
+          opacity="0.4"
           style={{
-            position: "absolute",
-            width: ringDiam * 0.75,
-            height: ringDiam * 0.75,
-            borderRadius: "50%",
-            background: color,
-            opacity: 0,
-            animation: `orb-pulse ${pulseSpeed * 0.7}s ease-in-out infinite`,
-            animationDelay: `${pulseSpeed * 0.35}s`,
-            transition: "all 0.6s ease",
+            animation: `pulse-ring ${pulseDuration.toFixed(3)}s ease-out infinite`,
+            transformOrigin: "150px 150px",
           }}
         />
-      )}
 
-      {/* Core orb */}
-      <div
-        style={{
-          position: "relative",
-          width: diam,
-          height: diam,
-          borderRadius: "50%",
-          background: `radial-gradient(circle at 38% 36%, ${color}dd, ${color}88)`,
-          boxShadow: `0 0 ${diam * 0.4}px ${color}55, 0 0 ${diam * 0.15}px ${color}99`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-          animation: `orb-breathe ${pulseSpeed * 1.4}s ease-in-out infinite`,
-          transition: "width 0.5s ease, height 0.5s ease, background 0.5s ease, box-shadow 0.5s ease",
-          zIndex: 1,
-        }}
-      >
-        <span
-          style={{
-            fontSize: diam * 0.28,
-            fontWeight: 800,
-            color: "white",
-            letterSpacing: "-0.04em",
-            lineHeight: 1,
-            textShadow: "0 2px 12px rgba(0,0,0,0.25)",
-            transition: "font-size 0.5s ease",
-          }}
+        {/* Core orb */}
+        <circle
+          cx="150"
+          cy="150"
+          r={diam / 2}
+          fill={color}
+        />
+
+        {/* Score text */}
+        <text
+          x="150"
+          y="150"
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={Math.max(18, diam * 0.3)}
+          fontWeight="bold"
+          fill="white"
         >
-          {score == null ? "—" : Math.round(s)}
-        </span>
-        <span
-          style={{
-            fontSize: Math.max(10, diam * 0.09),
-            color: "rgba(255,255,255,0.75)",
-            fontWeight: 600,
-            marginTop: 2,
-          }}
-        >
-          / 100
-        </span>
-      </div>
+          {label}
+        </text>
 
-      {/* Label */}
-      <p
-        style={{
-          marginTop: 28,
-          fontSize: 15,
-          fontWeight: 600,
-          color,
-          transition: "color 0.5s ease",
-          zIndex: 1,
-          letterSpacing: "-0.01em",
-        }}
-      >
-        {label}
-      </p>
-
-      {/* Threshold indicator */}
-      {threshold > 0 && (
-        <p style={{ marginTop: 6, fontSize: 12, color: "#94A3B8", zIndex: 1 }}>
-          Target threshold: {threshold}
-        </p>
-      )}
+        {/* Zone label below score */}
+        {zone && (
+          <text
+            x="150"
+            y={150 + diam / 2 + 20}
+            textAnchor="middle"
+            fontSize="13"
+            fontWeight="600"
+            fill={color}
+          >
+            {zone}
+          </text>
+        )}
+      </svg>
     </div>
   );
 }

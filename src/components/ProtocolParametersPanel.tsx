@@ -56,6 +56,12 @@ function mergeDefaults<T extends object>(saved: unknown, defaults: T): T {
 
 // ── Helper components ─────────────────────────────────────────────────────────
 
+const controlStyle: React.CSSProperties = {
+  border: "1px solid var(--border-default)",
+  background: "var(--surface-sunken)",
+  color: "var(--text-primary)",
+};
+
 function Field({
   label,
   hint,
@@ -67,11 +73,11 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+      <label className="block text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--text-secondary)" }}>
         {label}
       </label>
       {children}
-      {hint && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
+      {hint && <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>{hint}</p>}
     </div>
   );
 }
@@ -97,7 +103,8 @@ function NumInput({
       max={max}
       step={step ?? 1}
       onChange={(e) => onChange(Number(e.target.value))}
-      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      style={controlStyle}
     />
   );
 }
@@ -115,7 +122,8 @@ function Select({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+      className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      style={controlStyle}
     >
       {options.map((o) => (
         <option key={o.value} value={o.value}>
@@ -186,7 +194,7 @@ function PresetChips<T extends object>({
   const [hovered, setHovered] = useState<string | null>(null);
   return (
     <div className="mb-5">
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Quick Presets</p>
+      <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--text-tertiary)" }}>Quick Presets</p>
       <div className="flex flex-wrap gap-2">
         {presets.map((p) => {
           const isActive = JSON.stringify(current) === JSON.stringify(p.params);
@@ -197,11 +205,10 @@ function PresetChips<T extends object>({
               onClick={() => onApply(p.params)}
               onMouseEnter={() => setHovered(p.label)}
               onMouseLeave={() => setHovered(null)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-all ${
-                isActive
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "bg-white text-gray-600 border-gray-200 hover:border-blue-400 hover:text-blue-600"
-              }`}
+              className="px-3 py-1.5 text-xs font-medium rounded-full border transition-all"
+              style={isActive
+                ? { background: "var(--brand)", color: "#fff", borderColor: "var(--brand)" }
+                : { background: "var(--surface-raised)", color: "var(--text-secondary)", borderColor: "var(--border-subtle)" }}
             >
               {p.label}
             </button>
@@ -209,7 +216,7 @@ function PresetChips<T extends object>({
         })}
       </div>
       {hovered && (
-        <p className="text-xs text-gray-400 mt-2">
+        <p className="text-xs mt-2" style={{ color: "var(--text-tertiary)" }}>
           {presets.find((p) => p.label === hovered)?.desc}
         </p>
       )}
@@ -454,11 +461,11 @@ export function ProtocolParametersPanel({ protocolId, deviceType, savedParams }:
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-100">
-        <Settings2 size={15} className="text-gray-400" />
-        <h2 className="text-sm font-semibold text-gray-700 flex-1">Training Parameters</h2>
-        <span className="text-xs text-gray-400">
+    <div className="rounded-xl overflow-hidden" style={{ background: "var(--surface-raised)", border: "1px solid var(--border-subtle)" }}>
+      <div className="flex items-center gap-2 px-6 py-4 border-b" style={{ borderColor: "var(--border-subtle)" }}>
+        <Settings2 size={15} style={{ color: "var(--text-tertiary)" }} />
+        <h2 className="text-sm font-semibold flex-1" style={{ color: "var(--text-secondary)" }}>Training Parameters</h2>
+        <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
           {deviceType === "mendi"
             ? "Mendi fNIRS"
             : deviceType === "muse"
@@ -478,12 +485,13 @@ export function ProtocolParametersPanel({ protocolId, deviceType, savedParams }:
           <SimulatorForm params={simParams} onChange={setSimParams} />
         )}
 
-        <div className="flex items-center gap-3 mt-6 pt-5 border-t border-gray-100">
+        <div className="flex items-center gap-3 mt-6 pt-5 border-t" style={{ borderColor: "var(--border-subtle)" }}>
           <button
             type="button"
             onClick={handleSave}
             disabled={isPending}
-            className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg transition-colors disabled:opacity-50"
+            style={{ background: "var(--brand)", color: "#fff" }}
           >
             <Save size={14} />
             {isPending ? "Saving…" : saved ? "Saved ✓" : "Save Parameters"}
@@ -492,13 +500,14 @@ export function ProtocolParametersPanel({ protocolId, deviceType, savedParams }:
           <button
             type="button"
             onClick={handleReset}
-            className="flex items-center gap-1.5 px-3 py-2 text-gray-500 text-sm rounded-lg hover:bg-gray-100 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg transition-colors"
+            style={{ color: "var(--text-secondary)" }}
           >
             <RotateCcw size={13} />
             Reset to defaults
           </button>
 
-          {error && <span className="text-xs text-red-500">{error}</span>}
+          {error && <span className="text-xs" style={{ color: "var(--danger)" }}>{error}</span>}
         </div>
       </div>
     </div>

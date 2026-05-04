@@ -4,7 +4,7 @@ import { sessions, clients, protocols, sessionDataPoints } from "@/lib/db/schema
 import { eq, desc, inArray, and, isNotNull } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 import Link from "next/link";
-import { Play, Download } from "lucide-react";
+import { Play, Download, Upload } from "lucide-react";
 import { SessionsTable } from "@/components/SessionsTable";
 
 export default async function SessionsPage() {
@@ -67,8 +67,8 @@ export default async function SessionsPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Sessions</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-2xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>Sessions</h1>
+          <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
             {sessionList.length} session{sessionList.length !== 1 ? "s" : ""} recorded
           </p>
         </div>
@@ -77,15 +77,25 @@ export default async function SessionsPage() {
             <a
               href="/api/sessions/export"
               download
-              className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors"
+              style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)", background: "var(--surface-raised)" }}
             >
               <Download size={15} />
               Export CSV
             </a>
           )}
           <Link
+            href="/sessions/import"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors"
+            style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)", background: "var(--surface-raised)" }}
+          >
+            <Upload size={15} />
+            Import CSV
+          </Link>
+          <Link
             href="/sessions/live"
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+            style={{ background: "var(--brand)", color: "var(--text-inverse)" }}
           >
             <Play size={15} />
             Start Live Session

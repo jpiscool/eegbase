@@ -39,28 +39,29 @@ export default async function CheckInsPage({
       <div className="flex items-center gap-4 mb-8">
         <Link
           href={`/clients/${id}`}
-          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+          className="p-1.5 rounded-lg transition-colors"
+          style={{ color: "var(--text-tertiary)" }}
         >
           <ArrowLeft size={18} />
         </Link>
         <div className="flex-1">
-          <h1 className="text-xl font-bold text-gray-900">{client.name} — Daily Check-Ins</h1>
-          <p className="text-sm text-gray-500">Lifestyle & symptom tracking</p>
+          <h1 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>{client.name} — Daily Check-Ins</h1>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Lifestyle &amp; symptom tracking</p>
         </div>
       </div>
 
       {/* Client check-in link */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4 mb-6">
+      <div className="rounded-xl border p-4 mb-6" style={{ background: "var(--surface-raised)", borderColor: "var(--border-subtle)" }}>
         <div className="mb-2">
-          <p className="text-sm font-semibold text-gray-700">Client Self-Check-In Link</p>
-          <p className="text-xs text-gray-400">Send this link to your client so they can log daily check-ins from any device — no account needed.</p>
+          <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Client Self-Check-In Link</p>
+          <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>Send this link to your client so they can log daily check-ins from any device — no account needed.</p>
         </div>
         <CheckInLinkButton clientId={id} initialToken={client.checkInToken ?? null} />
       </div>
 
       {checkInList.length > 1 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <h2 className="text-sm font-semibold text-gray-700 mb-4">
+        <div className="rounded-xl border p-6 mb-6" style={{ background: "var(--surface-raised)", borderColor: "var(--border-subtle)" }}>
+          <h2 className="text-sm font-semibold mb-4" style={{ color: "var(--text-primary)" }}>
             Symptom Trends · Last {checkInList.length} check-ins
           </h2>
           <CheckInTrendChart
@@ -84,33 +85,33 @@ export default async function CheckInsPage({
 
         {/* History */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100">
-              <h2 className="text-sm font-semibold text-gray-900">History · last 30 entries</h2>
+          <div className="rounded-xl border overflow-hidden" style={{ background: "var(--surface-raised)", borderColor: "var(--border-subtle)" }}>
+            <div className="px-6 py-4 border-b" style={{ borderColor: "var(--border-subtle)" }}>
+              <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>History · last 30 entries</h2>
             </div>
             {checkInList.length === 0 ? (
-              <p className="text-sm text-gray-400 text-center py-10">
+              <p className="text-sm text-center py-10" style={{ color: "var(--text-tertiary)" }}>
                 No check-ins logged yet.
               </p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
-                  <thead className="bg-gray-50 border-b border-gray-100">
+                  <thead className="border-b" style={{ background: "var(--surface-sunken)", borderColor: "var(--border-subtle)" }}>
                     <tr>
                       {["Date", "Sleep h", "Sleep Q", "Mood", "Anxiety", "Focus", "Energy", "Notes"].map((h) => (
-                        <th key={h} className="text-left px-4 py-2.5 font-medium text-gray-500">
+                        <th key={h} className="text-left px-4 py-2.5 font-medium" style={{ color: "var(--text-secondary)" }}>
                           {h}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
+                  <tbody className="divide-y" style={{ borderColor: "var(--border-subtle)" }}>
                     {checkInList.map((c) => (
-                      <tr key={c.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-2.5 text-gray-700 whitespace-nowrap">
+                      <tr key={c.id}>
+                        <td className="px-4 py-2.5 whitespace-nowrap" style={{ color: "var(--text-primary)" }}>
                           {new Date(c.date).toLocaleDateString()}
                         </td>
-                        <td className="px-4 py-2.5 text-gray-500">{c.sleepHours ?? "—"}</td>
+                        <td className="px-4 py-2.5" style={{ color: "var(--text-secondary)" }}>{c.sleepHours ?? "—"}</td>
                         <td className="px-4 py-2.5">
                           <ScoreBadge val={c.sleepQuality} />
                         </td>
@@ -126,7 +127,7 @@ export default async function CheckInsPage({
                         <td className="px-4 py-2.5">
                           <ScoreBadge val={c.energy} />
                         </td>
-                        <td className="px-4 py-2.5 text-gray-400 max-w-[160px] truncate">
+                        <td className="px-4 py-2.5 max-w-[160px] truncate" style={{ color: "var(--text-tertiary)" }}>
                           {c.notes ?? ""}
                         </td>
                       </tr>
@@ -143,14 +144,13 @@ export default async function CheckInsPage({
 }
 
 function ScoreBadge({ val, invert }: { val: number | null; invert?: boolean }) {
-  if (val == null) return <span className="text-gray-300">—</span>;
+  if (val == null) return <span style={{ color: "var(--border-default)" }}>—</span>;
   const good = invert ? val <= 4 : val >= 7;
   const bad = invert ? val >= 7 : val <= 4;
   return (
     <span
-      className={`font-semibold ${
-        good ? "text-emerald-600" : bad ? "text-red-500" : "text-amber-600"
-      }`}
+      className="font-semibold"
+      style={{ color: good ? "var(--success)" : bad ? "var(--danger)" : "var(--warning)" }}
     >
       {val}
     </span>

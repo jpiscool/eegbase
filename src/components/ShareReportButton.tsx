@@ -41,12 +41,15 @@ export function ShareReportButton({ clientId, initialToken }: Props) {
     });
   }
 
+  const btnStyle: React.CSSProperties = { border: "1px solid var(--border-subtle)", color: "var(--text-secondary)" };
+
   if (!token) {
     return (
       <button
         onClick={handleGenerate}
         disabled={isPending}
-        className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+        className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+        style={btnStyle}
       >
         <Link2 size={14} />
         {isPending ? "Generating…" : "Create Share Link"}
@@ -57,31 +60,37 @@ export function ShareReportButton({ clientId, initialToken }: Props) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1.5 flex-1 min-w-0 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
-          <Link2 size={12} className="text-emerald-500 shrink-0" />
-          <span className="text-xs text-gray-600 truncate font-mono">{shareUrl}</span>
+        <div
+          className="flex items-center gap-1.5 flex-1 min-w-0 rounded-lg px-3 py-2"
+          style={{ background: "var(--surface-sunken)", border: "1px solid var(--border-subtle)" }}
+        >
+          <Link2 size={12} className="shrink-0" style={{ color: "var(--success)" }} />
+          <span className="text-xs truncate font-mono" style={{ color: "var(--text-secondary)" }}>{shareUrl}</span>
         </div>
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors shrink-0"
+          className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg transition-colors shrink-0"
           title="Copy link"
+          style={btnStyle}
         >
-          {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} />}
+          {copied ? <Check size={13} style={{ color: "var(--success)" }} /> : <Copy size={13} />}
           {copied ? "Copied!" : "Copy"}
         </button>
         <a
           href={shareUrl!}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors shrink-0"
+          className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg transition-colors shrink-0"
           title="Open report"
+          style={btnStyle}
         >
           <ExternalLink size={13} />
           Preview
         </a>
         <button
           onClick={() => setShowRevoke(true)}
-          className="p-2 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"
+          className="p-2 rounded-lg transition-colors"
+          style={{ color: "var(--text-tertiary)" }}
           title="Revoke link"
         >
           <Trash2 size={13} />
@@ -89,18 +98,23 @@ export function ShareReportButton({ clientId, initialToken }: Props) {
       </div>
 
       {showRevoke && (
-        <div className="flex items-center gap-3 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
-          <span className="text-xs text-red-700 flex-1">Revoke this link? Anyone with it will lose access.</span>
+        <div
+          className="flex items-center gap-3 rounded-lg px-3 py-2"
+          style={{ background: "var(--danger-subtle)", border: "1px solid color-mix(in srgb, var(--danger) 20%, transparent)" }}
+        >
+          <span className="text-xs flex-1" style={{ color: "var(--danger)" }}>Revoke this link? Anyone with it will lose access.</span>
           <button
             onClick={handleRevoke}
             disabled={isPending}
-            className="text-xs font-semibold text-red-600 hover:text-red-800 disabled:opacity-50"
+            className="text-xs font-semibold disabled:opacity-50"
+            style={{ color: "var(--danger)" }}
           >
             {isPending ? "Revoking…" : "Revoke"}
           </button>
           <button
             onClick={() => setShowRevoke(false)}
-            className="text-xs text-gray-500 hover:text-gray-700"
+            className="text-xs"
+            style={{ color: "var(--text-secondary)" }}
           >
             Cancel
           </button>

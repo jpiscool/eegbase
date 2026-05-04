@@ -76,8 +76,10 @@ export default function PublicCheckInPage({
     setLang(detectLang());
   }, []);
 
+  const LANG_CYCLE: Lang[] = ["en", "es", "sv"];
   function toggleLang() {
-    const next: Lang = lang === "en" ? "es" : "en";
+    const idx = LANG_CYCLE.indexOf(lang);
+    const next: Lang = LANG_CYCLE[(idx + 1) % LANG_CYCLE.length];
     setLang(next);
     localStorage.setItem("lang", next);
   }
@@ -116,7 +118,7 @@ export default function PublicCheckInPage({
               letterSpacing: "0.05em",
             }}
           >
-            {lang === "en" ? "🇪🇸 ES" : "🇺🇸 EN"}
+            {lang === "en" ? "🇪🇸 ES" : lang === "es" ? "🇸🇪 SV" : "🇺🇸 EN"}
           </button>
         </div>
 

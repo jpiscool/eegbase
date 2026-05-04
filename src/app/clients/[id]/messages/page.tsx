@@ -52,20 +52,21 @@ export default async function MessagesPage({
   return (
     <div className="flex flex-col h-[calc(100vh-120px)]">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-0 pb-4 border-b border-gray-200">
+      <div className="flex items-center gap-4 mb-0 pb-4 border-b" style={{ borderColor: "var(--border-subtle)" }}>
         <Link
           href={`/clients/${id}`}
-          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+          className="p-1.5 rounded-lg transition-colors"
+          style={{ color: "var(--text-tertiary)" }}
         >
           <ArrowLeft size={18} />
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">{client.name}</h1>
-          <p className="text-xs text-gray-500">Messages · {messageList.length} total</p>
+          <h1 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>{client.name}</h1>
+          <p className="text-xs" style={{ color: "var(--text-secondary)" }}>Messages · {messageList.length} total</p>
         </div>
       </div>
 
-      <div className="flex-1 bg-white rounded-xl border border-gray-200 overflow-hidden mt-4">
+      <div className="flex-1 rounded-xl border overflow-hidden mt-4" style={{ background: "var(--surface-raised)", borderColor: "var(--border-subtle)" }}>
         <MessageThread
           clientId={id}
           initialMessages={messageList}

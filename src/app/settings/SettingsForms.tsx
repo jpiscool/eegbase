@@ -2,7 +2,12 @@
 
 import { useState, useTransition } from "react";
 import { updateProfile, changePassword, updateClinicName, updateWebhookUrl, testWebhook } from "./actions";
-import { Loader2, CheckCircle2, XCircle, Send } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, Send, Copy, Check, ExternalLink } from "lucide-react";
+
+const inputCls = "w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+const inputStyle = { background: "var(--surface-sunken)", borderColor: "var(--border-default)", color: "var(--text-primary)" };
+const labelStyle = { color: "var(--text-primary)" };
+const btnStyle = { background: "var(--brand)", color: "var(--text-inverse)" };
 
 export function ClinicNameForm({ currentName }: { currentName: string }) {
   const [pending, startTransition] = useTransition();
@@ -22,21 +27,23 @@ export function ClinicNameForm({ currentName }: { currentName: string }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Clinic Name</label>
+        <label className="block text-sm font-medium mb-1" style={labelStyle}>Clinic Name</label>
         <input
           name="clinicName"
           defaultValue={currentName}
           required
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={inputCls}
+          style={inputStyle}
         />
       </div>
       {status !== "idle" && (
-        <p className={`text-sm ${status === "success" ? "text-emerald-600" : "text-red-500"}`}>{msg}</p>
+        <p className="text-sm" style={{ color: status === "success" ? "var(--success)" : "var(--danger)" }}>{msg}</p>
       )}
       <button
         type="submit"
         disabled={pending}
-        className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+        className="px-4 py-2 text-sm font-medium rounded-lg disabled:opacity-50 transition-colors"
+        style={btnStyle}
       >
         {pending ? "Saving…" : "Save"}
       </button>
@@ -62,32 +69,35 @@ export function ProfileForm({ name, email }: { name: string; email: string }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+        <label className="block text-sm font-medium mb-1" style={labelStyle}>Name</label>
         <input
           name="name"
           defaultValue={name}
           required
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={inputCls}
+          style={inputStyle}
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+        <label className="block text-sm font-medium mb-1" style={labelStyle}>Email</label>
         <input
           value={email}
           readOnly
-          className="w-full border border-gray-100 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-400 cursor-not-allowed"
+          className={inputCls + " cursor-not-allowed"}
+          style={{ background: "var(--surface-sunken)", borderColor: "var(--border-subtle)", color: "var(--text-tertiary)" }}
         />
-        <p className="text-xs text-gray-400 mt-1">Email cannot be changed here.</p>
+        <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>Email cannot be changed here.</p>
       </div>
       {status !== "idle" && (
-        <p className={`text-sm ${status === "success" ? "text-emerald-600" : "text-red-500"}`}>
+        <p className="text-sm" style={{ color: status === "success" ? "var(--success)" : "var(--danger)" }}>
           {msg}
         </p>
       )}
       <button
         type="submit"
         disabled={pending}
-        className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+        className="px-4 py-2 text-sm font-medium rounded-lg disabled:opacity-50 transition-colors"
+        style={btnStyle}
       >
         {pending ? "Saving…" : "Save Changes"}
       </button>
@@ -115,7 +125,7 @@ export function PasswordForm() {
     <form onSubmit={handleSubmit} className="space-y-4">
       {(["currentPassword", "newPassword", "confirmPassword"] as const).map((field) => (
         <div key={field}>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium mb-1" style={labelStyle}>
             {field === "currentPassword"
               ? "Current Password"
               : field === "newPassword"
@@ -126,23 +136,85 @@ export function PasswordForm() {
             type="password"
             name={field}
             required
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={inputCls}
+            style={inputStyle}
           />
         </div>
       ))}
       {status !== "idle" && (
-        <p className={`text-sm ${status === "success" ? "text-emerald-600" : "text-red-500"}`}>
+        <p className="text-sm" style={{ color: status === "success" ? "var(--success)" : "var(--danger)" }}>
           {msg}
         </p>
       )}
       <button
         type="submit"
         disabled={pending}
-        className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+        className="px-4 py-2 text-sm font-medium rounded-lg disabled:opacity-50 transition-colors"
+        style={btnStyle}
       >
         {pending ? "Updating…" : "Change Password"}
       </button>
     </form>
+  );
+}
+
+export function ApiKeyDisplay({ clinicId }: { clinicId: string }) {
+  const [copied, setCopied] = useState(false);
+
+  function handleCopy() {
+    navigator.clipboard.writeText(clinicId).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  function handleTestApi() {
+    window.open("/docs", "_blank", "noopener,noreferrer");
+  }
+
+  return (
+    <div className="rounded-lg p-4 mb-4 border" style={{ background: "var(--surface-sunken)", borderColor: "var(--border-default)" }}>
+      <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--text-secondary)" }}>
+        Your API Key (Clinic ID)
+      </p>
+      {/* Key row with copy button */}
+      <div className="flex items-center gap-2 mb-2">
+        <p className="font-mono text-sm break-all flex-1" style={{ color: "var(--text-primary)" }}>
+          {clinicId}
+        </p>
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-all"
+          style={copied
+            ? { borderColor: "var(--success)", color: "var(--success)", background: "var(--success-subtle)" }
+            : { borderColor: "var(--border-default)", color: "var(--text-secondary)", background: "var(--surface-raised)" }}
+        >
+          {copied ? <Check size={13} /> : <Copy size={13} />}
+          {copied ? "Copied!" : "Copy"}
+        </button>
+      </div>
+      {/* Bearer note */}
+      <p className="text-xs mb-3" style={{ color: "var(--text-tertiary)" }}>
+        Use this key in the Authorization header:{" "}
+        <code
+          className="rounded px-1"
+          style={{ background: "var(--surface-raised)", color: "var(--text-secondary)" }}
+        >
+          Bearer &lt;your-clinic-id&gt;
+        </code>
+      </p>
+      {/* Test API button */}
+      <button
+        type="button"
+        onClick={handleTestApi}
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-all"
+        style={{ borderColor: "var(--border-default)", color: "var(--brand)", background: "var(--surface-raised)" }}
+      >
+        <ExternalLink size={13} />
+        Test API
+      </button>
+    </div>
   );
 }
 
@@ -179,20 +251,20 @@ export function WebhookForm({ currentUrl }: { currentUrl: string | null }) {
         type="url"
         defaultValue={currentUrl ?? ""}
         placeholder="https://your-server.com/hooks/eegbase"
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className={inputCls}
+        style={inputStyle}
       />
       {status !== "idle" && (
-        <p className={`text-xs ${status === "success" ? "text-emerald-600" : "text-red-500"}`}>{msg}</p>
+        <p className="text-xs" style={{ color: status === "success" ? "var(--success)" : "var(--danger)" }}>{msg}</p>
       )}
       {testResult && (
-        <div className={`flex items-center gap-2 text-xs px-3 py-2 rounded-lg border ${
-          testResult.ok
-            ? "bg-emerald-50 border-emerald-100 text-emerald-700"
-            : "bg-red-50 border-red-100 text-red-600"
-        }`}>
-          {testResult.ok
-            ? <CheckCircle2 size={13} />
-            : <XCircle size={13} />}
+        <div
+          className="flex items-center gap-2 text-xs px-3 py-2 rounded-lg border"
+          style={testResult.ok
+            ? { background: "var(--success-subtle)", borderColor: "color-mix(in srgb, var(--success) 25%, transparent)", color: "var(--success)" }
+            : { background: "var(--danger-subtle)", borderColor: "color-mix(in srgb, var(--danger) 25%, transparent)", color: "var(--danger)" }}
+        >
+          {testResult.ok ? <CheckCircle2 size={13} /> : <XCircle size={13} />}
           {testResult.ok
             ? `Test succeeded — server responded with HTTP ${testResult.status}`
             : testResult.error ?? `HTTP ${testResult.status ?? "error"}`}
@@ -202,7 +274,8 @@ export function WebhookForm({ currentUrl }: { currentUrl: string | null }) {
         <button
           type="submit"
           disabled={pending}
-          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          className="px-4 py-2 text-sm font-medium rounded-lg disabled:opacity-50 transition-colors"
+          style={btnStyle}
         >
           {pending ? "Saving…" : "Save Webhook URL"}
         </button>
@@ -211,7 +284,8 @@ export function WebhookForm({ currentUrl }: { currentUrl: string | null }) {
             type="button"
             onClick={handleTest}
             disabled={testPending}
-            className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 border text-sm font-medium rounded-lg disabled:opacity-50 transition-colors"
+            style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)", background: "var(--surface-raised)" }}
           >
             {testPending ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
             {testPending ? "Testing…" : "Send Test"}

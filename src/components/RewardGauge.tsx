@@ -73,9 +73,9 @@ export function RewardGauge({ score }: { score: number | null }) {
         <path
           d={trackPath}
           fill="none"
-          stroke="#E2E8F0"
           strokeWidth={STROKE}
           strokeLinecap="round"
+          style={{ stroke: "var(--border-subtle)" }}
         />
 
         {/* Zones (subtle background ticks at 40 and 70) */}
@@ -90,8 +90,8 @@ export function RewardGauge({ score }: { score: number | null }) {
               y1={tp.y}
               x2={tp2.x}
               y2={tp2.y}
-              stroke="#CBD5E1"
               strokeWidth={1.5}
+              style={{ stroke: "var(--border-default)" }}
             />
           );
         })}
@@ -126,9 +126,8 @@ export function RewardGauge({ score }: { score: number | null }) {
           textAnchor="middle"
           fontSize={30}
           fontWeight={800}
-          fill={score != null ? color : "#CBD5E1"}
           fontFamily="system-ui, -apple-system, sans-serif"
-          style={{ transition: "fill 0.4s ease" }}
+          style={{ fill: score != null ? color : "var(--border-default)", transition: "fill 0.4s ease" }}
         >
           {score != null ? Math.round(score) : "—"}
         </text>
@@ -137,8 +136,8 @@ export function RewardGauge({ score }: { score: number | null }) {
           y={CY + 22}
           textAnchor="middle"
           fontSize={10}
-          fill="#94A3B8"
           fontFamily="system-ui, -apple-system, sans-serif"
+          style={{ fill: "var(--text-tertiary)" }}
         >
           / 100
         </text>
@@ -150,17 +149,16 @@ export function RewardGauge({ score }: { score: number | null }) {
           textAnchor="middle"
           fontSize={12}
           fontWeight={700}
-          fill={score != null ? color : "#CBD5E1"}
           fontFamily="system-ui, -apple-system, sans-serif"
-          style={{ transition: "fill 0.4s ease" }}
+          style={{ fill: score != null ? color : "var(--border-default)", transition: "fill 0.4s ease" }}
         >
           {label}
         </text>
 
         {/* Scale labels */}
-        <text x={26} y={144} textAnchor="middle" fontSize={9} fill="#94A3B8" fontFamily="system-ui">0</text>
-        <text x={166} y={144} textAnchor="middle" fontSize={9} fill="#94A3B8" fontFamily="system-ui">100</text>
-        <text x={CX} y={155} textAnchor="middle" fontSize={9} fill="#94A3B8" fontFamily="system-ui">{sub}</text>
+        <text x={26} y={144} textAnchor="middle" fontSize={9} fontFamily="system-ui" style={{ fill: "var(--text-tertiary)" }}>0</text>
+        <text x={166} y={144} textAnchor="middle" fontSize={9} fontFamily="system-ui" style={{ fill: "var(--text-tertiary)" }}>100</text>
+        <text x={CX} y={155} textAnchor="middle" fontSize={9} fontFamily="system-ui" style={{ fill: "var(--text-tertiary)" }}>{sub}</text>
       </svg>
     </div>
   );

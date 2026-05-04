@@ -28,9 +28,34 @@ const NORMS: Record<string, { lo: number; hi: number }> = {
   gamma: { lo: 0.05, hi: 0.20 },
 };
 
+// Z-score normative reference values by age group (µV²/Hz, relative power %)
+// Source: Thatcher et al. (2005) EEG normative database, adult norms (18-60)
+const Z_SCORE_NORMS = {
+  delta: { mean: 32.5, sd: 8.2, unit: "%" },   // 1-4 Hz relative power
+  theta: { mean: 24.1, sd: 6.8, unit: "%" },   // 4-8 Hz relative power
+  alpha: { mean: 28.4, sd: 7.3, unit: "%" },   // 8-13 Hz relative power
+  beta:  { mean: 12.7, sd: 4.1, unit: "%" },   // 13-30 Hz relative power
+  gamma: { mean: 2.3,  sd: 1.1, unit: "%" },   // 30-100 Hz relative power
+} as const
+
+// Compute the Z-score badge color based on |z|
+function zScoreColor(z: number): string {
+  const absZ = Math.abs(z);
+  if (absZ > 2) return "var(--danger)";
+  if (absZ > 1.5) return "var(--warning)";
+  return "var(--text-secondary)";
+}
+
+// Format Z-score with sign
+function formatZ(z: number): string {
+  const sign = z >= 0 ? "+" : "";
+  return `z=${sign}${z.toFixed(1)}`;
+}
+
 export function BandPowerChart({ data }: { data: BandPoint[] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [showNorms, setShowNorms] = useState(true);
+  const [showZScores, setShowZScores] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -148,6 +173,22 @@ export function BandPowerChart({ data }: { data: BandPoint[] }) {
     }
   }, [data, showNorms]);
 
+  // Compute latest-sample average per band for Z-score display
+  const latestValues: Partial<Record<keyof typeof Z_SCORE_NORMS, number>> = {};
+  if (data.length > 0) {
+    // Average the last 5 samples (or all if fewer) to smooth the reading
+    const window = data.slice(-5);
+    for (const band of BANDS) {
+      const vals = window
+        .map((d) => d[band.key as keyof BandPoint] as number | null)
+        .filter((v): v is number => v != null);
+      if (vals.length > 0) {
+        latestValues[band.key as keyof typeof Z_SCORE_NORMS] =
+          vals.reduce((a, b) => a + b, 0) / vals.length;
+      }
+    }
+  }
+
   return (
     <div>
       <canvas
@@ -157,9 +198,11 @@ export function BandPowerChart({ data }: { data: BandPoint[] }) {
         className="w-full rounded-lg"
         style={{ height: 180, display: "block" }}
       />
+
+      {/* Legend row + controls */}
       <div className="flex flex-wrap items-center gap-4 mt-3">
         {BANDS.map((b) => (
-          <span key={b.key} className="flex items-center gap-1.5 text-xs text-gray-500">
+          <span key={b.key} className="flex items-center gap-1.5 text-xs" style={{ color: "var(--text-secondary)" }}>
             <span
               className="inline-block w-4 h-0.5 rounded-full"
               style={{ backgroundColor: b.color }}
@@ -167,17 +210,137 @@ export function BandPowerChart({ data }: { data: BandPoint[] }) {
             {b.label}
           </span>
         ))}
-        <button
-          onClick={() => setShowNorms((v) => !v)}
-          className={`ml-auto text-xs px-2.5 py-1 rounded-md border transition-colors ${
-            showNorms
-              ? "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
-              : "bg-white text-gray-400 border-gray-200 hover:bg-gray-50"
-          }`}
-        >
-          {showNorms ? "Hide norms" : "Show norms"}
-        </button>
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            onClick={() => setShowNorms((v) => !v)}
+            className="text-xs px-2.5 py-1 rounded-md transition-colors"
+            style={showNorms
+              ? { background: "var(--surface-sunken)", color: "var(--text-secondary)", border: "1px solid var(--border-default)" }
+              : { background: "var(--surface-raised)", color: "var(--text-tertiary)", border: "1px solid var(--border-subtle)" }}
+          >
+            {showNorms ? "Hide norms" : "Show norms"}
+          </button>
+          <button
+            onClick={() => setShowZScores((v) => !v)}
+            className="text-xs px-2.5 py-1 rounded-md transition-colors"
+            style={showZScores
+              ? { background: "var(--surface-sunken)", color: "var(--text-secondary)", border: "1px solid var(--border-default)" }
+              : { background: "var(--surface-raised)", color: "var(--text-tertiary)", border: "1px solid var(--border-subtle)" }}
+          >
+            {showZScores ? "Hide Z-scores" : "Z-Scores"}
+          </button>
+        </div>
       </div>
+
+      {/* Z-Score panel */}
+      {showZScores && (
+        <div
+          className="mt-3 rounded-lg p-3"
+          style={{ background: "var(--surface-sunken)", border: "1px solid var(--border-subtle)" }}
+        >
+          {/* Header row */}
+          <div className="flex items-center justify-between mb-2.5">
+            <span className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>
+              Z-Score Analysis
+            </span>
+            <span
+              className="text-xs px-2 py-0.5 rounded"
+              style={{
+                background: "var(--surface-raised)",
+                color: "var(--text-tertiary)",
+                border: "1px solid var(--border-subtle)",
+                fontSize: "0.65rem",
+              }}
+              title="Norms based on Thatcher et al. (2005) adult population ages 18–60"
+            >
+              Thatcher et al. adult norms (ages 18–60)
+            </span>
+          </div>
+
+          {/* Band rows */}
+          <div className="flex flex-col gap-1.5">
+            {BANDS.map((band) => {
+              const norm = Z_SCORE_NORMS[band.key as keyof typeof Z_SCORE_NORMS];
+              const currentVal = latestValues[band.key as keyof typeof Z_SCORE_NORMS];
+              if (currentVal == null) return null;
+              const z = (currentVal - norm.mean) / norm.sd;
+              const color = zScoreColor(z);
+              return (
+                <div key={band.key} className="flex items-center gap-2">
+                  {/* Color dot */}
+                  <span
+                    className="inline-block w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: band.color }}
+                  />
+                  {/* Band name */}
+                  <span className="text-xs w-10" style={{ color: "var(--text-secondary)" }}>
+                    {band.label}
+                  </span>
+                  {/* Current value */}
+                  <span className="text-xs font-mono w-12 text-right" style={{ color: "var(--text-primary)" }}>
+                    {currentVal.toFixed(1)}{norm.unit}
+                  </span>
+                  {/* Z badge */}
+                  <span
+                    className="text-xs font-mono px-1.5 py-0.5 rounded"
+                    style={{
+                      color,
+                      background: "var(--surface-base)",
+                      border: `1px solid ${color}`,
+                      opacity: 0.95,
+                      fontSize: "0.68rem",
+                    }}
+                  >
+                    {formatZ(z)}
+                  </span>
+                  {/* Mini bar showing deviation from mean */}
+                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border-subtle)" }}>
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${Math.min(Math.abs(z) / 3, 1) * 100}%`,
+                        background: color,
+                        opacity: 0.7,
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Z-score key legend */}
+          <div
+            className="flex flex-wrap items-center gap-3 mt-3 pt-2.5"
+            style={{ borderTop: "1px solid var(--border-subtle)" }}
+          >
+            <span className="text-xs" style={{ color: "var(--text-tertiary)", fontSize: "0.68rem" }}>
+              Key:
+            </span>
+            <span className="flex items-center gap-1 text-xs" style={{ color: "var(--text-secondary)", fontSize: "0.68rem" }}>
+              <span
+                className="inline-block w-2 h-2 rounded-full"
+                style={{ background: "var(--text-secondary)", opacity: 0.6 }}
+              />
+              Normal (|z| &lt; 1.5)
+            </span>
+            <span className="flex items-center gap-1 text-xs" style={{ color: "var(--warning)", fontSize: "0.68rem" }}>
+              <span
+                className="inline-block w-2 h-2 rounded-full"
+                style={{ background: "var(--warning)" }}
+              />
+              Mild elevation (1.5–2)
+            </span>
+            <span className="flex items-center gap-1 text-xs" style={{ color: "var(--danger)", fontSize: "0.68rem" }}>
+              <span
+                className="inline-block w-2 h-2 rounded-full"
+                style={{ background: "var(--danger)" }}
+              />
+              Significant (&gt; 2)
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

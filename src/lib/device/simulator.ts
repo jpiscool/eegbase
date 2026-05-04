@@ -45,6 +45,10 @@ export class SimulatorAdapter implements DeviceAdapter {
   private _beta = 0.30;
   private _gamma = 0.15;
 
+  // HRV / HR state — realistic resting range
+  private _hr = 68.0;     // BPM
+  private _rmssd = 45.0;  // ms
+
   async connect(): Promise<void> {
     this._connected = true;
     this._startMs = Date.now();
@@ -70,6 +74,10 @@ export class SimulatorAdapter implements DeviceAdapter {
       this._beta = randWalk(this._beta, 0.05, 0.7, noise * 0.9);
       this._gamma = randWalk(this._gamma, 0.02, 0.5, noise * 0.7);
 
+      // HRV / HR — realistic walk; RMSSD inversely correlated with HR
+      this._hr = randWalk(this._hr, 52, 95, 0.5);
+      this._rmssd = randWalk(this._rmssd, 18, 90, 1.2);
+
       // Reward: prefrontal oxygenation-based (0–100)
       const oxyAvg = (this._oxyL + this._oxyR) / 2;
       const reward = Math.max(0, Math.min(100, 50 + oxyAvg * 80 + trend * 15));
@@ -86,6 +94,8 @@ export class SimulatorAdapter implements DeviceAdapter {
         beta: Math.round(this._beta * 100) / 100,
         gamma: Math.round(this._gamma * 100) / 100,
         rewardScore: Math.round(reward * 10) / 10,
+        heartRate: Math.round(this._hr * 10) / 10,
+        hrvRmssd: Math.round(this._rmssd * 10) / 10,
       };
 
       this._callbacks.forEach((cb) => cb(sample));

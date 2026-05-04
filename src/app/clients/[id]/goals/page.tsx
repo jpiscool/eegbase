@@ -36,17 +36,18 @@ export default async function GoalsPage({
       <div className="flex items-center gap-4 mb-8">
         <Link
           href={`/clients/${id}`}
-          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+          className="p-1.5 rounded-lg transition-colors"
+          style={{ color: "var(--text-tertiary)" }}
         >
           <ArrowLeft size={18} />
         </Link>
         <div className="flex items-center gap-3 flex-1">
-          <div className="p-2 rounded-lg bg-emerald-50">
-            <Target size={18} className="text-emerald-600" />
+          <div className="p-2 rounded-lg" style={{ background: "var(--success-subtle)" }}>
+            <Target size={18} style={{ color: "var(--success)" }} />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">{client.name} — Treatment Goals</h1>
-            <p className="text-sm text-gray-500">Track milestones and clinical objectives</p>
+            <h1 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>{client.name} — Treatment Goals</h1>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Track milestones and clinical objectives</p>
           </div>
         </div>
       </div>

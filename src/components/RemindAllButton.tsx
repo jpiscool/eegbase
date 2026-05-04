@@ -20,7 +20,10 @@ export function RemindAllButton() {
 
   if (state === "done") {
     return (
-      <span className="text-xs text-emerald-700 font-medium px-3 py-1.5 bg-emerald-50 rounded-lg border border-emerald-200">
+      <span
+        className="text-xs font-medium px-3 py-1.5 rounded-lg"
+        style={{ background: "var(--success-subtle)", color: "var(--success)", border: "1px solid color-mix(in srgb, var(--success) 25%, transparent)" }}
+      >
         ✓ {count} reminder{count !== 1 ? "s" : ""} sent
       </span>
     );
@@ -30,7 +33,8 @@ export function RemindAllButton() {
     <button
       onClick={handleClick}
       disabled={state === "sending"}
-      className="text-xs text-amber-700 hover:bg-amber-100 font-medium px-3 py-1.5 rounded-lg border border-amber-200 transition-colors disabled:opacity-50"
+      className="text-xs font-medium px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+      style={{ background: "var(--warning-subtle)", color: "var(--warning)", border: "1px solid color-mix(in srgb, var(--warning) 25%, transparent)" }}
     >
       {state === "sending" ? "Sending…" : "Remind All"}
     </button>

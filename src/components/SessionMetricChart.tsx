@@ -169,14 +169,13 @@ export function SessionMetricTrend({
         }));
 
         return (
-          <div key={m.label} className="border border-gray-100 rounded-xl p-4">
+          <div key={m.label} className="rounded-xl p-4" style={{ border: "1px solid var(--border-subtle)" }}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-gray-600">{m.label}</span>
+              <span className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>{m.label}</span>
               {delta != null && (
                 <span
-                  className={`text-xs font-medium ${
-                    improved ? "text-emerald-600" : delta === 0 ? "text-gray-400" : "text-red-500"
-                  }`}
+                  className="text-xs font-medium"
+                  style={{ color: improved ? "var(--success)" : delta === 0 ? "var(--text-tertiary)" : "var(--danger)" }}
                 >
                   {delta > 0 ? "+" : ""}{delta} last session
                 </span>
@@ -188,11 +187,11 @@ export function SessionMetricTrend({
               color={m.color}
             />
             <div className="flex gap-3 mt-2">
-              <span className="flex items-center gap-1 text-xs text-gray-400">
+              <span className="flex items-center gap-1 text-xs" style={{ color: "var(--text-tertiary)" }}>
                 <span className="inline-block w-5 border-t-2 border-dashed" style={{ borderColor: m.color + "80" }} />
                 Pre
               </span>
-              <span className="flex items-center gap-1 text-xs text-gray-400">
+              <span className="flex items-center gap-1 text-xs" style={{ color: "var(--text-tertiary)" }}>
                 <span className="inline-block w-5 border-t-2" style={{ borderColor: m.color }} />
                 Post
               </span>

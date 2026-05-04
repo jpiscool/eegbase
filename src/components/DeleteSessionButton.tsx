@@ -26,7 +26,8 @@ export function DeleteSessionButton({
     return (
       <button
         onClick={() => setConfirming(true)}
-        className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+        className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
+        style={{ color: "var(--danger)", border: "1px solid color-mix(in srgb, var(--danger) 25%, transparent)" }}
       >
         <Trash2 size={13} />
         Delete Session
@@ -36,17 +37,19 @@ export function DeleteSessionButton({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-red-600 font-medium">Delete this session permanently?</span>
+      <span className="text-xs font-medium" style={{ color: "var(--danger)" }}>Delete this session permanently?</span>
       <button
         onClick={handleDelete}
         disabled={isPending}
-        className="px-3 py-1.5 text-xs font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors"
+        className="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+        style={{ background: "var(--danger)", color: "#fff" }}
       >
         {isPending ? "Deleting…" : "Yes, delete"}
       </button>
       <button
         onClick={() => setConfirming(false)}
-        className="px-3 py-1.5 text-xs font-medium text-gray-500 rounded-lg hover:bg-gray-100 transition-colors"
+        className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
+        style={{ color: "var(--text-secondary)" }}
       >
         Cancel
       </button>

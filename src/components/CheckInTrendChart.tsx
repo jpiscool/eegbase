@@ -122,7 +122,7 @@ export function CheckInTrendChart({ data }: { data: CheckInPoint[] }) {
         {SERIES.map(({ label, color }) => (
           <div key={label} className="flex items-center gap-1.5">
             <div className="w-3 h-0.5 rounded-full" style={{ backgroundColor: color }} />
-            <span className="text-xs text-gray-500">{label}</span>
+            <span className="text-xs" style={{ color: "var(--text-secondary)" }}>{label}</span>
           </div>
         ))}
       </div>

@@ -3,6 +3,12 @@ import { useState, useRef } from "react";
 import { UserPlus, X } from "lucide-react";
 import { addClient } from "@/app/clients/actions";
 
+const inputStyle: React.CSSProperties = {
+  border: "1px solid var(--border-default)",
+  background: "var(--surface-sunken)",
+  color: "var(--text-primary)",
+};
+
 export function AddClientModal() {
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
@@ -21,7 +27,8 @@ export function AddClientModal() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+        className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-colors"
+        style={{ background: "var(--brand)", color: "#fff" }}
       >
         <UserPlus size={16} />
         Add Client
@@ -32,13 +39,22 @@ export function AddClientModal() {
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
           onClick={(e) => e.target === e.currentTarget && setOpen(false)}
         >
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
+          <div
+            className="rounded-xl shadow-2xl w-full max-w-md"
+            style={{ background: "var(--surface-overlay)", border: "1px solid var(--border-subtle)" }}
+          >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h2 className="text-base font-semibold text-gray-900">New Client</h2>
+            <div
+              className="flex items-center justify-between px-6 py-4"
+              style={{ borderBottom: "1px solid var(--border-subtle)" }}
+            >
+              <h2 className="text-base font-semibold" style={{ color: "var(--text-primary)" }}>
+                New Client
+              </h2>
               <button
                 onClick={() => setOpen(false)}
-                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                className="p-1.5 rounded-lg transition-colors"
+                style={{ color: "var(--text-tertiary)" }}
               >
                 <X size={16} />
               </button>
@@ -47,8 +63,8 @@ export function AddClientModal() {
             {/* Form */}
             <form ref={formRef} action={handleSubmit} className="px-6 py-5 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Full Name <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                  Full Name <span style={{ color: "var(--danger)" }}>*</span>
                 </label>
                 <input
                   name="name"
@@ -56,54 +72,75 @@ export function AddClientModal() {
                   required
                   autoFocus
                   placeholder="Jane Smith"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={inputStyle}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Email <span className="text-gray-400 font-normal">(optional)</span>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                  Email <span className="font-normal" style={{ color: "var(--text-tertiary)" }}>(optional)</span>
                 </label>
                 <input
                   name="email"
                   type="email"
                   placeholder="jane@example.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={inputStyle}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Date of Birth <span className="text-gray-400 font-normal">(optional)</span>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                  Date of Birth <span className="font-normal" style={{ color: "var(--text-tertiary)" }}>(optional)</span>
                 </label>
                 <input
                   name="dateOfBirth"
                   type="date"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={inputStyle}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Goals <span className="text-gray-400 font-normal">(optional)</span>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                  Goals <span className="font-normal" style={{ color: "var(--text-tertiary)" }}>(optional)</span>
                 </label>
                 <input
                   name="goals"
                   type="text"
                   placeholder="e.g. Reduce anxiety, improve sustained attention"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={inputStyle}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Clinical Notes <span className="text-gray-400 font-normal">(optional)</span>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                  Referral Source <span className="font-normal" style={{ color: "var(--text-tertiary)" }}>(optional)</span>
+                </label>
+                <select
+                  name="referralSource"
+                  className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={inputStyle}
+                >
+                  <option value="">— Select —</option>
+                  {["Physician / GP", "Psychiatrist", "Psychologist", "School / Teacher", "Self-referred", "Friend / Family", "Online search", "Social media", "Other"].map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                  Clinical Notes <span className="font-normal" style={{ color: "var(--text-tertiary)" }}>(optional)</span>
                 </label>
                 <textarea
                   name="notes"
                   rows={3}
-                  placeholder="Assessment notes, referral source, diagnosis…"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  placeholder="Assessment notes, diagnosis…"
+                  className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  style={inputStyle}
                 />
               </div>
 
@@ -112,14 +149,16 @@ export function AddClientModal() {
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+                  className="px-4 py-2 text-sm font-medium transition-colors"
+                  style={{ color: "var(--text-secondary)" }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={pending}
-                  className="px-5 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-60 transition-colors"
+                  className="px-5 py-2 text-sm font-semibold rounded-lg transition-colors"
+                  style={{ background: "var(--brand)", color: "#fff", opacity: pending ? 0.6 : 1 }}
                 >
                   {pending ? "Saving…" : "Add Client"}
                 </button>

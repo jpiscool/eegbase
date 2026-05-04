@@ -80,15 +80,15 @@ export function LiveChart({ data, color, label, height = 80 }: LiveChartProps) {
 
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>
         {label}
       </span>
       <canvas
         ref={canvasRef}
         width={600}
         height={height}
-        className="w-full rounded-lg border border-gray-100"
-        style={{ height, display: "block" }}
+        className="w-full rounded-lg"
+        style={{ height, display: "block", border: "1px solid var(--border-subtle)" }}
       />
     </div>
   );

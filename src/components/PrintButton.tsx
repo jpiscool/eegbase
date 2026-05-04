@@ -11,14 +11,14 @@ export function PrintButton() {
           alignItems: "center",
           gap: 8,
           padding: "10px 20px",
-          background: "#2563EB",
+          background: "var(--brand)",
           color: "white",
           border: "none",
           borderRadius: 10,
           fontSize: 13,
           fontWeight: 600,
           cursor: "pointer",
-          boxShadow: "0 4px 16px rgba(37,99,235,0.35)",
+          boxShadow: "0 4px 16px color-mix(in srgb, var(--brand) 35%, transparent)",
         }}
       >
         <Printer size={15} />

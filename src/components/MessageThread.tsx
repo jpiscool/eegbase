@@ -48,7 +48,7 @@ export function MessageThread({
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-6 py-5 space-y-3">
         {initialMessages.length === 0 && (
-          <p className="text-center text-sm text-gray-400 mt-16">
+          <p className="text-center text-sm mt-16" style={{ color: "var(--text-tertiary)" }}>
             No messages yet. Send the first one below.
           </p>
         )}
@@ -59,19 +59,18 @@ export function MessageThread({
               key={msg.id}
               className={`flex flex-col gap-0.5 ${isClinician ? "items-end" : "items-start"}`}
             >
-              <span className="text-[11px] text-gray-400 px-1">
+              <span className="text-[11px] px-1" style={{ color: "var(--text-tertiary)" }}>
                 {isClinician ? clinicianName : clientName}
               </span>
               <div
-                className={`max-w-[70%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
-                  isClinician
-                    ? "bg-blue-600 text-white rounded-br-sm"
-                    : "bg-gray-100 text-gray-900 rounded-bl-sm"
-                }`}
+                className="max-w-[70%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed"
+                style={isClinician
+                  ? { background: "var(--brand)", color: "#fff", borderBottomRightRadius: "4px" }
+                  : { background: "var(--surface-sunken)", color: "var(--text-primary)", borderBottomLeftRadius: "4px" }}
               >
                 {msg.body}
               </div>
-              <span className="text-[11px] text-gray-400 px-1">
+              <span className="text-[11px] px-1" style={{ color: "var(--text-tertiary)" }}>
                 {new Date(msg.createdAt).toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
@@ -89,14 +88,16 @@ export function MessageThread({
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="border-t border-gray-200 px-4 py-3 flex gap-3 items-end bg-white"
+        className="border-t px-4 py-3 flex gap-3 items-end"
+        style={{ borderColor: "var(--border-subtle)", background: "var(--surface-raised)" }}
       >
         <input type="hidden" name="clientId" value={clientId} />
         <textarea
           name="body"
           rows={2}
           placeholder="Write a message…"
-          className="flex-1 resize-none px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 resize-none px-3 py-2 rounded-xl text-sm focus:outline-none"
+          style={{ border: "1px solid var(--border-default)", background: "var(--surface-raised)", color: "var(--text-primary)" }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
@@ -107,7 +108,8 @@ export function MessageThread({
         <button
           type="submit"
           disabled={pending}
-          className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 flex-shrink-0"
+          className="flex items-center justify-center w-10 h-10 text-white rounded-xl transition-colors flex-shrink-0"
+          style={{ background: "var(--brand)", opacity: pending ? 0.5 : 1 }}
         >
           <Send size={16} />
         </button>

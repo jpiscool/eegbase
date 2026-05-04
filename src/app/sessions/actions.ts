@@ -33,6 +33,8 @@ export interface SamplePayload {
   beta?: number;
   gamma?: number;
   rewardScore?: number;
+  heartRate?: number;
+  hrvRmssd?: number;
 }
 
 export interface Questionnaire {
@@ -101,6 +103,8 @@ export async function saveSession(data: {
       beta: s.beta,
       gamma: s.gamma,
       rewardScore: s.rewardScore,
+      heartRate: s.heartRate,
+      hrvRmssd: s.hrvRmssd,
     }));
     const BATCH = 1000;
     for (let i = 0; i < rows.length; i += BATCH) {

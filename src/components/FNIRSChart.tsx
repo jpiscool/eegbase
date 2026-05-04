@@ -136,7 +136,7 @@ export function FNIRSChart({ data }: { data: FNIRSPoint[] }) {
       />
       <div className="flex flex-wrap gap-4 mt-3">
         {SERIES.map((s) => (
-          <span key={s.key} className="flex items-center gap-1.5 text-xs text-gray-500">
+          <span key={s.key} className="flex items-center gap-1.5 text-xs" style={{ color: "var(--text-secondary)" }}>
             <span
               className="inline-block w-5 border-t-2"
               style={{
@@ -148,7 +148,7 @@ export function FNIRSChart({ data }: { data: FNIRSPoint[] }) {
           </span>
         ))}
       </div>
-      <p className="text-xs text-gray-400 mt-1.5">
+      <p className="text-xs mt-1.5" style={{ color: "var(--text-tertiary)" }}>
         Values in μM (micromolar). Positive OxyHb with negative DeoxyHb indicates increased cerebral oxygenation.
       </p>
     </div>

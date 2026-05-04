@@ -29,28 +29,35 @@ export function CheckInForm({ clientId }: { clientId: string }) {
     }
   }
 
+  const inputStyle: React.CSSProperties = {
+    border: "1px solid var(--border-default)",
+    background: "var(--surface-sunken)",
+    color: "var(--text-primary)",
+  };
+
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <h2 className="text-sm font-semibold text-gray-900 mb-1">Log Today&apos;s Check-In</h2>
-      <p className="text-xs text-gray-500 mb-5">Record how the client is doing today.</p>
+    <div className="rounded-xl p-6" style={{ background: "var(--surface-raised)", border: "1px solid var(--border-subtle)" }}>
+      <h2 className="text-sm font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Log Today&apos;s Check-In</h2>
+      <p className="text-xs mb-5" style={{ color: "var(--text-secondary)" }}>Record how the client is doing today.</p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <input type="hidden" name="clientId" value={clientId} />
 
         {/* Date */}
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Date</label>
+          <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Date</label>
           <input
             name="date"
             type="date"
             defaultValue={new Date().toISOString().split("T")[0]}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            style={inputStyle}
           />
         </div>
 
         {/* Sleep hours */}
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">
+          <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-secondary)" }}>
             Sleep (hours)
           </label>
           <input
@@ -60,7 +67,8 @@ export function CheckInForm({ clientId }: { clientId: string }) {
             max={24}
             step={0.5}
             defaultValue={7}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            style={inputStyle}
           />
         </div>
 
@@ -68,11 +76,11 @@ export function CheckInForm({ clientId }: { clientId: string }) {
         {SCALES.map(({ key, label, desc }) => (
           <div key={key}>
             <div className="flex items-baseline justify-between mb-1">
-              <label className="text-xs font-medium text-gray-700">{label}</label>
-              <span className="text-[11px] text-gray-400">{desc}</span>
+              <label className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>{label}</label>
+              <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>{desc}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400 w-3 text-right">1</span>
+              <span className="text-xs w-3 text-right" style={{ color: "var(--text-tertiary)" }}>1</span>
               <input
                 name={key}
                 type="range"
@@ -82,8 +90,8 @@ export function CheckInForm({ clientId }: { clientId: string }) {
                 onChange={(e) => setValues((v) => ({ ...v, [key]: Number(e.target.value) }))}
                 className="flex-1 accent-blue-600"
               />
-              <span className="text-xs text-gray-400 w-3">10</span>
-              <span className="w-7 text-center text-sm font-bold text-blue-600 tabular-nums">
+              <span className="text-xs w-3" style={{ color: "var(--text-tertiary)" }}>10</span>
+              <span className="w-7 text-center text-sm font-bold tabular-nums" style={{ color: "var(--brand)" }}>
                 {values[key]}
               </span>
             </div>
@@ -92,21 +100,23 @@ export function CheckInForm({ clientId }: { clientId: string }) {
 
         {/* Notes */}
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">
-            Notes <span className="text-gray-400 font-normal">(optional)</span>
+          <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-secondary)" }}>
+            Notes <span className="font-normal" style={{ color: "var(--text-tertiary)" }}>(optional)</span>
           </label>
           <textarea
             name="notes"
             rows={2}
             placeholder="Any observations…"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            style={inputStyle}
           />
         </div>
 
         <button
           type="submit"
           disabled={pending}
-          className="w-full py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="w-full py-2.5 text-sm font-semibold rounded-lg transition-colors disabled:opacity-50"
+          style={{ background: "var(--brand)", color: "#fff" }}
         >
           {done ? "✓ Saved!" : pending ? "Saving…" : "Log Check-In"}
         </button>

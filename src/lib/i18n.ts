@@ -1,4 +1,4 @@
-export type Lang = "en" | "es";
+export type Lang = "en" | "es" | "sv";
 
 const strings = {
   en: {
@@ -41,6 +41,7 @@ const strings = {
     // Lang toggle
     langEN: "EN",
     langES: "ES",
+    langSV: "SV",
   },
   es: {
     // Check-in page
@@ -82,6 +83,49 @@ const strings = {
     // Lang toggle
     langEN: "EN",
     langES: "ES",
+    langSV: "SV",
+  },
+  sv: {
+    // Check-in page
+    checkinTitle: "Daglig Incheckning",
+    checkinSubtitle: "Hur mår du idag? Det tar ungefär 60 sekunder.",
+    dateLabel: "📅 Datum",
+    sleepHoursLabel: "🌙 Sömntimmar förra natten",
+    sleepHoursPlaceholder: "t.ex. 7.5",
+    sleepQualityLabel: "Sömnkvalitet",
+    moodLabel: "Humör",
+    anxietyLabel: "Ångestnivå",
+    focusLabel: "Fokus och koncentration",
+    energyLabel: "Energinivå",
+    notesLabel: "📝 Anteckningar",
+    notesOptional: "(valfritt)",
+    notesPlaceholder: "Finns det något annat du vill att din kliniker ska veta?",
+    submitButton: "Skicka incheckning",
+    submittingButton: "Skickar…",
+    successTitle: "Incheckning registrerad!",
+    successBody: "Din kliniker kan nu se denna post. Du kan stänga fliken.",
+    submitAnother: "Skicka en till",
+    footerNote: "Dina uppgifter delas bara med din kliniker via EEGBase.",
+    // Scale endpoints
+    poorExcellent: ["Dålig", "Utmärkt"] as [string, string],
+    veryLowHigh: ["Mycket låg", "Mycket hög"] as [string, string],
+    noneServerely: ["Ingen", "Svår"] as [string, string],
+    scatteredSharp: ["Splittrad", "Skarp"] as [string, string],
+    exhaustedEnergised: ["Utmattad", "Energisk"] as [string, string],
+    // Share page
+    shareHeader: "Framstegsrapport",
+    shareSessions: "Sessioner",
+    shareAvgReward: "Genomsnittlig belöningspoäng",
+    shareGoals: "Mål",
+    shareFooter: "Denna rapport genereras av EEGBase och delas av din kliniker.",
+    shareDate: "Datum",
+    shareDuration: "Varaktighet",
+    shareDevice: "Enhet",
+    shareReward: "Belöning",
+    // Lang toggle
+    langEN: "EN",
+    langES: "ES",
+    langSV: "SV",
   },
 } as const;
 
@@ -92,6 +136,9 @@ export function t<K extends keyof typeof strings.en>(key: K, lang: Lang): typeof
 export function detectLang(): Lang {
   if (typeof window === "undefined") return "en";
   const stored = localStorage.getItem("lang");
-  if (stored === "en" || stored === "es") return stored;
-  return navigator.language.toLowerCase().startsWith("es") ? "es" : "en";
+  if (stored === "en" || stored === "es" || stored === "sv") return stored;
+  const nav = navigator.language.toLowerCase();
+  if (nav.startsWith("sv")) return "sv";
+  if (nav.startsWith("es")) return "es";
+  return "en";
 }

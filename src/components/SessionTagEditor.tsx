@@ -70,29 +70,32 @@ export function SessionTagEditor({ sessionId, initialTags }: Props) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
-        <Tag size={13} className="text-gray-400" />
-        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Session Tags</span>
-        {isPending && <Loader2 size={11} className="animate-spin text-gray-400" />}
+        <Tag size={13} style={{ color: "var(--text-tertiary)" }} />
+        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>Session Tags</span>
+        {isPending && <Loader2 size={11} className="animate-spin" style={{ color: "var(--text-tertiary)" }} />}
       </div>
 
       {error && (
-        <p className="text-xs text-red-500 mb-2">{error}</p>
+        <p className="text-xs mb-2" style={{ color: "var(--danger)" }}>{error}</p>
       )}
 
       {/* Tag chips + input */}
       <div
-        className="flex flex-wrap gap-1.5 p-2 border border-gray-200 rounded-lg min-h-[40px] cursor-text focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent"
+        className="flex flex-wrap gap-1.5 p-2 rounded-lg min-h-[40px] cursor-text focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent"
+        style={{ border: "1px solid var(--border-default)" }}
         onClick={() => inputRef.current?.focus()}
       >
         {tags.map((tag) => (
           <span
             key={tag}
-            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100"
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+            style={{ background: "color-mix(in srgb, var(--brand) 10%, transparent)", color: "var(--brand)", border: "1px solid color-mix(in srgb, var(--brand) 20%, transparent)" }}
           >
             {tag}
             <button
               onClick={(e) => { e.stopPropagation(); removeTag(tag); }}
-              className="text-blue-400 hover:text-blue-700 transition-colors"
+              className="transition-colors"
+              style={{ color: "var(--brand)" }}
               aria-label={`Remove ${tag}`}
             >
               <X size={10} />
@@ -109,19 +112,24 @@ export function SessionTagEditor({ sessionId, initialTags }: Props) {
             onFocus={() => setShowSuggestions(true)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
             placeholder={tags.length === 0 ? "Add tags…" : ""}
-            className="text-xs outline-none bg-transparent min-w-[80px] text-gray-700 placeholder-gray-300"
+            className="text-xs outline-none bg-transparent min-w-[80px]"
+            style={{ color: "var(--text-primary)" }}
           />
 
           {/* Autocomplete dropdown */}
           {showSuggestions && (input || suggestions.length > 0) && suggestions.length > 0 && (
-            <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[160px] py-1">
+            <div
+              className="absolute top-full left-0 mt-1 rounded-lg shadow-lg z-10 min-w-[160px] py-1"
+              style={{ background: "var(--surface-overlay)", border: "1px solid var(--border-subtle)" }}
+            >
               {suggestions.slice(0, 8).map((s) => (
                 <button
                   key={s}
                   onMouseDown={(e) => { e.preventDefault(); addTag(s); }}
-                  className="w-full text-left px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                  className="w-full text-left px-3 py-1.5 text-xs flex items-center gap-2 transition-colors"
+                  style={{ color: "var(--text-primary)" }}
                 >
-                  <Plus size={10} className="text-gray-400" />
+                  <Plus size={10} style={{ color: "var(--text-tertiary)" }} />
                   {s}
                 </button>
               ))}
@@ -130,7 +138,7 @@ export function SessionTagEditor({ sessionId, initialTags }: Props) {
         </div>
       </div>
 
-      <p className="text-xs text-gray-400 mt-1.5">
+      <p className="text-xs mt-1.5" style={{ color: "var(--text-tertiary)" }}>
         Press Enter or comma to add · Backspace to remove · or choose from suggestions
       </p>
     </div>

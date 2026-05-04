@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import { Brain, BarChart3, Wifi, ShieldCheck, Users, Zap, Bluetooth, FileText, Share2, CheckCircle } from "lucide-react";
+import { useState } from "react";
+import { Brain, BarChart3, Wifi, ShieldCheck, Users, Zap, Bluetooth, FileText, Share2, CheckCircle, ChevronDown } from "lucide-react";
 import { LandingLivePreview } from "@/components/LandingLivePreview";
 
 const features = [
@@ -47,6 +50,48 @@ const metrics = [
   { value: "Open source", label: "License" },
 ];
 
+const faqs = [
+  {
+    q: "How is EEGBase different from SimplePractice or TherapyNotes?",
+    a: "Those are general EHR platforms with no neurofeedback signal capture. EEGBase is purpose-built for real-time fNIRS and EEG streaming, bilateral OxyHb analysis, and device-native clinical workflows. The EHR features are included, but the signal is first-class.",
+  },
+  {
+    q: "Do I need a server to run EEGBase?",
+    a: "No. Deploy for free on Vercel + Neon (PostgreSQL) in under 10 minutes. Or self-host on any Linux server. Full Docker Compose setup included.",
+  },
+  {
+    q: "Is patient data safe?",
+    a: "Patient data never leaves your infrastructure. EEGBase is designed for self-hosting — no third-party cloud access by default. HIPAA-friendly architecture.",
+  },
+];
+
+function FaqAccordion() {
+  const [open, setOpen] = useState<number | null>(null);
+  return (
+    <div className="space-y-3">
+      {faqs.map((item, i) => (
+        <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
+          <button
+            onClick={() => setOpen(open === i ? null : i)}
+            className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+          >
+            <span className="text-sm font-semibold text-gray-900">{item.q}</span>
+            <ChevronDown
+              size={16}
+              className={`text-gray-400 shrink-0 ml-4 transition-transform ${open === i ? "rotate-180" : ""}`}
+            />
+          </button>
+          {open === i && (
+            <div className="px-5 pb-4 bg-white text-sm text-gray-600 leading-relaxed border-t border-gray-100">
+              {item.a}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
@@ -60,6 +105,14 @@ export default function LandingPage() {
             <span className="text-base font-bold text-gray-900">EEGBase</span>
           </div>
           <div className="flex items-center gap-3">
+            <a
+              href="https://github.com/eegbase/eegbase"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
+            >
+              Self-host for free →
+            </a>
             <Link
               href="/demo"
               className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
@@ -70,7 +123,7 @@ export default function LandingPage() {
               href="/login"
               className="text-sm font-medium px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Sign in
+              Try Demo
             </Link>
           </div>
         </div>
@@ -101,7 +154,7 @@ export default function LandingPage() {
             Try live demo →
           </Link>
           <a
-            href="https://github.com/trainbase/eegbase"
+            href="https://github.com/eegbase/eegbase"
             target="_blank"
             rel="noopener noreferrer"
             className="px-6 py-3 border border-gray-200 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-50 transition-colors"
@@ -148,6 +201,72 @@ export default function LandingPage() {
               <p className="text-xs text-gray-500 leading-relaxed">{description}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* What Mendi clinicians get — comparison section */}
+      <section className="max-w-5xl mx-auto px-6 pb-24">
+        <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
+          What Mendi clinicians get
+        </h2>
+        <p className="text-sm text-gray-500 text-center mb-12 max-w-2xl mx-auto">
+          The Mendi app shows clients their progress. EEGBase gives clinicians clinical oversight.
+        </p>
+        <div className="grid grid-cols-2 gap-6">
+          {/* Left — Mendi App */}
+          <div className="border-2 border-gray-200 rounded-2xl p-6 bg-gray-50">
+            <div className="flex items-center gap-2 mb-5">
+              <div className="w-7 h-7 bg-gray-300 rounded-lg flex items-center justify-center">
+                <Bluetooth size={14} className="text-gray-600" />
+              </div>
+              <span className="text-sm font-bold text-gray-600 uppercase tracking-wide">In the Mendi App</span>
+              <span className="text-xs text-gray-400 font-normal">(client view)</span>
+            </div>
+            <ul className="space-y-3">
+              {[
+                "Mendi Score trend",
+                "Session count",
+                "Basic progress graph",
+                "Reward score history",
+                "Gamified feedback",
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-2.5 text-sm text-gray-600">
+                  <span className="w-4 h-4 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                    <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Right — EEGBase */}
+          <div className="border-2 border-blue-200 rounded-2xl p-6 bg-blue-50/40">
+            <div className="flex items-center gap-2 mb-5">
+              <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Brain size={14} className="text-white" />
+              </div>
+              <span className="text-sm font-bold text-blue-700 uppercase tracking-wide">In EEGBase</span>
+              <span className="text-xs text-blue-400 font-normal">(clinician view)</span>
+            </div>
+            <ul className="space-y-3">
+              {[
+                "All clients in one dashboard",
+                "OxyHb/DeoxyHb bilateral analysis",
+                "Pre/post questionnaire deltas (focus, mood, anxiety, energy)",
+                "SOAP clinical notes + session annotations",
+                "AI-generated clinical summary",
+                "Shareable progress reports",
+                "Billing, scheduling, outcome measures",
+                "Export to EDF+ / CSV / PDF",
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-2.5 text-sm text-blue-900">
+                  <CheckCircle size={15} className="text-blue-500 shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </section>
 
@@ -241,6 +360,80 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ROI Calculator */}
+      <section className="max-w-5xl mx-auto px-6 pb-24">
+        <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
+          Calculate your practice ROI
+        </h2>
+        <p className="text-sm text-gray-400 text-center mb-12">
+          A typical neurofeedback practice — the numbers speak for themselves.
+        </p>
+        <div className="bg-gray-50 border border-gray-100 rounded-3xl p-8">
+          <div className="grid grid-cols-3 gap-6 mb-8">
+            {[
+              {
+                label: "Save $5K/yr",
+                sub: "in admin labor",
+                detail: "~2 hrs/week saved on notes, reports & billing",
+                color: "text-emerald-600",
+                bg: "bg-emerald-50 border-emerald-100",
+              },
+              {
+                label: "No subscription",
+                sub: "ever",
+                detail: "Competitors charge $150–500/month ($1,800–6,000/yr)",
+                color: "text-blue-600",
+                bg: "bg-blue-50 border-blue-100",
+              },
+              {
+                label: "Full data ownership",
+                sub: "guaranteed",
+                detail: "Self-hosted — your data stays on your infrastructure",
+                color: "text-violet-600",
+                bg: "bg-violet-50 border-violet-100",
+              },
+            ].map(({ label, sub, detail, color, bg }) => (
+              <div key={label} className={`border rounded-2xl p-5 ${bg}`}>
+                <p className={`text-2xl font-extrabold ${color} mb-0.5`}>{label}</p>
+                <p className={`text-xs font-semibold ${color} opacity-70 mb-3`}>{sub}</p>
+                <p className="text-xs text-gray-500 leading-relaxed">{detail}</p>
+              </div>
+            ))}
+          </div>
+          <div className="border-t border-gray-200 pt-6">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">How the math works</p>
+            <div className="grid grid-cols-3 gap-4 text-sm">
+              <div className="space-y-1">
+                <p className="font-semibold text-gray-900">Practice revenue</p>
+                <p className="text-gray-500 text-xs">15 clients × 2 sessions/week × $150/session</p>
+                <p className="font-bold text-emerald-600">= $90K/year</p>
+              </div>
+              <div className="space-y-1">
+                <p className="font-semibold text-gray-900">Admin time saved</p>
+                <p className="text-gray-500 text-xs">~2 hrs/week × $50/hr equivalent labor</p>
+                <p className="font-bold text-emerald-600">= $5,200/year</p>
+              </div>
+              <div className="space-y-1">
+                <p className="font-semibold text-gray-900">vs. Competitors</p>
+                <p className="text-gray-500 text-xs">SimplePractice / TherapyNotes at $150–500/month</p>
+                <p className="font-bold text-blue-600">EEGBase: $0/month</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="max-w-3xl mx-auto px-6 pb-24">
+        <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
+          Why not SimplePractice?
+        </h2>
+        <p className="text-sm text-gray-400 text-center mb-10">
+          Common questions from clinicians evaluating EEGBase.
+        </p>
+        <FaqAccordion />
+      </section>
+
       {/* CTA band */}
       <section className="bg-blue-600 py-16">
         <div className="max-w-2xl mx-auto px-6 text-center">
@@ -248,29 +441,38 @@ export default function LandingPage() {
             Ready to run your first session?
           </h2>
           <p className="text-blue-100 text-sm mb-8">
-            Try the live simulator demo — no account required.
+            The demo clinic is pre-loaded with 10 clients and 88 Mendi fNIRS sessions.
           </p>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-4 flex-wrap mb-6">
             <Link
               href="/demo"
               className="px-6 py-3 bg-white text-blue-600 text-sm font-semibold rounded-xl hover:bg-blue-50 transition-colors"
             >
-              Open live demo
+              Open live simulator →
             </Link>
             <Link
               href="/login"
               className="px-6 py-3 border border-blue-400 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-colors"
             >
-              Sign in to dashboard
+              ▶ Enter Demo Clinic
             </Link>
           </div>
+          <p className="text-blue-200 text-xs">
+            Demo login: <span className="font-mono bg-blue-700 px-2 py-0.5 rounded">demo@eegbase.io</span>{" "}
+            / <span className="font-mono bg-blue-700 px-2 py-0.5 rounded">demo2026</span>
+          </p>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="border-t border-gray-100 px-6 py-8">
         <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-gray-400">
-          <span>© 2026 EEGBase — open-source neurofeedback platform</span>
+          <div>
+            <span>© 2026 EEGBase — open-source neurofeedback platform</span>
+            <p className="mt-1 text-gray-400">
+              MIT licensed — fork it, self-host it, contribute to it. No lock-in.
+            </p>
+          </div>
           <div className="flex items-center gap-6">
             <Link href="/demo" className="hover:text-gray-600 transition-colors">
               Demo
@@ -279,7 +481,7 @@ export default function LandingPage() {
               Login
             </Link>
             <a
-              href="https://github.com/trainbase/eegbase"
+              href="https://github.com/eegbase/eegbase"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-gray-600 transition-colors"
