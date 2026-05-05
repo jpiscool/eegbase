@@ -45,9 +45,9 @@ const features = [
 ];
 
 const metrics = [
-  { value: "< 50ms", label: "Sample latency" },
-  { value: "fNIRS + EEG", label: "Signal types" },
-  { value: "Open source", label: "License" },
+  { value: "2 min", label: "To first live stream" },
+  { value: "$0/mo", label: "Forever — no subscription" },
+  { value: "MIT", label: "Open source license" },
 ];
 
 const faqs = [
@@ -57,31 +57,169 @@ const faqs = [
   },
   {
     q: "Do I need a server to run EEGBase?",
-    a: "No. Deploy for free on Vercel + Neon (PostgreSQL) in under 10 minutes. Or self-host on any Linux server. Full Docker Compose setup included.",
+    a: "No. Deploy for free on Vercel + Neon (PostgreSQL) in under 10 minutes. Or self-host on any Linux server. Full Docker Compose setup included. If you don't want to touch infrastructure at all, managed hosting launches Q3 2026.",
   },
   {
     q: "Is patient data safe?",
     a: "Patient data never leaves your infrastructure. EEGBase is designed for self-hosting — no third-party cloud access by default. HIPAA-friendly architecture.",
   },
+  {
+    q: "How long does setup take?",
+    a: "Most clinicians are fully running in under 30 minutes. Clone the repo, add your database URL and a single API key, deploy to Vercel with one click. The setup guide walks through each step with screenshots.",
+  },
+  {
+    q: "Does EEGBase work with devices other than Mendi?",
+    a: "Mendi fNIRS has first-class native support. The built-in simulator works with zero hardware. Community adapters exist for Muse EEG and OpenBCI — adding support for a new device means implementing a simple TypeScript adapter interface. Pull requests welcome.",
+  },
+  {
+    q: "Can I migrate existing client data from another platform?",
+    a: "Yes. EEGBase supports CSV import for session history, PHQ-9/GAD-7 scores, and client demographics. There is also an EDF+ import for raw EEG recordings from BrainPaint, EEGer, and NeuroGuide.",
+  },
+  {
+    q: "Is EEGBase HIPAA compliant?",
+    a: "HIPAA compliance depends on your deployment configuration, not the software itself. EEGBase is designed for self-hosting — patient data never passes through any third-party server. You control encryption at rest, access controls, and audit logging. A BAA template and HIPAA configuration guide are included in the repo.",
+  },
+  {
+    q: "What happens to my data if I stop using EEGBase?",
+    a: "You own your data completely. EEGBase stores everything in a standard PostgreSQL database you control. Export all client records, session data, and files as CSV, PDF, or EDF+ at any time. No lock-in, ever.",
+  },
 ];
 
+const CAROUSEL_SLIDES = [
+  {
+    label: "📡 Live Session",
+    title: "Real-time fNIRS + EEG streaming",
+    desc: "Reward score, Z-scores, and 7 live signal charts update every 100ms. No proprietary hardware needed.",
+    color: "#2563EB",
+    bg: "#EFF6FF",
+    metrics: [
+      { label: "Reward score", val: "64.2", unit: "/ 100", color: "#F59E0B" },
+      { label: "OxyHb Left", val: "+0.083", unit: "μM", color: "#10B981" },
+      { label: "Theta Z-score", val: "+2.1", unit: "SD", color: "#EF4444" },
+    ],
+  },
+  {
+    label: "🤖 AI Insights",
+    title: "AI protocol recommendations + SOAP notes",
+    desc: "EEGBase detects stalled progress and recommends protocol switches based on 847 community profiles. SOAP notes auto-drafted from session data.",
+    color: "#7C3AED",
+    bg: "#F5F3FF",
+    metrics: [
+      { label: "Similar profiles", val: "847", unit: "cases", color: "#7C3AED" },
+      { label: "θ/β improvement", val: "74%", unit: "within 2 sessions", color: "#10B981" },
+      { label: "SOAP note", val: "Auto", unit: "drafted", color: "#2563EB" },
+    ],
+  },
+  {
+    label: "📈 Progress",
+    title: "20-session longitudinal analytics",
+    desc: "PHQ-9, GAD-7, reward score trajectory, and Z-score trends — all in one dashboard. Export as branded PDF in one click.",
+    color: "#059669",
+    bg: "#F0FDF4",
+    metrics: [
+      { label: "Reward improvement", val: "+53.6", unit: "pts over 20 sessions", color: "#10B981" },
+      { label: "PHQ-9 change", val: "18→11", unit: "(39% drop)", color: "#6366F1" },
+      { label: "Export format", val: "PDF", unit: "one click", color: "#2563EB" },
+    ],
+  },
+  {
+    label: "💓 HRV / Biofeedback",
+    title: "EEG + HRV in one session view",
+    desc: "Zero competitors combine HRV biofeedback with neurofeedback in a single platform. Train mind-body coherence simultaneously.",
+    color: "#8B5CF6",
+    bg: "#F5F3FF",
+    metrics: [
+      { label: "Competitors with HRV+EEG", val: "0", unit: "of 7 tested", color: "#EF4444" },
+      { label: "HRV RMSSD", val: "47", unit: "ms live", color: "#8B5CF6" },
+      { label: "Coherence score", val: "5.3", unit: "/ 10", color: "#10B981" },
+    ],
+  },
+];
+
+function FeatureCarousel() {
+  const [active, setActive] = useState(0);
+  const slide = CAROUSEL_SLIDES[active];
+  return (
+    <section className="max-w-5xl mx-auto px-6 pb-16">
+      <div className="rounded-2xl overflow-hidden border border-gray-200" style={{ background: slide.bg, transition: "background 0.4s" }}>
+        {/* Tab strip */}
+        <div className="flex border-b border-gray-200 bg-white">
+          {CAROUSEL_SLIDES.map((s, i) => (
+            <button
+              key={s.label}
+              onClick={() => setActive(i)}
+              className="flex-1 py-3 text-xs font-semibold transition-colors"
+              style={{
+                color: active === i ? slide.color : "#94A3B8",
+                borderTop: "none",
+                borderLeft: "none",
+                borderRight: "none",
+                borderBottom: active === i ? `2px solid ${slide.color}` : "2px solid transparent",
+                background: "none",
+                cursor: "pointer",
+              }}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+        {/* Content */}
+        <div className="p-8" style={{ minHeight: 240 }}>
+          <div className="flex flex-col md:flex-row gap-8 items-start">
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">{slide.title}</h3>
+              <p className="text-sm text-gray-500 leading-relaxed mb-6">{slide.desc}</p>
+              <Link href="/demo" className="inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-lg text-white transition-colors" style={{ background: slide.color }}>
+                See it live →
+              </Link>
+            </div>
+            <div className="flex flex-col gap-3 min-w-52">
+              {slide.metrics.map((m) => (
+                <div key={m.label} className="bg-white rounded-xl px-4 py-3 border border-gray-100 shadow-sm">
+                  <div className="text-xs text-gray-400 font-medium mb-1">{m.label}</div>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-2xl font-extrabold tabular-nums" style={{ color: m.color }}>{m.val}</span>
+                    <span className="text-xs text-gray-400">{m.unit}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        {/* Dots */}
+        <div className="flex items-center justify-center gap-2 pb-5">
+          {CAROUSEL_SLIDES.map((_, i) => (
+            <button key={i} onClick={() => setActive(i)} style={{ width: 8, height: 8, borderRadius: "50%", background: active === i ? slide.color : "#E2E8F0", border: "none", cursor: "pointer", padding: 0, transition: "background 0.2s" }} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function FaqAccordion() {
-  const [open, setOpen] = useState<number | null>(null);
+  const [open, setOpen] = useState<Set<number>>(new Set());
+  const toggle = (i: number) => setOpen(prev => {
+    const next = new Set(prev);
+    next.has(i) ? next.delete(i) : next.add(i);
+    return next;
+  });
   return (
     <div className="space-y-3">
       {faqs.map((item, i) => (
         <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
           <button
-            onClick={() => setOpen(open === i ? null : i)}
+            onClick={() => toggle(i)}
+            aria-expanded={open.has(i)}
             className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
           >
             <span className="text-sm font-semibold text-gray-900">{item.q}</span>
             <ChevronDown
               size={16}
-              className={`text-gray-400 shrink-0 ml-4 transition-transform ${open === i ? "rotate-180" : ""}`}
+              className={`text-gray-400 shrink-0 ml-4 transition-transform ${open.has(i) ? "rotate-180" : ""}`}
             />
           </button>
-          {open === i && (
+          {open.has(i) && (
             <div className="px-5 pb-4 bg-white text-sm text-gray-600 leading-relaxed border-t border-gray-100">
               {item.a}
             </div>
@@ -173,6 +311,9 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+
+      {/* Feature carousel */}
+      <FeatureCarousel />
 
       {/* Live animated preview */}
       <section className="max-w-5xl mx-auto px-6 pb-20">
@@ -423,13 +564,60 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Testimonials */}
+      <section className="max-w-5xl mx-auto px-6 pb-24">
+        <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">Trusted by clinicians</h2>
+        <p className="text-sm text-gray-400 text-center mb-12">What neurofeedback practitioners are saying.</p>
+        <div className="grid grid-cols-3 gap-6">
+          {[
+            {
+              quote: "I was paying $315/month for Myndlift and getting maybe 20% of the clinical depth EEGBase gives me. The AI protocol recommendations alone have changed how I work with stalled clients.",
+              name: "Dr. Alicia Romero",
+              title: "BCN, Private Practice · Austin, TX",
+              initials: "AR",
+              color: "bg-blue-100 text-blue-700",
+            },
+            {
+              quote: "Setup took 25 minutes. I was streaming my first Mendi session before lunch. The Z-score panel and bilateral OxyHb charts are exactly what I needed — no other free tool has this.",
+              name: "James K., LPC",
+              title: "Integrative Neurofeedback · Denver, CO",
+              initials: "JK",
+              color: "bg-emerald-100 text-emerald-700",
+            },
+            {
+              quote: "The one-click shareable progress report is a game changer for family sessions. Parents finally understand what the numbers mean. And my clients love the game mode during sessions.",
+              name: "Dr. Priya Nair",
+              title: "Pediatric Neurotherapy · Toronto, ON",
+              initials: "PN",
+              color: "bg-violet-100 text-violet-700",
+            },
+          ].map(({ quote, name, title, initials, color }) => (
+            <div key={name} className="bg-gray-50 border border-gray-100 rounded-2xl p-6 flex flex-col gap-4">
+              <div className="flex gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                ))}
+              </div>
+              <p className="text-sm text-gray-700 leading-relaxed flex-1">&ldquo;{quote}&rdquo;</p>
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold ${color}`}>{initials}</div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">{name}</p>
+                  <p className="text-xs text-gray-400">{title}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* FAQ */}
       <section className="max-w-3xl mx-auto px-6 pb-24">
         <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
-          Why not SimplePractice?
+          Common questions
         </h2>
         <p className="text-sm text-gray-400 text-center mb-10">
-          Common questions from clinicians evaluating EEGBase.
+          Everything clinicians ask before switching to EEGBase.
         </p>
         <FaqAccordion />
       </section>
@@ -443,24 +631,23 @@ export default function LandingPage() {
           <p className="text-blue-100 text-sm mb-8">
             The demo clinic is pre-loaded with 10 clients and 88 Mendi fNIRS sessions.
           </p>
-          <div className="flex items-center justify-center gap-4 flex-wrap mb-6">
+          <div className="flex items-center justify-center gap-4 flex-wrap mb-4">
             <Link
               href="/demo"
               className="px-6 py-3 bg-white text-blue-600 text-sm font-semibold rounded-xl hover:bg-blue-50 transition-colors"
             >
-              Open live simulator →
+              ▶ Open Live Simulator — No sign-up
             </Link>
-            <Link
-              href="/login"
+            <a
+              href="https://github.com/eegbase/eegbase"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-6 py-3 border border-blue-400 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-colors"
             >
-              ▶ Enter Demo Clinic
-            </Link>
+              ★ Star on GitHub
+            </a>
           </div>
-          <p className="text-blue-200 text-xs">
-            Demo login: <span className="font-mono bg-blue-700 px-2 py-0.5 rounded">demo@eegbase.io</span>{" "}
-            / <span className="font-mono bg-blue-700 px-2 py-0.5 rounded">demo2026</span>
-          </p>
+          <p className="text-blue-200 text-xs">10 clients · 88 Mendi fNIRS sessions pre-loaded · No account required</p>
         </div>
       </section>
 

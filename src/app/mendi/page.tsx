@@ -421,7 +421,7 @@ export default function MendiPartnershipPage() {
             </p>
             {[
               { label: "URL", value: "eegbase.com/login" },
-              { label: "Email", value: "demo@eegbase.io" },
+              { label: "Email", value: "demo@eegbase.com" },
               { label: "Password", value: "demo2026" },
             ].map(({ label, value }) => (
               <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid #F3F4F6" }}>
