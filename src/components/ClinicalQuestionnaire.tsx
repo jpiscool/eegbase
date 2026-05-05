@@ -198,6 +198,7 @@ export function ClinicalQuestionnaire({ clientName, onComplete, readOnly = false
           <button
             onClick={handleSubmit}
             disabled={!allDone}
+            title={allDone ? "Submit questionnaire" : "Answer all questions to submit"}
             style={{
               padding: "10px 24px", borderRadius: 10, border: "none", fontWeight: 700, fontSize: 14,
               background: allDone ? "var(--brand, #2563EB)" : "#1E293B",

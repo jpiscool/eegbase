@@ -292,6 +292,8 @@ export default function DemoPage() {
           .demo-sidebar { display: none !important; }
           .demo-content { padding: 16px !important; }
         }
+        /* Hide Next.js dev-mode error/issue badge overlay */
+        [data-nextjs-toast], nextjs-portal, #__next-build-watcher, .__next-error-overlay-wrapper { display: none !important; }
       `}</style>
 
       {/* Top bar */}
@@ -429,7 +431,7 @@ export default function DemoPage() {
             {TABS.map((t, i) => (
               <div key={t.id}>
                 {t.groupStart && (
-                  <div style={{ padding: i === 0 ? "6px 16px 8px" : "20px 16px 8px", fontSize: 9, fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.14em" }}>
+                  <div style={{ padding: i === 0 ? "6px 16px 8px" : "20px 16px 8px", fontSize: 11, fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.14em" }}>
                     {t.groupStart}
                   </div>
                 )}
@@ -578,7 +580,7 @@ export default function DemoPage() {
                     <span style={{ fontSize: 18, fontWeight: 800, color: devColor, fontVariantNumeric: "tabular-nums", width: 52 }}>
                       {val ? (n > 0 ? "+" : "") + val : "—"}
                     </span>
-                    <span style={{ fontSize: 10, color: "#64748B" }}>SD</span>
+                    <span style={{ fontSize: 12, color: "#64748B" }}>SD</span>
                     <span style={{ fontSize: 11, color: devColor, fontWeight: 500 }}>
                       {Math.abs(n) > 2 ? "↑ Elevated" : Math.abs(n) > 1 ? "Borderline" : "✓ Normal"}
                     </span>
@@ -981,7 +983,7 @@ export default function DemoPage() {
                   { data: oxyR.data, color: "#0EA5E9", label: "OxyHb R · prefrontal" },
                 ].map(({ data, color, label }) => (
                   <div key={label} style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 12, padding: 14 }}>
-                    <LiveChart data={data} color={color} label={label} height={64} />
+                    <LiveChart data={data} color={color} label={label} height={88} />
                   </div>
                 ))}
               </div>
@@ -1187,7 +1189,7 @@ export default function DemoPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {[...SESSION_HISTORY].reverse().slice(0, 8).map((s) => (
+                    {[...SESSION_HISTORY].reverse().slice(0, 15).map((s) => (
                       <tr key={s.session} style={{ borderTop: "1px solid #334155" }}>
                         <td style={{ padding: "10px 16px", color: "#94A3B8", fontWeight: 600 }}>{s.session}</td>
                         <td style={{ padding: "10px 16px", color: "#94A3B8" }}>{s.date}</td>
@@ -1654,8 +1656,16 @@ export default function DemoPage() {
               );
             })()}
 
-            <div style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 12, padding: "14px 18px", fontSize: 12, color: "#94A3B8" }}>
-              Showing 6 of 54 protocols. Full library includes ILF variants, LORETA-guided, gamma training, neuromuscular (TBI), and paediatric protocols. Evidence ratings based on Arns et al. 2014, van Doren et al. 2019, and EEGBase community outcome data.
+            <div style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 12, padding: "14px 18px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
+              <span style={{ fontSize: 13, color: "#94A3B8" }}>
+                Showing {protocolSearch ? "filtered" : "6"} of 47 protocols — full library includes ILF variants, LORETA-guided, gamma training, neuromuscular (TBI), and paediatric protocols.
+              </span>
+              <button
+                onClick={() => setProtocolSearch("")}
+                style={{ fontSize: 13, color: "#60A5FA", background: "none", border: "none", cursor: "pointer", fontWeight: 600, padding: 0, whiteSpace: "nowrap" }}
+              >
+                Browse full library →
+              </button>
             </div>
           </div>
         )}
@@ -1837,7 +1847,7 @@ export default function DemoPage() {
 
             <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, overflow: "hidden" }}>
               <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, minWidth: 920 }}>
                   <thead>
                     <tr style={{ background: "#1E293B", borderBottom: "2px solid #334155" }}>
                       <th style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#94A3B8", minWidth: 220, position: "sticky", left: 0, background: "#1E293B" }}>Feature</th>
