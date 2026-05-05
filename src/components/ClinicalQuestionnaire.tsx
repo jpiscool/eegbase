@@ -161,10 +161,16 @@ export function ClinicalQuestionnaire({ clientName, onComplete, readOnly = false
                       transition: "all 0.1s",
                     }}
                   >
-                    {opt.label}
+                    {answers[i] === opt.value ? "✓ " : ""}{opt.label}
                   </button>
                 ))}
               </div>
+              {/* FIX 13: PHQ-9 item 9 crisis callout (suicidal ideation) */}
+              {tab === "phq9" && i === 8 && answers[8] !== undefined && answers[8] !== null && (answers[8] as number) > 0 && (
+                <div style={{ marginTop: 8, padding: "10px 14px", borderRadius: 8, background: "rgba(127,29,29,0.3)", border: "1px solid #991B1B", fontSize: 12, color: "#FCA5A5" }}>
+                  ⚠️ Item 9 score &gt; 0 — consider immediate safety assessment. Crisis resources: <strong>988 Suicide &amp; Crisis Lifeline</strong> (call or text 988).
+                </div>
+              )}
             </div>
           ))}
         </div>

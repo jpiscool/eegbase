@@ -22,16 +22,30 @@ function useSlidingWindow(size: number) {
   return { data, push, reset };
 }
 
-const SESSION_HISTORY = Array.from({ length: 20 }, (_, i) => ({
-  session: i + 1,
-  date: new Date(Date.now() - (20 - i) * 7 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-  reward: 38 + i * 2.8 + (Math.random() - 0.5) * 6,
-  alpha: 0.32 + i * 0.012 + (Math.random() - 0.5) * 0.03,
-  thetaBeta: 2.4 - i * 0.02 + (Math.random() - 0.5) * 0.15, // Z-score, trending down
-  phq9: Math.max(4, 18 - Math.floor(i * 0.7)),
-  gad7: Math.max(3, 14 - Math.floor(i * 0.55)),
-  duration: 20 + Math.floor(Math.random() * 10),
-}));
+// Fixed seed data — realistic learning curve, no Math.random()
+// Reward: grows ~38 → ~88; PHQ-9: 18 → 5; GAD-7: 14 → 4; θ/β Z: stays ~2.0–2.4 SD
+const SESSION_HISTORY: { session: number; date: string; reward: number; alpha: number; thetaBeta: number; phq9: number; gad7: number; duration: number }[] = [
+  { session:  1, date: "Jan  6", reward: 38.2, alpha: 0.32, thetaBeta: 2.38, phq9: 18, gad7: 14, duration: 42 },
+  { session:  2, date: "Jan 13", reward: 41.7, alpha: 0.33, thetaBeta: 2.31, phq9: 17, gad7: 13, duration: 44 },
+  { session:  3, date: "Jan 20", reward: 43.5, alpha: 0.34, thetaBeta: 2.35, phq9: 16, gad7: 13, duration: 40 },
+  { session:  4, date: "Jan 27", reward: 46.1, alpha: 0.35, thetaBeta: 2.27, phq9: 16, gad7: 12, duration: 45 },
+  { session:  5, date: "Feb  3", reward: 49.4, alpha: 0.36, thetaBeta: 2.29, phq9: 15, gad7: 12, duration: 43 },
+  { session:  6, date: "Feb 10", reward: 51.8, alpha: 0.37, thetaBeta: 2.10, phq9: 14, gad7: 11, duration: 42 },
+  { session:  7, date: "Feb 17", reward: 54.3, alpha: 0.38, thetaBeta: 2.04, phq9: 13, gad7: 10, duration: 46 },
+  { session:  8, date: "Feb 24", reward: 57.9, alpha: 0.39, thetaBeta: 2.22, phq9: 12, gad7:  9, duration: 44 },
+  { session:  9, date: "Mar  3", reward: 60.6, alpha: 0.40, thetaBeta: 2.08, phq9: 11, gad7:  9, duration: 45 },
+  { session: 10, date: "Mar 10", reward: 63.1, alpha: 0.41, thetaBeta: 2.01, phq9: 10, gad7:  8, duration: 42 },
+  { session: 11, date: "Mar 17", reward: 65.4, alpha: 0.42, thetaBeta: 1.97, phq9:  9, gad7:  7, duration: 48 },
+  { session: 12, date: "Mar 24", reward: 67.8, alpha: 0.43, thetaBeta: 1.93, phq9:  9, gad7:  7, duration: 45 },
+  { session: 13, date: "Mar 31", reward: 70.2, alpha: 0.44, thetaBeta: 1.88, phq9:  8, gad7:  6, duration: 43 },
+  { session: 14, date: "Apr  7", reward: 72.5, alpha: 0.44, thetaBeta: 1.84, phq9:  8, gad7:  6, duration: 46 },
+  { session: 15, date: "Apr 14", reward: 74.9, alpha: 0.45, thetaBeta: 1.80, phq9:  7, gad7:  5, duration: 44 },
+  { session: 16, date: "Apr 21", reward: 77.3, alpha: 0.46, thetaBeta: 1.76, phq9:  7, gad7:  5, duration: 47 },
+  { session: 17, date: "Apr 28", reward: 80.1, alpha: 0.47, thetaBeta: 1.72, phq9:  6, gad7:  4, duration: 45 },
+  { session: 18, date: "May  5", reward: 82.6, alpha: 0.47, thetaBeta: 1.68, phq9:  6, gad7:  4, duration: 43 },
+  { session: 19, date: "May 12", reward: 85.4, alpha: 0.48, thetaBeta: 1.65, phq9:  5, gad7:  4, duration: 48 },
+  { session: 20, date: "May 19", reward: 88.0, alpha: 0.49, thetaBeta: 1.61, phq9:  5, gad7:  4, duration: 46 },
+];
 
 // ── Competitor feature comparison ──────────────────────────────────────────
 // Columns: eeg, myndlift, divergence, eeger, brainpaint, neuroptimal, neuroguide, brainavatar
@@ -134,6 +148,7 @@ export default function DemoPage() {
   const [emailSent, setEmailSent] = useState(false);
   const [faxSent, setFaxSent] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showSimilarCasesModal, setShowSimilarCasesModal] = useState(false);
   const [gameMode, setGameMode] = useState<"orb" | "art" | "audio">("orb");
   const [reminderToggles, setReminderToggles] = useState({ sms: true, email: true, noshow: true, lapsed: false });
   const [peakFlash, setPeakFlash] = useState(false);
@@ -226,7 +241,7 @@ export default function DemoPage() {
       if (betaN < 0)    return { icon: "↗", text: "Building up — beta focus band is below average. Try a light mental task to activate it.", color: "#FCD34D", bg: "rgba(120,53,15,0.3)", border: "#92400E" };
       return { icon: "↗", text: "Building up — patterns are forming. Stay relaxed but alert.", color: "#FCD34D", bg: "rgba(120,53,15,0.3)", border: "#92400E" };
     }
-    return { icon: "◌", text: "Starting up — takes a moment for brainwave patterns to stabilise. Breathe naturally.", color: "#94A3B8", bg: "#1E293B", border: "#334155" };
+    return { icon: "◌", text: "Starting up — takes a moment for brainwave patterns to stabilize. Breathe naturally.", color: "#94A3B8", bg: "#1E293B", border: "#334155" };
   })();
 
   const TABS: { id: MainTab; label: string; groupStart?: string }[] = [
@@ -250,6 +265,14 @@ export default function DemoPage() {
     { name: "Daniel Cruz",      protocol: "Sleep Spindle · Cz/Pz",      session: 3  },
     { name: "Emily Tanaka",     protocol: "Neuromuscular · C3/C4",       session: 6  },
   ];
+
+  const PROTOCOL_GOALS: Record<string, string> = {
+    "SMR · Cz (12–15 Hz)":    "Increase SMR (12–15 Hz) · Reduce Theta (4–8 Hz) · Score rises when sensorimotor rhythm is sustained",
+    "Alpha-Theta · Pz/Oz":    "Reward Alpha (8–12 Hz) · Reward Theta (4–8 Hz) · Score rises during deep relaxation states",
+    "ILF · Fp1/Fp2":          "Train infra-low frequencies (<0.1 Hz) · Improve autonomic regulation · Score rises with sustained ILF coherence",
+    "Sleep Spindle · Cz/Pz":  "Increase Sigma (12–16 Hz) sleep spindles · Reduce hyperarousal · Score rises when spindle activity is detected",
+    "Neuromuscular · C3/C4":  "Increase SMR at motor cortex · Reduce excess Theta · Score rises with sustained sensorimotor balance",
+  };
   const [demoClientIdx, setDemoClientIdx] = useState(0);
   const demoClient = DEMO_CLIENTS[demoClientIdx];
 
@@ -309,8 +332,9 @@ export default function DemoPage() {
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           {/* Client switcher */}
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ fontSize: "0.72rem", color: "#64748B", fontWeight: 600 }}>Client:</span>
+            <span style={{ fontSize: "0.72rem", color: "#94A3B8", fontWeight: 600 }}>Client:</span>
             <select
+              aria-label="Select demo client"
               value={demoClientIdx}
               onChange={(e) => setDemoClientIdx(Number(e.target.value))}
               style={{ fontSize: "0.78rem", fontWeight: 600, color: "white", border: "1px solid #334155", borderRadius: 6, padding: "4px 8px", background: "#1E293B", cursor: "pointer", outline: "none" }}
@@ -364,6 +388,7 @@ export default function DemoPage() {
                 ))}
               </div>
               <button
+                aria-label="Close welcome modal and start exploring"
                 onClick={() => { sessionStorage.setItem("demo-onboarding-dismissed", "1"); setShowOnboarding(false); }}
                 style={{ width: "100%", padding: "13px 20px", background: "linear-gradient(135deg, #2563EB, #7C3AED)", color: "white", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer", letterSpacing: "0.01em" }}
               >
@@ -371,6 +396,47 @@ export default function DemoPage() {
               </button>
               <p style={{ fontSize: 12, color: "#CBD5E1", textAlign: "center", marginTop: 12 }}>No sign-up required · Synthetic data only</p>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Similar Cases Modal */}
+      {showSimilarCasesModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setShowSimilarCasesModal(false)}>
+          <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 32, maxWidth: 680, width: "90%", maxHeight: "80vh", overflowY: "auto" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+              <h2 style={{ color: "#F1F5F9", fontSize: 18, fontWeight: 700 }}>847 Similar Client Profiles</h2>
+              <button onClick={() => setShowSimilarCasesModal(false)} aria-label="Close" style={{ background: "none", border: "none", color: "#94A3B8", fontSize: 20, cursor: "pointer" }}>✕</button>
+            </div>
+            <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 20 }}>Anonymized profiles from the EEGBase normative database matching Sarah Mitchell&apos;s theta elevation pattern, age range (25–35), and SMR non-response history.</p>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid #334155" }}>
+                  {["Age / Dx", "Protocol", "Sessions", "PHQ-9", "Reward \u2191", "Outcome"].map((h) => (
+                    <th key={h} style={{ color: "#64748B", fontWeight: 600, padding: "6px 10px", textAlign: "left", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["28F / ADHD-C", "SMR Cz", "18", "19 \u2192 7", "+61%", "\u2713 Remission"],
+                  ["31M / Anxiety", "Alpha-Theta Pz", "24", "16 \u2192 5", "+48%", "\u2713 Remission"],
+                  ["29F / ADHD-PI", "SMR Cz/Fz", "22", "21 \u2192 9", "+54%", "\u2713 Improved"],
+                  ["34M / Depression", "Alpha-Theta Oz", "30", "22 \u2192 8", "+39%", "\u2713 Improved"],
+                  ["27F / ADHD-C", "SMR C3/C4", "16", "18 \u2192 6", "+67%", "\u2713 Remission"],
+                  ["33M / Mixed", "SMR + ILF", "28", "20 \u2192 11", "+41%", "~ Partial"],
+                  ["30F / Anxiety", "Alpha-Theta Pz", "20", "15 \u2192 4", "+55%", "\u2713 Remission"],
+                  ["26M / ADHD-PI", "SMR Cz", "14", "17 \u2192 8", "+44%", "\u2713 Improved"],
+                ].map((row, i) => (
+                  <tr key={i} style={{ borderBottom: "1px solid #1E293B" }}>
+                    {row.map((cell, j) => (
+                      <td key={j} style={{ padding: "10px", color: cell.startsWith("\u2713") ? "#34D399" : cell.startsWith("~") ? "#FCD34D" : "#CBD5E1" }}>{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p style={{ color: "#475569", fontSize: 11, marginTop: 16 }}>74% of matched client profiles achieved clinically significant improvement (PHQ-9 \u22655+) within 22 sessions. Based on EEGBase internal outcomes data, n=847.</p>
           </div>
         </div>
       )}
@@ -431,7 +497,7 @@ export default function DemoPage() {
             {TABS.map((t, i) => (
               <div key={t.id}>
                 {t.groupStart && (
-                  <div style={{ padding: i === 0 ? "6px 16px 8px" : "20px 16px 8px", fontSize: 11, fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.14em" }}>
+                  <div style={{ padding: i === 0 ? "6px 16px 8px" : "20px 16px 8px", fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.14em" }}>
                     {t.groupStart}
                   </div>
                 )}
@@ -503,7 +569,7 @@ export default function DemoPage() {
               <div style={{ display: "flex", alignItems: "center", gap: 32, flexWrap: "wrap" }}>
                 {/* Reward score ring */}
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-                  <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#64748B", letterSpacing: "0.1em", textTransform: "uppercase", alignSelf: "flex-start" }}>Reward Score</div>
+                  <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#94A3B8", letterSpacing: "0.1em", textTransform: "uppercase", alignSelf: "flex-start" }}>Reward Score</div>
                   <div style={{ position: "relative", width: 130, height: 130 }}>
                     <svg width="130" height="130" viewBox="0 0 130 130" style={{ transform: "rotate(-90deg)" }}>
                       {/* Track */}
@@ -525,7 +591,7 @@ export default function DemoPage() {
                       <div style={{ fontSize: "2.1rem", fontWeight: 800, color: "white", lineHeight: 1, fontVariantNumeric: "tabular-nums", letterSpacing: "-0.03em" }}>
                         {rewardVal != null ? rewardVal.toFixed(0) : "—"}
                       </div>
-                      <div style={{ fontSize: "0.6rem", color: "#64748B", marginTop: 1 }}>/ 100</div>
+                      <div style={{ fontSize: "0.6rem", color: "#94A3B8", marginTop: 1 }}>/ 100</div>
                       {rewardTrend != null && (
                         <div style={{ fontSize: "0.7rem", color: rewardTrend > 1 ? "#34D399" : rewardTrend < -1 ? "#F87171" : "#64748B", fontWeight: 700, marginTop: 3 }}>
                           {rewardTrend > 1 ? "↑" : rewardTrend < -1 ? "↓" : "→"} {rewardTrend > 0 ? "+" : ""}{rewardTrend.toFixed(1)}
@@ -545,16 +611,16 @@ export default function DemoPage() {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
                   {[
-                    { label: "O₂ flow L", val: sample?.oxyHbLeft, color: "#10B981" },
-                    { label: "O₂ flow R", val: sample?.oxyHbRight, color: "#0EA5E9" },
-                    { label: "O₂ use L", val: sample?.deoxyHbLeft, color: "#6366F1" },
-                    { label: "O₂ use R", val: sample?.deoxyHbRight, color: "#EC4899" },
+                    { label: "OxyHb L", val: sample?.oxyHbLeft, color: "#10B981" },
+                    { label: "OxyHb R", val: sample?.oxyHbRight, color: "#0EA5E9" },
+                    { label: "DeoxyHb L", val: sample?.deoxyHbLeft, color: "#6366F1" },
+                    { label: "DeoxyHb R", val: sample?.deoxyHbRight, color: "#EC4899" },
                     { label: "Heart rate", val: sample?.heartRate, color: "#F59E0B", suffix: " bpm" },
                     { label: "HRV", val: sample?.hrvRmssd, color: "#8B5CF6", suffix: " ms" },
                   ].map(({ label, val, color, suffix }) => (
                     <div key={label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 8px", borderRadius: 8, background: "rgba(255,255,255,0.04)" }}>
                       <div style={{ width: 6, height: 6, borderRadius: "50%", background: color, flexShrink: 0 }} />
-                      <span style={{ fontSize: "0.72rem", color: "#64748B", width: 58 }}>{label}</span>
+                      <span style={{ fontSize: "0.72rem", color: "#94A3B8", width: 58 }}>{label}</span>
                       <span style={{ fontSize: "0.82rem", fontWeight: 700, color, fontVariantNumeric: "tabular-nums", width: 58, textAlign: "right" }}>
                         {val != null ? val.toFixed(suffix ? 0 : 3) + (suffix ?? "") : "—"}
                       </span>
@@ -580,7 +646,7 @@ export default function DemoPage() {
                     <span style={{ fontSize: 18, fontWeight: 800, color: devColor, fontVariantNumeric: "tabular-nums", width: 52 }}>
                       {val ? (n > 0 ? "+" : "") + val : "—"}
                     </span>
-                    <span style={{ fontSize: 12, color: "#64748B" }}>SD</span>
+                    <span style={{ fontSize: 12, color: "#94A3B8" }}>SD</span>
                     <span style={{ fontSize: 11, color: devColor, fontWeight: 500 }}>
                       {Math.abs(n) > 2 ? "↑ Elevated" : Math.abs(n) > 1 ? "Borderline" : "✓ Normal"}
                     </span>
@@ -606,7 +672,7 @@ export default function DemoPage() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }} className="demo-grid-2">
               {[
                 { data: oxyL.data, color: "#10B981", label: "Oxygenated blood · Left prefrontal" },
-                { data: oxyR.data, color: "#0EA5E9", label: "Oxygenated blood · Right prefrontal" },
+                { data: oxyR.data.map((v) => Math.max(0, Math.min(1, v + 0.5))), color: "#0EA5E9", label: "Oxygenated blood · Right prefrontal" },
               ].map(({ data, color, label }) => (
                 <div key={label} style={{ background: "#0F172A", boxShadow: "0 2px 8px rgba(0,0,0,0.3), 0 0 0 1px #334155", borderRadius: 14, padding: 18 }}>
                   {sampleCount === 0 ? (
@@ -625,7 +691,7 @@ export default function DemoPage() {
             <div style={{ background: "linear-gradient(135deg, #0F172A, #1E293B)", border: "1px solid #334155", borderRadius: 10, padding: "10px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 16 }}>🎯</span>
               <span style={{ fontSize: 13, color: "#FCD34D", fontWeight: 700 }}>Session goal:</span>
-              <span style={{ fontSize: 13, color: "#FDE68A", marginLeft: 4 }}>Increase <strong>Beta</strong> (active focus) · Reduce <strong>Theta</strong> (drowsy slow waves) · Score rises when both happen together</span>
+              <span style={{ fontSize: 13, color: "#FDE68A", marginLeft: 4 }}>{PROTOCOL_GOALS[recommendationApplied ? "Alpha-Theta · Pz/Oz" : demoClient.protocol] ?? "Score rises when the target brainwave pattern is sustained"}</span>
             </div>
 
             <div className="demo-section-label">Brainwave bands (EEG)</div>
@@ -747,7 +813,7 @@ export default function DemoPage() {
                   )}
                 </div>
                 <div style={{ marginTop: 10, fontSize: 11, color: "#94A3B8", textAlign: "center" }}>
-                  Inspired by BrainPaint — fractal art that evolves with your brainwaves
+                  Generative art that evolves in real time with your brainwave activity
                 </div>
               </div>
             )}
@@ -773,11 +839,11 @@ export default function DemoPage() {
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 15, fontWeight: 700, color: "white", marginBottom: 2 }}>Ambient Focus Mix</div>
-                      <div style={{ fontSize: 12, color: "#64748B", marginBottom: 10 }}>EEGBase · Curated for neurofeedback</div>
+                      <div style={{ fontSize: 12, color: "#94A3B8", marginBottom: 10 }}>EEGBase · Curated for neurofeedback</div>
                       <div style={{ height: 3, background: "#1E293B", borderRadius: 99, overflow: "hidden" }}>
                         <div style={{
                           height: "100%", background: "linear-gradient(90deg, #2563EB, #7C3AED)",
-                          width: rewardVal != null && rewardVal >= 60 ? `${35 + (elapsed % 60)}%` : "35%",
+                          width: rewardVal != null && rewardVal >= 60 ? `${Math.min(98, 8 + (elapsed / 3))}%` : "8%",
                           transition: "width 1s linear",
                         }} />
                       </div>
@@ -801,7 +867,7 @@ export default function DemoPage() {
                   )}
                 </div>
                 <div style={{ marginTop: 12, padding: "10px 14px", background: "#1E293B", borderRadius: 10, fontSize: 12, color: "#94A3B8", lineHeight: 1.6 }}>
-                  <strong>How it works:</strong> Music pauses the moment reward score drops below 60. Clients naturally learn to self-regulate to keep the music playing — no instructions needed. Inspired by NeurOptimal&apos;s audio interrupt method.
+                  <strong>How it works:</strong> Music pauses momentarily when brain activity drifts off target. Clients naturally learn to self-regulate to keep the music playing — no instructions needed.
                 </div>
               </div>
             )}
@@ -885,30 +951,28 @@ export default function DemoPage() {
               <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 20 }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Combined EEG + HRV Score</div>
                 <p style={{ fontSize: 11, color: "#94A3B8", marginBottom: 16 }}>Both channels must exceed threshold for maximum reward — trains mind-body coherence simultaneously.</p>
-                <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
-                  <div style={{ textAlign: "center" }}>
+                <div style={{ display: "flex", gap: 20, alignItems: "center", flexWrap: "wrap" }}>
+                  <div style={{ textAlign: "center", padding: "10px 14px", background: "#1E293B", borderRadius: 10 }}>
                     <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 4 }}>EEG Alpha</div>
                     <div style={{ fontSize: 28, fontWeight: 800, color: "#10B981" }}>{sample?.alpha != null ? (sample.alpha * 100).toFixed(0) : "—"}<span style={{ fontSize: 12 }}>%</span></div>
                   </div>
-                  <div style={{ fontSize: 24, color: "#64748B" }}>×</div>
-                  <div style={{ textAlign: "center" }}>
+                  <div style={{ textAlign: "center", padding: "10px 14px", background: "#1E293B", borderRadius: 10 }}>
                     <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 4 }}>HRV Coherence</div>
                     <div style={{ fontSize: 28, fontWeight: 800, color: "#8B5CF6" }}>{sample?.hrvRmssd != null ? Math.min(9.9, sample.hrvRmssd / 10).toFixed(1) : "—"}<span style={{ fontSize: 12 }}>/ 10</span></div>
                   </div>
-                  <div style={{ fontSize: 24, color: "#64748B" }}>=</div>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 4 }}>Combined</div>
+                  <div style={{ textAlign: "center", padding: "10px 14px", background: "#1E293B", borderRadius: 10 }}>
+                    <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 4 }}>Overall Session Score</div>
                     <div style={{ fontSize: 28, fontWeight: 800, color: rewardColor }}>{rewardVal != null ? rewardVal.toFixed(0) : "—"}</div>
                   </div>
                 </div>
               </div>
               <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 20 }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Resonance Frequency Trainer</div>
-                <p style={{ fontSize: 11, color: "#94A3B8", marginBottom: 16 }}>Paced breathing guide at client&apos;s personal resonance frequency (typically 4.5–7 breaths/min) to maximise HRV amplitude.</p>
+                <p style={{ fontSize: 11, color: "#94A3B8", marginBottom: 16 }}>Paced breathing guide at client&apos;s personal resonance frequency (typically 4.5–7 breaths/min) to maximize HRV amplitude.</p>
                 <div style={{ textAlign: "center" }}>
                   <div style={{
                     width: 80, height: 80, borderRadius: "50%",
-                    background: breathPhase === "Inhale" ? "rgba(37,99,235,0.2)" : "rgba(37,99,235,0.2)",
+                    background: breathPhase === "Inhale" ? "rgba(37,99,235,0.2)" : "rgba(16,185,129,0.15)",
                     border: `4px solid ${breathPhase === "Inhale" ? "#2563EB" : "#93C5FD"}`,
                     display: "flex", alignItems: "center", justifyContent: "center",
                     margin: "0 auto 12px",
@@ -917,7 +981,7 @@ export default function DemoPage() {
                   }}>
                     <span style={{ fontSize: 12, fontWeight: 700, color: "#93C5FD", transition: "opacity 0.3s" }}>{breathPhase}</span>
                   </div>
-                  <div style={{ fontSize: 11, color: "#64748B" }}>6.0 breaths/min · 5s inhale / 5s exhale</div>
+                  <div style={{ fontSize: 11, color: "#94A3B8" }}>6.0 breaths/min · 5s inhale / 5s exhale</div>
                 </div>
               </div>
             </div>
@@ -952,7 +1016,7 @@ export default function DemoPage() {
             <div style={{ ...card, marginBottom: 16 }}>
               <h2 style={{ fontSize: 15, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Prefrontal Activity Map</h2>
               <p style={{ fontSize: 13, color: "#CBD5E1", marginBottom: 12, lineHeight: 1.6 }}>
-                This map shows blood flow to the front of the brain — the decision-making and focus centre. Warmer colors (green → red) mean more oxygen-rich blood is flowing there. It updates live as the session runs.
+                This map shows blood flow to the front of the brain — the decision-making and focus center. Warmer colors (green → red) mean more oxygen-rich blood is flowing there. It updates live as the session runs.
               </p>
               <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
                 {[
@@ -980,7 +1044,7 @@ export default function DemoPage() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 20 }} className="demo-grid-2">
                 {[
                   { data: oxyL.data, color: "#10B981", label: "OxyHb L · prefrontal" },
-                  { data: oxyR.data, color: "#0EA5E9", label: "OxyHb R · prefrontal" },
+                  { data: oxyR.data.map((v) => Math.max(0, Math.min(1, v + 0.5))), color: "#0EA5E9", label: "OxyHb R · prefrontal" },
                 ].map(({ data, color, label }) => (
                   <div key={label} style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 12, padding: 14 }}>
                     <LiveChart data={data} color={color} label={label} height={88} />
@@ -1011,14 +1075,14 @@ export default function DemoPage() {
                     <div key={label} style={{ background: "#1E293B", borderRadius: 12, padding: 16 }}>
                       <div style={{ fontSize: 11, fontWeight: 700, color, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>{label}</div>
                       <div style={{ fontSize: 32, fontWeight: 800, color: devColor, fontVariantNumeric: "tabular-nums", marginBottom: 4 }}>
-                        {val ? (n > 0 ? "+" : "") + val : "—"} <span style={{ fontSize: 14, fontWeight: 500, color: "#64748B" }}>SD</span>
+                        {val ? (n > 0 ? "+" : "") + val : "—"} <span style={{ fontSize: 14, fontWeight: 500, color: "#94A3B8" }}>SD</span>
                       </div>
                       {/* Deviation bar */}
                       <div style={{ height: 6, background: "#0F172A", borderRadius: 99, marginBottom: 8, position: "relative", overflow: "hidden" }}>
                         <div style={{ position: "absolute", left: "50%", top: 0, height: "100%", width: `${barWidth / 2}%`, background: devColor, ...(n < 0 ? { right: "50%", left: "auto" } : {}) }} />
                         <div style={{ position: "absolute", left: "50%", top: 0, height: "100%", width: 1, background: "#475569" }} />
                       </div>
-                      <div style={{ fontSize: 10, color: "#64748B", lineHeight: 1.5 }}>
+                      <div style={{ fontSize: 10, color: "#94A3B8", lineHeight: 1.5 }}>
                         Norm: {norm} ± {sd}<br />
                         <span style={{ color: devColor }}>{target}</span>
                       </div>
@@ -1087,8 +1151,8 @@ export default function DemoPage() {
                   >
                     {recommendationApplied ? "✓ Protocol Updated to Alpha-Theta" : "Apply Recommendation"}
                   </button>
-                  <button style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", background: "#1E293B", color: "#FCD34D", border: "1px solid #92400E", borderRadius: 6, cursor: "pointer" }}>
-                    View Similar Cases
+                  <button onClick={() => setShowSimilarCasesModal(true)} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", background: "#1E293B", color: "#FCD34D", border: "1px solid #92400E", borderRadius: 6, cursor: "pointer" }}>
+                    View 847 Similar Profiles
                   </button>
                   <button style={{ fontSize: 12, color: "#94A3B8", background: "none", border: "none", cursor: "pointer", padding: "6px 0" }}>Dismiss</button>
                 </div>
@@ -1207,7 +1271,7 @@ export default function DemoPage() {
                         <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums", color: "#94A3B8" }}>{s.phq9}</td>
                         <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums", color: "#94A3B8" }}>{s.gad7}</td>
                         <td style={{ padding: "10px 16px" }}>
-                          <button style={{ fontSize: 11, color: "#2563EB", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>AI Note</button>
+                          <button onClick={() => switchTab("ai")} style={{ fontSize: 11, color: "#2563EB", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>AI Note</button>
                         </td>
                       </tr>
                     ))}
@@ -1224,7 +1288,7 @@ export default function DemoPage() {
             <div style={{ marginBottom: 20 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>AI Insights</h2>
               <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
-                EEGBase AI watches session data and flags when a client is stalled — then suggests the next protocol to try, backed by similar cases from 847 anonymised clinics. It also drafts clinical notes you can copy straight to your EHR.
+                EEGBase AI watches session data and flags when a client is stalled — then suggests the next protocol to try, compared against <strong style={{ color: "#A5B4FC" }}>847 anonymized client profiles</strong>. It also drafts clinical notes you can copy straight to your EHR.
               </p>
             </div>
 
@@ -1267,8 +1331,8 @@ export default function DemoPage() {
                   >
                     {recommendationApplied ? "✓ Protocol Updated" : "Apply Recommendation"}
                   </button>
-                  <button style={{ fontSize: 13, fontWeight: 600, padding: "8px 18px", background: "transparent", color: "#6EE7B7", border: "1px solid #059669", borderRadius: 8, cursor: "pointer" }}>
-                    View 847 Similar Cases
+                  <button onClick={() => setShowSimilarCasesModal(true)} style={{ fontSize: 13, fontWeight: 600, padding: "8px 18px", background: "transparent", color: "#6EE7B7", border: "1px solid #059669", borderRadius: 8, cursor: "pointer" }}>
+                    View 847 Similar Profiles
                   </button>
                 </div>
               </div>
@@ -1283,7 +1347,7 @@ export default function DemoPage() {
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
                 <div>
                   <h3 style={{ fontSize: 15, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>AI-Drafted SOAP Note</h3>
-                  <p style={{ fontSize: 12, color: "#94A3B8" }}>Session 8 · May 4, 2026 · Auto-generated from session data — edit before saving</p>
+                  <p style={{ fontSize: 12, color: "#94A3B8" }}>Session 8 · {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} · Auto-generated from session data — edit before saving</p>
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
                   <button
@@ -1301,7 +1365,7 @@ export default function DemoPage() {
               {[
                 { label: "S — Subjective", color: "#6366F1", lines: ["Client reports moderate difficulty concentrating this week; rated focus 4/10.", "Sleep quality 6/10 (down from 7 last visit). No medication changes.", "Reports feeling \"stuck\" on same tasks at work."] },
                 { label: "O — Objective",  color: "#0EA5E9", lines: ["22-minute SMR (12–15 Hz) training at Cz. Average reward score 64.2/100 (above-threshold 71% of session).", "θ/β Z-score: +2.2 SD above age/sex-matched norm (ages 28–35, eyes-open).", "HR 68 bpm · HRV-RMSSD 45 ms (baseline normal). PHQ-9: 11 (moderate) · GAD-7: 8 (mild)."] },
-                { label: "A — Assessment", color: "#F59E0B", lines: ["Client engagement improving — reward score +18% from session 1 baseline (38.4).", "Theta/beta ratio stalled above normative range (>1.5 SD) across sessions 6–8 despite compliance.", "PHQ-9 depression score trending down from 18 → 11 over 8 sessions — positive trajectory.", "Alpha-theta protocol switch indicated given stalled θ/β trajectory."] },
+                { label: "A — Assessment", color: "#F59E0B", lines: ["Client engagement improving — reward score +52% from session 1 baseline (38.2).", "Theta/beta ratio stalled above normative range (>1.5 SD) across sessions 6–8 despite compliance.", "PHQ-9 depression score trending down from 18 \u2192 12 over 8 sessions — positive trajectory.", "Alpha-theta protocol switch indicated given stalled \u03b8/\u03b2 trajectory."] },
                 { label: "P — Plan",       color: "#10B981", lines: ["1. Switch to Alpha-Theta (Pz/Oz, 8–12 Hz reward) for sessions 9–12.", "2. Reassess PHQ-9 at session 10.", "3. Discuss sleep hygiene at next appointment.", "4. Continue 22-minute weekly sessions.", "5. Client to complete daily symptom journal between sessions."] },
               ].map(({ label, color, lines }) => (
                 <div key={label} style={{ marginBottom: 16, paddingLeft: 14, borderLeft: `3px solid ${color}` }}>
@@ -1359,7 +1423,8 @@ export default function DemoPage() {
                   {Array.from({ length: 4 }).map((_, i) => <div key={`e${i}`} />)}
                   {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => {
                     const hasAppt = [6, 7, 8, 9, 10, 13, 14, 15, 16, 20, 21].includes(day);
-                    const isToday = day === 4;
+                    const todayDate = new Date().getDate();
+                    const isToday = day === todayDate;
                     return (
                       <div key={day} style={{
                         aspectRatio: "1", borderRadius: 8, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
@@ -1453,7 +1518,7 @@ export default function DemoPage() {
             <div style={{ marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Condition-Specific Protocol Library</h2>
               <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
-                50+ evidence-based protocols organised by condition. Search, preview, and apply in one click — no more looking up papers or guessing electrode placement. Zero competitors have a searchable protocol library.
+                50+ evidence-based protocols organized by condition. Search, preview, and apply in one click — no more looking up papers or guessing electrode placement. Zero competitors have a searchable protocol library.
               </p>
             </div>
 
@@ -1573,7 +1638,7 @@ export default function DemoPage() {
                   evidenceColor: "#F59E0B",
                   protocols: ["Zone Training", "Flow State Protocol"],
                   tags: ["Athletes", "Peak Performance", "Focus", "Flow"],
-                  desc: "Trains alpha at the client&apos;s individual peak frequency (typically 9–12 Hz) to maximise processing speed and attentional control. Popular with elite athletes, executives, and musicians.",
+                  desc: "Trains alpha at the client&apos;s individual peak frequency (typically 9–12 Hz) to maximize processing speed and attentional control. Popular with elite athletes, executives, and musicians.",
                 },
               ];
               const filtered = allProtocols.filter((p) =>
@@ -1587,7 +1652,7 @@ export default function DemoPage() {
                   <div style={{ textAlign: "center", padding: "48px 24px", background: "#0F172A", borderRadius: 14, border: "1px solid #334155", marginBottom: 16 }}>
                     <div style={{ fontSize: 32, marginBottom: 12 }}>🔍</div>
                     <div style={{ fontSize: 15, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>No protocols found</div>
-                    <div style={{ fontSize: 13, color: "#64748B", marginBottom: 16 }}>No protocols match &ldquo;{protocolSearch}&rdquo;</div>
+                    <div style={{ fontSize: 13, color: "#94A3B8", marginBottom: 16 }}>No protocols match &ldquo;{protocolSearch}&rdquo;</div>
                     <button onClick={() => setProtocolSearch("")} style={{ padding: "8px 20px", background: "#2563EB", color: "white", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: "pointer" }}>
                       Clear search
                     </button>
@@ -1620,7 +1685,7 @@ export default function DemoPage() {
                           <span key={tag} style={{ fontSize: 10, background: "#1E293B", color: "#94A3B8", borderRadius: 6, padding: "3px 8px", fontWeight: 600 }}>{tag}</span>
                         ))}
                       </div>
-                      <div style={{ fontSize: 11, color: "#64748B", lineHeight: 1.6, marginBottom: 10 }}>{p.desc}</div>
+                      <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.6, marginBottom: 10 }}>{p.desc}</div>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
                         {[
                           { label: "Sites", val: p.sites },
@@ -1650,6 +1715,17 @@ export default function DemoPage() {
                           </div>
                         </div>
                       )}
+                      {selectedProtocol !== p.id && (
+                        <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #334155", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <span style={{ fontSize: 11, color: "#94A3B8" }}>{p.duration.split("·")[0].trim()}</span>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setRecommendationApplied(true); switchTab("session"); }}
+                            style={{ fontSize: 12, fontWeight: 600, color: "#60A5FA", background: "none", border: "1px solid #334155", borderRadius: 6, padding: "4px 12px", cursor: "pointer" }}
+                          >
+                            ▶ Apply to {demoClient.name.split(" ")[0]}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1658,7 +1734,23 @@ export default function DemoPage() {
 
             <div style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 12, padding: "14px 18px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
               <span style={{ fontSize: 13, color: "#94A3B8" }}>
-                Showing {protocolSearch ? "filtered" : "6"} of 47 protocols — full library includes ILF variants, LORETA-guided, gamma training, neuromuscular (TBI), and paediatric protocols.
+                {(() => {
+                  const proto = [
+                    { condition: "ADHD", name: "Theta/Beta + SMR Training", tags: ["ADHD", "Focus", "Inattention"] },
+                    { condition: "Trauma / PTSD", name: "Alpha-Theta (Peniston) Protocol", tags: ["PTSD", "Trauma", "Anxiety", "Addiction"] },
+                    { condition: "Trauma / PTSD", name: "Infraslow Frequency (ILF) Training", tags: ["Trauma", "Dysregulation", "Autonomic"] },
+                    { condition: "Sleep Disorders", name: "Sleep Spindle Enhancement", tags: ["Insomnia", "Sleep", "Memory"] },
+                    { condition: "Anxiety", name: "Alpha Asymmetry Training (F4 > F3)", tags: ["Anxiety", "Depression", "Mood"] },
+                    { condition: "Peak Performance", name: "Alpha Peak Frequency (APF) Optimization", tags: ["Athletes", "Peak Performance", "Focus", "Flow"] },
+                  ];
+                  const count = proto.filter((p) =>
+                    !protocolSearch ||
+                    p.condition.toLowerCase().includes(protocolSearch.toLowerCase()) ||
+                    p.name.toLowerCase().includes(protocolSearch.toLowerCase()) ||
+                    p.tags.some((t) => t.toLowerCase().includes(protocolSearch.toLowerCase()))
+                  ).length;
+                  return `Showing ${count} of 47 protocols`;
+                })()} — full library includes ILF variants, LORETA-guided, gamma training, neuromuscular (TBI), and pediatric protocols.
               </span>
               <button
                 onClick={() => setProtocolSearch("")}
@@ -1724,9 +1816,9 @@ export default function DemoPage() {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }} className="demo-grid-2">
                   {[
                     { label: "Sessions completed", val: "20 / 30", sub: "67% of treatment plan", color: "#2563EB" },
-                    { label: "Reward score", val: "+53%", sub: "38.4 → 58.7 avg", color: "#10B981" },
-                    { label: "PHQ-9 (depression)", val: "18 → 11", sub: "39% improvement", color: "#10B981" },
-                    { label: "GAD-7 (anxiety)", val: "14 → 9", sub: "36% improvement", color: "#10B981" },
+                    { label: "Reward score", val: "+131%", sub: "38.2 → 88.0 avg", color: "#10B981" },
+                    { label: "PHQ-9 (depression)", val: "18 → 5", sub: "72% improvement", color: "#10B981" },
+                    { label: "GAD-7 (anxiety)", val: "14 → 4", sub: "71% improvement", color: "#10B981" },
                   ].map(({ label, val, sub, color }, i) => (
                     <div key={label} style={{ textAlign: "center", padding: 16, background: "#F8FAFC", borderRadius: 12, animation: `statPop 0.45s ease ${i * 0.1}s both` }}>
                       <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 6 }}>{label}</div>
@@ -1741,14 +1833,14 @@ export default function DemoPage() {
               <div style={{ padding: "24px 32px", borderBottom: "1px solid #F1F5F9" }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#0F172A", marginBottom: 12 }}>Progress Summary — Plain Language</div>
                 {[
-                  { icon: "✅", text: "Sarah has completed 20 of 30 planned sessions with excellent attendance (95% show rate). She has made strong progress on the primary treatment goals." },
-                  { icon: "📈", text: "Her brain training reward score has increased by 53% since the first session, indicating meaningfully better ability to produce the target brainwave pattern (sensorimotor rhythm, 12–15 Hz)." },
-                  { icon: "😊", text: "Depression symptoms (PHQ-9) have decreased from moderate (18) to mild (11). Anxiety symptoms (GAD-7) have decreased from moderate (14) to mild (9)." },
-                  { icon: "⚠️", text: "Frontal theta activity remains above the normal range for her age group. The AI has recommended a protocol adjustment (alpha-theta training) starting session 9, which we have implemented." },
-                  { icon: "🔮", text: "Projected outcome at 30 sessions: PHQ-9 ≤ 8 (minimal depression), reward score ≥ 70 (above target consistently), based on trajectory and community database comparison." },
-                ].map(({ icon, text }, i) => (
+                  { bullet: "•", text: "Sarah has completed 20 of 30 planned sessions with excellent attendance (95% show rate). She has made strong progress on the primary treatment goals." },
+                  { bullet: "•", text: "Her brain training reward score has increased by 131% since the first session (38.2 \u2192 88.0), indicating meaningfully better ability to produce the target brainwave pattern (sensorimotor rhythm, 12\u201315 Hz)." },
+                  { bullet: "•", text: "Depression symptoms (PHQ-9) have decreased from moderately severe (18) to minimal (5). Anxiety symptoms (GAD-7) have decreased from moderate (14) to minimal (4)." },
+                  { bullet: "[Note]", text: "Frontal theta activity remains above the normal range for her age group. The AI has recommended a protocol adjustment (alpha-theta training) starting session 9, which we have implemented." },
+                  { bullet: "•", text: "Projected outcome at 30 sessions: PHQ-9 \u2264 4 (minimal depression), reward score \u2265 90 (above target consistently), based on trajectory and community database comparison." },
+                ].map(({ bullet, text }, i) => (
                   <div key={i} style={{ display: "flex", gap: 12, marginBottom: 12, alignItems: "flex-start" }}>
-                    <span style={{ fontSize: 16, flexShrink: 0 }}>{icon}</span>
+                    <span style={{ fontSize: 13, flexShrink: 0, fontWeight: bullet === "[Note]" ? 700 : 400, color: bullet === "[Note]" ? "#92400E" : "#374151" }}>{bullet}</span>
                     <span style={{ fontSize: 13, color: "#374151", lineHeight: 1.7 }}>{text}</span>
                   </div>
                 ))}
@@ -1917,7 +2009,7 @@ export default function DemoPage() {
                 }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>{name}</div>
                   <div style={{ fontSize: 26, fontWeight: 800, color: highlight ? "#60A5FA" : "#CBD5E1", marginBottom: 4 }}>{price}</div>
-                  <div style={{ fontSize: 11, color: "#64748B", lineHeight: 1.5 }}>{note}</div>
+                  <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>{note}</div>
                 </div>
               ))}
             </div>
