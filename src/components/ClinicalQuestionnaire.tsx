@@ -77,8 +77,8 @@ export function ClinicalQuestionnaire({ clientName, onComplete, readOnly = false
   }
 
   const card: React.CSSProperties = {
-    background: "var(--surface-raised, #fff)",
-    border: "1px solid var(--border-subtle, #E2E8F0)",
+    background: "#0F172A",
+    border: "1px solid #334155",
     borderRadius: 16,
     padding: 24,
   };
@@ -95,11 +95,11 @@ export function ClinicalQuestionnaire({ clientName, onComplete, readOnly = false
       {/* Header */}
       <div style={{ marginBottom: 20 }}>
         {clientName && (
-          <p style={{ fontSize: 13, color: "var(--text-secondary, #64748B)", marginBottom: 4 }}>
+          <p style={{ fontSize: 13, color: "#94A3B8", marginBottom: 4 }}>
             Client: <strong>{clientName}</strong>
           </p>
         )}
-        <p style={{ fontSize: 12, color: "var(--text-tertiary, #94A3B8)" }}>
+        <p style={{ fontSize: 12, color: "#64748B" }}>
           Over the last 2 weeks, how often have you been bothered by the following problems?
         </p>
       </div>
@@ -113,8 +113,8 @@ export function ClinicalQuestionnaire({ clientName, onComplete, readOnly = false
             style={{
               padding: "8px 18px", borderRadius: 8, border: "none", cursor: "pointer",
               fontSize: 13, fontWeight: 600,
-              background: tab === t ? "var(--brand, #2563EB)" : "var(--surface-sunken, #F1F5F9)",
-              color: tab === t ? "#fff" : "var(--text-secondary, #64748B)",
+              background: tab === t ? "var(--brand, #2563EB)" : "#1E293B",
+              color: tab === t ? "#fff" : "#94A3B8",
             }}
           >
             {t === "phq9" ? "PHQ-9 Depression" : "GAD-7 Anxiety"}
@@ -130,14 +130,14 @@ export function ClinicalQuestionnaire({ clientName, onComplete, readOnly = false
 
       {/* Questions */}
       <div style={card}>
-        <h3 style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary, #0F172A)", marginBottom: 16 }}>
+        <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 16 }}>
           {tab === "phq9" ? "PHQ-9 — Patient Health Questionnaire" : "GAD-7 — Generalized Anxiety Disorder Scale"}
         </h3>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {items.map((item, i) => (
-            <div key={i} style={{ paddingBottom: 16, borderBottom: i < items.length - 1 ? "1px solid var(--border-subtle, #E2E8F0)" : "none" }}>
-              <p style={{ fontSize: 13, color: "var(--text-primary, #0F172A)", marginBottom: 10, lineHeight: 1.5 }}>
+            <div key={i} style={{ paddingBottom: 16, borderBottom: i < items.length - 1 ? "1px solid #334155" : "none" }}>
+              <p style={{ fontSize: 13, color: "#CBD5E1", marginBottom: 10, lineHeight: 1.5 }}>
                 <span style={{ color: "var(--text-tertiary, #94A3B8)", marginRight: 8, fontWeight: 600 }}>{i + 1}.</span>
                 {item}
               </p>
@@ -155,9 +155,9 @@ export function ClinicalQuestionnaire({ clientName, onComplete, readOnly = false
                       padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: readOnly ? "default" : "pointer",
                       border: answers[i] === opt.value
                         ? "2px solid var(--brand, #2563EB)"
-                        : "1px solid var(--border-default, #CBD5E1)",
-                      background: answers[i] === opt.value ? "var(--brand, #2563EB)" : "var(--surface-base, #F8FAFC)",
-                      color: answers[i] === opt.value ? "#fff" : "var(--text-secondary, #64748B)",
+                        : "1px solid #334155",
+                      background: answers[i] === opt.value ? "var(--brand, #2563EB)" : "#1E293B",
+                      color: answers[i] === opt.value ? "#fff" : "#94A3B8",
                       transition: "all 0.1s",
                     }}
                   >
@@ -177,15 +177,15 @@ export function ClinicalQuestionnaire({ clientName, onComplete, readOnly = false
             display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12,
           }}>
             <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-tertiary, #94A3B8)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                 {tab === "phq9" ? "PHQ-9" : "GAD-7"} Score
               </div>
               <div style={{ fontSize: 28, fontWeight: 800, color: result.color, fontVariantNumeric: "tabular-nums" }}>
-                {score} <span style={{ fontSize: 14, fontWeight: 500, color: "var(--text-tertiary, #94A3B8)" }}>/ {maxScore}</span>
+                {score} <span style={{ fontSize: 14, fontWeight: 500, color: "#64748B" }}>/ {maxScore}</span>
               </div>
               <div style={{ fontSize: 13, color: result.color, fontWeight: 600 }}>{result.level}</div>
             </div>
-            <div style={{ fontSize: 13, color: "var(--text-secondary, #64748B)", maxWidth: 300, lineHeight: 1.5 }}>
+            <div style={{ fontSize: 13, color: "#94A3B8", maxWidth: 300, lineHeight: 1.5 }}>
               {result.note}
             </div>
           </div>
@@ -200,21 +200,21 @@ export function ClinicalQuestionnaire({ clientName, onComplete, readOnly = false
             disabled={!allDone}
             style={{
               padding: "10px 24px", borderRadius: 10, border: "none", fontWeight: 700, fontSize: 14,
-              background: allDone ? "var(--brand, #2563EB)" : "var(--border-default, #CBD5E1)",
-              color: allDone ? "#fff" : "var(--text-tertiary, #94A3B8)", cursor: allDone ? "pointer" : "not-allowed",
+              background: allDone ? "var(--brand, #2563EB)" : "#1E293B",
+              color: allDone ? "#fff" : "#475569", cursor: allDone ? "pointer" : "not-allowed",
             }}
           >
             Submit Assessment
           </button>
           {!allDone && (
-            <span style={{ fontSize: 12, color: "var(--text-tertiary, #94A3B8)" }}>
+            <span style={{ fontSize: 12, color: "#64748B" }}>
               Complete both PHQ-9 and GAD-7 to submit
             </span>
           )}
         </div>
       )}
       {submitted && (
-        <div style={{ marginTop: 16, padding: "12px 18px", borderRadius: 10, background: "#ECFDF5", border: "1px solid #6EE7B7", fontSize: 13, color: "#065F46", fontWeight: 600 }}>
+        <div style={{ marginTop: 16, padding: "12px 18px", borderRadius: 10, background: "rgba(6,78,59,0.35)", border: "1px solid #065F46", fontSize: 13, color: "#34D399", fontWeight: 600 }}>
           ✓ Assessment saved — PHQ-9: {phq9Score} · GAD-7: {gad7Score}
         </div>
       )}
