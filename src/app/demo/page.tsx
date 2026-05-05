@@ -429,7 +429,7 @@ export default function DemoPage() {
             {TABS.map((t, i) => (
               <div key={t.id}>
                 {t.groupStart && (
-                  <div style={{ padding: i === 0 ? "6px 16px 8px" : "20px 16px 8px", fontSize: 9, fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: "0.14em" }}>
+                  <div style={{ padding: i === 0 ? "6px 16px 8px" : "20px 16px 8px", fontSize: 9, fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.14em" }}>
                     {t.groupStart}
                   </div>
                 )}
@@ -501,7 +501,7 @@ export default function DemoPage() {
               <div style={{ display: "flex", alignItems: "center", gap: 32, flexWrap: "wrap" }}>
                 {/* Reward score ring */}
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-                  <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", letterSpacing: "0.1em", textTransform: "uppercase", alignSelf: "flex-start" }}>Reward Score</div>
+                  <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#64748B", letterSpacing: "0.1em", textTransform: "uppercase", alignSelf: "flex-start" }}>Reward Score</div>
                   <div style={{ position: "relative", width: 130, height: 130 }}>
                     <svg width="130" height="130" viewBox="0 0 130 130" style={{ transform: "rotate(-90deg)" }}>
                       {/* Track */}
@@ -523,7 +523,7 @@ export default function DemoPage() {
                       <div style={{ fontSize: "2.1rem", fontWeight: 800, color: "white", lineHeight: 1, fontVariantNumeric: "tabular-nums", letterSpacing: "-0.03em" }}>
                         {rewardVal != null ? rewardVal.toFixed(0) : "—"}
                       </div>
-                      <div style={{ fontSize: "0.6rem", color: "#475569", marginTop: 1 }}>/ 100</div>
+                      <div style={{ fontSize: "0.6rem", color: "#64748B", marginTop: 1 }}>/ 100</div>
                       {rewardTrend != null && (
                         <div style={{ fontSize: "0.7rem", color: rewardTrend > 1 ? "#34D399" : rewardTrend < -1 ? "#F87171" : "#64748B", fontWeight: 700, marginTop: 3 }}>
                           {rewardTrend > 1 ? "↑" : rewardTrend < -1 ? "↓" : "→"} {rewardTrend > 0 ? "+" : ""}{rewardTrend.toFixed(1)}
@@ -578,14 +578,14 @@ export default function DemoPage() {
                     <span style={{ fontSize: 18, fontWeight: 800, color: devColor, fontVariantNumeric: "tabular-nums", width: 52 }}>
                       {val ? (n > 0 ? "+" : "") + val : "—"}
                     </span>
-                    <span style={{ fontSize: 10, color: "#475569" }}>SD</span>
+                    <span style={{ fontSize: 10, color: "#64748B" }}>SD</span>
                     <span style={{ fontSize: 11, color: devColor, fontWeight: 500 }}>
                       {Math.abs(n) > 2 ? "↑ Elevated" : Math.abs(n) > 1 ? "Borderline" : "✓ Normal"}
                     </span>
                   </div>
                 );
               })}
-              <span style={{ marginLeft: "auto", display: "flex", gap: 10, fontSize: 10, color: "#475569", alignItems: "center" }}>
+              <span style={{ marginLeft: "auto", display: "flex", gap: 10, fontSize: 10, color: "#64748B", alignItems: "center" }}>
                 <span style={{ color: "#10B981" }}>🟢 Normal</span>
                 <span style={{ color: "#F59E0B" }}>🟡 Borderline</span>
                 <span style={{ color: "#EF4444" }}>🔴 Elevated</span>
@@ -880,20 +880,20 @@ export default function DemoPage() {
 
             {/* Combined EEG + HRV feedback */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }} className="demo-grid-2">
-              <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 16, padding: 20 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "white", marginBottom: 4 }}>Combined EEG + HRV Score</div>
-                <p style={{ fontSize: 11, color: "#475569", marginBottom: 16 }}>Both channels must exceed threshold for maximum reward — trains mind-body coherence simultaneously.</p>
+              <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 20 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Combined EEG + HRV Score</div>
+                <p style={{ fontSize: 11, color: "#94A3B8", marginBottom: 16 }}>Both channels must exceed threshold for maximum reward — trains mind-body coherence simultaneously.</p>
                 <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
                   <div style={{ textAlign: "center" }}>
                     <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 4 }}>EEG Alpha</div>
                     <div style={{ fontSize: 28, fontWeight: 800, color: "#10B981" }}>{sample?.alpha != null ? (sample.alpha * 100).toFixed(0) : "—"}<span style={{ fontSize: 12 }}>%</span></div>
                   </div>
-                  <div style={{ fontSize: 24, color: "#475569" }}>×</div>
+                  <div style={{ fontSize: 24, color: "#64748B" }}>×</div>
                   <div style={{ textAlign: "center" }}>
                     <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 4 }}>HRV Coherence</div>
                     <div style={{ fontSize: 28, fontWeight: 800, color: "#8B5CF6" }}>{sample?.hrvRmssd != null ? Math.min(9.9, sample.hrvRmssd / 10).toFixed(1) : "—"}<span style={{ fontSize: 12 }}>/ 10</span></div>
                   </div>
-                  <div style={{ fontSize: 24, color: "#475569" }}>=</div>
+                  <div style={{ fontSize: 24, color: "#64748B" }}>=</div>
                   <div style={{ textAlign: "center" }}>
                     <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 4 }}>Combined</div>
                     <div style={{ fontSize: 28, fontWeight: 800, color: rewardColor }}>{rewardVal != null ? rewardVal.toFixed(0) : "—"}</div>
@@ -913,7 +913,7 @@ export default function DemoPage() {
                     animation: "breathe 10s ease-in-out infinite",
                     transition: "background 0.5s, border-color 0.5s",
                   }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: "#2563EB", transition: "opacity 0.3s" }}>{breathPhase}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "#93C5FD", transition: "opacity 0.3s" }}>{breathPhase}</span>
                   </div>
                   <div style={{ fontSize: 11, color: "#64748B" }}>6.0 breaths/min · 5s inhale / 5s exhale</div>
                 </div>
@@ -988,12 +988,12 @@ export default function DemoPage() {
             </div>
 
             {/* Z-score training panel */}
-            <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 16, padding: 24 }}>
+            <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 24 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-                <span style={{ fontSize: 14, fontWeight: 700, color: "white" }}>Real-Time Z-Score Training</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Real-Time Z-Score Training</span>
                 <span style={{ fontSize: 10, background: "#2563EB", color: "white", borderRadius: 99, padding: "2px 8px", fontWeight: 700 }}>LIVE</span>
               </div>
-              <p style={{ fontSize: 12, color: "#475569", marginBottom: 20, lineHeight: 1.5 }}>
+              <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 20, lineHeight: 1.5 }}>
                 We compare your client&apos;s brainwaves in real time to <strong style={{ color: "#A5B4FC" }}>847 healthy adults of the same age</strong>. The colored bars show how far they differ — the goal is to bring each band closer to 0 (the healthy average). A bar that shrinks toward the center means the training is working.
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }} className="demo-grid-3">
@@ -1009,14 +1009,14 @@ export default function DemoPage() {
                     <div key={label} style={{ background: "#1E293B", borderRadius: 12, padding: 16 }}>
                       <div style={{ fontSize: 11, fontWeight: 700, color, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>{label}</div>
                       <div style={{ fontSize: 32, fontWeight: 800, color: devColor, fontVariantNumeric: "tabular-nums", marginBottom: 4 }}>
-                        {val ? (n > 0 ? "+" : "") + val : "—"} <span style={{ fontSize: 14, fontWeight: 500, color: "#475569" }}>SD</span>
+                        {val ? (n > 0 ? "+" : "") + val : "—"} <span style={{ fontSize: 14, fontWeight: 500, color: "#64748B" }}>SD</span>
                       </div>
                       {/* Deviation bar */}
                       <div style={{ height: 6, background: "#0F172A", borderRadius: 99, marginBottom: 8, position: "relative", overflow: "hidden" }}>
                         <div style={{ position: "absolute", left: "50%", top: 0, height: "100%", width: `${barWidth / 2}%`, background: devColor, ...(n < 0 ? { right: "50%", left: "auto" } : {}) }} />
                         <div style={{ position: "absolute", left: "50%", top: 0, height: "100%", width: 1, background: "#475569" }} />
                       </div>
-                      <div style={{ fontSize: 10, color: "#475569", lineHeight: 1.5 }}>
+                      <div style={{ fontSize: 10, color: "#64748B", lineHeight: 1.5 }}>
                         Norm: {norm} ± {sd}<br />
                         <span style={{ color: devColor }}>{target}</span>
                       </div>
@@ -1246,7 +1246,7 @@ export default function DemoPage() {
                     { label: "Session 8", val: "+2.2 SD", color: "#EF4444" },
                   ].map(({ label, val, color }) => (
                     <div key={label} style={{ background: "#1E1B4B", borderRadius: 8, padding: "10px 12px", textAlign: "center" }}>
-                      <div style={{ fontSize: 11, color: "#6B7280", marginBottom: 4 }}>{label}</div>
+                      <div style={{ fontSize: 11, color: "#A5B4FC", marginBottom: 4 }}>{label}</div>
                       <div style={{ fontSize: 18, fontWeight: 800, color, fontVariantNumeric: "tabular-nums" }}>{val}</div>
                     </div>
                   ))}
