@@ -219,14 +219,14 @@ export default function DemoPage() {
     if (rewardVal == null) return null;
     const thetaN = thetaZ ? parseFloat(thetaZ) : 0;
     const betaN  = betaZ  ? parseFloat(betaZ)  : 0;
-    if (rewardVal >= 75) return { icon: "🌟", text: "Peak focus — target pattern sustained. Excellent session.", color: "#10B981", bg: "#F0FDF4", border: "#BBF7D0" };
-    if (rewardVal >= 60) return { icon: "✓",  text: "On target — reward threshold met. Maintain this state.", color: "#059669", bg: "#F0FDF4", border: "#6EE7B7" };
+    if (rewardVal >= 75) return { icon: "🌟", text: "Peak focus — target pattern sustained. Excellent session.", color: "#34D399", bg: "rgba(6,78,59,0.35)", border: "#065F46" };
+    if (rewardVal >= 60) return { icon: "✓",  text: "On target — reward threshold met. Maintain this state.", color: "#6EE7B7", bg: "rgba(6,78,59,0.35)", border: "#065F46" };
     if (rewardVal >= 40) {
-      if (thetaN > 1.5) return { icon: "↗", text: "Building up — theta is slightly elevated. Slow, focused breathing helps calm it.", color: "#D97706", bg: "#FFFBEB", border: "#FCD34D" };
-      if (betaN < 0)    return { icon: "↗", text: "Building up — beta focus band is below average. Try a light mental task to activate it.", color: "#D97706", bg: "#FFFBEB", border: "#FCD34D" };
-      return { icon: "↗", text: "Building up — patterns are forming. Stay relaxed but alert.", color: "#D97706", bg: "#FFFBEB", border: "#FCD34D" };
+      if (thetaN > 1.5) return { icon: "↗", text: "Building up — theta is slightly elevated. Slow, focused breathing helps calm it.", color: "#FCD34D", bg: "rgba(120,53,15,0.3)", border: "#92400E" };
+      if (betaN < 0)    return { icon: "↗", text: "Building up — beta focus band is below average. Try a light mental task to activate it.", color: "#FCD34D", bg: "rgba(120,53,15,0.3)", border: "#92400E" };
+      return { icon: "↗", text: "Building up — patterns are forming. Stay relaxed but alert.", color: "#FCD34D", bg: "rgba(120,53,15,0.3)", border: "#92400E" };
     }
-    return { icon: "◌", text: "Starting up — takes a moment for brainwave patterns to stabilise. Breathe naturally.", color: "#64748B", bg: "#F8FAFC", border: "#E2E8F0" };
+    return { icon: "◌", text: "Starting up — takes a moment for brainwave patterns to stabilise. Breathe naturally.", color: "#94A3B8", bg: "#1E293B", border: "#334155" };
   })();
 
   const TABS: { id: MainTab; label: string; groupStart?: string }[] = [
@@ -262,13 +262,13 @@ export default function DemoPage() {
     borderBottom: active ? "2px solid #2563EB" : "2px solid transparent",
   });
 
-  const card: React.CSSProperties = { background: "white", border: "1px solid #E2E8F0", borderRadius: 16, padding: 24 };
+  const card: React.CSSProperties = { background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 24 };
 
   const categories = [...new Set(FEATURES.map((f) => f.category))];
   const filteredFeatures = featureCategory ? FEATURES.filter((f) => f.category === featureCategory) : FEATURES;
 
   return (
-    <div style={{ fontFamily: "Inter, system-ui, sans-serif", background: "#F1F5F9", minHeight: "100vh" }}>
+    <div style={{ fontFamily: "Inter, system-ui, sans-serif", background: "#060A14", minHeight: "100vh" }}>
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
@@ -282,8 +282,8 @@ export default function DemoPage() {
         @keyframes floatA { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-12px) scale(1.08); } }
         @keyframes floatB { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(10px) scale(0.92); } }
         @keyframes statPop { 0% { opacity: 0; transform: translateY(14px) scale(0.96); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
-        .skeleton { background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%); background-size: 800px 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
-        .demo-section-label { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.07em; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #E9EEF5; }
+        .skeleton { background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%); background-size: 800px 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
+        .demo-section-label { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.07em; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #334155; }
         select option { background: #1E293B; color: white; }
         @media (max-width: 640px) {
           .demo-grid-2 { grid-template-columns: 1fr !important; }
@@ -466,10 +466,10 @@ export default function DemoPage() {
         {tab === "session" && (
           <>
             {/* Context strip */}
-            <div style={{ background: "white", boxShadow: "0 1px 4px rgba(0,0,0,0.06), 0 0 0 1px rgba(37,99,235,0.12)", borderRadius: 12, padding: "10px 16px", marginBottom: 16, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", borderLeft: "3px solid #2563EB" }}>
+            <div style={{ background: "#1E293B", boxShadow: "0 1px 4px rgba(0,0,0,0.06), 0 0 0 1px rgba(37,99,235,0.12)", borderRadius: 12, padding: "10px 16px", marginBottom: 16, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", borderLeft: "3px solid #2563EB" }}>
               <span style={{ fontSize: 16 }}>👩‍⚕️</span>
-              <span style={{ fontSize: 13, color: "#374151", lineHeight: 1.5 }}>
-                <strong style={{ color: "#1E40AF" }}>Clinician view</strong> — you&apos;re watching {demoClient.name}&apos;s brain signals in real time (simulated). The <strong>Reward Score</strong> rises when the client&apos;s brain is producing the target pattern. Switch to <button onClick={() => switchTab("game")} style={{ background: "none", border: "none", color: "#2563EB", fontWeight: 700, cursor: "pointer", padding: 0, fontSize: 13, textDecoration: "underline" }}>Game Mode</button> to see what the client sees.
+              <span style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.5 }}>
+                <strong style={{ color: "#93C5FD" }}>Clinician view</strong> — you&apos;re watching {demoClient.name}&apos;s brain signals in real time (simulated). The <strong>Reward Score</strong> rises when the client&apos;s brain is producing the target pattern. Switch to <button onClick={() => switchTab("game")} style={{ background: "none", border: "none", color: "#60A5FA", fontWeight: 700, cursor: "pointer", padding: 0, fontSize: 13, textDecoration: "underline" }}>Game Mode</button> to see what the client sees.
               </span>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }} className="demo-grid-2 demo-grid-4">
@@ -479,11 +479,11 @@ export default function DemoPage() {
                 { label: "Device", value: "Mendi fNIRS (sim)", updated: false },
                 { label: "Elapsed", value: fmt(elapsed), updated: false },
               ].map(({ label, value, updated }) => (
-                <div key={label} style={{ background: "white", boxShadow: updated ? "0 0 0 2px #10B981, 0 4px 12px rgba(16,185,129,0.15)" : "0 1px 4px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.05)", borderRadius: 12, padding: "14px 18px", transition: "box-shadow 0.4s ease" }}>
+                <div key={label} style={{ background: "#0F172A", boxShadow: updated ? "0 0 0 2px #10B981, 0 4px 12px rgba(16,185,129,0.15)" : "0 1px 4px rgba(0,0,0,0.3), 0 0 0 1px #334155", borderRadius: 12, padding: "14px 18px", transition: "box-shadow 0.4s ease" }}>
                   <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#94A3B8", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>{label}</div>
-                  <div style={{ fontSize: "0.9rem", fontWeight: 700, color: updated ? "#059669" : "#0F172A", transition: "color 0.4s ease" }}>
+                  <div style={{ fontSize: "0.9rem", fontWeight: 700, color: updated ? "#34D399" : "#F1F5F9", transition: "color 0.4s ease" }}>
                     {value}
-                    {updated && <span style={{ fontSize: "0.65rem", background: "#D1FAE5", color: "#065F46", borderRadius: 99, padding: "2px 6px", marginLeft: 6, fontWeight: 700 }}>AI ✓</span>}
+                    {updated && <span style={{ fontSize: "0.65rem", background: "rgba(6,78,59,0.5)", color: "#34D399", borderRadius: 99, padding: "2px 6px", marginLeft: 6, fontWeight: 700 }}>AI ✓</span>}
                   </div>
                 </div>
               ))}
@@ -606,7 +606,7 @@ export default function DemoPage() {
                 { data: oxyL.data, color: "#10B981", label: "Oxygenated blood · Left prefrontal" },
                 { data: oxyR.data, color: "#0EA5E9", label: "Oxygenated blood · Right prefrontal" },
               ].map(({ data, color, label }) => (
-                <div key={label} style={{ background: "white", boxShadow: "0 2px 8px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.05)", borderRadius: 14, padding: 18 }}>
+                <div key={label} style={{ background: "#0F172A", boxShadow: "0 2px 8px rgba(0,0,0,0.3), 0 0 0 1px #334155", borderRadius: 14, padding: 18 }}>
                   {sampleCount === 0 ? (
                     <>
                       <div style={{ fontSize: 11, color: "#94A3B8", fontWeight: 600, marginBottom: 8 }}>{label}</div>
@@ -634,17 +634,17 @@ export default function DemoPage() {
                 { data: betaW.data,  color: "#EC4899", label: "Beta — active thinking",  isTarget: true,  isSuppressed: false },
               ].map(({ data, color, label, isTarget, isSuppressed }) => (
                 <div key={label} style={{
-                  background: isTarget ? "#FFFAFD" : isSuppressed ? "#FFFEF0" : "white",
+                  background: "#0F172A",
                   border: "none",
                   boxShadow: isTarget
                     ? "0 0 0 2px #EC4899, 0 4px 20px rgba(236,72,153,0.16)"
                     : isSuppressed
                     ? "0 0 0 2px #F59E0B, 0 4px 20px rgba(245,158,11,0.14)"
-                    : "0 1px 4px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.05)",
+                    : "0 1px 4px rgba(0,0,0,0.3), 0 0 0 1px #334155",
                   borderRadius: 14, padding: 18, position: "relative",
                 }}>
-                  {isTarget && <div style={{ position: "absolute", top: 8, right: 10, fontSize: 10, fontWeight: 700, color: "#EC4899", background: "#FDF2F8", padding: "2px 7px", borderRadius: 99 }}>REWARD ↑</div>}
-                  {isSuppressed && <div style={{ position: "absolute", top: 8, right: 10, fontSize: 10, fontWeight: 700, color: "#D97706", background: "#FFFBEB", padding: "2px 7px", borderRadius: 99 }}>SUPPRESS ↓</div>}
+                  {isTarget && <div style={{ position: "absolute", top: 8, right: 10, fontSize: 10, fontWeight: 700, color: "#EC4899", background: "rgba(236,72,153,0.15)", padding: "2px 7px", borderRadius: 99 }}>REWARD ↑</div>}
+                  {isSuppressed && <div style={{ position: "absolute", top: 8, right: 10, fontSize: 10, fontWeight: 700, color: "#D97706", background: "rgba(245,158,11,0.15)", padding: "2px 7px", borderRadius: 99 }}>SUPPRESS ↓</div>}
                   {sampleCount === 0 ? (
                     <>
                       <div style={{ fontSize: 11, color: "#94A3B8", fontWeight: 600, marginBottom: 8 }}>{label}</div>
@@ -663,18 +663,18 @@ export default function DemoPage() {
         {tab === "game" && (
           <div>
             {/* Clinician context banner */}
-            <div style={{ background: "#F0FDF4", border: "1.5px solid #BBF7D0", borderRadius: 12, padding: "14px 18px", marginBottom: 16, display: "flex", gap: 14 }}>
+            <div style={{ background: "rgba(6,78,59,0.35)", border: "1px solid #065F46", borderRadius: 12, padding: "14px 18px", marginBottom: 16, display: "flex", gap: 14 }}>
               <span style={{ fontSize: 22, lineHeight: 1 }}>👨‍⚕️</span>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#166534", marginBottom: 4 }}>How clinicians use Game Mode</div>
-                <p style={{ fontSize: 13, color: "#166534", lineHeight: 1.6, margin: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#34D399", marginBottom: 4 }}>How clinicians use Game Mode</div>
+                <p style={{ fontSize: 13, color: "#6EE7B7", lineHeight: 1.6, margin: 0 }}>
                   Turn your monitor toward the client during a session. Pick a feedback style below — all update in real time from live EEG. Green = on target. Clients engage 2–3× longer with visual feedback vs. a progress bar.
                 </p>
               </div>
             </div>
 
             {/* Mode selector */}
-            <div style={{ display: "flex", gap: 8, marginBottom: 16, background: "white", borderRadius: 12, padding: 6, border: "1px solid #E2E8F0", alignItems: "center", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: 8, marginBottom: 16, background: "#1E293B", borderRadius: 12, padding: 6, border: "1px solid #334155", alignItems: "center", flexWrap: "wrap" }}>
               <span style={{ fontSize: 12, color: "#94A3B8", fontWeight: 600, paddingLeft: 6, whiteSpace: "nowrap" }}>Feedback style:</span>
               {([
                 { id: "orb",   icon: "🔮", label: "Energy Orb" },
@@ -702,7 +702,7 @@ export default function DemoPage() {
               <div style={{ ...card, marginBottom: 16 }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
                   <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", marginBottom: 2 }}>Energy Orb — Client View</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>Energy Orb — Client View</div>
                     <div style={{ fontSize: 12, color: "#94A3B8" }}>Threshold: 60 · Orb grows + turns green above threshold</div>
                   </div>
                 </div>
@@ -713,7 +713,7 @@ export default function DemoPage() {
             {/* Generative Art */}
             {gameMode === "art" && (
               <div style={{ ...card, marginBottom: 16 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", marginBottom: 2 }}>Generative Art — Client View</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>Generative Art — Client View</div>
                 <div style={{ fontSize: 12, color: "#94A3B8", marginBottom: 16 }}>Your brain is the paintbrush. Colors deepen and motion quickens as focus improves.</div>
                 <div style={{
                   height: 300, borderRadius: 16, position: "relative", overflow: "hidden",
@@ -753,7 +753,7 @@ export default function DemoPage() {
             {/* Audio Interrupt */}
             {gameMode === "audio" && (
               <div style={{ ...card, marginBottom: 16 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", marginBottom: 2 }}>Audio Interrupt — Client View</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>Audio Interrupt — Client View</div>
                 <div style={{ fontSize: 12, color: "#94A3B8", marginBottom: 16 }}>Music plays when you&apos;re on target. When focus drops, audio pauses — a gentle nudge to refocus.</div>
                 <div style={{
                   background: "#0F172A", borderRadius: 16, padding: "24px 28px",
@@ -798,7 +798,7 @@ export default function DemoPage() {
                     </div>
                   )}
                 </div>
-                <div style={{ marginTop: 12, padding: "10px 14px", background: "#F8FAFC", borderRadius: 10, fontSize: 12, color: "#64748B", lineHeight: 1.6 }}>
+                <div style={{ marginTop: 12, padding: "10px 14px", background: "#1E293B", borderRadius: 10, fontSize: 12, color: "#94A3B8", lineHeight: 1.6 }}>
                   <strong>How it works:</strong> Music pauses the moment reward score drops below 60. Clients naturally learn to self-regulate to keep the music playing — no instructions needed. Inspired by NeurOptimal&apos;s audio interrupt method.
                 </div>
               </div>
@@ -812,7 +812,7 @@ export default function DemoPage() {
                 { label: "Heart rate", value: sample?.heartRate != null ? sample.heartRate.toFixed(0) + " bpm" : "—", color: "#F59E0B" },
                 { label: "HRV", value: sample?.hrvRmssd != null ? sample.hrvRmssd.toFixed(1) + " ms" : "—", color: "#8B5CF6" },
               ].map(({ label, value, color }) => (
-                <div key={label} style={{ background: "white", border: "1px solid #E2E8F0", borderRadius: 12, padding: "16px 18px", textAlign: "center" }}>
+                <div key={label} style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 12, padding: "16px 18px", textAlign: "center" }}>
                   <div style={{ fontSize: 11, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>{label}</div>
                   <div style={{ fontSize: 22, fontWeight: 800, color, fontVariantNumeric: "tabular-nums" }}>{value}</div>
                 </div>
@@ -825,8 +825,8 @@ export default function DemoPage() {
         {tab === "hrv" && (
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             <div style={{ marginBottom: 16 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#0F172A", marginBottom: 4 }}>Heart & Breathing (HRV)</h2>
-              <p style={{ fontSize: 13, color: "#64748B", lineHeight: 1.6 }}>Monitor heart rate variability and breathing coherence alongside EEG — all in one view. Helps clients learn to combine calm breathing with focused brain states.</p>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Heart & Breathing (HRV)</h2>
+              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>Monitor heart rate variability and breathing coherence alongside EEG — all in one view. Helps clients learn to combine calm breathing with focused brain states.</p>
             </div>
 
             {/* Live HRV metrics */}
@@ -837,7 +837,7 @@ export default function DemoPage() {
                 { label: "Coherence", val: sample?.hrvRmssd != null ? Math.min(9.9, (sample.hrvRmssd / 10)).toFixed(1) : null, color: "#10B981", unit: "/ 10", norm: "High: >8.0", icon: "🌊" },
                 { label: "Resonance Freq", val: "6.0", color: "#F59E0B", unit: "breaths/min", norm: "Personalised target", icon: "🫁" },
               ].map(({ label, val, color, unit, norm, icon }) => (
-                <div key={label} style={{ background: "white", border: "1px solid #E2E8F0", borderRadius: 14, padding: "18px 20px" }}>
+                <div key={label} style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 14, padding: "18px 20px" }}>
                   <div style={{ fontSize: 20, marginBottom: 8 }}>{icon}</div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 6 }}>{label}</div>
                   <div style={{ fontSize: 28, fontWeight: 800, color, fontVariantNumeric: "tabular-nums", marginBottom: 2 }}>
@@ -849,9 +849,9 @@ export default function DemoPage() {
             </div>
 
             {/* HRV trend chart */}
-            <div style={{ background: "white", border: "1px solid #E2E8F0", borderRadius: 16, padding: 20, marginBottom: 16 }}>
+            <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 20, marginBottom: 16 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0F172A" }}>Live HRV Waveform — RMSSD</h3>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Live HRV Waveform — RMSSD</h3>
                 <span style={{ fontSize: 11, color: "#10B981", fontWeight: 600 }}>● Recording</span>
               </div>
               <div style={{ position: "relative" }}>
@@ -900,13 +900,13 @@ export default function DemoPage() {
                   </div>
                 </div>
               </div>
-              <div style={{ background: "white", border: "1px solid #E2E8F0", borderRadius: 16, padding: 20 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#0F172A", marginBottom: 4 }}>Resonance Frequency Trainer</div>
+              <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 20 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Resonance Frequency Trainer</div>
                 <p style={{ fontSize: 11, color: "#94A3B8", marginBottom: 16 }}>Paced breathing guide at client&apos;s personal resonance frequency (typically 4.5–7 breaths/min) to maximise HRV amplitude.</p>
                 <div style={{ textAlign: "center" }}>
                   <div style={{
                     width: 80, height: 80, borderRadius: "50%",
-                    background: breathPhase === "Inhale" ? "#DBEAFE" : "#EFF6FF",
+                    background: breathPhase === "Inhale" ? "rgba(37,99,235,0.2)" : "rgba(37,99,235,0.2)",
                     border: `4px solid ${breathPhase === "Inhale" ? "#2563EB" : "#93C5FD"}`,
                     display: "flex", alignItems: "center", justifyContent: "center",
                     margin: "0 auto 12px",
@@ -921,9 +921,9 @@ export default function DemoPage() {
             </div>
 
             {/* Wearable import */}
-            <div style={{ background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 12, padding: "16px 20px" }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#065F46", marginBottom: 8 }}>📱 Wearable Data Import</div>
-              <p style={{ fontSize: 12, color: "#047857", marginBottom: 12 }}>Import overnight HRV and sleep data from wearables. If the client slept poorly, the AI suggests a lower-intensity session today.</p>
+            <div style={{ background: "rgba(6,78,59,0.35)", border: "1px solid #065F46", borderRadius: 12, padding: "16px 20px" }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#34D399", marginBottom: 8 }}>📱 Wearable Data Import</div>
+              <p style={{ fontSize: 12, color: "#6EE7B7", marginBottom: 12 }}>Import overnight HRV and sleep data from wearables. If the client slept poorly, the AI suggests a lower-intensity session today.</p>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {[
                   { name: "Oura Ring", icon: "💍", status: "Connected · Last sync 6h ago", active: true },
@@ -931,10 +931,10 @@ export default function DemoPage() {
                   { name: "Garmin", icon: "🏃", status: "Connect →", active: false },
                   { name: "Whoop", icon: "💪", status: "Connect →", active: false },
                 ].map(({ name, icon, status, active }) => (
-                  <div key={name} style={{ background: active ? "white" : "#F8FAFC", border: active ? "1.5px solid #10B981" : "1px solid #E2E8F0", borderRadius: 10, padding: "10px 14px", display: "flex", gap: 8, alignItems: "center" }}>
+                  <div key={name} style={{ background: active ? "#1E293B" : "#243148", border: active ? "1.5px solid #10B981" : "1px solid #334155", borderRadius: 10, padding: "10px 14px", display: "flex", gap: 8, alignItems: "center" }}>
                     <span style={{ fontSize: 18 }}>{icon}</span>
                     <div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "#0F172A" }}>{name}</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: "#F1F5F9" }}>{name}</div>
                       <div style={{ fontSize: 11, color: active ? "#10B981" : "#94A3B8" }}>{status}</div>
                     </div>
                   </div>
@@ -948,8 +948,8 @@ export default function DemoPage() {
         {tab === "brain" && (
           <div>
             <div style={{ ...card, marginBottom: 16 }}>
-              <h2 style={{ fontSize: 15, fontWeight: 700, color: "#0F172A", marginBottom: 4 }}>Prefrontal Activity Map</h2>
-              <p style={{ fontSize: 13, color: "#64748B", marginBottom: 12, lineHeight: 1.6 }}>
+              <h2 style={{ fontSize: 15, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Prefrontal Activity Map</h2>
+              <p style={{ fontSize: 13, color: "#CBD5E1", marginBottom: 12, lineHeight: 1.6 }}>
                 This map shows blood flow to the front of the brain — the decision-making and focus centre. Warmer colors (green → red) mean more oxygen-rich blood is flowing there. It updates live as the session runs.
               </p>
               <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
@@ -958,9 +958,9 @@ export default function DemoPage() {
                   { color: "#EC4899", label: "Alpha", desc: "Relaxed attention" },
                   { color: "#8B5CF6", label: "Theta", desc: "Deep/drowsy waves" },
                 ].map(({ color, label, desc }) => (
-                  <div key={label} style={{ display: "flex", alignItems: "center", gap: 6, background: "#F8FAFC", borderRadius: 8, padding: "5px 10px" }}>
+                  <div key={label} style={{ display: "flex", alignItems: "center", gap: 6, background: "#1E293B", borderRadius: 8, padding: "5px 10px" }}>
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: color }} />
-                    <span style={{ fontSize: 11, fontWeight: 700, color: "#374151" }}>{label}</span>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1" }}>{label}</span>
                     <span style={{ fontSize: 11, color: "#94A3B8" }}>— {desc}</span>
                   </div>
                 ))}
@@ -980,7 +980,7 @@ export default function DemoPage() {
                   { data: oxyL.data, color: "#10B981", label: "OxyHb L · prefrontal" },
                   { data: oxyR.data, color: "#0EA5E9", label: "OxyHb R · prefrontal" },
                 ].map(({ data, color, label }) => (
-                  <div key={label} style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 12, padding: 14 }}>
+                  <div key={label} style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 12, padding: 14 }}>
                     <LiveChart data={data} color={color} label={label} height={64} />
                   </div>
                 ))}
@@ -1032,21 +1032,21 @@ export default function DemoPage() {
         {tab === "outcomes" && (
           <div>
             <div style={{ marginBottom: 20 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#0F172A", marginBottom: 6 }}>Questionnaires</h2>
-              <p style={{ fontSize: 13, color: "#64748B", lineHeight: 1.6 }}>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>Questionnaires</h2>
+              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
                 Send depression and anxiety check-ins to clients on a schedule (e.g. every 5 sessions). Clients fill them out on their phone, and scores automatically appear alongside their brain data.
               </p>
             </div>
 
             {/* Questionnaire schedule demo */}
-            <div style={{ background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 12, padding: "14px 18px", marginBottom: 20, display: "flex", gap: 20, flexWrap: "wrap", alignItems: "center" }}>
+            <div style={{ background: "rgba(6,78,59,0.35)", border: "1px solid #065F46", borderRadius: 12, padding: "14px 18px", marginBottom: 20, display: "flex", gap: 20, flexWrap: "wrap", alignItems: "center" }}>
               <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#065F46", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 3 }}>Automated Questionnaire Schedule</div>
-                <div style={{ fontSize: 13, color: "#047857" }}>PHQ-9 every 5 sessions · GAD-7 every 5 sessions · ADHD-RS at intake + discharge</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#34D399", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 3 }}>Automated Questionnaire Schedule</div>
+                <div style={{ fontSize: 13, color: "#6EE7B7" }}>PHQ-9 every 5 sessions · GAD-7 every 5 sessions · ADHD-RS at intake + discharge</div>
               </div>
               <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
                 {["PHQ-9", "GAD-7", "ADHD-RS", "DASS-21"].map((q) => (
-                  <span key={q} style={{ fontSize: 11, background: "white", border: "1px solid #6EE7B7", borderRadius: 6, padding: "4px 10px", color: "#065F46", fontWeight: 600 }}>{q}</span>
+                  <span key={q} style={{ fontSize: 11, background: "rgba(6,78,59,0.4)", border: "1px solid #065F46", borderRadius: 6, padding: "4px 10px", color: "#34D399", fontWeight: 600 }}>{q}</span>
                 ))}
               </div>
             </div>
@@ -1059,23 +1059,23 @@ export default function DemoPage() {
         {tab === "progress" && (
           <div>
             <div style={{ marginBottom: 16 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#0F172A", marginBottom: 6 }}>Longitudinal Progress Dashboard</h2>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>Longitudinal Progress Dashboard</h2>
               <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                <span style={{ fontSize: 13, color: "#64748B" }}>Sarah Mitchell · 20 sessions</span>
-                <span style={{ background: "#FEF3C7", border: "1px solid #FCD34D", borderRadius: 99, padding: "3px 12px", fontSize: 12, fontWeight: 700, color: "#92400E" }}>🔥 8-session streak</span>
-                <span style={{ background: "#F0FDF4", border: "1px solid #6EE7B7", borderRadius: 99, padding: "3px 12px", fontSize: 12, fontWeight: 700, color: "#065F46" }}>✓ 95% attendance</span>
-                <span style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 99, padding: "3px 12px", fontSize: 12, fontWeight: 700, color: "#1D4ED8" }}>↑ Top 12% of clients</span>
+                <span style={{ fontSize: 13, color: "#CBD5E1" }}>Sarah Mitchell · 20 sessions</span>
+                <span style={{ background: "rgba(120,53,15,0.4)", border: "1px solid #92400E", borderRadius: 99, padding: "3px 12px", fontSize: 12, fontWeight: 700, color: "#FCD34D" }}>🔥 8-session streak</span>
+                <span style={{ background: "rgba(6,78,59,0.4)", border: "1px solid #065F46", borderRadius: 99, padding: "3px 12px", fontSize: 12, fontWeight: 700, color: "#34D399" }}>✓ 95% attendance</span>
+                <span style={{ background: "rgba(30,58,138,0.4)", border: "1px solid #3B82F6", borderRadius: 99, padding: "3px 12px", fontSize: 12, fontWeight: 700, color: "#60A5FA" }}>↑ Top 12% of clients</span>
               </div>
             </div>
 
             {/* AI stall detection banner */}
-            <div style={{ background: "#FFFBEB", border: "1.5px solid #F59E0B", borderRadius: 12, padding: "14px 18px", marginBottom: 20, display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-start" }}>
+            <div style={{ background: "rgba(120,53,15,0.3)", border: "1.5px solid #92400E", borderRadius: 12, padding: "14px 18px", marginBottom: 20, display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-start" }}>
               <span style={{ fontSize: 20 }}>⚠️</span>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#92400E", marginBottom: 4 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#FCD34D", marginBottom: 4 }}>
                   EEGBase AI · Session 8 Insight — Theta/Beta ratio not improving
                 </div>
-                <div style={{ fontSize: 13, color: "#78350F", lineHeight: 1.6 }}>
+                <div style={{ fontSize: 13, color: "#FDE68A", lineHeight: 1.6 }}>
                   θ/β Z-score has remained above 2.0 SD for the last 3 sessions (S6: +2.1, S7: +2.0, S8: +2.2). 74% of similar profiles in the community database responded to Alpha-Theta protocol switch within 2 sessions.
                 </div>
                 <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
@@ -1085,7 +1085,7 @@ export default function DemoPage() {
                   >
                     {recommendationApplied ? "✓ Protocol Updated to Alpha-Theta" : "Apply Recommendation"}
                   </button>
-                  <button style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", background: "white", color: "#92400E", border: "1px solid #F59E0B", borderRadius: 6, cursor: "pointer" }}>
+                  <button style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", background: "#1E293B", color: "#FCD34D", border: "1px solid #92400E", borderRadius: 6, cursor: "pointer" }}>
                     View Similar Cases
                   </button>
                   <button style={{ fontSize: 12, color: "#94A3B8", background: "none", border: "none", cursor: "pointer", padding: "6px 0" }}>Dismiss</button>
@@ -1095,7 +1095,7 @@ export default function DemoPage() {
 
             {/* Reward trajectory */}
             <div style={{ ...card, marginBottom: 16 }}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", marginBottom: 16 }}>Reward Score Trajectory</h3>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 16 }}>Reward Score Trajectory</h3>
               <div style={{ display: "flex", gap: 4, alignItems: "flex-end", height: 100 }}>
                 {SESSION_HISTORY.map((s) => (
                   <div key={s.session} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
@@ -1140,10 +1140,10 @@ export default function DemoPage() {
                 const delta = last - first;
                 const improved = delta < 0;
                 return (
-                  <div key={key} style={{ background: "white", border: "1px solid #E2E8F0", borderRadius: 16, padding: 20 }}>
+                  <div key={key} style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 20 }}>
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }}>
-                      <h3 style={{ fontSize: 13, fontWeight: 700, color: "#0F172A" }}>{label} Trend</h3>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: improved ? "#10B981" : "#EF4444", background: improved ? "#F0FDF4" : "#FEF2F2", padding: "2px 8px", borderRadius: 99 }}>
+                      <h3 style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>{label} Trend</h3>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: improved ? "#10B981" : "#EF4444", background: improved ? "rgba(6,78,59,0.35)" : "rgba(127,29,29,0.35)", padding: "2px 8px", borderRadius: 99 }}>
                         {improved ? "↓" : "↑"} {Math.abs(delta).toFixed(key === "thetaBeta" ? 1 : 0)}{unit}
                       </span>
                     </div>
@@ -1170,9 +1170,9 @@ export default function DemoPage() {
             </div>
 
             {/* Session table */}
-            <div style={{ background: "white", border: "1px solid #E2E8F0", borderRadius: 16, overflow: "hidden" }}>
-              <div style={{ padding: "16px 20px", borderBottom: "1px solid #E2E8F0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0F172A" }}>Session History</h3>
+            <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, overflow: "hidden" }}>
+              <div style={{ padding: "16px 20px", borderBottom: "1px solid #334155", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Session History</h3>
                 <button style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", background: "#2563EB", color: "white", border: "none", borderRadius: 6, cursor: "pointer" }}>
                   Export PDF Report
                 </button>
@@ -1180,7 +1180,7 @@ export default function DemoPage() {
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
-                    <tr style={{ background: "#F8FAFC" }}>
+                    <tr style={{ background: "#1E293B" }}>
                       {["#", "Date", "Duration", "Reward", "θ/β Z", "PHQ-9", "GAD-7", "Notes"].map((h) => (
                         <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#94A3B8", letterSpacing: "0.06em", textTransform: "uppercase" }}>{h}</th>
                       ))}
@@ -1188,10 +1188,10 @@ export default function DemoPage() {
                   </thead>
                   <tbody>
                     {[...SESSION_HISTORY].reverse().slice(0, 8).map((s) => (
-                      <tr key={s.session} style={{ borderTop: "1px solid #F1F5F9" }}>
+                      <tr key={s.session} style={{ borderTop: "1px solid #334155" }}>
                         <td style={{ padding: "10px 16px", color: "#94A3B8", fontWeight: 600 }}>{s.session}</td>
-                        <td style={{ padding: "10px 16px", color: "#475569" }}>{s.date}</td>
-                        <td style={{ padding: "10px 16px", color: "#475569" }}>{s.duration} min</td>
+                        <td style={{ padding: "10px 16px", color: "#94A3B8" }}>{s.date}</td>
+                        <td style={{ padding: "10px 16px", color: "#94A3B8" }}>{s.duration} min</td>
                         <td style={{ padding: "10px 16px" }}>
                           <span style={{ fontWeight: 700, color: s.reward >= 70 ? "#10B981" : s.reward >= 50 ? "#F59E0B" : "#EF4444", fontVariantNumeric: "tabular-nums" }}>
                             {s.reward.toFixed(1)}
@@ -1202,8 +1202,8 @@ export default function DemoPage() {
                             +{s.thetaBeta.toFixed(2)}
                           </span>
                         </td>
-                        <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums", color: "#475569" }}>{s.phq9}</td>
-                        <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums", color: "#475569" }}>{s.gad7}</td>
+                        <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums", color: "#94A3B8" }}>{s.phq9}</td>
+                        <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums", color: "#94A3B8" }}>{s.gad7}</td>
                         <td style={{ padding: "10px 16px" }}>
                           <button style={{ fontSize: 11, color: "#2563EB", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>AI Note</button>
                         </td>
@@ -1220,8 +1220,8 @@ export default function DemoPage() {
         {tab === "ai" && (
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             <div style={{ marginBottom: 20 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#0F172A", marginBottom: 6 }}>AI Insights</h2>
-              <p style={{ fontSize: 13, color: "#64748B", lineHeight: 1.6 }}>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>AI Insights</h2>
+              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
                 EEGBase AI watches session data and flags when a client is stalled — then suggests the next protocol to try, backed by similar cases from 847 anonymised clinics. It also drafts clinical notes you can copy straight to your EHR.
               </p>
             </div>
@@ -1271,7 +1271,7 @@ export default function DemoPage() {
                 </div>
               </div>
 
-              <div style={{ fontSize: 11, color: "#4338CA", lineHeight: 1.5 }}>
+              <div style={{ fontSize: 11, color: "#818CF8", lineHeight: 1.5 }}>
                 ℹ️ AI insights are decision support tools, not medical advice. Clinician judgment always prevails. Model trained on de-identified session data from consenting EEGBase clinics.
               </div>
             </div>
@@ -1280,7 +1280,7 @@ export default function DemoPage() {
             <div style={{ ...card }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
                 <div>
-                  <h3 style={{ fontSize: 15, fontWeight: 700, color: "#0F172A", marginBottom: 2 }}>AI-Drafted SOAP Note</h3>
+                  <h3 style={{ fontSize: 15, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>AI-Drafted SOAP Note</h3>
                   <p style={{ fontSize: 12, color: "#94A3B8" }}>Session 8 · May 4, 2026 · Auto-generated from session data — edit before saving</p>
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
@@ -1290,7 +1290,7 @@ export default function DemoPage() {
                   >
                     {soapCopied ? "✓ Copied!" : "Copy to EHR"}
                   </button>
-                  <button style={{ fontSize: 12, fontWeight: 600, padding: "7px 14px", background: "white", color: "#64748B", border: "1px solid #E2E8F0", borderRadius: 6, cursor: "pointer" }}>
+                  <button style={{ fontSize: 12, fontWeight: 600, padding: "7px 14px", background: "#1E293B", color: "#94A3B8", border: "1px solid #334155", borderRadius: 6, cursor: "pointer" }}>
                     Download PDF
                   </button>
                 </div>
@@ -1309,15 +1309,15 @@ export default function DemoPage() {
                       key={i}
                       contentEditable
                       suppressContentEditableWarning
-                      onFocus={(e) => { e.currentTarget.style.background = "#F1F5F9"; e.currentTarget.style.borderRadius = "4px"; }}
+                      onFocus={(e) => { e.currentTarget.style.background = "#243148"; e.currentTarget.style.borderRadius = "4px"; }}
                       onBlur={(e) => { e.currentTarget.style.background = "transparent"; }}
-                      style={{ fontSize: 13, color: "#374151", lineHeight: 1.6, marginBottom: 2, outline: "none", padding: "1px 4px", cursor: "text", borderRadius: 4, transition: "background 0.15s" }}
+                      style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6, marginBottom: 2, outline: "none", padding: "1px 4px", cursor: "text", borderRadius: 4, transition: "background 0.15s" }}
                     >{l}</div>
                   ))}
                 </div>
               ))}
 
-              <div style={{ marginTop: 12, padding: "10px 14px", background: "#F8FAFC", borderRadius: 8, border: "1px solid #E2E8F0", fontSize: 11, color: "#94A3B8", lineHeight: 1.6 }}>
+              <div style={{ marginTop: 12, padding: "10px 14px", background: "#1E293B", borderRadius: 8, border: "1px solid #334155", fontSize: 11, color: "#94A3B8", lineHeight: 1.6 }}>
                 ✏️ <strong>Click any line above to edit.</strong> Auto-populated from session metrics · PHQ-9 · Z-score database · prior session notes.
               </div>
             </div>
@@ -1328,8 +1328,8 @@ export default function DemoPage() {
         {tab === "schedule" && (
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             <div style={{ marginBottom: 20 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#0F172A", marginBottom: 6 }}>Scheduling</h2>
-              <p style={{ fontSize: 13, color: "#64748B", lineHeight: 1.6 }}>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>Scheduling</h2>
+              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
                 Book appointments, send reminders, and view session history — all in one place. No need for a separate tool like Calendly or SimplePractice.
               </p>
             </div>
@@ -1338,10 +1338,10 @@ export default function DemoPage() {
               {/* Calendar */}
               <div style={{ ...card }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-                  <h3 style={{ fontSize: 15, fontWeight: 700, color: "#0F172A" }}>May 2026</h3>
+                  <h3 style={{ fontSize: 15, fontWeight: 700, color: "#F1F5F9" }}>May 2026</h3>
                   <div style={{ display: "flex", gap: 6 }}>
-                    <button style={{ fontSize: 12, padding: "5px 10px", border: "1px solid #E2E8F0", borderRadius: 6, background: "white", cursor: "pointer", color: "#64748B" }}>‹</button>
-                    <button style={{ fontSize: 12, padding: "5px 10px", border: "1px solid #E2E8F0", borderRadius: 6, background: "white", cursor: "pointer", color: "#64748B" }}>›</button>
+                    <button style={{ fontSize: 12, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1E293B", cursor: "pointer", color: "#CBD5E1" }}>‹</button>
+                    <button style={{ fontSize: 12, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1E293B", cursor: "pointer", color: "#CBD5E1" }}>›</button>
                     <button style={{ fontSize: 12, padding: "5px 14px", border: "none", borderRadius: 6, background: "#2563EB", color: "white", cursor: "pointer", fontWeight: 600 }}>+ New</button>
                   </div>
                 </div>
@@ -1361,10 +1361,10 @@ export default function DemoPage() {
                     return (
                       <div key={day} style={{
                         aspectRatio: "1", borderRadius: 8, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                        background: isToday ? "#2563EB" : hasAppt ? "#EFF6FF" : "transparent",
-                        border: isToday ? "none" : hasAppt ? "1px solid #BFDBFE" : "1px solid transparent",
+                        background: isToday ? "#2563EB" : hasAppt ? "rgba(30,58,138,0.25)" : "transparent",
+                        border: isToday ? "none" : hasAppt ? "1px solid #3B82F6" : "1px solid transparent",
                         cursor: "pointer", fontSize: 13, fontWeight: isToday ? 800 : 500,
-                        color: isToday ? "white" : "#0F172A",
+                        color: isToday ? "white" : "#CBD5E1",
                         position: "relative",
                       }}>
                         {day}
@@ -1378,17 +1378,17 @@ export default function DemoPage() {
               {/* Sidebar: upcoming + reminders */}
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 <div style={{ ...card, padding: 20 }}>
-                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", marginBottom: 12 }}>Upcoming Appointments</h3>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 12 }}>Upcoming Appointments</h3>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     {APPOINTMENTS.slice(0, 4).map((a) => (
-                      <div key={a.time} style={{ padding: "10px 12px", borderRadius: 10, background: "#F8FAFC", border: "1px solid #E2E8F0" }}>
+                      <div key={a.time} style={{ padding: "10px 12px", borderRadius: 10, background: "#1E293B", border: "1px solid #334155" }}>
                         <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 3 }}>{a.time}</div>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: "#0F172A", marginBottom: 1 }}>{a.client}</div>
-                        <div style={{ fontSize: 11, color: "#64748B", marginBottom: 4 }}>{a.protocol}</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 1 }}>{a.client}</div>
+                        <div style={{ fontSize: 11, color: "#CBD5E1", marginBottom: 4 }}>{a.protocol}</div>
                         <span style={{
                           fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 99,
-                          background: a.status === "confirmed" ? "#D1FAE5" : "#FEF3C7",
-                          color: a.status === "confirmed" ? "#065F46" : "#92400E",
+                          background: a.status === "confirmed" ? "rgba(6,78,59,0.4)" : "rgba(120,53,15,0.4)",
+                          color: a.status === "confirmed" ? "#34D399" : "#FCD34D",
                         }}>
                           {a.status === "confirmed" ? "✓ Confirmed" : "⏳ Pending"}
                         </span>
@@ -1398,7 +1398,7 @@ export default function DemoPage() {
                 </div>
 
                 <div style={{ ...card, padding: 20 }}>
-                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", marginBottom: 12 }}>Automated Reminders</h3>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 12 }}>Automated Reminders</h3>
                   {([
                     { key: "sms" as const,    label: "24h SMS reminder" },
                     { key: "email" as const,  label: "1h email reminder" },
@@ -1406,20 +1406,20 @@ export default function DemoPage() {
                     { key: "lapsed" as const, label: "Lapsed client (14d)" },
                   ]).map(({ key, label }) => (
                     <div key={key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                      <span style={{ fontSize: 13, color: "#374151" }}>{label}</span>
+                      <span style={{ fontSize: 13, color: "#CBD5E1" }}>{label}</span>
                       <div
                         onClick={() => setReminderToggles((prev) => ({ ...prev, [key]: !prev[key] }))}
-                        style={{ width: 36, height: 20, borderRadius: 99, background: reminderToggles[key] ? "#2563EB" : "#E2E8F0", position: "relative", cursor: "pointer", transition: "background 0.2s" }}
+                        style={{ width: 36, height: 20, borderRadius: 99, background: reminderToggles[key] ? "#2563EB" : "#334155", position: "relative", cursor: "pointer", transition: "background 0.2s" }}
                       >
                         <div style={{ width: 16, height: 16, borderRadius: "50%", background: "white", position: "absolute", top: 2, left: reminderToggles[key] ? 18 : 2, transition: "left 0.2s" }} />
                       </div>
                     </div>
                   ))}
-                  <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #F1F5F9" }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "#64748B", marginBottom: 8 }}>Sync to calendar</div>
+                  <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #334155" }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#94A3B8", marginBottom: 8 }}>Sync to calendar</div>
                     <div style={{ display: "flex", gap: 8 }}>
                       {["Google Calendar", "iCal"].map((cal) => (
-                        <button key={cal} style={{ fontSize: 11, fontWeight: 600, padding: "5px 10px", border: "1px solid #E2E8F0", borderRadius: 6, background: "white", cursor: "pointer", color: "#374151" }}>
+                        <button key={cal} style={{ fontSize: 11, fontWeight: 600, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1E293B", cursor: "pointer", color: "#CBD5E1" }}>
                           {cal}
                         </button>
                       ))}
@@ -1430,12 +1430,12 @@ export default function DemoPage() {
             </div>
 
             {/* Billing strip */}
-            <div style={{ marginTop: 16, background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 12, padding: "16px 20px" }}>
+            <div style={{ marginTop: 16, background: "rgba(6,78,59,0.35)", border: "1px solid #065F46", borderRadius: 12, padding: "16px 20px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                 <span style={{ fontSize: 18 }}>💳</span>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#065F46", marginBottom: 2 }}>Billing + CPT Codes — Zero competitors have this</div>
-                  <div style={{ fontSize: 12, color: "#047857" }}>After each session, EEGBase auto-generates a superbill with CPT 90901 (biofeedback), 97012, and E/M codes. Export to CMS-1500 or Stripe self-pay. No separate billing software needed.</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#34D399", marginBottom: 2 }}>Billing + CPT Codes — Zero competitors have this</div>
+                  <div style={{ fontSize: 12, color: "#6EE7B7" }}>After each session, EEGBase auto-generates a superbill with CPT 90901 (biofeedback), 97012, and E/M codes. Export to CMS-1500 or Stripe self-pay. No separate billing software needed.</div>
                 </div>
                 <button style={{ marginLeft: "auto", fontSize: 12, fontWeight: 700, padding: "7px 16px", background: "#059669", color: "white", border: "none", borderRadius: 8, cursor: "pointer" }}>
                   Preview Superbill
@@ -1449,8 +1449,8 @@ export default function DemoPage() {
         {tab === "protocols" && (
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             <div style={{ marginBottom: 16 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#0F172A", marginBottom: 4 }}>Condition-Specific Protocol Library</h2>
-              <p style={{ fontSize: 13, color: "#64748B", lineHeight: 1.6 }}>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Condition-Specific Protocol Library</h2>
+              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
                 50+ evidence-based protocols organised by condition. Search, preview, and apply in one click — no more looking up papers or guessing electrode placement. Zero competitors have a searchable protocol library.
               </p>
             </div>
@@ -1465,8 +1465,8 @@ export default function DemoPage() {
                     onClick={() => setProtocolSearch(tag === "All" ? "" : tag)}
                     style={{
                       fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 99, border: "none", cursor: "pointer",
-                      background: active ? "#2563EB" : "#F1F5F9",
-                      color: active ? "white" : "#64748B",
+                      background: active ? "#2563EB" : "#1E293B",
+                      color: active ? "white" : "#94A3B8",
                       transition: "background 0.15s, color 0.15s",
                     }}
                   >
@@ -1485,10 +1485,10 @@ export default function DemoPage() {
                 value={protocolSearch}
                 onChange={(e) => setProtocolSearch(e.target.value)}
                 placeholder="Search by condition, name, or tag…"
-                style={{ flex: 1, padding: "10px 14px", border: "1px solid #E2E8F0", borderRadius: 10, fontSize: 13, outline: "none", background: "white" }}
+                style={{ flex: 1, padding: "10px 14px", border: "1px solid #334155", borderRadius: 10, fontSize: 13, outline: "none", background: "#1E293B", color: "#CBD5E1" }}
               />
               {protocolSearch && (
-                <button onClick={() => setProtocolSearch("")} aria-label="Clear search" style={{ padding: "10px 14px", background: "#F1F5F9", color: "#64748B", border: "none", borderRadius: 10, fontWeight: 600, fontSize: 13, cursor: "pointer" }}>✕</button>
+                <button onClick={() => setProtocolSearch("")} aria-label="Clear search" style={{ padding: "10px 14px", background: "#243148", color: "#94A3B8", border: "none", borderRadius: 10, fontWeight: 600, fontSize: 13, cursor: "pointer" }}>✕</button>
               )}
             </div>
 
@@ -1582,9 +1582,9 @@ export default function DemoPage() {
               );
               if (filtered.length === 0) {
                 return (
-                  <div style={{ textAlign: "center", padding: "48px 24px", background: "white", borderRadius: 14, border: "1px solid #E2E8F0", marginBottom: 16 }}>
+                  <div style={{ textAlign: "center", padding: "48px 24px", background: "#0F172A", borderRadius: 14, border: "1px solid #334155", marginBottom: 16 }}>
                     <div style={{ fontSize: 32, marginBottom: 12 }}>🔍</div>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: "#0F172A", marginBottom: 6 }}>No protocols found</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>No protocols found</div>
                     <div style={{ fontSize: 13, color: "#64748B", marginBottom: 16 }}>No protocols match &ldquo;{protocolSearch}&rdquo;</div>
                     <button onClick={() => setProtocolSearch("")} style={{ padding: "8px 20px", background: "#2563EB", color: "white", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: "pointer" }}>
                       Clear search
@@ -1599,15 +1599,15 @@ export default function DemoPage() {
                       key={p.id}
                       onClick={() => setSelectedProtocol(selectedProtocol === p.id ? null : p.id)}
                       style={{
-                        background: "white", border: selectedProtocol === p.id ? "2px solid #2563EB" : "1px solid #E2E8F0",
+                        background: "#0F172A", border: selectedProtocol === p.id ? "2px solid #2563EB" : "1px solid #334155",
                         borderRadius: 14, padding: 20, cursor: "pointer",
-                        boxShadow: selectedProtocol === p.id ? "0 0 0 4px #EFF6FF" : undefined,
+                        boxShadow: selectedProtocol === p.id ? "0 0 0 4px rgba(30,58,138,0.25)" : undefined,
                       }}
                     >
                       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8, marginBottom: 8 }}>
                         <div>
                           <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4 }}>{p.condition}</div>
-                          <div style={{ fontSize: 14, fontWeight: 700, color: "#0F172A" }}>{p.name}</div>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>{p.name}</div>
                         </div>
                         <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 99, background: p.evidenceColor + "20", color: p.evidenceColor, whiteSpace: "nowrap" }}>
                           {p.evidence} evidence
@@ -1615,7 +1615,7 @@ export default function DemoPage() {
                       </div>
                       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 10 }}>
                         {p.tags.map((tag) => (
-                          <span key={tag} style={{ fontSize: 10, background: "#F1F5F9", color: "#64748B", borderRadius: 6, padding: "3px 8px", fontWeight: 600 }}>{tag}</span>
+                          <span key={tag} style={{ fontSize: 10, background: "#1E293B", color: "#94A3B8", borderRadius: 6, padding: "3px 8px", fontWeight: 600 }}>{tag}</span>
                         ))}
                       </div>
                       <div style={{ fontSize: 11, color: "#64748B", lineHeight: 1.6, marginBottom: 10 }}>{p.desc}</div>
@@ -1624,15 +1624,15 @@ export default function DemoPage() {
                           { label: "Sites", val: p.sites },
                           { label: "Duration", val: p.duration },
                         ].map(({ label, val }) => (
-                          <div key={label} style={{ background: "#F8FAFC", borderRadius: 8, padding: "8px 10px" }}>
+                          <div key={label} style={{ background: "#1E293B", borderRadius: 8, padding: "8px 10px" }}>
                             <div style={{ fontSize: 10, color: "#94A3B8", fontWeight: 700, marginBottom: 2 }}>{label}</div>
-                            <div style={{ fontSize: 11, color: "#374151", fontWeight: 600 }}>{val}</div>
+                            <div style={{ fontSize: 11, color: "#CBD5E1", fontWeight: 600 }}>{val}</div>
                           </div>
                         ))}
                       </div>
                       {selectedProtocol === p.id && (
-                        <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #E2E8F0" }}>
-                          <div style={{ fontSize: 11, color: "#64748B", marginBottom: 8 }}>
+                        <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #334155" }}>
+                          <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 8 }}>
                             <strong>Bands:</strong> {p.bands}
                           </div>
                           <div style={{ display: "flex", gap: 8 }}>
@@ -1642,7 +1642,7 @@ export default function DemoPage() {
                             >
                               {protocolApplied === p.id ? "✓ Applied to Sarah Mitchell!" : "▶ Apply to Sarah Mitchell"}
                             </button>
-                            <button onClick={(e) => e.stopPropagation()} style={{ fontSize: 12, fontWeight: 600, padding: "8px 12px", background: "white", color: "#64748B", border: "1px solid #E2E8F0", borderRadius: 8, cursor: "pointer" }}>
+                            <button onClick={(e) => e.stopPropagation()} style={{ fontSize: 12, fontWeight: 600, padding: "8px 12px", background: "#1E293B", color: "#94A3B8", border: "1px solid #334155", borderRadius: 8, cursor: "pointer" }}>
                               View Evidence
                             </button>
                           </div>
@@ -1654,7 +1654,7 @@ export default function DemoPage() {
               );
             })()}
 
-            <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 12, padding: "14px 18px", fontSize: 12, color: "#64748B" }}>
+            <div style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 12, padding: "14px 18px", fontSize: 12, color: "#94A3B8" }}>
               Showing 6 of 54 protocols. Full library includes ILF variants, LORETA-guided, gamma training, neuromuscular (TBI), and paediatric protocols. Evidence ratings based on Arns et al. 2014, van Doren et al. 2019, and EEGBase community outcome data.
             </div>
           </div>
@@ -1664,8 +1664,8 @@ export default function DemoPage() {
         {tab === "reports" && (
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             <div style={{ marginBottom: 16 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#0F172A", marginBottom: 4 }}>One-Click Shareable Progress Reports</h2>
-              <p style={{ fontSize: 13, color: "#64748B", lineHeight: 1.6 }}>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>One-Click Shareable Progress Reports</h2>
+              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
                 Generate plain-English progress reports for clients, parents, or referring physicians. No data export or Word document needed — branded PDF in one click. Only Divergence Neuro offers a comparable report feature; all other competitors lack this entirely.
               </p>
             </div>
@@ -1679,13 +1679,13 @@ export default function DemoPage() {
               </button>
               <button
                 onClick={() => { setEmailSent(true); setTimeout(() => setEmailSent(false), 2500); }}
-                style={{ fontSize: 13, fontWeight: 600, padding: "8px 18px", background: emailSent ? "#10B981" : "white", color: emailSent ? "white" : "#64748B", border: emailSent ? "none" : "1px solid #E2E8F0", borderRadius: 8, cursor: "pointer" }}
+                style={{ fontSize: 13, fontWeight: 600, padding: "8px 18px", background: emailSent ? "#10B981" : "#1E293B", color: emailSent ? "white" : "#CBD5E1", border: emailSent ? "none" : "1px solid #334155", borderRadius: 8, cursor: "pointer" }}
               >
                 {emailSent ? "✓ Sent to sarah@example.com" : "📧 Email to Client"}
               </button>
               <button
                 onClick={() => { setFaxSent(true); setTimeout(() => setFaxSent(false), 2500); }}
-                style={{ fontSize: 13, fontWeight: 600, padding: "8px 18px", background: faxSent ? "#10B981" : "white", color: faxSent ? "white" : "#64748B", border: faxSent ? "none" : "1px solid #E2E8F0", borderRadius: 8, cursor: "pointer" }}
+                style={{ fontSize: 13, fontWeight: 600, padding: "8px 18px", background: faxSent ? "#10B981" : "#1E293B", color: faxSent ? "white" : "#CBD5E1", border: faxSent ? "none" : "1px solid #334155", borderRadius: 8, cursor: "pointer" }}
               >
                 {faxSent ? "✓ Sent to Dr. Patel" : "🏥 Send to Referring Physician"}
               </button>
@@ -1781,15 +1781,15 @@ export default function DemoPage() {
             </div>
 
             {/* EHR integration */}
-            <div style={{ marginTop: 16, background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 12, padding: "16px 20px" }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#065F46", marginBottom: 8 }}>🏥 EHR Integration — Zero competitors have this</div>
-              <p style={{ fontSize: 12, color: "#047857", marginBottom: 12 }}>Session notes and progress data sync directly to your EHR — no copy-paste. Select your platform:</p>
+            <div style={{ marginTop: 16, background: "rgba(6,78,59,0.35)", border: "1px solid #065F46", borderRadius: 12, padding: "16px 20px" }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#34D399", marginBottom: 8 }}>🏥 EHR Integration — Zero competitors have this</div>
+              <p style={{ fontSize: 12, color: "#6EE7B7", marginBottom: 12 }}>Session notes and progress data sync directly to your EHR — no copy-paste. Select your platform:</p>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {["SimplePractice", "TherapyNotes", "Jane App", "TheraNest", "Alma"].map((ehr) => (
                   <button
                     key={ehr}
                     onClick={() => { setEhrCopied(true); setTimeout(() => setEhrCopied(false), 2000); }}
-                    style={{ fontSize: 12, fontWeight: 700, padding: "8px 16px", border: "1.5px solid #10B981", borderRadius: 8, background: "white", color: "#065F46", cursor: "pointer" }}
+                    style={{ fontSize: 12, fontWeight: 700, padding: "8px 16px", border: "1.5px solid #10B981", borderRadius: 8, background: "#1E293B", color: "#34D399", cursor: "pointer" }}
                   >
                     {ehrCopied ? "✓ Sent!" : `Sync to ${ehr}`}
                   </button>
@@ -1803,8 +1803,8 @@ export default function DemoPage() {
         {tab === "compare" && (
           <div>
             <div style={{ marginBottom: 20 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#0F172A", marginBottom: 6 }}>EEGBase vs All Competitors</h2>
-              <p style={{ fontSize: 13, color: "#64748B", lineHeight: 1.6 }}>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>EEGBase vs All Competitors</h2>
+              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
                 Compiled May 2026 from platform docs, clinician reviews, and NeuroBB forums. EEGBase is the only platform that covers every layer — live signal, QEEG, AI, clinical workflow, practice management — in one open-source web app.
               </p>
             </div>
@@ -1812,40 +1812,40 @@ export default function DemoPage() {
             {/* Why EEGBase summary */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }} className="demo-grid-2">
               {[
-                { icon: "🧠", label: "Only platform with fNIRS + EEG + HRV", sub: "Competitors offer one modality; we offer all three", color: "#2563EB", bg: "#EFF6FF", border: "#BFDBFE" },
-                { icon: "🤖", label: "AI protocol recommendations", sub: "74% of stalled clients improve within 2 sessions", color: "#7C3AED", bg: "#F5F3FF", border: "#DDD6FE" },
-                { icon: "$0", label: "Zero cost · Open source", sub: "Competitors charge $95–$650/mo. We charge nothing.", color: "#059669", bg: "#F0FDF4", border: "#6EE7B7" },
-                { icon: "☁️", label: "Browser-based · No install", sub: "Runs on any device — no Windows-only requirement", color: "#0EA5E9", bg: "#F0F9FF", border: "#BAE6FD" },
+                { icon: "🧠", label: "Only platform with fNIRS + EEG + HRV", sub: "Competitors offer one modality; we offer all three", color: "#60A5FA", bg: "rgba(30,58,138,0.25)", border: "#3B82F6" },
+                { icon: "🤖", label: "AI protocol recommendations", sub: "74% of stalled clients improve within 2 sessions", color: "#A78BFA", bg: "rgba(76,29,149,0.25)", border: "#7C3AED" },
+                { icon: "$0", label: "Zero cost · Open source", sub: "Competitors charge $95–$650/mo. We charge nothing.", color: "#34D399", bg: "rgba(6,78,59,0.35)", border: "#065F46" },
+                { icon: "☁️", label: "Browser-based · No install", sub: "Runs on any device — no Windows-only requirement", color: "#38BDF8", bg: "rgba(7,89,133,0.25)", border: "#0EA5E9" },
               ].map(({ icon, label, sub, color, bg, border }) => (
                 <div key={label} style={{ background: bg, border: `1.5px solid ${border}`, borderRadius: 14, padding: "16px 18px" }}>
                   <div style={{ fontSize: 22, marginBottom: 6 }}>{icon}</div>
                   <div style={{ fontSize: 13, fontWeight: 700, color, marginBottom: 4, lineHeight: 1.3 }}>{label}</div>
-                  <div style={{ fontSize: 11, color: "#64748B", lineHeight: 1.5 }}>{sub}</div>
+                  <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>{sub}</div>
                 </div>
               ))}
             </div>
 
             {/* Category filter pills */}
             <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
-              <button onClick={() => setFeatureCategory(null)} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 99, border: "none", cursor: "pointer", background: featureCategory === null ? "#2563EB" : "#F1F5F9", color: featureCategory === null ? "white" : "#64748B" }}>All</button>
+              <button onClick={() => setFeatureCategory(null)} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 99, border: "none", cursor: "pointer", background: featureCategory === null ? "#2563EB" : "#1E293B", color: featureCategory === null ? "white" : "#94A3B8" }}>All</button>
               {categories.map((c) => (
-                <button key={c} onClick={() => setFeatureCategory(featureCategory === c ? null : c)} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 99, border: "none", cursor: "pointer", background: featureCategory === c ? "#2563EB" : "#F1F5F9", color: featureCategory === c ? "white" : "#64748B" }}>
+                <button key={c} onClick={() => setFeatureCategory(featureCategory === c ? null : c)} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 99, border: "none", cursor: "pointer", background: featureCategory === c ? "#2563EB" : "#1E293B", color: featureCategory === c ? "white" : "#94A3B8" }}>
                   {c}
                 </button>
               ))}
             </div>
 
-            <div style={{ background: "white", border: "1px solid #E2E8F0", borderRadius: 16, overflow: "hidden" }}>
+            <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, overflow: "hidden" }}>
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                   <thead>
-                    <tr style={{ background: "#F8FAFC", borderBottom: "2px solid #E2E8F0" }}>
-                      <th style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#64748B", minWidth: 220, position: "sticky", left: 0, background: "#F8FAFC" }}>Feature</th>
+                    <tr style={{ background: "#1E293B", borderBottom: "2px solid #334155" }}>
+                      <th style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#94A3B8", minWidth: 220, position: "sticky", left: 0, background: "#1E293B" }}>Feature</th>
                       {COMPETITORS.map((c) => (
                         <th key={c.key} style={{
                           padding: "12px 12px", textAlign: "center", fontSize: 11, fontWeight: 700,
-                          color: c.highlight ? "#2563EB" : "#64748B",
-                          background: c.highlight ? "#EFF6FF" : undefined,
+                          color: c.highlight ? "#60A5FA" : "#94A3B8",
+                          background: c.highlight ? "rgba(30,58,138,0.3)" : undefined,
                           minWidth: 90,
                         }}>
                           {c.label}
@@ -1863,20 +1863,20 @@ export default function DemoPage() {
                         <>
                           {showCat && (
                             <tr key={`cat-${f.category}`}>
-                              <td colSpan={COMPETITORS.length + 1} style={{ padding: "8px 16px 4px", fontSize: 10, fontWeight: 800, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.1em", background: "#F8FAFC", borderTop: i > 0 ? "2px solid #E2E8F0" : undefined }}>
+                              <td colSpan={COMPETITORS.length + 1} style={{ padding: "8px 16px 4px", fontSize: 10, fontWeight: 800, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.1em", background: "#243148", borderTop: i > 0 ? "2px solid #334155" : undefined }}>
                                 {f.category}
                               </td>
                             </tr>
                           )}
-                          <tr key={f.feature} style={{ borderTop: "1px solid #F1F5F9", background: i % 2 === 0 ? "white" : "#FAFAFA" }}>
-                            <td style={{ padding: "9px 16px", color: "#374151", fontWeight: 500, fontSize: 12, position: "sticky", left: 0, background: i % 2 === 0 ? "white" : "#FAFAFA" }}>{f.feature}</td>
+                          <tr key={f.feature} style={{ borderTop: "1px solid #334155", background: i % 2 === 0 ? "#0F172A" : "#131C2E" }}>
+                            <td style={{ padding: "9px 16px", color: "#CBD5E1", fontWeight: 500, fontSize: 12, position: "sticky", left: 0, background: i % 2 === 0 ? "#0F172A" : "#131C2E" }}>{f.feature}</td>
                             {COMPETITORS.map((c) => {
                               const has = f[c.key as keyof typeof f] as boolean;
                               return (
-                                <td key={c.key} style={{ padding: "9px 12px", textAlign: "center", background: c.highlight ? "#EFF6FF" : undefined }}>
+                                <td key={c.key} style={{ padding: "9px 12px", textAlign: "center", background: c.highlight ? "rgba(30,58,138,0.2)" : undefined }}>
                                   {has
                                     ? <span style={{ color: "#10B981", fontSize: 16, fontWeight: 700 }}>✓</span>
-                                    : <span style={{ color: "#E2E8F0", fontSize: 14 }}>—</span>}
+                                    : <span style={{ color: "#334155", fontSize: 14 }}>—</span>}
                                 </td>
                               );
                             })}
@@ -1887,7 +1887,7 @@ export default function DemoPage() {
                   </tbody>
                 </table>
               </div>
-              <div style={{ padding: "12px 16px", borderTop: "1px solid #E2E8F0", fontSize: 11, color: "#94A3B8" }}>
+              <div style={{ padding: "12px 16px", borderTop: "1px solid #334155", fontSize: 11, color: "#94A3B8" }}>
                 Sources: platform documentation, Capterra/G2 reviews, NeuroBB clinician forums, Neurosity comparison guide (May 2026).
               </div>
             </div>
@@ -1901,12 +1901,12 @@ export default function DemoPage() {
                 { name: "EEGBase",    price: "$0",         note: "Self-hosted, MIT open source, all features", highlight: true },
               ].map(({ name, price, note, highlight }) => (
                 <div key={name} style={{
-                  background: highlight ? "#EFF6FF" : "white",
-                  border: highlight ? "2px solid #2563EB" : "1px solid #E2E8F0",
+                  background: highlight ? "rgba(30,58,138,0.25)" : "#0F172A",
+                  border: highlight ? "2px solid #2563EB" : "1px solid #334155",
                   borderRadius: 14, padding: "18px 20px", textAlign: "center",
                 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", marginBottom: 6 }}>{name}</div>
-                  <div style={{ fontSize: 26, fontWeight: 800, color: highlight ? "#2563EB" : "#0F172A", marginBottom: 4 }}>{price}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>{name}</div>
+                  <div style={{ fontSize: 26, fontWeight: 800, color: highlight ? "#60A5FA" : "#CBD5E1", marginBottom: 4 }}>{price}</div>
                   <div style={{ fontSize: 11, color: "#64748B", lineHeight: 1.5 }}>{note}</div>
                 </div>
               ))}
@@ -1916,12 +1916,12 @@ export default function DemoPage() {
       </div>
 
       {/* Footer CTA */}
-      <div style={{ background: "linear-gradient(135deg, #EDE9FE 0%, #EFF6FF 100%)", borderTop: "1px solid #C4B5FD", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
-        <span style={{ fontSize: 14, color: "#4C1D95", fontWeight: 600 }}>Ready to use with real clients?</span>
+      <div style={{ background: "linear-gradient(135deg, #1E1B4B 0%, #1E3A5F 100%)", borderTop: "1px solid #334155", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
+        <span style={{ fontSize: 14, color: "#C4B5FD", fontWeight: 600 }}>Ready to use with real clients?</span>
         <a href="/login" style={{ fontSize: 14, fontWeight: 700, padding: "8px 20px", background: "#7C3AED", color: "#fff", borderRadius: 8, textDecoration: "none" }}>
           Get Access →
         </a>
-        <a href="https://github.com/jpiscool/eegbase" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "#6D28D9", textDecoration: "none", fontWeight: 600 }}>
+        <a href="https://github.com/jpiscool/eegbase" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "#A78BFA", textDecoration: "none", fontWeight: 600 }}>
           ★ GitHub →
         </a>
       </div>
