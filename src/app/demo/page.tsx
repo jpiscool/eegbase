@@ -903,7 +903,7 @@ export default function DemoPage() {
                 { label: "Heart Rate", val: sample?.heartRate, color: "#EF4444", unit: "bpm", norm: "60–80 bpm", icon: "❤️" },
                 { label: "HRV (RMSSD)", val: sample?.hrvRmssd, color: "#8B5CF6", unit: "ms", norm: "Target: >50 ms", icon: "📊" },
                 { label: "Coherence", val: sample?.hrvRmssd != null ? Math.min(9.9, (sample.hrvRmssd / 10)).toFixed(1) : null, color: "#10B981", unit: "/ 10", norm: "High: >8.0", icon: "🌊" },
-                { label: "Resonance Freq", val: "6.0", color: "#F59E0B", unit: "breaths/min", norm: "Personalised target", icon: "🫁" },
+                { label: "Resonance Freq", val: "6.0", color: "#F59E0B", unit: "breaths/min", norm: "Personalized target", icon: "🫁" },
               ].map(({ label, val, color, unit, norm, icon }) => (
                 <div key={label} style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 14, padding: "18px 20px" }}>
                   <div style={{ fontSize: 20, marginBottom: 8 }}>{icon}</div>
