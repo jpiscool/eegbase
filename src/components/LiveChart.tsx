@@ -23,11 +23,11 @@ export function LiveChart({ data, color, label, height = 80 }: LiveChartProps) {
     ctx.clearRect(0, 0, w, h);
 
     // Background
-    ctx.fillStyle = "#F8FAFC";
+    ctx.fillStyle = "#1E293B";
     ctx.fillRect(0, 0, w, h);
 
     // Mid grid line
-    ctx.strokeStyle = "#E2E8F0";
+    ctx.strokeStyle = "#334155";
     ctx.lineWidth = 1;
     ctx.setLineDash([4, 4]);
     ctx.beginPath();
@@ -88,7 +88,7 @@ export function LiveChart({ data, color, label, height = 80 }: LiveChartProps) {
         width={600}
         height={height}
         className="w-full rounded-lg"
-        style={{ height, display: "block", border: "1px solid var(--border-subtle)" }}
+        style={{ height, display: "block", border: "1px solid #334155" }}
       />
     </div>
   );
