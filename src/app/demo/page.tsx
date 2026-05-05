@@ -268,7 +268,7 @@ export default function DemoPage() {
   const filteredFeatures = featureCategory ? FEATURES.filter((f) => f.category === featureCategory) : FEATURES;
 
   return (
-    <div style={{ fontFamily: "Inter, system-ui, sans-serif", background: "#060A14", minHeight: "100vh" }}>
+    <div style={{ fontFamily: "Inter, system-ui, sans-serif", background: "#F0F4F8", minHeight: "100vh" }}>
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
@@ -421,7 +421,7 @@ export default function DemoPage() {
       )}
 
       {/* Sidebar + Content layout */}
-      <div style={{ display: "flex", alignItems: "flex-start" }}>
+      <div style={{ display: "flex", alignItems: "flex-start", background: "#F0F4F8", minHeight: "calc(100vh - 60px)" }}>
 
         {/* Left sidebar nav */}
         <nav aria-label="Demo sections" className="demo-sidebar" style={{ width: 216, background: "#0F172A", flexShrink: 0, position: "sticky", top: 56, height: "calc(100vh - 60px)", overflowY: "auto", zIndex: 10, borderRight: "1px solid #1E293B" }}>
