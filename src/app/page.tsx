@@ -45,7 +45,7 @@ const features = [
 ];
 
 const metrics = [
-  { value: "2 min", label: "To first live stream" },
+  { value: "2 min", label: "From signup to first session" },
   { value: "$0/mo", label: "Forever — no subscription" },
   { value: "MIT", label: "Open source license" },
 ];
@@ -271,25 +271,25 @@ export default function LandingPage() {
       <section className="max-w-5xl mx-auto px-6 pt-24 pb-20 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-100 rounded-full text-xs font-medium text-blue-700 mb-6">
           <span className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
-          Now with Mendi fNIRS support
+          Free for licensed clinicians
         </div>
         <h1 className="text-5xl font-extrabold text-gray-900 tracking-tight leading-tight mb-5">
-          Neurofeedback practice
+          Run your whole neurofeedback
           <br />
-          management that{" "}
-          <span className="text-blue-600">actually streams</span>
+          practice from{" "}
+          <span className="text-blue-600">one app</span>
         </h1>
         <p className="text-lg text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-          EEGBase is an open-source, self-hosted platform for licensed
-          clinicians — bringing real-time fNIRS and EEG session streaming,
-          longitudinal analytics, and client management under one roof.
+          Stop juggling four tools to run one session. EEGBase replaces your
+          streaming software, EHR, scheduler, and report builder — with live
+          brain data, AI session notes, and progress tracking in one place.
         </p>
         <div className="flex items-center justify-center gap-4">
           <Link
             href="/demo"
             className="px-6 py-3 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors shadow-sm"
           >
-            Try live demo →
+            Try the live demo →
           </Link>
           <a
             href="https://github.com/eegbase/eegbase"
@@ -323,11 +323,10 @@ export default function LandingPage() {
       {/* Features grid */}
       <section className="max-w-5xl mx-auto px-6 pb-24">
         <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
-          Built for clinical workflows
+          What you get out of the box
         </h2>
         <p className="text-sm text-gray-400 text-center mb-12">
-          Everything a neurofeedback practice needs — from first session to
-          longitudinal outcome tracking.
+          Everything you need to run sessions, write notes, and show clients their progress.
         </p>
         <div className="grid grid-cols-3 gap-6">
           {features.map(({ icon: Icon, title, description }) => (
