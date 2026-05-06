@@ -57,7 +57,7 @@ const faqs = [
   },
   {
     q: "Do I need a server to run EEGBase?",
-    a: "No. Deploy for free on Vercel + Neon (PostgreSQL) in under 10 minutes. Or self-host on any Linux server. Full Docker Compose setup included. If you don't want to touch infrastructure at all, managed hosting launches Q3 2026.",
+    a: "No. Deploy for free on Vercel + Neon (PostgreSQL) in under 10 minutes. Or self-host on any Linux server. A Docker Compose setup is included in the repo. Managed hosting is on the roadmap — not yet available.",
   },
   {
     q: "Is patient data safe?",
@@ -101,37 +101,37 @@ const CAROUSEL_SLIDES = [
   {
     label: "🤖 AI Insights",
     title: "AI protocol recommendations + SOAP notes",
-    desc: "EEGBase detects stalled progress and recommends protocol switches based on 847 community profiles. SOAP notes auto-drafted from session data.",
+    desc: "EEGBase analyzes session data, flags stalled progress, and drafts SOAP notes. Powered by Claude Haiku — clinician approves before anything is saved.",
     color: "#7C3AED",
     bg: "#F5F3FF",
     metrics: [
-      { label: "Similar profiles", val: "847", unit: "cases", color: "#7C3AED" },
-      { label: "θ/β improvement", val: "74%", unit: "within 2 sessions", color: "#10B981" },
-      { label: "SOAP note", val: "Auto", unit: "drafted", color: "#2563EB" },
+      { label: "Trend detection", val: "Live", unit: "every session", color: "#7C3AED" },
+      { label: "SOAP draft", val: "Auto", unit: "clinician approves", color: "#10B981" },
+      { label: "AI provider", val: "Claude", unit: "Haiku 4.5", color: "#2563EB" },
     ],
   },
   {
     label: "📈 Progress",
     title: "20-session longitudinal analytics",
-    desc: "PHQ-9, GAD-7, reward score trajectory, and Z-score trends — all in one dashboard. Export as branded PDF in one click.",
+    desc: "PHQ-9, GAD-7, reward score trajectory, and Z-score trends — all in one dashboard. Export as branded PDF in one click. Demo data shown is illustrative.",
     color: "#059669",
     bg: "#F0FDF4",
     metrics: [
-      { label: "Reward improvement", val: "+53.6", unit: "pts over 20 sessions", color: "#10B981" },
-      { label: "PHQ-9 change", val: "18→11", unit: "(39% drop)", color: "#6366F1" },
+      { label: "Outcome measures", val: "PHQ-9", unit: "GAD-7 · custom", color: "#10B981" },
+      { label: "Trend window", val: "20", unit: "sessions tracked", color: "#6366F1" },
       { label: "Export format", val: "PDF", unit: "one click", color: "#2563EB" },
     ],
   },
   {
     label: "💓 HRV / Biofeedback",
     title: "EEG + HRV in one session view",
-    desc: "Zero competitors combine HRV biofeedback with neurofeedback in a single platform. Train mind-body coherence simultaneously.",
+    desc: "Combine HRV biofeedback with neurofeedback in a single platform. Pair a Polar H10 alongside any EEG headband and train mind-body coherence simultaneously.",
     color: "#8B5CF6",
     bg: "#F5F3FF",
     metrics: [
-      { label: "Competitors with HRV+EEG", val: "0", unit: "of 7 tested", color: "#EF4444" },
-      { label: "HRV RMSSD", val: "47", unit: "ms live", color: "#8B5CF6" },
-      { label: "Coherence score", val: "5.3", unit: "/ 10", color: "#10B981" },
+      { label: "Devices supported", val: "Polar", unit: "H10 / OH1", color: "#8B5CF6" },
+      { label: "Live metrics", val: "RMSSD", unit: "+ coherence", color: "#10B981" },
+      { label: "Synced view", val: "EEG", unit: "+ HRV one screen", color: "#2563EB" },
     ],
   },
 ];
@@ -580,50 +580,22 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Honest "be a launch clinician" CTA — replaces testimonials until we have real ones */}
       <section className="max-w-5xl mx-auto px-6 pb-24">
-        <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">Trusted by clinicians</h2>
-        <p className="text-sm text-gray-400 text-center mb-12">What neurofeedback practitioners are saying.</p>
-        <div className="grid grid-cols-3 gap-6">
-          {[
-            {
-              quote: "I was paying $315/month for Myndlift and getting maybe 20% of the clinical depth EEGBase gives me. The AI protocol recommendations alone have changed how I work with stalled clients.",
-              name: "Dr. Alicia Romero",
-              title: "BCN, Private Practice · Austin, TX",
-              initials: "AR",
-              color: "bg-blue-100 text-blue-700",
-            },
-            {
-              quote: "Setup took 25 minutes. I was streaming my first Mendi session before lunch. The Z-score panel and bilateral OxyHb charts are exactly what I needed — no other free tool has this.",
-              name: "James K., LPC",
-              title: "Integrative Neurofeedback · Denver, CO",
-              initials: "JK",
-              color: "bg-emerald-100 text-emerald-700",
-            },
-            {
-              quote: "The one-click shareable progress report is a game changer for family sessions. Parents finally understand what the numbers mean. And my clients love the game mode during sessions.",
-              name: "Dr. Priya Nair",
-              title: "Pediatric Neurotherapy · Toronto, ON",
-              initials: "PN",
-              color: "bg-violet-100 text-violet-700",
-            },
-          ].map(({ quote, name, title, initials, color }) => (
-            <div key={name} className="bg-gray-50 border border-gray-100 rounded-2xl p-6 flex flex-col gap-4">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                ))}
-              </div>
-              <p className="text-sm text-gray-700 leading-relaxed flex-1">&ldquo;{quote}&rdquo;</p>
-              <div className="flex items-center gap-3">
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold ${color}`}>{initials}</div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">{name}</p>
-                  <p className="text-xs text-gray-400">{title}</p>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="bg-gradient-to-br from-gray-50 to-blue-50/30 border border-gray-100 rounded-3xl p-10 text-center">
+          <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3">Honest disclosure</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">We&apos;re a new project — be one of the first clinicians on it</h2>
+          <p className="text-sm text-gray-500 leading-relaxed max-w-2xl mx-auto mb-7">
+            EEGBase is in active development. We&apos;re not going to fabricate testimonials or download counts — when real clinicians use the platform, their feedback will appear here with full names and verified affiliations. For now, the best way to evaluate is to try the live demo yourself.
+          </p>
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            <Link href="/demo" className="px-6 py-3 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors">
+              Open the live demo →
+            </Link>
+            <a href="https://github.com/eegbase/eegbase" target="_blank" rel="noopener noreferrer" className="px-6 py-3 border border-gray-200 text-gray-700 text-sm font-medium rounded-xl hover:border-gray-300 transition-colors">
+              Read the source on GitHub
+            </a>
+          </div>
         </div>
       </section>
 

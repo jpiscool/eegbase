@@ -76,9 +76,9 @@ const THREADS = [
 // ── Stats ────────────────────────────────────────────────────────────────────
 
 const STATS = [
-  { value: "847", label: "Clinicians" },
-  { value: "12,400", label: "Sessions Logged" },
-  { value: "94", label: "Countries" },
+  { value: "Q3 2026", label: "Public launch" },
+  { value: "Pre-launch", label: "Waitlist open" },
+  { value: "MIT", label: "Open source" },
 ];
 
 // ── Professional Resources ────────────────────────────────────────────────────
@@ -238,6 +238,25 @@ export default function CommunityPage() {
         ))}
       </div>
 
+      {/* Honest-disclosure banner */}
+      <div
+        className="rounded-xl border p-4 flex items-start gap-3"
+        style={{
+          background: "var(--warning-subtle)",
+          borderColor: "color-mix(in srgb, var(--warning) 30%, transparent)",
+        }}
+      >
+        <span style={{ fontSize: 18 }}>ⓘ</span>
+        <div>
+          <p className="text-sm font-semibold" style={{ color: "var(--warning)" }}>
+            Preview content
+          </p>
+          <p className="text-xs mt-0.5 leading-relaxed" style={{ color: "var(--warning)" }}>
+            The protocols, discussions, downloads, and ratings shown below are illustrative examples of what the community will look like at launch. They are <strong>not</strong> real clinician contributions yet — no clinicians have submitted protocols and no sessions have been logged. We&apos;ll replace this with real content once the community goes live.
+          </p>
+        </div>
+      </div>
+
       {/* ── Protocol Exchange ── */}
       <section>
         <div className="flex items-center justify-between mb-4">
@@ -245,7 +264,7 @@ export default function CommunityPage() {
             className="text-sm font-semibold uppercase tracking-wide"
             style={{ color: "var(--text-tertiary)" }}
           >
-            Protocol Exchange
+            Protocol Exchange <span style={{ fontSize: 10, color: "var(--warning)", marginLeft: 6 }}>· example</span>
           </h2>
           <Link
             href="/protocols/marketplace"
@@ -329,7 +348,7 @@ export default function CommunityPage() {
             className="text-sm font-semibold uppercase tracking-wide"
             style={{ color: "var(--text-tertiary)" }}
           >
-            Clinical Discussion
+            Clinical Discussion <span style={{ fontSize: 10, color: "var(--warning)", marginLeft: 6 }}>· example</span>
           </h2>
           <Link
             href="/community"
