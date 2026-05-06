@@ -1,6 +1,8 @@
 # EEGBase
 
-An open-source, self-hosted neurofeedback practice management platform for licensed clinicians. Built with Next.js 15 App Router, PostgreSQL (Drizzle ORM), and WebBluetooth.
+An open-source, self-hosted neurofeedback practice management platform for licensed clinicians. Built with Next.js 16 App Router, PostgreSQL (Drizzle ORM), and WebBluetooth.
+
+> **Status:** Active beta. The Mendi fNIRS adapter currently uses placeholder GATT UUIDs while we work with the SDK; the simulator works out of the box. See [Mendi BLE Integration](#mendi-ble-integration) below.
 
 ---
 
@@ -8,7 +10,7 @@ An open-source, self-hosted neurofeedback practice management platform for licen
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/eegbase/eegbase && cd eegbase
+git clone https://github.com/jpiscool/eegbase && cd eegbase
 npm install
 
 # 2. Set up the database
@@ -24,7 +26,7 @@ npm run dev
 
 # 5. Open the demo
 # http://localhost:3000/login
-# Email: demo@eegbase.io  Password: demo2026
+# Email: demo@eegbase.com  Password: demo2026
 ```
 
 ---
@@ -50,7 +52,7 @@ npm run dev
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/trainbase/eegbase
+git clone https://github.com/jpiscool/eegbase
 cd eegbase
 npm install
 ```
@@ -114,7 +116,7 @@ Returns `{ "sessionId": "uuid" }`. Your Clinic ID (API key) is shown on the Sett
 
 ## Stack
 
-- **Next.js 15** App Router (React 19)
+- **Next.js 16** App Router (React 19)
 - **PostgreSQL** via Drizzle ORM
 - **NextAuth.js** v5 (credentials)
 - **Tailwind CSS**

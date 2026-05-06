@@ -276,6 +276,70 @@ export default function DemoPage() {
   const [demoClientIdx, setDemoClientIdx] = useState(0);
   const demoClient = DEMO_CLIENTS[demoClientIdx];
 
+  // ── Clinician interactive controls ────────────────────────────────────────
+  const [chartWindow, setChartWindow] = useState<30 | 60 | 120>(60);
+  const [rewardThreshold, setRewardThreshold] = useState(60);
+  const [sensitivity, setSensitivity] = useState(5);
+  const [enabledBands, setEnabledBands] = useState<{ theta: boolean; alpha: boolean; beta: boolean }>({ theta: true, alpha: true, beta: true });
+  const [markers, setMarkers] = useState<Array<{ time: number; label: string }>>([]);
+  const [quickNote, setQuickNote] = useState("");
+  const [noteSavedFlash, setNoteSavedFlash] = useState(false);
+  const [audioReward, setAudioReward] = useState(true);
+  const [toast, setToast] = useState<string | null>(null);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showClinicianOverlay, setShowClinicianOverlay] = useState(true);
+  const [gameDifficulty, setGameDifficulty] = useState<"Easy" | "Medium" | "Hard">("Medium");
+  const [hoveredMarker, setHoveredMarker] = useState<number | null>(null);
+
+  const showToast = useCallback((msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast((t) => (t === msg ? null : t)), 2000);
+  }, []);
+
+  const togglePauseResume = useCallback(() => {
+    if (running) {
+      stop();
+      showToast("Session paused");
+    } else {
+      start();
+      showToast("Session resumed");
+    }
+  }, [running, start, stop, showToast]);
+
+  const addMarker = useCallback(() => {
+    const m = { time: elapsed, label: "Marker" };
+    setMarkers((prev) => [...prev, m]);
+    showToast(`Marker added at ${fmt(elapsed)}`);
+  }, [elapsed, showToast]);
+
+  const resetSession = useCallback(() => {
+    setElapsed(0);
+    setMarkers([]);
+    showToast("Session reset");
+    setShowResetConfirm(false);
+  }, [showToast]);
+
+  const clinicianBtn: React.CSSProperties = {
+    background: "#1E293B",
+    border: "1px solid #334155",
+    color: "#F1F5F9",
+    padding: "8px 14px",
+    borderRadius: 8,
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: "pointer",
+    transition: "border-color 0.15s, background 0.15s",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+  };
+  const clinicianBtnPrimary: React.CSSProperties = {
+    ...clinicianBtn,
+    background: "#2563EB",
+    color: "white",
+    border: "1px solid #2563EB",
+  };
+
   const switchTab = (id: MainTab) => { setTab(id); setVisitedTabs((prev) => new Set([...prev, id])); };
 
   const navBtn: (active: boolean) => React.CSSProperties = (active) => ({
@@ -445,6 +509,14 @@ export default function DemoPage() {
         </div>
       )}
 
+      {/* Clinician control toast */}
+      {toast && (
+        <div style={{ position: "fixed", bottom: 80, right: 20, zIndex: 999, background: "#0F172A", border: "1px solid #14B8A6", color: "#F1F5F9", borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, boxShadow: "0 8px 32px rgba(0,0,0,0.4)", animation: "fadeIn 0.2s ease", display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#14B8A6" }} />
+          {toast}
+        </div>
+      )}
+
       {/* Peak achievement flash */}
       {peakFlash && (
         <div style={{ position: "fixed", top: 72, left: "50%", transform: "translateX(-50%)", zIndex: 998, animation: "fadeIn 0.3s ease", pointerEvents: "none" }}>
@@ -578,6 +650,59 @@ export default function DemoPage() {
                 <strong style={{ color: "#93C5FD" }}>Clinician view</strong> — you&apos;re watching {demoClient.name}&apos;s brain signals in real time (simulated). The <strong>Reward Score</strong> rises when the client&apos;s brain is producing the target pattern. Switch to <button onClick={() => switchTab("game")} style={{ background: "none", border: "none", color: "#60A5FA", fontWeight: 700, cursor: "pointer", padding: 0, fontSize: 13, textDecoration: "underline" }}>Game Mode</button> to see what the client sees.
               </span>
             </div>
+
+            {/* Session Control Panel */}
+            <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 12, padding: "10px 14px", marginBottom: 16, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.07em", marginRight: 4 }}>Session Controls</span>
+              <button
+                onClick={togglePauseResume}
+                style={running ? clinicianBtn : clinicianBtnPrimary}
+                aria-label={running ? "Pause session" : "Resume session"}
+              >
+                {running ? "⏸ Pause" : "▶ Resume"}
+              </button>
+              <button onClick={addMarker} style={clinicianBtn} aria-label="Add session marker">
+                + Marker
+              </button>
+              <button onClick={() => setShowResetConfirm(true)} style={clinicianBtn} aria-label="Reset session">
+                ↺ Reset
+              </button>
+              <button
+                onClick={() => setAudioReward((v) => !v)}
+                style={audioReward ? clinicianBtnPrimary : clinicianBtn}
+                aria-label="Toggle audio reward"
+              >
+                {audioReward ? "🔊 Audio reward: ON" : "🔇 Audio reward: OFF"}
+              </button>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 4, marginLeft: "auto" }}>
+                <span style={{ fontSize: 11, color: "#94A3B8", fontWeight: 600, marginRight: 4 }}>Window:</span>
+                {([30, 60, 120] as const).map((w) => (
+                  <button
+                    key={w}
+                    onClick={() => setChartWindow(w)}
+                    style={{
+                      ...clinicianBtn,
+                      padding: "6px 10px",
+                      fontSize: 12,
+                      background: chartWindow === w ? "#2563EB" : "#1E293B",
+                      color: chartWindow === w ? "white" : "#F1F5F9",
+                      border: chartWindow === w ? "1px solid #2563EB" : "1px solid #334155",
+                    }}
+                  >
+                    {w}s
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {showResetConfirm && (
+              <div style={{ background: "rgba(127,29,29,0.25)", border: "1px solid #B91C1C", borderRadius: 10, padding: "10px 14px", marginBottom: 14, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 13, color: "#FCA5A5", fontWeight: 600 }}>Reset session timer and clear all markers?</span>
+                <button onClick={resetSession} style={{ ...clinicianBtn, background: "#B91C1C", border: "1px solid #B91C1C", color: "white", marginLeft: "auto" }}>Yes, reset</button>
+                <button onClick={() => setShowResetConfirm(false)} style={clinicianBtn}>Cancel</button>
+              </div>
+            )}
+
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }} className="demo-grid-2 demo-grid-4">
               {[
                 { label: "Client", value: demoClient.name, updated: false },
@@ -640,12 +765,20 @@ export default function DemoPage() {
                   <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: `${rewardColor}25`, padding: "4px 12px", borderRadius: 99, border: `1px solid ${rewardColor}40` }}>
                     <div style={{ width: 6, height: 6, borderRadius: "50%", background: rewardColor, animation: "pulse 2s infinite" }} />
                     <span style={{ fontSize: "0.72rem", fontWeight: 700, color: rewardColor }}>
-                      {rewardVal == null ? "—" : rewardVal >= 80 ? "Peak — excellent" : rewardVal >= 60 ? "On target" : rewardVal >= 40 ? "Building up" : "Below target"}
+                      {rewardVal == null
+                        ? "—"
+                        : rewardVal >= rewardThreshold + 20
+                        ? "Peak — excellent"
+                        : rewardVal >= rewardThreshold
+                        ? "On target"
+                        : rewardVal >= rewardThreshold - 20
+                        ? "Building up"
+                        : "Below target"}
                     </span>
                   </div>
                 </div>
                 <div style={{ flex: 1, minWidth: 180 }}>
-                  <LiveChart data={reward.data} color="#60A5FA" label="Reward score · last 60s" height={80} />
+                  <LiveChart data={reward.data.slice(-chartWindow)} color="#60A5FA" label={`Reward score · last ${chartWindow}s`} height={80} />
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
                   {[
@@ -666,6 +799,41 @@ export default function DemoPage() {
                   ))}
                 </div>
               </div>
+            </div>
+
+            {/* Threshold + sensitivity sliders */}
+            <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 12, padding: "12px 16px", marginBottom: 16, display: "flex", gap: 28, flexWrap: "wrap", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                <label htmlFor="reward-threshold" style={{ fontSize: 12, fontWeight: 700, color: "#CBD5E1", minWidth: 110 }}>
+                  Threshold: <span style={{ color: "#14B8A6", fontVariantNumeric: "tabular-nums" }}>{rewardThreshold}</span>
+                </label>
+                <input
+                  id="reward-threshold"
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={rewardThreshold}
+                  onChange={(e) => setRewardThreshold(Number(e.target.value))}
+                  style={{ width: 160, accentColor: "#14B8A6" }}
+                  aria-label="Reward threshold"
+                />
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                <label htmlFor="sensitivity" style={{ fontSize: 12, fontWeight: 700, color: "#CBD5E1", minWidth: 110 }}>
+                  Sensitivity: <span style={{ color: "#14B8A6", fontVariantNumeric: "tabular-nums" }}>{sensitivity}</span>
+                </label>
+                <input
+                  id="sensitivity"
+                  type="range"
+                  min={1}
+                  max={10}
+                  value={sensitivity}
+                  onChange={(e) => setSensitivity(Number(e.target.value))}
+                  style={{ width: 160, accentColor: "#14B8A6" }}
+                  aria-label="Feedback sensitivity"
+                />
+              </div>
+              <span style={{ fontSize: 11, color: "#64748B", marginLeft: "auto" }}>Adjust to recalibrate &quot;On target&quot; in real time</span>
             </div>
 
             {/* Z-score strip */}
@@ -732,25 +900,98 @@ export default function DemoPage() {
               <span style={{ fontSize: 13, color: "#FDE68A", marginLeft: 4 }}>{PROTOCOL_GOALS[recommendationApplied ? "Alpha-Theta · Pz/Oz" : demoClient.protocol] ?? "Score rises when the target brainwave pattern is sustained"}</span>
             </div>
 
+            {/* Marker Timeline */}
+            <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 12, padding: "12px 16px", marginBottom: 14 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.07em" }}>Session Markers ({markers.length})</span>
+                <span style={{ fontSize: 11, color: "#64748B", fontVariantNumeric: "tabular-nums" }}>0:00 ─── {fmt(Math.max(elapsed, 60))}</span>
+              </div>
+              {markers.length === 0 ? (
+                <div style={{ fontSize: 12, color: "#64748B", fontStyle: "italic", padding: "10px 0", textAlign: "center" }}>
+                  No markers yet — tap + Marker to flag a moment
+                </div>
+              ) : (
+                <div style={{ position: "relative", height: 28, background: "#1E293B", borderRadius: 8, overflow: "visible" }}>
+                  <div style={{ position: "absolute", left: 0, right: 0, top: "50%", height: 2, background: "#334155", transform: "translateY(-50%)" }} />
+                  {markers.map((m, i) => {
+                    const totalSpan = Math.max(60, elapsed, ...markers.map((mm) => mm.time));
+                    const pct = totalSpan === 0 ? 0 : (m.time / totalSpan) * 100;
+                    const isHovered = hoveredMarker === i;
+                    return (
+                      <div
+                        key={i}
+                        onMouseEnter={() => setHoveredMarker(i)}
+                        onMouseLeave={() => setHoveredMarker(null)}
+                        onClick={() => showToast(`${m.label} at ${fmt(m.time)}`)}
+                        style={{
+                          position: "absolute",
+                          left: `${pct}%`,
+                          top: "50%",
+                          transform: "translate(-50%, -50%)",
+                          width: 14,
+                          height: 14,
+                          borderRadius: "50%",
+                          background: "#14B8A6",
+                          border: "2px solid #0F172A",
+                          cursor: "pointer",
+                          boxShadow: isHovered ? "0 0 0 4px rgba(20,184,166,0.25)" : "none",
+                          transition: "box-shadow 0.15s",
+                        }}
+                        title={`${m.label} · ${fmt(m.time)}`}
+                      >
+                        {isHovered && (
+                          <div style={{ position: "absolute", bottom: "calc(100% + 6px)", left: "50%", transform: "translateX(-50%)", background: "#0F172A", border: "1px solid #14B8A6", color: "#F1F5F9", fontSize: 11, padding: "4px 8px", borderRadius: 6, whiteSpace: "nowrap", fontWeight: 600 }}>
+                            {m.label} · {fmt(m.time)}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
             <div className="demo-section-label">Brainwave bands (EEG)</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }} className="demo-grid-3">
-              {[
-                { data: thetaW.data, color: "#F59E0B", label: "Theta — slow waves (drowsy/relaxed)", isTarget: false, isSuppressed: true },
-                { data: alphaW.data, color: "#EF4444", label: "Alpha — calm focus", isTarget: false, isSuppressed: false },
-                { data: betaW.data,  color: "#EC4899", label: "Beta — active thinking",  isTarget: true,  isSuppressed: false },
-              ].map(({ data, color, label, isTarget, isSuppressed }) => (
+              {([
+                { data: thetaW.data, color: "#F59E0B", label: "Theta — slow waves (drowsy/relaxed)", isTarget: false, isSuppressed: true,  bandKey: "theta" as const },
+                { data: alphaW.data, color: "#EF4444", label: "Alpha — calm focus",                    isTarget: false, isSuppressed: false, bandKey: "alpha" as const },
+                { data: betaW.data,  color: "#EC4899", label: "Beta — active thinking",                isTarget: true,  isSuppressed: false, bandKey: "beta"  as const },
+              ]).map(({ data, color, label, isTarget, isSuppressed, bandKey }) => {
+                const enabled = enabledBands[bandKey];
+                return (
                 <div key={label} style={{
                   background: "#0F172A",
                   border: "none",
-                  boxShadow: isTarget
+                  boxShadow: !enabled
+                    ? "0 0 0 1px #334155"
+                    : isTarget
                     ? "0 0 0 2px #EC4899, 0 4px 20px rgba(236,72,153,0.16)"
                     : isSuppressed
                     ? "0 0 0 2px #F59E0B, 0 4px 20px rgba(245,158,11,0.14)"
                     : "0 1px 4px rgba(0,0,0,0.3), 0 0 0 1px #334155",
                   borderRadius: 14, padding: 18, position: "relative",
+                  opacity: enabled ? 1 : 0.45,
+                  transition: "opacity 0.2s, box-shadow 0.2s",
                 }}>
-                  {isTarget && <div style={{ position: "absolute", top: 8, right: 10, fontSize: 10, fontWeight: 700, color: "#EC4899", background: "rgba(236,72,153,0.15)", padding: "2px 7px", borderRadius: 99 }}>REWARD ↑</div>}
-                  {isSuppressed && <div style={{ position: "absolute", top: 8, right: 10, fontSize: 10, fontWeight: 700, color: "#D97706", background: "rgba(245,158,11,0.15)", padding: "2px 7px", borderRadius: 99 }}>SUPPRESS ↓</div>}
+                  <button
+                    onClick={() => setEnabledBands((prev) => ({ ...prev, [bandKey]: !prev[bandKey] }))}
+                    aria-label={`Toggle ${bandKey} band reward contribution`}
+                    style={{
+                      position: "absolute", top: 8, left: 10,
+                      fontSize: 10, fontWeight: 700,
+                      color: enabled ? "#34D399" : "#64748B",
+                      background: enabled ? "rgba(6,78,59,0.4)" : "rgba(51,65,85,0.4)",
+                      border: enabled ? "1px solid #065F46" : "1px solid #334155",
+                      padding: "2px 8px", borderRadius: 99,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {enabled ? "✓ In reward" : "○ Disabled"}
+                  </button>
+                  {enabled && isTarget && <div style={{ position: "absolute", top: 8, right: 10, fontSize: 10, fontWeight: 700, color: "#EC4899", background: "rgba(236,72,153,0.15)", padding: "2px 7px", borderRadius: 99 }}>REWARD ↑</div>}
+                  {enabled && isSuppressed && <div style={{ position: "absolute", top: 8, right: 10, fontSize: 10, fontWeight: 700, color: "#D97706", background: "rgba(245,158,11,0.15)", padding: "2px 7px", borderRadius: 99 }}>SUPPRESS ↓</div>}
+                  <div style={{ height: 22 }} />
                   {sampleCount === 0 ? (
                     <>
                       <div style={{ fontSize: 11, color: "#94A3B8", fontWeight: 600, marginBottom: 8 }}>{label}</div>
@@ -760,7 +1001,35 @@ export default function DemoPage() {
                     <LiveChart data={data} color={color} label={label} height={68} />
                   )}
                 </div>
-              ))}
+                );
+              })}
+            </div>
+
+            {/* Quick session note */}
+            <div style={{ marginTop: 14, background: "#0F172A", border: "1px solid #334155", borderRadius: 12, padding: "12px 16px", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <label htmlFor="quick-note" style={{ fontSize: 12, fontWeight: 700, color: "#CBD5E1", whiteSpace: "nowrap" }}>
+                Quick session note
+              </label>
+              <input
+                id="quick-note"
+                type="text"
+                value={quickNote}
+                onChange={(e) => setQuickNote(e.target.value)}
+                onBlur={() => {
+                  if (quickNote.trim().length > 0) {
+                    setNoteSavedFlash(true);
+                    setTimeout(() => setNoteSavedFlash(false), 2000);
+                  }
+                }}
+                placeholder="Type and tab away to save…"
+                aria-label="Quick session note"
+                style={{ flex: 1, minWidth: 220, padding: "8px 12px", border: "1px solid #334155", borderRadius: 8, background: "#1E293B", color: "#F1F5F9", fontSize: 13, outline: "none" }}
+              />
+              {noteSavedFlash && (
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#34D399", background: "rgba(6,78,59,0.4)", border: "1px solid #065F46", padding: "4px 10px", borderRadius: 99 }}>
+                  ✓ Saved
+                </span>
+              )}
             </div>
           </>
         )}
@@ -803,16 +1072,55 @@ export default function DemoPage() {
               ))}
             </div>
 
+            {/* Game Mode clinician toolbar */}
+            <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 12, padding: "10px 14px", marginBottom: 16, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.07em", marginRight: 4 }}>Clinician Toolbar</span>
+              <button
+                onClick={() => {
+                  if (typeof document !== "undefined" && document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(() => showToast("Fullscreen not available"));
+                    showToast("Entered fullscreen");
+                  } else {
+                    showToast("Fullscreen not available");
+                  }
+                }}
+                style={clinicianBtnPrimary}
+                aria-label="Enter fullscreen for client"
+              >
+                ⛶ Fullscreen for client
+              </button>
+              <button
+                onClick={() => setShowClinicianOverlay((v) => !v)}
+                style={showClinicianOverlay ? clinicianBtnPrimary : clinicianBtn}
+                aria-label="Toggle clinician overlay"
+              >
+                {showClinicianOverlay ? "👁 Clinician overlay: ON" : "🚫 Clinician overlay: OFF"}
+              </button>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginLeft: "auto" }}>
+                <label htmlFor="game-difficulty" style={{ fontSize: 12, color: "#94A3B8", fontWeight: 600 }}>Difficulty:</label>
+                <select
+                  id="game-difficulty"
+                  value={gameDifficulty}
+                  onChange={(e) => setGameDifficulty(e.target.value as "Easy" | "Medium" | "Hard")}
+                  style={{ background: "#1E293B", color: "#F1F5F9", border: "1px solid #334155", borderRadius: 8, padding: "7px 12px", fontSize: 13, fontWeight: 600, cursor: "pointer", outline: "none" }}
+                >
+                  <option value="Easy">Easy</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Hard">Hard</option>
+                </select>
+              </div>
+            </div>
+
             {/* Energy Orb */}
             {gameMode === "orb" && (
               <div style={{ ...card, marginBottom: 16 }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>Energy Orb — Client View</div>
-                    <div style={{ fontSize: 12, color: "#94A3B8" }}>Threshold: 60 · Orb grows + turns green above threshold</div>
+                    <div style={{ fontSize: 12, color: "#94A3B8" }}>Threshold: {rewardThreshold} · Orb grows + turns green above threshold{showClinicianOverlay ? "" : " · score hidden from client"}</div>
                   </div>
                 </div>
-                <GameFeedback score={rewardVal ?? null} threshold={60} />
+                <GameFeedback score={showClinicianOverlay ? (rewardVal ?? null) : null} threshold={rewardThreshold} />
               </div>
             )}
 

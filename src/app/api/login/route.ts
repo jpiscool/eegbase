@@ -63,7 +63,9 @@ export async function POST(req: Request) {
       },
     });
   } catch (e) {
+    // Log full error server-side; never echo it back to the client (could leak
+    // stack traces, file paths, env state).
     console.error("[/api/login] error:", e);
-    return Response.json({ error: String(e) }, { status: 500 });
+    return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }
