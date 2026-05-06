@@ -1295,6 +1295,87 @@ export default function DemoPage() {
               ))}
             </div>
 
+            {/* Mendi-specific fNIRS analytics: Asymmetry + HRF + TOI */}
+            {(() => {
+              const oxyLval = sample?.oxyHbLeft ?? 0;
+              const oxyRval = sample?.oxyHbRight ?? 0;
+              const asymmetry = oxyLval - oxyRval;
+              const asymmetryPct = Math.max(-1, Math.min(1, asymmetry * 2));
+              const toi = oxyLval > 0 ? (oxyLval / (oxyLval + Math.abs(sample?.deoxyHbLeft ?? 0.05))) * 100 : 65;
+              return (
+                <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr", gap: 12, marginBottom: 14 }} className="demo-grid-3">
+                  {/* Prefrontal Asymmetry — Mendi flagship metric */}
+                  <div style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderLeft: "3px solid #A855F7", borderRadius: 12, padding: 14, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA", textTransform: "uppercase", letterSpacing: "0.08em" }}>Prefrontal Asymmetry</div>
+                      <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>L − R DLPFC</span>
+                    </div>
+                    <div style={{ position: "relative", height: 12, background: "linear-gradient(90deg, #EF4444 0%, #1E293B 50%, #10B981 100%)", borderRadius: 6, marginBottom: 8 }}>
+                      <div style={{ position: "absolute", top: -4, left: `calc(50% + ${asymmetryPct * 50}% - 2px)`, width: 4, height: 20, background: "white", borderRadius: 2, boxShadow: "0 0 8px white" }} />
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "#64748B", marginBottom: 8 }}>
+                      <span>R-dominant</span>
+                      <span style={{ fontFamily: "ui-monospace, monospace", color: asymmetry > 0 ? "#34D399" : asymmetry < 0 ? "#F87171" : "#94A3B8", fontWeight: 700, fontSize: 13 }}>
+                        {asymmetry >= 0 ? "+" : ""}{asymmetry.toFixed(3)}
+                      </span>
+                      <span>L-dominant</span>
+                    </div>
+                    <div style={{ fontSize: 10, color: "#94A3B8", lineHeight: 1.5 }}>
+                      L &gt; R indicates approach motivation · R &gt; L indicates withdrawal/anxiety state. Target zone for depression protocols: <strong style={{ color: "#A78BFA" }}>+0.05 to +0.20</strong>
+                    </div>
+                  </div>
+
+                  {/* Hemodynamic Response Function (HRF) viewer */}
+                  <div style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderLeft: "3px solid #06B6D4", borderRadius: 12, padding: 14, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#06B6D4", textTransform: "uppercase", letterSpacing: "0.08em" }}>HRF Response</div>
+                      <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>last stim · canonical</span>
+                    </div>
+                    <svg viewBox="0 0 160 64" width="100%" style={{ display: "block", marginBottom: 6 }}>
+                      <line x1="0" y1="48" x2="160" y2="48" stroke="#1E293B" strokeWidth="1" />
+                      <line x1="20" y1="0" x2="20" y2="64" stroke="rgba(6,182,212,0.3)" strokeWidth="1" strokeDasharray="2 3" />
+                      <text x="22" y="10" fontSize="7" fill="#64748B">stim</text>
+                      <path
+                        d={(() => {
+                          const points: string[] = [];
+                          for (let x = 0; x <= 160; x += 2) {
+                            const tau = (x - 20) / 12;
+                            const y = tau < 0 ? 48 : 48 - 32 * Math.pow(tau, 5) * Math.exp(-tau) / 24;
+                            points.push(`${x},${Math.max(8, Math.min(56, y))}`);
+                          }
+                          return "M " + points.join(" L ");
+                        })()}
+                        fill="none"
+                        stroke="#06B6D4"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        filter="drop-shadow(0 0 4px rgba(6,182,212,0.4))"
+                      />
+                      <circle cx="80" cy="14" r="2.5" fill="#06B6D4" />
+                      <text x="86" y="14" fontSize="7" fill="#06B6D4" fontWeight="700">peak 5s</text>
+                    </svg>
+                    <div style={{ fontSize: 10, color: "#64748B", lineHeight: 1.4 }}>Onset 1.2s · Peak 5.0s · Return 14s · <span style={{ color: "#34D399", fontWeight: 600 }}>well-formed</span></div>
+                  </div>
+
+                  {/* Tissue Oxygenation Index (TOI) */}
+                  <div style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderLeft: "3px solid #10B981", borderRadius: 12, padding: 14, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#10B981", textTransform: "uppercase", letterSpacing: "0.08em" }}>TOI</div>
+                      <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>HbO / (HbO + HbR)</span>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
+                      <span style={{ fontSize: 28, fontWeight: 800, color: "#F1F5F9", fontVariantNumeric: "tabular-nums", letterSpacing: "-0.02em" }}>{toi.toFixed(1)}</span>
+                      <span style={{ fontSize: 12, color: "#64748B" }}>%</span>
+                    </div>
+                    <div style={{ height: 6, background: "#1E293B", borderRadius: 3, overflow: "hidden", marginBottom: 6 }}>
+                      <div style={{ height: "100%", width: `${toi}%`, background: "linear-gradient(90deg, #10B981, #34D399)", borderRadius: 3 }} />
+                    </div>
+                    <div style={{ fontSize: 10, color: "#64748B", lineHeight: 1.4 }}>Normal 60–75% · <span style={{ color: "#34D399", fontWeight: 600 }}>oxygenation healthy</span></div>
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Session visual hierarchy: highlight training metric */}
             <div style={{ background: "linear-gradient(135deg, #0F172A, #1E293B)", border: "1px solid #334155", borderRadius: 10, padding: "10px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 16 }}>🎯</span>
@@ -2380,6 +2461,47 @@ export default function DemoPage() {
               </p>
             </div>
 
+            {/* Mendi-Optimized Protocols (pinned) */}
+            <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 14, padding: 18, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(79,70,229,0.4)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(167,139,250,0.2)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, border: "1px solid rgba(167,139,250,0.3)" }}>M</div>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Mendi-Optimized Protocols</div>
+                    <div style={{ fontSize: 11, color: "#A5B4FC" }}>10 prefrontal-training protocols designed specifically for Mendi&apos;s dual-channel fNIRS</div>
+                  </div>
+                </div>
+                <span style={{ fontSize: 9, fontWeight: 700, color: "#A5B4FC", padding: "3px 10px", background: "rgba(79,70,229,0.2)", borderRadius: 99, border: "1px solid rgba(79,70,229,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Pinned · Mendi Native</span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }} className="demo-grid-2">
+                {[
+                  { name: "Focus Boost",            target: "Fp1+Fp2 HbO ↑ · 12 min",     cite: "Yamashita 2021", color: "#60A5FA" },
+                  { name: "Anxiety Reduction",      target: "R-DLPFC down-train",         cite: "Trambaiolli 2021", color: "#34D399" },
+                  { name: "Depression Asymmetry",   target: "L &gt; R asymmetry training",  cite: "Ehlis 2014; Sutoko 2021", color: "#A78BFA" },
+                  { name: "ADHD Inhibitory Control",target: "Sustained Fp1 HbO upregulation", cite: "Marx 2015", color: "#F59E0B" },
+                  { name: "Burnout Recovery",       target: "DLPFC reactivation",         cite: "KU Leuven 2026", color: "#10B981" },
+                  { name: "PTSD Hyperarousal",      target: "PFC down-regulation",        cite: "Kohl 2020", color: "#EC4899" },
+                  { name: "Athletic Pre-Performance", target: "Approach motivation +",    cite: "Bishop 2022", color: "#06B6D4" },
+                  { name: "Pediatric Focus (8–12)", target: "L-DLPFC sustained ↑",        cite: "Marx 2015", color: "#FBBF24" },
+                  { name: "Executive Recovery (post-COVID)", target: "DLPFC + DMN balance", cite: "Pirkola 2024", color: "#A855F7" },
+                  { name: "Meditation Deepening",   target: "Bilateral PFC quietening",   cite: "Tang 2015", color: "#8B5CF6" },
+                ].map((p) => (
+                  <button
+                    key={p.name}
+                    onClick={() => showToast(`${p.name} · loading Mendi-optimized protocol`)}
+                    style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(79,70,229,0.3)", borderRadius: 10, padding: "10px 12px", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: 10 }}
+                  >
+                    <span style={{ width: 8, height: 8, borderRadius: "50%", background: p.color, boxShadow: `0 0 8px ${p.color}`, flexShrink: 0 }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>{p.name}</div>
+                      <div style={{ fontSize: 10, color: "#94A3B8" }} dangerouslySetInnerHTML={{ __html: p.target }} />
+                    </div>
+                    <span style={{ fontSize: 9, color: "#64748B", fontStyle: "italic", whiteSpace: "nowrap" }}>{p.cite}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Quick-filter tags */}
             <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
               {(["All", "ADHD", "Anxiety", "Trauma / PTSD", "Sleep", "Peak Performance"] as const).map((tag) => {
@@ -2622,6 +2744,40 @@ export default function DemoPage() {
         {/* ── REPORTS ── */}
         {tab === "reports" && (
           <div style={{ animation: "fadeIn 0.3s ease" }}>
+            {/* Mendi Outcomes Registry */}
+            <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 24, marginBottom: 20, boxShadow: "0 12px 36px -16px rgba(79,70,229,0.4)", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, color: "#A5B4FC", background: "rgba(79,70,229,0.2)", padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(79,70,229,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Mendi Co-Published</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(79,70,229,0.25)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, border: "1px solid rgba(79,70,229,0.4)" }}>📊</div>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em" }}>Live Outcomes Registry</div>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.02em" }}>Real-world Mendi outcomes — anonymized &amp; opt-in</div>
+                </div>
+              </div>
+              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6, marginBottom: 16 }}>
+                Aggregate, de-identified, BIDS-compatible. Generates the peer-reviewed clinical evidence Mendi has been waiting for. Direct export pipeline to Mendi&apos;s science team.
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }} className="demo-grid-4">
+                {[
+                  { label: "Sessions", val: "47,213", sub: "across 412 clinics" },
+                  { label: "Mean ΔHbO", val: "+12.3%", sub: "20-session protocol" },
+                  { label: "ADHD-RS", val: "−8.1 pts", sub: "n=2,840 (p<0.001)" },
+                  { label: "Burnout (KU Leuven)", val: "−18.7%", sub: "MBI-EE, n=87" },
+                ].map((s) => (
+                  <div key={s.label} style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(79,70,229,0.3)", borderRadius: 10, padding: 12 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>{s.label}</div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums" }}>{s.val}</div>
+                    <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>{s.sub}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                <button onClick={() => showToast("BIDS-compatible JSON export queued · sending to Mendi science team")} style={{ ...clinicianBtnPrimary, background: "#7C3AED" }}>Export to Mendi Science Team →</button>
+                <button onClick={() => showToast("Filter outcomes by condition, age, region, protocol")} style={clinicianBtn}>Filter registry</button>
+                <button onClick={() => showToast("View 14 active research studies using EEGBase + Mendi data")} style={clinicianBtn}>Active studies (14)</button>
+              </div>
+            </div>
+
             <div style={{ marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>One-Click Shareable Progress Reports</h2>
               <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
@@ -3234,6 +3390,43 @@ export default function DemoPage() {
               ))}
             </div>
 
+            {/* Mendi Clinical Case Studies */}
+            <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 14, padding: 20, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(79,70,229,0.4)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em" }}>Mendi Co-Branded Case Studies</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginTop: 2 }}>Real outcomes from clinics using Mendi + EEGBase</div>
+                </div>
+                <button onClick={() => showToast("Co-branded marketing kit opening — logos, photos, social tiles, intake scripts")} style={{ ...clinicianBtn, fontSize: 11 }}>Marketing kit ↓</button>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }} className="demo-grid-3">
+                {[
+                  { clinic: "Riverside Wellness", location: "Portland, OR", n: 42, cond: "ADHD", protocol: "Focus Boost", outcome: "67% clinically significant ADHD-RS improvement", quote: "Mendi at home + EEGBase clinic visits transformed our ADHD adolescent caseload. Adherence is 4× our prior protocols.", clinician: "Dr. Maya Chen, BCN", img: "🏔" },
+                  { clinic: "Cedar Valley NF",   location: "Austin, TX",   n: 28, cond: "Anxiety",   protocol: "R-DLPFC down-train", outcome: "GAD-7 −7.2 pts mean (n=28, 20 sessions)",                  quote: "We can finally publish outcomes — the registry exports as BIDS-compatible JSON. Our IRB approved fast.",         clinician: "Dr. Jamie Chen, PhD", img: "🌲" },
+                  { clinic: "BrightPath Clinic", location: "Boston, MA",  n: 87, cond: "Burnout",  protocol: "DLPFC reactivation", outcome: "MBI-EE −18.7% (KU Leuven replication)",                    quote: "We replicated KU Leuven's burnout study at home using Mendi + EEGBase. The clinical channel actually works.", clinician: "Dr. Marcus Reyes, MD", img: "✨" },
+                ].map((c) => (
+                  <div key={c.clinic} style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(79,70,229,0.3)", borderRadius: 12, padding: 14 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                      <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(167,139,250,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>{c.img}</div>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: "#F1F5F9" }}>{c.clinic}</div>
+                        <div style={{ fontSize: 10, color: "#94A3B8" }}>{c.location} · n={c.n} · {c.cond}</div>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 11, color: "#A5B4FC", fontWeight: 700, marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.06em" }}>Outcome</div>
+                    <div style={{ fontSize: 12, color: "#34D399", fontWeight: 600, marginBottom: 10, lineHeight: 1.4 }}>{c.outcome}</div>
+                    <div style={{ fontSize: 11, color: "#CBD5E1", fontStyle: "italic", lineHeight: 1.5, marginBottom: 8, paddingLeft: 10, borderLeft: "2px solid rgba(167,139,250,0.4)" }}>&ldquo;{c.quote}&rdquo;</div>
+                    <div style={{ fontSize: 10, color: "#64748B", fontWeight: 600 }}>— {c.clinician}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 14, padding: "10px 14px", background: "rgba(15,23,42,0.6)", borderRadius: 8, fontSize: 11, color: "#A5B4FC", display: "flex", gap: 10, alignItems: "center" }}>
+                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34D399", animation: "pulse 1.5s infinite" }} />
+                <strong style={{ color: "#34D399", fontWeight: 700 }}>14 active research studies</strong>
+                <span>using EEGBase + Mendi data · published case studies → clinic acquisition tool</span>
+              </div>
+            </div>
+
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }} className="demo-grid-2">
               <div style={{ ...card }}>
                 <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Public Booking Page</h3>
@@ -3366,6 +3559,82 @@ export default function DemoPage() {
                     <button onClick={() => showToast("Mendi headset paired ✓ — streaming OxyHb/DeoxyHb at 25 Hz")} style={{ ...clinicianBtnPrimary, fontSize: 13 }}>Pair Mendi headset</button>
                     <button onClick={() => showToast("Calibration started — keep eyes closed for 30 seconds")} style={clinicianBtn}>Run calibration</button>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Mendi-specific feature row: Calibration · Drop-ship · Partner program */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 16 }} className="demo-grid-3">
+              {/* Calibration Wizard */}
+              <div style={{ ...card, padding: 18 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>Mendi Calibration</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {[
+                    { num: 1, label: "Hairline placement", status: "complete", img: "📍" },
+                    { num: 2, label: "Sensor contact pressure", status: "complete", img: "🤝" },
+                    { num: 3, label: "Ambient light check", status: "active", img: "💡" },
+                    { num: 4, label: "Baseline capture (60s)", status: "pending", img: "⏱" },
+                  ].map((s) => (
+                    <div key={s.num} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 10px", background: s.status === "active" ? "rgba(167,139,250,0.1)" : "#0A1320", border: s.status === "active" ? "1px solid #A78BFA" : "1px solid #1E293B", borderRadius: 8 }}>
+                      <span style={{ width: 24, height: 24, borderRadius: "50%", background: s.status === "complete" ? "#10B981" : s.status === "active" ? "#A78BFA" : "#1E293B", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 11, flexShrink: 0 }}>
+                        {s.status === "complete" ? "✓" : s.num}
+                      </span>
+                      <span style={{ fontSize: 12, color: "#CBD5E1", flex: 1 }}>{s.label}</span>
+                      <span style={{ fontSize: 14 }}>{s.img}</span>
+                    </div>
+                  ))}
+                </div>
+                <button onClick={() => showToast("Calibration step 3 complete · capturing baseline...")} style={{ ...clinicianBtnPrimary, fontSize: 12, width: "100%", marginTop: 12 }}>Continue to Step 3 →</button>
+              </div>
+
+              {/* Drop-ship Mendi to client */}
+              <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 18, boxShadow: "0 8px 24px -12px rgba(79,70,229,0.3)" }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>Order Mendi for Client</div>
+                <div style={{ fontSize: 13, color: "#F1F5F9", marginBottom: 4, fontWeight: 700 }}>Ship to client&apos;s home</div>
+                <div style={{ fontSize: 12, color: "#CBD5E1", lineHeight: 1.5, marginBottom: 12 }}>Drop-ship a Mendi headset to your client. Pre-paired to their EEGBase account, opens in-app already provisioned.</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
+                  <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(79,70,229,0.3)", borderRadius: 8, padding: 8 }}>
+                    <div style={{ fontSize: 10, color: "#A5B4FC", fontWeight: 600 }}>Clinic price</div>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: "#F1F5F9", fontVariantNumeric: "tabular-nums" }}>$240</div>
+                  </div>
+                  <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(79,70,229,0.3)", borderRadius: 8, padding: 8 }}>
+                    <div style={{ fontSize: 10, color: "#A5B4FC", fontWeight: 600 }}>HSA/FSA</div>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: "#34D399", fontVariantNumeric: "tabular-nums" }}>Eligible</div>
+                  </div>
+                </div>
+                <button onClick={() => showToast("Order placed: Mendi headset shipping to Sarah Mitchell · arrives in 3 days · pre-paired ✓")} style={{ ...clinicianBtnPrimary, fontSize: 12, width: "100%", background: "#7C3AED" }}>Order &amp; ship to client →</button>
+                <div style={{ fontSize: 10, color: "#64748B", marginTop: 8, textAlign: "center" }}>Truemed-eligible · ships in 3 days · pre-provisioned</div>
+              </div>
+
+              {/* Partner Program tiers */}
+              <div style={{ ...card, padding: 18 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#F59E0B", textTransform: "uppercase", letterSpacing: "0.08em" }}>Mendi Partner Program</div>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: "#F59E0B", padding: "2px 8px", background: "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 99 }}>SILVER</span>
+                </div>
+                <div style={{ marginBottom: 10 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#94A3B8", marginBottom: 4 }}>
+                    <span>Sessions this month</span>
+                    <span style={{ color: "#F59E0B", fontWeight: 700 }}>247 / 500</span>
+                  </div>
+                  <div style={{ height: 8, background: "#0A1320", borderRadius: 4, overflow: "hidden", border: "1px solid #1E293B" }}>
+                    <div style={{ width: "49%", height: "100%", background: "linear-gradient(90deg, #F59E0B, #FCD34D)" }} />
+                  </div>
+                  <div style={{ fontSize: 10, color: "#64748B", marginTop: 4 }}>253 more to reach <strong style={{ color: "#FCD34D" }}>Gold tier</strong></div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 5, fontSize: 11, color: "#CBD5E1" }}>
+                  {[
+                    { tier: "Bronze", on: true, perk: "Listed on Mendi clinic finder" },
+                    { tier: "Silver", on: true, perk: "20% off device · co-marketing" },
+                    { tier: "Gold",   on: false, perk: "30% off · joint research grant" },
+                    { tier: "Platinum", on: false, perk: "Free devices · Mendi Certified Clinic badge" },
+                  ].map((t) => (
+                    <div key={t.tier} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ width: 14, height: 14, borderRadius: "50%", background: t.on ? "#10B981" : "#1E293B", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, flexShrink: 0 }}>{t.on ? "✓" : ""}</span>
+                      <span style={{ fontWeight: 700, color: t.on ? "#F1F5F9" : "#64748B", width: 60 }}>{t.tier}</span>
+                      <span style={{ color: t.on ? "#94A3B8" : "#475569" }}>{t.perk}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
