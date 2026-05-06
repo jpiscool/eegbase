@@ -2378,7 +2378,7 @@ export default function DemoPage() {
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 8 }}>
                 <div>
                   <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Normative database comparison</h3>
-                  <p style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>Sarah&apos;s Z-scores vs age- and sex-matched cohort · n=4,210 healthy controls · LORETA source localization on roadmap</p>
+                  <p style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>Sarah&apos;s Z-scores vs age- and sex-matched cohort · n=847 healthy controls · LORETA source localization on roadmap</p>
                 </div>
                 <div style={{ display: "flex", gap: 4, padding: 3, background: "#0A1320", border: "1px solid #1E293B", borderRadius: 8 }}>
                   {["Eyes-closed", "Eyes-open", "Task"].map((m, i) => (
@@ -3218,8 +3218,8 @@ export default function DemoPage() {
               <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(16,185,129,0.15)", color: "#10B981", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 16 }}>$</div>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>Billing + CPT Codes <span style={{ color: "#10B981", fontWeight: 600 }}>— Zero competitors have this</span></div>
-                  <div style={{ fontSize: 12, color: "#94A3B8" }}>After each session, EEGBase auto-generates a superbill with CPT 90901 (biofeedback), 97012, and E/M codes. Export to CMS-1500 or Stripe self-pay. No separate billing software needed.</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>Billing + CPT Codes <span style={{ color: "#10B981", fontWeight: 600 }}>— bundled, not bolted on</span></div>
+                  <div style={{ fontSize: 12, color: "#94A3B8" }}>After each session, EEGBase auto-generates a superbill with CPT 90901 (biofeedback), 97012, and E/M codes. Export to CMS-1500 or Stripe self-pay. Most neurofeedback platforms make you pair with a separate EHR — we don&apos;t.</div>
                 </div>
                 <button onClick={() => showToast("Superbill PDF generated — opens in production")} style={{ marginLeft: "auto", fontSize: 12, fontWeight: 700, padding: "7px 16px", background: "#059669", color: "white", border: "none", borderRadius: 8, cursor: "pointer" }}>
                   Preview Superbill
@@ -3235,7 +3235,7 @@ export default function DemoPage() {
             <div style={{ marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Condition-Specific Protocol Library</h2>
               <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
-                50+ evidence-based protocols organized by condition. Search, preview, and apply in one click — no more looking up papers or guessing electrode placement. Zero competitors have a searchable protocol library.
+                50+ evidence-based protocols organized by condition. Search, preview, and apply in one click — no more looking up papers or guessing electrode placement. Open library — clinicians can fork, customize, and contribute back.
               </p>
             </div>
 
@@ -3720,7 +3720,7 @@ export default function DemoPage() {
 
             {/* EHR integration */}
             <div style={{ marginTop: 16, background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #10B981", borderRadius: 12, padding: "16px 20px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 8 }}>EHR Integration <span style={{ color: "#10B981", fontWeight: 600 }}>— Zero competitors have this</span></div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 8 }}>EHR Integration <span style={{ color: "#10B981", fontWeight: 600 }}>— sync neurofeedback signal data, not just notes</span></div>
               <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 12 }}>Session notes and progress data sync directly to your EHR — no copy-paste. Select your platform:</p>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {["SimplePractice", "TherapyNotes", "Jane App", "TheraNest", "Alma"].map((ehr) => (
@@ -3750,10 +3750,10 @@ export default function DemoPage() {
             {/* Why EEGBase summary */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }} className="demo-grid-2">
               {[
-                { label: "Only platform with fNIRS + EEG + HRV", sub: "Competitors offer one modality; we offer all three", color: "#06B6D4" },
-                { label: "AI protocol recommendations", sub: "74% of stalled clients improve within 2 sessions", color: "#A855F7" },
-                { label: "Zero cost · Open source", sub: "Competitors charge $95–$650/mo. We charge nothing.", color: "#10B981" },
-                { label: "Browser-based · No install", sub: "Runs on any device — no Windows-only requirement", color: "#F59E0B" },
+                { label: "fNIRS + EEG + HRV in one app", sub: "Most platforms cover one modality; we unify all three with native Mendi support", color: "#06B6D4" },
+                { label: "AI cross-session pattern detector", sub: "Correlates Mendi data with sleep · mood · HRV · adherence — flags drivers", color: "#A855F7" },
+                { label: "Free OSS · or $19/session up", sub: "Legacy platforms: $95–650/mo + $2–6k upfront. We&apos;re open-source.", color: "#10B981" },
+                { label: "Browser-based · No install", sub: "Cloud-native — no Windows-only requirement, no per-machine licenses", color: "#F59E0B" },
               ].map(({ label, sub, color }) => (
                 <div key={label} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 14, padding: "16px 18px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 24px -16px rgba(0,0,0,0.5)" }}>
                   <div style={{ width: 8, height: 8, borderRadius: "50%", background: color, marginBottom: 10, boxShadow: `0 0 12px ${color}` }} />
