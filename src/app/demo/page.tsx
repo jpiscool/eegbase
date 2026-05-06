@@ -3776,16 +3776,234 @@ export default function DemoPage() {
               </div>
             </div>
 
+            {/* INTEROPERABILITY — LSL + BrainFlow + Web Bluetooth */}
+            <div style={{ ...card, marginBottom: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                <div>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Universal Interoperability</h3>
+                  <p style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>Triple-stack: any LSL stream · any BrainFlow board · any Web Bluetooth device</p>
+                </div>
+                <div style={{ display: "flex", gap: 6 }}>
+                  {["LSL 1.16", "BrainFlow 5.x", "Web BLE"].map((v) => (
+                    <span key={v} style={{ fontSize: 9, fontWeight: 700, color: "#34D399", padding: "3px 8px", background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>{v}</span>
+                  ))}
+                </div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }} className="demo-grid-3">
+                {/* LSL Outlets/Inlets */}
+                <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderLeft: "3px solid #06B6D4", borderRadius: 10, padding: 12 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#06B6D4", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Lab Streaming Layer (LSL)</div>
+                  <div style={{ fontSize: 10, color: "#64748B", marginBottom: 8 }}>Outlets advertised on this network</div>
+                  {[
+                    { name: "EEGBase_Mendi_OxyHb", srate: "25 Hz", ch: 4 },
+                    { name: "EEGBase_Polar_RR",    srate: "1 kHz", ch: 1 },
+                    { name: "EEGBase_Markers",     srate: "irregular", ch: 1 },
+                  ].map((s) => (
+                    <div key={s.name} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", fontSize: 10, fontFamily: "ui-monospace, monospace", borderTop: "1px solid #1E293B" }}>
+                      <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#34D399", flexShrink: 0, animation: "pulse 1.5s infinite" }} />
+                      <span style={{ color: "#A5F3FC", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.name}</span>
+                      <span style={{ color: "#64748B", flexShrink: 0 }}>{s.ch}ch · {s.srate}</span>
+                    </div>
+                  ))}
+                  <div style={{ fontSize: 10, color: "#64748B", marginTop: 8, marginBottom: 6 }}>Inlets resolved from peers</div>
+                  {[
+                    { name: "PsychoPy_Markers", srate: "irregular" },
+                    { name: "Tobii_Pro_Gaze",   srate: "120 Hz" },
+                  ].map((s) => (
+                    <div key={s.name} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", fontSize: 10, fontFamily: "ui-monospace, monospace", borderTop: "1px solid #1E293B" }}>
+                      <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#A78BFA", flexShrink: 0 }} />
+                      <span style={{ color: "#C4B5FD", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.name}</span>
+                      <span style={{ color: "#64748B", flexShrink: 0 }}>{s.srate}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* BrainFlow universal driver */}
+                <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderLeft: "3px solid #A855F7", borderRadius: 10, padding: 12 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#A855F7", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>BrainFlow Universal Driver</div>
+                  <div style={{ fontSize: 10, color: "#64748B", marginBottom: 8 }}>Single API for 32+ supported boards</div>
+                  <pre style={{ margin: 0, padding: "10px 12px", fontSize: 10, fontFamily: "ui-monospace, monospace", color: "#CBD5E1", lineHeight: 1.65, overflow: "auto", background: "#0F172A", borderRadius: 6, marginBottom: 8 }}>{`from brainflow import BoardShim
+board = BoardShim(BoardIds.CYTON_BOARD,
+                  params)
+board.prepare_session()
+board.start_stream()`}</pre>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                    {["Cyton", "Ganglion", "Crown", "Muse 2/S", "BrainBit", "Mentalab", "Unicorn", "Notion", "Synthetic"].map((b) => (
+                      <span key={b} style={{ fontSize: 9, color: "#C4B5FD", background: "#1E293B", border: "1px solid #334155", padding: "2px 6px", borderRadius: 4 }}>{b}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Drift / latency dashboard */}
+                <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderLeft: "3px solid #10B981", borderRadius: 10, padding: 12 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#10B981", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Sync Drift Dashboard</div>
+                  {[
+                    { l: "BLE → adapter", v: "12.4 ms", c: "#34D399" },
+                    { l: "Adapter → DB",  v: "3.1 ms",  c: "#34D399" },
+                    { l: "LSL clock drift", v: "+0.18 ms/min", c: "#34D399" },
+                    { l: "Inter-stream offset", v: "<1 ms (max 4)", c: "#34D399" },
+                    { l: "Marker jitter (parallel)", v: "0.4 ms σ", c: "#34D399" },
+                  ].map((m) => (
+                    <div key={m.l} style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", fontSize: 10, borderTop: "1px solid #1E293B" }}>
+                      <span style={{ color: "#94A3B8" }}>{m.l}</span>
+                      <span style={{ color: m.c, fontFamily: "ui-monospace, monospace", fontWeight: 700 }}>{m.v}</span>
+                    </div>
+                  ))}
+                  <div style={{ fontSize: 10, color: "#64748B", marginTop: 8, lineHeight: 1.4 }}>Sub-ms multi-device alignment without a SyncBox.</div>
+                </div>
+              </div>
+            </div>
+
+            {/* IMPORT / EXPORT — BIDS, EDF+, BrainVision, SNIRF, XDF */}
+            <div style={{ ...card, marginBottom: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                <div>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Import &amp; Export · Research-Grade Formats</h3>
+                  <p style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>BIDS-EEG / BIDS-fNIRS · EDF+ · BrainVision (.vhdr) · SNIRF · XDF · OpenNeuro publish</p>
+                </div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 12 }} className="demo-grid-2">
+                {/* Drop zone */}
+                <div style={{ background: "#0A1320", border: "2px dashed #334155", borderRadius: 10, padding: 18, textAlign: "center", cursor: "pointer" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#60A5FA")}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#334155")}
+                  onClick={() => showToast("BIDS-compatible session imported · 64 channels · 1.2 GB · MNE auto-loaded")}
+                >
+                  <div style={{ fontSize: 28, marginBottom: 6 }}>📥</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Drop a session here</div>
+                  <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 10 }}>Auto-detects format · channel mapping wizard · MNE-Python compatible</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6, justifyContent: "center" }}>
+                    {[".edf", ".bdf", ".vhdr", ".eeg", ".snirf", ".xdf", ".csv", ".cnt", "BIDS folder"].map((f) => (
+                      <span key={f} style={{ fontSize: 10, fontFamily: "ui-monospace, monospace", color: "#A5B4FC", background: "#1E293B", border: "1px solid #334155", padding: "2px 8px", borderRadius: 4 }}>{f}</span>
+                    ))}
+                  </div>
+                </div>
+                {/* Export options */}
+                <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 12 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#34D399", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>One-Click Export</div>
+                  {[
+                    { fmt: "BIDS-EEG bundle", desc: "sub-/ses-/eeg/ tree + sidecars", color: "#A78BFA" },
+                    { fmt: "BIDS-fNIRS (Mendi)", desc: "SNIRF + dataset_description.json", color: "#A78BFA" },
+                    { fmt: "EDF+ Export", desc: "Universal clinical format", color: "#60A5FA" },
+                    { fmt: "Publish to OpenNeuro", desc: "DataLad · DOI assigned", color: "#10B981" },
+                    { fmt: "DICOM-EEG", desc: "HL7 / FHIR Observation", color: "#F59E0B" },
+                  ].map((o) => (
+                    <button key={o.fmt} onClick={() => showToast(`${o.fmt} · queued`)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "8px 10px", background: "transparent", border: "1px solid #1E293B", borderRadius: 6, cursor: "pointer", textAlign: "left", marginBottom: 6, transition: "border-color 0.15s" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#475569")}
+                      onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#1E293B")}
+                    >
+                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: o.color, flexShrink: 0 }} />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 11, color: "#F1F5F9", fontWeight: 600 }}>{o.fmt}</div>
+                        <div style={{ fontSize: 10, color: "#64748B" }}>{o.desc}</div>
+                      </div>
+                      <span style={{ fontSize: 9, color: "#475569" }}>↓</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* MULTI-DEVICE SYNC TIMELINE */}
+            <div style={{ ...card, marginBottom: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                <div>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Multi-Device Sync Timeline</h3>
+                  <p style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>4 streams · LSL clock-aligned · click any moment to inspect all signals</p>
+                </div>
+                <span style={{ fontSize: 10, color: "#34D399", fontWeight: 700, padding: "3px 8px", background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Sub-ms Aligned</span>
+              </div>
+              <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 12 }}>
+                {[
+                  { name: "Mendi OxyHb",   color: "#A855F7", path: "M 0,12 Q 30,8 60,14 T 120,11 T 180,15 T 240,10 T 300,13 T 360,12 T 420,11" },
+                  { name: "Muse Beta",     color: "#06B6D4", path: "M 0,12 Q 20,16 40,10 T 80,14 T 120,9 T 160,15 T 200,11 T 240,13 T 280,10 T 320,14 T 360,12 T 420,12" },
+                  { name: "Polar HRV",     color: "#10B981", path: "M 0,12 L 30,9 L 60,14 L 90,10 L 120,15 L 150,11 L 180,12 L 210,9 L 240,14 L 270,10 L 300,13 L 330,11 L 360,12 L 390,10 L 420,12" },
+                  { name: "Pupil Gaze X",  color: "#F59E0B", path: "M 0,12 L 60,8 L 120,16 L 180,9 L 240,14 L 300,11 L 360,13 L 420,12" },
+                ].map((s, i) => (
+                  <div key={s.name} style={{ display: "flex", alignItems: "center", gap: 10, padding: "5px 0", borderTop: i === 0 ? "none" : "1px solid #1E293B" }}>
+                    <div style={{ width: 90, fontSize: 10, color: s.color, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>{s.name}</div>
+                    <svg viewBox="0 0 420 24" width="100%" style={{ flex: 1, height: 24 }}>
+                      <path d={s.path} fill="none" stroke={s.color} strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                    <div style={{ width: 50, fontSize: 10, color: "#64748B", fontFamily: "ui-monospace, monospace", textAlign: "right" }}>{[".05Hz", "16Hz", "·", "120Hz"][i]}</div>
+                  </div>
+                ))}
+                {/* Stim marker */}
+                <div style={{ position: "relative", height: 14, marginTop: 4, borderTop: "1px solid #1E293B" }}>
+                  {[5, 18, 38, 62, 78].map((p, i) => (
+                    <div key={i} style={{ position: "absolute", left: `${10 + p * 0.85}%`, top: 4, width: 2, height: 8, background: "#FCD34D" }} title={`Stim @ ${p}s`} />
+                  ))}
+                  <span style={{ fontSize: 9, color: "#FCD34D", marginLeft: 96, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>↑ stim markers (LSL)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* DEVICE FLEET MANAGEMENT */}
+            <div style={{ ...card, marginBottom: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Device Fleet Management</h3>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button onClick={() => showToast("Firmware OTA push initiated for 3 out-of-date devices")} style={clinicianBtn}>Update firmware (3)</button>
+                  <button onClick={() => showToast("Inventory CSV exported")} style={clinicianBtn}>Export inventory</button>
+                </div>
+              </div>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11, minWidth: 720 }}>
+                  <thead>
+                    <tr style={{ background: "#1E293B", borderBottom: "1px solid #334155" }}>
+                      {["Device", "Serial", "Assigned", "Last seen", "Firmware", "Battery", "Status"].map((h) => (
+                        <th key={h} style={{ padding: "8px 10px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.06em" }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { dev: "Mendi #1",     sn: "MND-2403-A41", assigned: "Sarah Mitchell (home)", seen: "2h ago",  fw: "v2.4.1",  fwOk: true,  bat: 78, status: "online" },
+                      { dev: "Mendi #2",     sn: "MND-2403-A42", assigned: "Clinic · Room 1",       seen: "now",      fw: "v2.4.1",  fwOk: true,  bat: 92, status: "online" },
+                      { dev: "Mendi #3",     sn: "MND-2401-B17", assigned: "James Okafor (home)",   seen: "3d ago",   fw: "v2.3.0",  fwOk: false, bat: 31, status: "offline" },
+                      { dev: "Muse S Athena", sn: "MSA-25-019",  assigned: "Clinic · Room 2",       seen: "12m ago",  fw: "v3.1.2",  fwOk: true,  bat: 64, status: "online" },
+                      { dev: "Polar H10 #1", sn: "BD-02-2839",   assigned: "Clinic · Pool",         seen: "now",      fw: "v3.1.0",  fwOk: true,  bat: 88, status: "online" },
+                      { dev: "OpenBCI Cyton", sn: "OBC-22-014",  assigned: "Lab · benchtop",        seen: "1d ago",   fw: "v3.1.2",  fwOk: false, bat: 0,  status: "wired" },
+                    ].map((d) => (
+                      <tr key={d.sn} style={{ borderTop: "1px solid #334155" }}>
+                        <td style={{ padding: "8px 10px", color: "#F1F5F9", fontWeight: 600 }}>{d.dev}</td>
+                        <td style={{ padding: "8px 10px", color: "#64748B", fontFamily: "ui-monospace, monospace" }}>{d.sn}</td>
+                        <td style={{ padding: "8px 10px", color: "#CBD5E1" }}>{d.assigned}</td>
+                        <td style={{ padding: "8px 10px", color: "#94A3B8" }}>{d.seen}</td>
+                        <td style={{ padding: "8px 10px" }}>
+                          <span style={{ color: d.fwOk ? "#34D399" : "#F59E0B", fontFamily: "ui-monospace, monospace", fontWeight: 600 }}>{d.fw}</span>
+                          {!d.fwOk && <span style={{ marginLeft: 6, fontSize: 9, color: "#F59E0B", fontWeight: 700 }}>UPDATE</span>}
+                        </td>
+                        <td style={{ padding: "8px 10px" }}>
+                          {d.bat > 0 ? (
+                            <span style={{ color: d.bat > 50 ? "#34D399" : d.bat > 20 ? "#F59E0B" : "#EF4444", fontVariantNumeric: "tabular-nums", fontWeight: 600 }}>{d.bat}%</span>
+                          ) : <span style={{ color: "#64748B" }}>—</span>}
+                        </td>
+                        <td style={{ padding: "8px 10px" }}>
+                          <span style={{ fontSize: 9, fontWeight: 700, color: d.status === "online" ? "#34D399" : d.status === "wired" ? "#60A5FA" : "#64748B", padding: "2px 8px", background: d.status === "online" ? "rgba(16,185,129,0.12)" : d.status === "wired" ? "rgba(96,165,250,0.12)" : "#1E293B", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                            {d.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             {/* Supported devices catalog */}
             <div style={{ ...card, marginBottom: 16 }}>
               <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Hardware Catalog</h3>
-              <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 14 }}>32 devices supported out of the box · open SDK for adding your own</p>
+              <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 14 }}>110+ devices supported via LSL · BrainFlow · vendor SDK · open SDK to add your own</p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }} className="demo-grid-2">
                 {[
-                  { cat: "fNIRS", items: ["Mendi", "NIRx", "Artinis"] },
-                  { cat: "EEG (consumer)", items: ["Muse 2/S", "NeuroSky", "BrainBit"] },
-                  { cat: "EEG (clinical)", items: ["OpenBCI Cyton", "Wearable Sensing", "ANT Neuro", "g.Tec Unicorn"] },
-                  { cat: "HRV / Wearable", items: ["Polar H10", "Oura Ring", "Apple Watch", "Garmin", "Whoop"] },
+                  { cat: "fNIRS", items: ["Mendi", "NIRx NIRSport2", "Artinis Brite", "Artinis OctaMon", "Gowerlabs LUMO", "Cortivision", "Kernel Flow", "OBELAB NIRSIT"] },
+                  { cat: "EEG (consumer)", items: ["Muse 2/S", "Muse S Athena", "NeuroSky", "BrainBit", "BrainBit Flex", "Emotiv Insight", "Emotiv EPOC X", "Neurosity Crown"] },
+                  { cat: "EEG (clinical)", items: ["OpenBCI Cyton", "OpenBCI Galea", "Wearable Sensing DSI-24", "ANT Neuro eego", "Brain Products LiveAmp", "Brain Products actiCHamp", "BrainMaster Discovery 24E", "g.tec Unicorn"] },
+                  { cat: "HRV / Wearable / EDA", items: ["Polar H10 / Verity", "Garmin HRM-Pro", "Whoop 4.0", "Oura Ring 4", "Apple Watch", "HeartMath emWave", "Empatica EmbracePlus", "Shimmer3 GSR+"] },
+                  { cat: "Eye tracking", items: ["Tobii Pro Spectrum", "Pupil Labs Neon", "EyeLink 1000+"] },
+                  { cat: "Multimodal hubs", items: ["BIOPAC MP160", "Thought Tech ProComp", "Mind Media NeXus", "iMotions"] },
+                  { cat: "BCI / hybrid", items: ["OpenBCI Galea", "Cognixion ONE", "Bitbrain Diadem"] },
                 ].map((g) => (
                   <div key={g.cat} style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 12 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: "#60A5FA", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>{g.cat}</div>
