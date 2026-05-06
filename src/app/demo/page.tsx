@@ -2430,11 +2430,15 @@ export default function DemoPage() {
                   { bullet: "•", text: "Sarah has completed 20 of 30 planned sessions with excellent attendance (95% show rate). She has made strong progress on the primary treatment goals." },
                   { bullet: "•", text: "Her brain training reward score has increased by 131% since the first session (38.2 \u2192 88.0), indicating meaningfully better ability to produce the target brainwave pattern (sensorimotor rhythm, 12\u201315 Hz)." },
                   { bullet: "•", text: "Depression symptoms (PHQ-9) have decreased from moderately severe (18) to minimal (5). Anxiety symptoms (GAD-7) have decreased from moderate (14) to minimal (4)." },
-                  { bullet: "[Note]", text: "Frontal theta activity remains above the normal range for her age group. The AI has recommended a protocol adjustment (alpha-theta training) starting session 9, which we have implemented." },
+                  { bullet: "Note", text: "Frontal theta activity remains above the normal range for her age group. The AI has recommended a protocol adjustment (alpha-theta training) starting session 9, which we have implemented." },
                   { bullet: "•", text: "Projected outcome at 30 sessions: PHQ-9 \u2264 4 (minimal depression), reward score \u2265 90 (above target consistently), based on trajectory and community database comparison." },
                 ].map(({ bullet, text }, i) => (
                   <div key={i} style={{ display: "flex", gap: 12, marginBottom: 12, alignItems: "flex-start" }}>
-                    <span style={{ fontSize: 13, flexShrink: 0, fontWeight: bullet === "[Note]" ? 700 : 400, color: bullet === "[Note]" ? "#92400E" : "#374151" }}>{bullet}</span>
+                    {bullet === "Note" ? (
+                      <span style={{ fontSize: 11, flexShrink: 0, fontWeight: 700, color: "#92400E", background: "#FEF3C7", border: "1px solid #FDE68A", borderRadius: 6, padding: "2px 8px", letterSpacing: "0.04em", textTransform: "uppercase" }}>Note</span>
+                    ) : (
+                      <span style={{ fontSize: 13, flexShrink: 0, fontWeight: 400, color: "#9CA3AF" }}>{bullet}</span>
+                    )}
                     <span style={{ fontSize: 13, color: "#374151", lineHeight: 1.7 }}>{text}</span>
                   </div>
                 ))}
@@ -2508,15 +2512,15 @@ export default function DemoPage() {
             {/* Why EEGBase summary */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }} className="demo-grid-2">
               {[
-                { icon: "🧠", label: "Only platform with fNIRS + EEG + HRV", sub: "Competitors offer one modality; we offer all three", color: "#60A5FA", bg: "rgba(30,58,138,0.25)", border: "#3B82F6" },
-                { icon: "🤖", label: "AI protocol recommendations", sub: "74% of stalled clients improve within 2 sessions", color: "#A78BFA", bg: "rgba(76,29,149,0.25)", border: "#7C3AED" },
-                { icon: "$0", label: "Zero cost · Open source", sub: "Competitors charge $95–$650/mo. We charge nothing.", color: "#34D399", bg: "rgba(6,78,59,0.35)", border: "#065F46" },
-                { icon: "☁️", label: "Browser-based · No install", sub: "Runs on any device — no Windows-only requirement", color: "#38BDF8", bg: "rgba(7,89,133,0.25)", border: "#0EA5E9" },
-              ].map(({ icon, label, sub, color, bg, border }) => (
-                <div key={label} style={{ background: bg, border: `1.5px solid ${border}`, borderRadius: 14, padding: "16px 18px" }}>
-                  <div style={{ fontSize: 22, marginBottom: 6 }}>{icon}</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color, marginBottom: 4, lineHeight: 1.3 }}>{label}</div>
-                  <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>{sub}</div>
+                { label: "Only platform with fNIRS + EEG + HRV", sub: "Competitors offer one modality; we offer all three", color: "#60A5FA" },
+                { label: "AI protocol recommendations", sub: "74% of stalled clients improve within 2 sessions", color: "#A78BFA" },
+                { label: "Zero cost · Open source", sub: "Competitors charge $95–$650/mo. We charge nothing.", color: "#34D399" },
+                { label: "Browser-based · No install", sub: "Runs on any device — no Windows-only requirement", color: "#38BDF8" },
+              ].map(({ label, sub, color }) => (
+                <div key={label} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 14, padding: "16px 18px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 24px -16px rgba(0,0,0,0.5)" }}>
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: color, marginBottom: 10, boxShadow: `0 0 12px ${color}` }} />
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4, lineHeight: 1.35, letterSpacing: "-0.01em" }}>{label}</div>
+                  <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.55 }}>{sub}</div>
                 </div>
               ))}
             </div>
