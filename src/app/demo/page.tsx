@@ -2334,6 +2334,113 @@ export default function DemoPage() {
               </p>
             </div>
 
+            {/* MENDI HOME-CONTINUITY BRIDGE */}
+            <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 20, marginBottom: 16, boxShadow: "0 12px 36px -16px rgba(79,70,229,0.4)", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, color: "#A5B4FC", background: "rgba(79,70,229,0.2)", padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(79,70,229,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Mendi Home-Continuity</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(167,139,250,0.2)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, border: "1px solid rgba(167,139,250,0.3)" }}>↔</div>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Clinic ↔ Home Practice Bridge</div>
+                  <div style={{ fontSize: 11, color: "#A5B4FC" }}>Push protocols to client&apos;s Mendi at home · sessions auto-flow back</div>
+                </div>
+              </div>
+
+              {/* Visual flow: clinic → home → clinic */}
+              <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(79,70,229,0.25)", borderRadius: 12, padding: 16, marginBottom: 14 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr auto 1fr", gap: 14, alignItems: "center" }}>
+                  {/* Clinic */}
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ width: 56, height: 56, borderRadius: 12, background: "linear-gradient(135deg, #2563EB, #4F46E5)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 8px", fontSize: 26, boxShadow: "0 4px 16px -4px rgba(79,70,229,0.5)" }}>🏥</div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#F1F5F9" }}>Clinic Visit</div>
+                    <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>Session 8 · today</div>
+                    <div style={{ fontSize: 9, color: "#A5B4FC", marginTop: 4, fontFamily: "ui-monospace, monospace" }}>Protocol: Focus Boost</div>
+                  </div>
+                  {/* Arrow → */}
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                    <svg width="48" height="20" viewBox="0 0 48 20"><defs><linearGradient id="arrowR" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#4F46E5" /><stop offset="100%" stopColor="#A78BFA" /></linearGradient></defs><line x1="2" y1="10" x2="40" y2="10" stroke="url(#arrowR)" strokeWidth="2" strokeDasharray="4 3" /><polygon points="40,5 46,10 40,15" fill="#A78BFA" /></svg>
+                    <span style={{ fontSize: 9, color: "#A78BFA", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>Push</span>
+                  </div>
+                  {/* Home / Mendi */}
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ width: 56, height: 56, borderRadius: 12, background: "linear-gradient(135deg, #7C3AED, #A78BFA)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 8px", fontSize: 26, boxShadow: "0 4px 16px -4px rgba(167,139,250,0.5)", position: "relative" }}>
+                      🧠
+                      <span style={{ position: "absolute", bottom: -2, right: -2, fontSize: 14 }}>📱</span>
+                    </div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#F1F5F9" }}>Mendi at Home</div>
+                    <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>3× / week, 12 min</div>
+                    <div style={{ fontSize: 9, color: "#34D399", marginTop: 4, fontFamily: "ui-monospace, monospace" }}>Streaming live</div>
+                  </div>
+                  {/* Arrow ← */}
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                    <svg width="48" height="20" viewBox="0 0 48 20"><defs><linearGradient id="arrowL" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#A78BFA" /><stop offset="100%" stopColor="#10B981" /></linearGradient></defs><line x1="8" y1="10" x2="46" y2="10" stroke="url(#arrowL)" strokeWidth="2" strokeDasharray="4 3" /><polygon points="46,5 40,10 46,15" fill="none" /><polygon points="2,10 8,5 8,15" fill="#A78BFA" /></svg>
+                    <span style={{ fontSize: 9, color: "#34D399", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>Sync back</span>
+                  </div>
+                  {/* Next visit */}
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ width: 56, height: 56, borderRadius: 12, background: "linear-gradient(135deg, #10B981, #06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 8px", fontSize: 26, boxShadow: "0 4px 16px -4px rgba(16,185,129,0.4)" }}>📊</div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#F1F5F9" }}>Next Visit</div>
+                    <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>Session 9 · May 12</div>
+                    <div style={{ fontSize: 9, color: "#34D399", marginTop: 4, fontFamily: "ui-monospace, monospace" }}>+8 home sessions</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Home practice activity feed */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }} className="demo-grid-2">
+                <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(79,70,229,0.25)", borderRadius: 10, padding: 12 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Sarah&apos;s home practice this week</div>
+                  {[
+                    { day: "Mon", date: "May 5", duration: 12, score: 71, color: "#10B981" },
+                    { day: "Wed", date: "May 7", duration: 14, score: 68, color: "#10B981" },
+                    { day: "Thu", date: "May 8", duration: 10, score: 62, color: "#F59E0B" },
+                    { day: "Sat", date: "May 10", duration: 0, score: 0, color: "#475569" },
+                    { day: "Sun", date: "May 11", duration: 0, score: 0, color: "#475569" },
+                  ].map((s) => (
+                    <div key={s.day} style={{ display: "flex", alignItems: "center", gap: 10, padding: "5px 0", fontSize: 11, borderTop: "1px solid #1E293B" }}>
+                      <span style={{ color: "#94A3B8", width: 50, fontWeight: 600 }}>{s.day} {s.date}</span>
+                      {s.duration > 0 ? (
+                        <>
+                          <span style={{ color: "#CBD5E1", width: 56, fontVariantNumeric: "tabular-nums" }}>{s.duration} min</span>
+                          <div style={{ flex: 1, height: 4, background: "#1E293B", borderRadius: 2, overflow: "hidden" }}>
+                            <div style={{ width: `${s.score}%`, height: "100%", background: s.color, borderRadius: 2 }} />
+                          </div>
+                          <span style={{ color: s.color, fontWeight: 700, fontVariantNumeric: "tabular-nums", width: 30, textAlign: "right" }}>{s.score}</span>
+                        </>
+                      ) : (
+                        <span style={{ color: "#475569", fontStyle: "italic", fontSize: 11 }}>upcoming</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(79,70,229,0.25)", borderRadius: 10, padding: 12 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#34D399", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Adherence &amp; engagement</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                    {[
+                      { l: "Adherence", v: "78%", sub: "vs 22% consumer-only", c: "#34D399" },
+                      { l: "Sessions/week", v: "3.2", sub: "target: 3+", c: "#34D399" },
+                      { l: "Avg score", v: "67", sub: "Mendi norm: 58", c: "#10B981" },
+                      { l: "Streak", v: "4 days", sub: "best: 12 days", c: "#F59E0B" },
+                    ].map((m) => (
+                      <div key={m.l} style={{ background: "rgba(15,23,42,0.7)", border: "1px solid #1E293B", borderRadius: 8, padding: 10 }}>
+                        <div style={{ fontSize: 10, color: "#94A3B8", marginBottom: 2 }}>{m.l}</div>
+                        <div style={{ fontSize: 18, fontWeight: 800, color: m.c, fontVariantNumeric: "tabular-nums", letterSpacing: "-0.02em" }}>{m.v}</div>
+                        <div style={{ fontSize: 9, color: "#64748B", marginTop: 1 }}>{m.sub}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ fontSize: 10, color: "#A5B4FC", marginTop: 10, padding: "6px 8px", background: "rgba(79,70,229,0.1)", borderRadius: 6, lineHeight: 1.5 }}>
+                    <strong style={{ color: "#A78BFA" }}>3.5×</strong> the adherence of consumer-only Mendi users. Clinic-prescribed users have 5–10× lower churn.
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                <button onClick={() => showToast("Sent: Focus Boost protocol pushed to Sarah's Mendi · 3 sessions/week × 12 min")} style={{ ...clinicianBtnPrimary, background: "#7C3AED" }}>Push protocol to Mendi →</button>
+                <button onClick={() => showToast("Message sent · Sarah will see it in the Mendi app")} style={clinicianBtn}>💬 Message via Mendi app</button>
+                <button onClick={() => showToast("Home session video summary opening — Sarah's last training")} style={clinicianBtn}>View last home session</button>
+              </div>
+            </div>
+
             <div style={{ display: "grid", gridTemplateColumns: "minmax(280px, 1fr) minmax(0, 1.2fr)", gap: 16, alignItems: "start" }} className="demo-schedule-grid">
               {/* Calendar */}
               <div style={{ ...card }}>
