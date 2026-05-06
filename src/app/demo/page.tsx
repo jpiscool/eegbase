@@ -4568,7 +4568,7 @@ export default function DemoPage() {
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginTop: 2 }}>Rebrand the entire clinical platform as &ldquo;Mendi Clinical&rdquo; — Mendi&apos;s B2B SaaS arm</div>
                   <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>One toggle hides EEGBase branding · applies Mendi logo / palette / domain · Mendi keeps the customer relationship</div>
                 </div>
-                <button onClick={() => showToast("White-label preview · Mendi-branded theme would render across all 16 tabs · contact for enterprise pricing")} style={{ ...clinicianBtnPrimary, fontSize: 12, background: "#7C3AED" }}>Preview Mendi Clinical →</button>
+                <a href="/mendi-clinical-preview" target="_blank" rel="noopener noreferrer" style={{ ...clinicianBtnPrimary, fontSize: 12, background: "#7C3AED", textDecoration: "none", display: "inline-block" }}>Preview Mendi Clinical →</a>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
                 {[
