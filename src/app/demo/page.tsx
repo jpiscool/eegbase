@@ -441,7 +441,7 @@ export default function DemoPage() {
       </div>
 
       {/* Progress bar */}
-      <div style={{ height: 4, background: "#1E293B" }}>
+      <div role="progressbar" aria-label={`Session time: ${Math.floor(elapsed / 60)} of 30 minutes`} aria-valuenow={Math.min(100, Math.round((elapsed / 1800) * 100))} aria-valuemin={0} aria-valuemax={100} title={`Session progress · ${Math.floor(elapsed / 60)} of 30 min`} style={{ height: 4, background: "#1E293B" }}>
         <div style={{ height: "100%", background: "linear-gradient(90deg, #2563EB, #8B5CF6, #EC4899)", width: `${Math.min(100, (elapsed / 1800) * 100)}%`, transition: "width 1s linear" }} />
       </div>
 
