@@ -630,6 +630,108 @@ export default function DemoPage() {
 
         /* Selection color */
         .demo-content ::selection { background: var(--eb-brand-tint); color: var(--eb-text-primary); }
+
+        /* ─────────────────────────────────────────────────────────────────
+           iOS-INSPIRED PATTERNS — Apple Health / Settings / Mail HIG
+           ───────────────────────────────────────────────────────────────── */
+
+        /* iOS pill-style toggle switch */
+        .ios-toggle {
+          appearance: none; -webkit-appearance: none;
+          width: 42px; height: 26px;
+          border-radius: 99px;
+          background: rgba(120,120,128,0.32);
+          border: none;
+          cursor: pointer;
+          position: relative;
+          transition: background 0.25s var(--eb-ease-out);
+          flex-shrink: 0;
+        }
+        .ios-toggle::after {
+          content: ""; position: absolute;
+          top: 2px; left: 2px;
+          width: 22px; height: 22px;
+          border-radius: 50%;
+          background: white;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.25), 0 1px 1px rgba(0,0,0,0.15);
+          transition: transform 0.28s var(--eb-ease-out);
+        }
+        .ios-toggle:checked { background: #34C759; }
+        .ios-toggle:checked::after { transform: translateX(16px); }
+        .ios-toggle:focus-visible { box-shadow: 0 0 0 3px rgba(52,199,89,0.3); outline: none; }
+        .ios-toggle:not(:disabled):active::after { transform: scaleX(1.18); }
+        .ios-toggle:checked:not(:disabled):active::after { transform: translateX(13px) scaleX(1.18); }
+
+        /* iOS grouped-list container — Settings app style */
+        .ios-list {
+          background: linear-gradient(180deg, #11151F 0%, #0E1119 100%);
+          border: 1px solid var(--eb-border-default);
+          border-radius: var(--eb-radius-lg);
+          overflow: hidden;
+          box-shadow: var(--eb-shadow-md);
+        }
+        .ios-list-row {
+          display: flex; align-items: center; gap: 12px;
+          padding: 14px 18px;
+          min-height: 52px;
+          border-bottom: 1px solid var(--eb-border-subtle);
+          transition: background 0.15s var(--eb-ease-out);
+        }
+        .ios-list-row:last-child { border-bottom: none; }
+        .ios-list-row:hover { background: rgba(255,255,255,0.025); }
+        .ios-list-row-tap { cursor: pointer; }
+        .ios-list-row-tap:active { background: rgba(255,255,255,0.04); }
+        .ios-list-row-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .ios-list-row-content { flex: 1; min-width: 0; }
+        .ios-list-row-title { font-size: 14px; font-weight: 500; color: var(--eb-text-primary); line-height: 1.3; }
+        .ios-list-row-subtitle { font-size: 12px; color: var(--eb-text-tertiary); margin-top: 2px; line-height: 1.4; }
+        .ios-list-row-trailing { color: var(--eb-text-quaternary); font-size: 13px; flex-shrink: 0; display: flex; align-items: center; gap: 6px; }
+        .ios-list-row-chevron { color: var(--eb-text-quaternary); font-size: 14px; flex-shrink: 0; }
+
+        /* iOS section header (caps tracked, system gray) */
+        .ios-section-header {
+          font-size: 11px; font-weight: 600;
+          color: rgba(235,235,245,0.6);
+          text-transform: uppercase; letter-spacing: 0.05em;
+          padding: 0 18px 8px;
+        }
+        .ios-section-footer {
+          font-size: 12px; color: var(--eb-text-quaternary);
+          padding: 8px 18px 0;
+          line-height: 1.45;
+        }
+
+        /* Apple Health-style large stat numerals */
+        .ios-stat { display: flex; align-items: baseline; gap: 4px; }
+        .ios-stat-value {
+          font-size: clamp(2rem, 3.4vw, 2.75rem);
+          font-weight: 700;
+          letter-spacing: -0.035em;
+          color: var(--eb-text-primary);
+          line-height: 1;
+          font-variant-numeric: tabular-nums;
+          font-feature-settings: "tnum" 1, "ss01" 1, "cv11" 1;
+        }
+        .ios-stat-unit { font-size: 0.95rem; font-weight: 500; color: var(--eb-text-tertiary); letter-spacing: -0.02em; }
+        .ios-stat-label { font-size: 11px; font-weight: 600; color: var(--eb-text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+
+        /* iOS-style press feedback — spring physics, more pronounced */
+        .demo-content button:not(:disabled):active,
+        .demo-content [role="button"]:not(:disabled):active {
+          transform: scale(0.96);
+          transition-duration: 0.06s;
+        }
+
+        /* Refined disclosure chevron */
+        .ios-chevron::after {
+          content: "›";
+          color: var(--eb-text-quaternary);
+          font-size: 18px;
+          font-weight: 300;
+          line-height: 1;
+          margin-left: 4px;
+        }
+
         /* Premium tabular numerics globally for stat values */
         .demo-content [data-stat],
         .demo-content [class*="stat-"] [class*="value"],
@@ -2747,24 +2849,30 @@ export default function DemoPage() {
                   </div>
                 </div>
 
-                <div style={{ ...card, padding: 20 }}>
-                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 12 }}>Automated Reminders</h3>
-                  {([
-                    { key: "sms" as const,    label: "24h SMS reminder" },
-                    { key: "email" as const,  label: "1h email reminder" },
-                    { key: "noshow" as const, label: "No-show follow-up" },
-                    { key: "lapsed" as const, label: "Lapsed client (14d)" },
-                  ]).map(({ key, label }) => (
-                    <div key={key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                      <span style={{ fontSize: 13, color: "#CBD5E1" }}>{label}</span>
-                      <div
-                        onClick={() => setReminderToggles((prev) => ({ ...prev, [key]: !prev[key] }))}
-                        style={{ width: 36, height: 20, borderRadius: 99, background: reminderToggles[key] ? "#2563EB" : "#334155", position: "relative", cursor: "pointer", transition: "background 0.2s" }}
-                      >
-                        <div style={{ width: 16, height: 16, borderRadius: "50%", background: "white", position: "absolute", top: 2, left: reminderToggles[key] ? 18 : 2, transition: "left 0.2s" }} />
-                      </div>
-                    </div>
-                  ))}
+                <div>
+                  <div className="ios-section-header">Automated Reminders</div>
+                  <div className="ios-list">
+                    {([
+                      { key: "sms" as const,    label: "24h SMS reminder",   sub: "Sent the day before" },
+                      { key: "email" as const,  label: "1h email reminder",  sub: "Includes telehealth link" },
+                      { key: "noshow" as const, label: "No-show follow-up",  sub: "Auto-rebook prompt within 1h" },
+                      { key: "lapsed" as const, label: "Lapsed client check-in", sub: "After 14 days without a session" },
+                    ]).map(({ key, label, sub }) => (
+                      <label key={key} className="ios-list-row ios-list-row-tap" style={{ cursor: "pointer" }}>
+                        <div className="ios-list-row-content">
+                          <div className="ios-list-row-title">{label}</div>
+                          <div className="ios-list-row-subtitle">{sub}</div>
+                        </div>
+                        <input
+                          type="checkbox"
+                          className="ios-toggle"
+                          checked={reminderToggles[key]}
+                          onChange={() => setReminderToggles((prev) => ({ ...prev, [key]: !prev[key] }))}
+                          aria-label={label}
+                        />
+                      </label>
+                    ))}
+                  </div>
                   <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #334155" }}>
                     <div style={{ fontSize: 12, fontWeight: 700, color: "#94A3B8", marginBottom: 8 }}>Sync to calendar</div>
                     <div style={{ display: "flex", gap: 8 }}>
@@ -3685,21 +3793,26 @@ export default function DemoPage() {
                     {r.primary && <span style={{ fontSize: 9, fontWeight: 700, color: "#60A5FA", padding: "2px 8px", background: "rgba(96,165,250,0.15)", borderRadius: 99 }}>Primary</span>}
                   </div>
                 ))}
-                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginTop: 16, marginBottom: 10 }}>Security Settings</h3>
-                {[
-                  { label: "2FA enforced for all users", on: true },
-                  { label: "SAML / SSO (Okta, Google)",  on: true },
-                  { label: "Auto-logout after 15 min idle", on: true },
-                  { label: "Encryption at rest (AES-256)", on: true },
-                  { label: "TLS 1.3 in transit", on: true },
-                  { label: "IP allowlist (clinic only)", on: false },
-                ].map((s) => (
-                  <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", borderTop: "1px solid #1E293B", fontSize: 11 }}>
-                    <span style={{ width: 14, height: 14, borderRadius: 4, background: s.on ? "#10B981" : "#475569", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 9, fontWeight: 700 }}>{s.on ? "✓" : "○"}</span>
-                    <span style={{ color: "#CBD5E1", flex: 1 }}>{s.label}</span>
-                    <span style={{ color: s.on ? "#34D399" : "#64748B", fontWeight: 600, fontSize: 10 }}>{s.on ? "On" : "Off"}</span>
-                  </div>
-                ))}
+                <div className="ios-section-header" style={{ marginTop: 18, padding: "0 0 8px" }}>Security Settings</div>
+                <div className="ios-list">
+                  {[
+                    { label: "2FA enforced for all users", sub: "All clinicians + staff",        on: true },
+                    { label: "SAML / SSO",                  sub: "Okta, Google Workspace",        on: true },
+                    { label: "Auto-logout after idle",      sub: "Session ends after 15 minutes", on: true },
+                    { label: "Encryption at rest",          sub: "AES-256 across all PHI",        on: true },
+                    { label: "TLS 1.3 in transit",          sub: "Forward secrecy enforced",      on: true },
+                    { label: "IP allowlist",                sub: "Restrict to clinic networks",   on: false },
+                  ].map((s) => (
+                    <label key={s.label} className="ios-list-row ios-list-row-tap" style={{ cursor: "pointer" }}>
+                      <div className="ios-list-row-content">
+                        <div className="ios-list-row-title">{s.label}</div>
+                        <div className="ios-list-row-subtitle">{s.sub}</div>
+                      </div>
+                      <input type="checkbox" className="ios-toggle" defaultChecked={s.on} aria-label={s.label} />
+                    </label>
+                  ))}
+                </div>
+                <div className="ios-section-footer">Changes apply immediately and are logged to the audit trail.</div>
               </div>
             </div>
           </div>
