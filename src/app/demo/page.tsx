@@ -732,6 +732,68 @@ export default function DemoPage() {
           margin-left: 4px;
         }
 
+        /* ─────────────────────────────────────────────────────────────────
+           GLOSSARY TOOLTIP — dotted underline + hover plain-English
+           ───────────────────────────────────────────────────────────────── */
+        .gloss {
+          position: relative;
+          border-bottom: 1px dotted var(--eb-text-quaternary);
+          cursor: help;
+        }
+        .gloss::before, .gloss::after {
+          opacity: 0; pointer-events: none;
+          transition: opacity 0.15s var(--eb-ease-out), transform 0.15s var(--eb-ease-out);
+          position: absolute; z-index: 100;
+        }
+        .gloss::before {
+          content: attr(data-gloss);
+          bottom: calc(100% + 8px); left: 50%;
+          transform: translate(-50%, 4px);
+          background: linear-gradient(180deg, #1A1F2E 0%, #11151F 100%);
+          color: var(--eb-text-primary);
+          padding: 8px 12px;
+          border-radius: 8px;
+          border: 1px solid var(--eb-border-default);
+          font-size: 12px;
+          font-weight: 500;
+          line-height: 1.5;
+          letter-spacing: 0;
+          text-transform: none;
+          white-space: normal;
+          width: max-content; max-width: 240px;
+          box-shadow: var(--eb-shadow-lg);
+        }
+        .gloss::after {
+          content: ""; bottom: calc(100% + 2px); left: 50%;
+          width: 0; height: 0; transform: translate(-50%, 4px);
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          border-top: 5px solid #1A1F2E;
+        }
+        .gloss:hover::before, .gloss:focus-visible::before { opacity: 1; transform: translate(-50%, 0); }
+        .gloss:hover::after, .gloss:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+
+        /* "What this tells you" caption helper */
+        .what-it-tells {
+          display: flex; gap: 8px; align-items: flex-start;
+          padding: 10px 12px;
+          background: rgba(99,102,241,0.06);
+          border: 1px solid rgba(99,102,241,0.18);
+          border-radius: 8px;
+          font-size: 12px;
+          color: var(--eb-text-secondary);
+          line-height: 1.5;
+        }
+        .what-it-tells::before {
+          content: "💡";
+          flex-shrink: 0;
+          font-size: 13px;
+          opacity: 0.85;
+        }
+
+        /* Three-state legend dots */
+        .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; vertical-align: middle; margin-right: 4px; }
+
         /* Premium tabular numerics globally for stat values */
         .demo-content [data-stat],
         .demo-content [class*="stat-"] [class*="value"],
@@ -1404,16 +1466,16 @@ export default function DemoPage() {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
                   {[
-                    { label: "OxyHb L", val: sample?.oxyHbLeft, color: "#10B981" },
-                    { label: "OxyHb R", val: sample?.oxyHbRight, color: "#0EA5E9" },
-                    { label: "DeoxyHb L", val: sample?.deoxyHbLeft, color: "#6366F1" },
-                    { label: "DeoxyHb R", val: sample?.deoxyHbRight, color: "#EC4899" },
-                    { label: "Heart rate", val: sample?.heartRate, color: "#F59E0B", suffix: " bpm" },
-                    { label: "HRV", val: sample?.hrvRmssd, color: "#8B5CF6", suffix: " ms" },
-                  ].map(({ label, val, color, suffix }) => (
+                    { label: "Oxy L",   val: sample?.oxyHbLeft,    color: "#10B981", gloss: "Oxygen-rich blood, left forehead — higher means more brain activity in that area." },
+                    { label: "Oxy R",   val: sample?.oxyHbRight,   color: "#0EA5E9", gloss: "Oxygen-rich blood, right forehead." },
+                    { label: "Deoxy L", val: sample?.deoxyHbLeft,  color: "#6366F1", gloss: "Used-up blood, left forehead. Drops when oxygen is being consumed." },
+                    { label: "Deoxy R", val: sample?.deoxyHbRight, color: "#EC4899", gloss: "Used-up blood, right forehead." },
+                    { label: "Heart",   val: sample?.heartRate,    color: "#F59E0B", suffix: " bpm", gloss: "Heart rate in beats per minute. Normal resting: 60–80 bpm." },
+                    { label: "HRV",     val: sample?.hrvRmssd,     color: "#8B5CF6", suffix: " ms", gloss: "Heart-rate variability. Higher means a calmer nervous system. Target above 50 ms." },
+                  ].map(({ label, val, color, suffix, gloss }) => (
                     <div key={label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 8px", borderRadius: 8, background: "rgba(255,255,255,0.04)" }}>
                       <div style={{ width: 6, height: 6, borderRadius: "50%", background: color, flexShrink: 0 }} />
-                      <span style={{ fontSize: "0.72rem", color: "#94A3B8", width: 58 }}>{label}</span>
+                      <span className="gloss" data-gloss={gloss} style={{ fontSize: "0.72rem", color: "#94A3B8", width: 58 }}>{label}</span>
                       <span style={{ fontSize: "0.82rem", fontWeight: 700, color, fontVariantNumeric: "tabular-nums", width: 58, textAlign: "right" }}>
                         {val != null ? val.toFixed(suffix ? 0 : 3) + (suffix ?? "") : "—"}
                       </span>
@@ -1426,8 +1488,8 @@ export default function DemoPage() {
             {/* Threshold + sensitivity sliders */}
             <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 12, padding: "12px 16px", marginBottom: 16, display: "flex", gap: 28, flexWrap: "wrap", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                <label htmlFor="reward-threshold" style={{ fontSize: 12, fontWeight: 700, color: "#CBD5E1", minWidth: 110 }}>
-                  Threshold: <span style={{ color: "#14B8A6", fontVariantNumeric: "tabular-nums" }}>{rewardThreshold}</span>
+                <label htmlFor="reward-threshold" className="gloss" data-gloss="How hard the goal is. Higher = client has to focus more to score points." style={{ fontSize: 12, fontWeight: 700, color: "#CBD5E1", minWidth: 110 }}>
+                  Goal level: <span style={{ color: "#14B8A6", fontVariantNumeric: "tabular-nums" }}>{rewardThreshold}</span>
                 </label>
                 <input
                   id="reward-threshold"
@@ -1437,12 +1499,12 @@ export default function DemoPage() {
                   value={rewardThreshold}
                   onChange={(e) => setRewardThreshold(Number(e.target.value))}
                   style={{ width: 160, accentColor: "#14B8A6" }}
-                  aria-label="Reward threshold"
+                  aria-label="Goal level"
                 />
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                <label htmlFor="sensitivity" style={{ fontSize: 12, fontWeight: 700, color: "#CBD5E1", minWidth: 110 }}>
-                  Sensitivity: <span style={{ color: "#14B8A6", fontVariantNumeric: "tabular-nums" }}>{sensitivity}</span>
+                <label htmlFor="sensitivity" className="gloss" data-gloss="How quickly the score reacts to brain changes. Higher = jumpier; Lower = smoother." style={{ fontSize: 12, fontWeight: 700, color: "#CBD5E1", minWidth: 110 }}>
+                  Reaction speed: <span style={{ color: "#14B8A6", fontVariantNumeric: "tabular-nums" }}>{sensitivity}</span>
                 </label>
                 <input
                   id="sensitivity"
@@ -2576,7 +2638,7 @@ export default function DemoPage() {
               <div style={{ background: "#0A1320", borderRadius: 12, padding: "16px 20px", marginBottom: 14, borderLeft: "3px solid #F59E0B", border: "1px solid #1E293B", borderLeftWidth: 3, borderLeftColor: "#F59E0B" }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#F59E0B", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Signal Detected · Stalled Progress</div>
                 <div style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.65, marginBottom: 14 }}>
-                  Sarah Mitchell&apos;s <strong style={{ color: "#F1F5F9" }}>θ/β Z-score has not improved</strong> over sessions 6–8 despite consistent SMR training at Cz. Current protocol (SMR 12–15 Hz) appears insufficient to normalize elevated frontal theta.
+                  Sarah&apos;s <strong style={{ color: "#F1F5F9" }}>brain calmness score hasn&apos;t improved</strong> in 3 sessions, even though she&apos;s training consistently. The current protocol may not be enough to settle her elevated forehead activity.
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }} className="demo-grid-3">
                   {[
@@ -2595,7 +2657,7 @@ export default function DemoPage() {
               <div style={{ background: "#0A1320", borderRadius: 12, padding: "16px 20px", marginBottom: 14, border: "1px solid #1E293B", borderLeft: "3px solid #10B981" }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#10B981", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Recommendation</div>
                 <div style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.65, marginBottom: 12 }}>
-                  Switch to <strong style={{ color: "#F1F5F9" }}>Alpha-Theta (Pz/Oz, 8–12 Hz reward)</strong> for sessions 9–12. Based on <strong style={{ color: "#F1F5F9" }}>847 similar client profiles</strong> in the EEGBase community database, <strong style={{ color: "#34D399" }}>74%</strong> showed θ/β improvement within 2 sessions after this protocol transition.
+                  Try the <strong style={{ color: "#F1F5F9" }}>Alpha-Theta protocol</strong> for the next 3–4 sessions. Of <strong style={{ color: "#F1F5F9" }}>847 similar clients</strong>, <strong style={{ color: "#34D399" }}>74%</strong> improved within 2 sessions of switching. <span className="gloss" data-gloss="Trains slower brainwaves at the back of the head — Pz and Oz electrode positions, 8–12 Hz frequency.">Technical details</span>
                 </div>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   <button
