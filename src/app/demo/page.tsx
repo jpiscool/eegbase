@@ -8,7 +8,7 @@ import { BrainMapPanel } from "@/components/BrainMapPanel";
 import { ClinicalQuestionnaire } from "@/components/ClinicalQuestionnaire";
 
 const MAX_POINTS = 60;
-type MainTab = "session" | "game" | "brain" | "outcomes" | "progress" | "ai" | "schedule" | "hrv" | "protocols" | "reports" | "compare";
+type MainTab = "session" | "game" | "brain" | "outcomes" | "progress" | "ai" | "schedule" | "hrv" | "protocols" | "reports" | "compare" | "devices";
 
 function fmt(sec: number) {
   return `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`;
@@ -262,6 +262,7 @@ export default function DemoPage() {
     { id: "schedule",  label: "📅 Schedule" },
     { id: "reports",   label: "📊 Reports" },
     { id: "compare",   label: "🏆 Compare" },
+    { id: "devices",   label: "🛠 Devices & API",          groupStart: "Integrations" },
   ];
 
   const DEMO_CLIENTS = [
@@ -296,8 +297,8 @@ export default function DemoPage() {
   const [showClinicianOverlay, setShowClinicianOverlay] = useState(true);
   const [gameDifficulty, setGameDifficulty] = useState<"Easy" | "Medium" | "Hard">("Medium");
   const [hoveredMarker, setHoveredMarker] = useState<number | null>(null);
-  // Advanced clinician controls
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  // Advanced clinician controls — open by default to show full functionality
+  const [showAdvanced, setShowAdvanced] = useState(true);
   const [rewardPct, setRewardPct] = useState(70);
   const [holdTime, setHoldTime] = useState(0.5);
   const [smoothing, setSmoothing] = useState(2.0);
@@ -867,6 +868,31 @@ export default function DemoPage() {
               <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(37,99,235,0.15)", color: "#60A5FA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 14, fontWeight: 700 }}>i</div>
               <span style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.5, flex: 1, minWidth: 0 }}>
                 <strong style={{ color: "#F1F5F9" }}>Clinician view</strong> — you&apos;re watching {demoClient.name}&apos;s brain signals in real time (simulated). The <strong style={{ color: "#F1F5F9" }}>Reward Score</strong> rises when the client&apos;s brain is producing the target pattern. Switch to <button onClick={() => switchTab("game")} style={{ background: "none", border: "none", color: "#60A5FA", fontWeight: 700, cursor: "pointer", padding: 0, fontSize: 13, textDecoration: "underline" }}>Game Mode</button> to see what the client sees.
+              </span>
+            </div>
+
+            {/* Signal Quality Strip — fNIRS / EEG sensor health */}
+            <div style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 12, padding: "12px 16px", marginBottom: 12, display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em", marginRight: 4 }}>Signal Quality</span>
+              {[
+                { label: "Fp1 OxyHb", quality: 96, color: "#10B981", impedance: "8 kΩ" },
+                { label: "Fp2 OxyHb", quality: 94, color: "#10B981", impedance: "9 kΩ" },
+                { label: "Cz EEG", quality: 88, color: "#10B981", impedance: "12 kΩ" },
+                { label: "HRV (Polar)", quality: 99, color: "#10B981", impedance: "—" },
+                { label: "EMG Artifact", quality: emgRejection ? 92 : 0, color: emgRejection ? "#10B981" : "#64748B", impedance: emgRejection ? "Rejected" : "Off" },
+              ].map((s) => (
+                <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 10px", background: "#0A1320", border: "1px solid #1E293B", borderRadius: 8 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: s.color, boxShadow: `0 0 6px ${s.color}` }} />
+                  <span style={{ fontSize: 11, color: "#CBD5E1", fontWeight: 600 }}>{s.label}</span>
+                  <span style={{ fontSize: 10, color: "#64748B", fontVariantNumeric: "tabular-nums" }}>{s.impedance}</span>
+                  <div style={{ width: 28, height: 4, background: "#1E293B", borderRadius: 2, overflow: "hidden" }}>
+                    <div style={{ width: `${s.quality}%`, height: "100%", background: s.color }} />
+                  </div>
+                </div>
+              ))}
+              <span style={{ marginLeft: "auto", fontSize: 11, color: "#34D399", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34D399", animation: "pulse 1.5s infinite" }} />
+                All sensors clean
               </span>
             </div>
 
@@ -2761,6 +2787,197 @@ export default function DemoPage() {
                   <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>{note}</div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── DEVICES & API ── */}
+        {tab === "devices" && (
+          <div>
+            <div style={{ marginBottom: 20 }}>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>Devices, Drivers &amp; Public API</h2>
+              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
+                Hardware-agnostic by design. Plug in any supported EEG, fNIRS, or HRV device — start streaming in under 30 seconds. Full REST + WebSocket APIs and an open-source SDK for building custom integrations.
+              </p>
+            </div>
+
+            {/* Featured: Mendi flagship integration */}
+            <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 24, marginBottom: 20, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 12px 32px -12px rgba(79,70,229,0.3)", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, color: "#A5B4FC", background: "rgba(79,70,229,0.2)", padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(79,70,229,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Flagship Partner</div>
+              <div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "center" }}>
+                <div style={{ width: 120, height: 120, borderRadius: 24, background: "linear-gradient(135deg, #4F46E5, #7C3AED)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: "0 8px 32px -8px rgba(79,70,229,0.5)" }}>
+                  <span style={{ fontSize: 64 }}>🧠</span>
+                </div>
+                <div style={{ flex: 1, minWidth: 240 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Mendi fNIRS Headset</div>
+                  <div style={{ fontSize: 22, fontWeight: 800, color: "#F1F5F9", marginBottom: 8, letterSpacing: "-0.02em" }}>First-class native integration</div>
+                  <div style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6, marginBottom: 14 }}>
+                    EEGBase ships with a hand-tuned Mendi driver: dual-channel OxyHb/DeoxyHb streaming at 25 Hz, automatic light source calibration, and motion-artifact rejection trained on 1,200+ session-hours.
+                  </div>
+                  <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 14 }}>
+                    {[
+                      { label: "Sample rate", val: "25 Hz" },
+                      { label: "Channels", val: "Fp1 / Fp2" },
+                      { label: "Latency", val: "<80ms" },
+                      { label: "Battery life", val: "8h" },
+                    ].map((s) => (
+                      <div key={s.label}>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em" }}>{s.label}</div>
+                        <div style={{ fontSize: 16, fontWeight: 800, color: "#F1F5F9", fontVariantNumeric: "tabular-nums" }}>{s.val}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <button onClick={() => showToast("Mendi headset paired ✓ — streaming OxyHb/DeoxyHb at 25 Hz")} style={{ ...clinicianBtnPrimary, fontSize: 13 }}>Pair Mendi headset</button>
+                    <button onClick={() => showToast("Calibration started — keep eyes closed for 30 seconds")} style={clinicianBtn}>Run calibration</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Connected devices grid */}
+            <div style={{ ...card, marginBottom: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Currently Connected</h3>
+                <span style={{ fontSize: 11, color: "#34D399", display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34D399", boxShadow: "0 0 8px #34D399", animation: "pulse 1.5s infinite" }} />
+                  3 devices online
+                </span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }} className="demo-grid-2">
+                {[
+                  { name: "Mendi fNIRS", channels: "Fp1, Fp2 · OxyHb/DeoxyHb · 25 Hz", status: "Connected", quality: 96, color: "#10B981" },
+                  { name: "Muse S Athena", channels: "AF7, AF8, TP9, TP10 · 256 Hz", status: "Connected", quality: 88, color: "#10B981" },
+                  { name: "Polar H10 (HRV)", channels: "RR intervals · 1000 Hz", status: "Connected", quality: 99, color: "#10B981" },
+                  { name: "OpenBCI Cyton", channels: "8-channel EEG · 250 Hz", status: "Standby", quality: 0, color: "#64748B" },
+                ].map((dev) => (
+                  <div key={dev.name} style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 12, padding: 14 }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>{dev.name}</div>
+                      <span style={{ fontSize: 10, color: dev.color, fontWeight: 700, padding: "2px 8px", background: `${dev.color}1A`, borderRadius: 99 }}>{dev.status}</span>
+                    </div>
+                    <div style={{ fontSize: 11, color: "#64748B", marginBottom: 8 }}>{dev.channels}</div>
+                    {dev.quality > 0 && (
+                      <div>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "#94A3B8", marginBottom: 4 }}>
+                          <span>Signal quality</span>
+                          <span style={{ color: dev.quality > 90 ? "#10B981" : "#F59E0B", fontWeight: 700 }}>{dev.quality}%</span>
+                        </div>
+                        <div style={{ height: 4, background: "#1E293B", borderRadius: 2, overflow: "hidden" }}>
+                          <div style={{ height: "100%", width: `${dev.quality}%`, background: `linear-gradient(90deg, ${dev.color}, ${dev.color}88)`, borderRadius: 2 }} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Supported devices catalog */}
+            <div style={{ ...card, marginBottom: 16 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Hardware Catalog</h3>
+              <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 14 }}>32 devices supported out of the box · open SDK for adding your own</p>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }} className="demo-grid-2">
+                {[
+                  { cat: "fNIRS", items: ["Mendi", "NIRx", "Artinis"] },
+                  { cat: "EEG (consumer)", items: ["Muse 2/S", "NeuroSky", "BrainBit"] },
+                  { cat: "EEG (clinical)", items: ["OpenBCI Cyton", "Wearable Sensing", "ANT Neuro", "g.Tec Unicorn"] },
+                  { cat: "HRV / Wearable", items: ["Polar H10", "Oura Ring", "Apple Watch", "Garmin", "Whoop"] },
+                ].map((g) => (
+                  <div key={g.cat} style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 12 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#60A5FA", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>{g.cat}</div>
+                    {g.items.map((it) => (
+                      <div key={it} style={{ fontSize: 12, color: "#CBD5E1", padding: "3px 0", display: "flex", alignItems: "center", gap: 6 }}>
+                        <span style={{ width: 4, height: 4, borderRadius: "50%", background: it === "Mendi" ? "#A78BFA" : "#475569" }} />
+                        {it}
+                        {it === "Mendi" && <span style={{ marginLeft: "auto", fontSize: 9, color: "#A78BFA", fontWeight: 700 }}>FLAGSHIP</span>}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* API + SDK panel */}
+            <div style={{ ...card, marginBottom: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                <div>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Public API &amp; SDK</h3>
+                  <p style={{ fontSize: 12, color: "#94A3B8", marginTop: 2 }}>Build your own integration in any language · OpenAPI 3.1 spec · MIT-licensed SDK</p>
+                </div>
+                <button onClick={() => showToast("Opening API docs at /api/docs")} style={clinicianBtn}>View full API docs →</button>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }} className="demo-grid-2">
+                {/* WebSocket sample */}
+                <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, overflow: "hidden" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid #1E293B", background: "#0F172A" }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA", textTransform: "uppercase", letterSpacing: "0.08em" }}>Live Stream — WebSocket</span>
+                    <span style={{ fontSize: 10, color: "#64748B" }}>JavaScript</span>
+                  </div>
+                  <pre style={{ margin: 0, padding: "14px 16px", fontSize: 11, fontFamily: "ui-monospace, monospace", color: "#CBD5E1", lineHeight: 1.7, overflow: "auto" }}>
+{`import { EEGBase } from "@eegbase/sdk";
+
+const eb = new EEGBase({ apiKey: "..." });
+const stream = eb.devices.stream("mendi");
+
+stream.on("oxy", ({ left, right, t }) => {
+  console.log(\`OxyHb L: \${left}, R: \${right}\`);
+});
+
+stream.on("artifact", ({ type }) => {
+  // EMG, eyeBlink, motion
+});`}
+                  </pre>
+                </div>
+                {/* REST sample */}
+                <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, overflow: "hidden" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid #1E293B", background: "#0F172A" }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: "#10B981", textTransform: "uppercase", letterSpacing: "0.08em" }}>REST — Create Session</span>
+                    <span style={{ fontSize: 10, color: "#64748B" }}>cURL</span>
+                  </div>
+                  <pre style={{ margin: 0, padding: "14px 16px", fontSize: 11, fontFamily: "ui-monospace, monospace", color: "#CBD5E1", lineHeight: 1.7, overflow: "auto" }}>
+{`curl -X POST https://api.eegbase.io/v1/sessions \\
+  -H "Authorization: Bearer $EEGBASE_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "client_id": "c_8f3a2",
+    "device": "mendi",
+    "protocol": "smr_cz",
+    "duration_min": 30
+  }'
+
+# 201 Created
+# { "session_id": "s_a1b2c3", ... }`}
+                  </pre>
+                </div>
+              </div>
+              <div style={{ marginTop: 14, display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {["GET /clients", "POST /sessions", "GET /sessions/:id", "GET /sessions/:id/eeg", "POST /protocols", "GET /reports/:id.pdf", "POST /webhooks", "GET /devices"].map((endpoint) => (
+                  <span key={endpoint} style={{ fontSize: 10, fontFamily: "ui-monospace, monospace", color: "#A5B4FC", background: "#1E293B", border: "1px solid #334155", padding: "3px 8px", borderRadius: 6 }}>{endpoint}</span>
+                ))}
+                <span style={{ fontSize: 10, color: "#64748B", padding: "3px 8px" }}>+ 47 more</span>
+              </div>
+            </div>
+
+            {/* Webhooks + integrations */}
+            <div style={{ ...card }}>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Webhooks &amp; Outbound Integrations</h3>
+              <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 14 }}>Push events to any service — fire-and-forget HTTP POST with HMAC signing</p>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }} className="demo-grid-3">
+                {[
+                  { event: "session.completed", desc: "After every session ends" },
+                  { event: "client.threshold_crossed", desc: "When PHQ-9/GAD-7 hits target" },
+                  { event: "device.connected", desc: "On any device pairing" },
+                  { event: "ai.recommendation_generated", desc: "When AI flags stalled progress" },
+                  { event: "report.generated", desc: "PDF ready for download" },
+                  { event: "appointment.scheduled", desc: "New booking in any calendar" },
+                ].map((w) => (
+                  <div key={w.event} style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 8, padding: "10px 12px" }}>
+                    <code style={{ fontSize: 11, fontFamily: "ui-monospace, monospace", color: "#A5B4FC", fontWeight: 600 }}>{w.event}</code>
+                    <div style={{ fontSize: 11, color: "#64748B", marginTop: 4 }}>{w.desc}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
