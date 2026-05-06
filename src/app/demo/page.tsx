@@ -10,6 +10,8 @@ import {
   Activity, Gamepad2, Brain, HeartPulse, ClipboardList, TrendingUp,
   Sparkles, Target, Calendar, FileText, BarChart3, CreditCard,
   Users, ShieldCheck, Megaphone, Plug, Search, Bell,
+  Pause, Play, RotateCcw, Plus, Volume2, VolumeX, Smartphone,
+  Mail, Building2, Download, UploadCloud,
 } from "lucide-react";
 
 const MAX_POINTS = 60;
@@ -1333,30 +1335,35 @@ export default function DemoPage() {
               <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.07em", marginRight: 4 }}>Session Controls</span>
               <button
                 onClick={togglePauseResume}
-                style={running ? clinicianBtn : clinicianBtnPrimary}
+                style={{ ...(running ? clinicianBtn : clinicianBtnPrimary), display: "inline-flex", alignItems: "center", gap: 6 }}
                 aria-label={running ? "Pause session" : "Resume session"}
               >
-                {running ? "⏸ Pause" : "▶ Resume"}
+                {running ? <Pause size={13} strokeWidth={2} /> : <Play size={13} strokeWidth={2} />}
+                {running ? "Pause session" : "Resume"}
               </button>
-              <button onClick={addMarker} style={clinicianBtn} aria-label="Add session marker">
-                + Marker
+              <button onClick={addMarker} style={{ ...clinicianBtn, display: "inline-flex", alignItems: "center", gap: 6 }} aria-label="Mark this moment">
+                <Plus size={13} strokeWidth={2} />
+                Mark moment
               </button>
-              <button onClick={() => setShowResetConfirm(true)} style={clinicianBtn} aria-label="Reset session">
-                ↺ Reset
+              <button onClick={() => setShowResetConfirm(true)} style={{ ...clinicianBtn, display: "inline-flex", alignItems: "center", gap: 6 }} aria-label="Reset session timer">
+                <RotateCcw size={13} strokeWidth={2} />
+                Reset
               </button>
               <button
                 onClick={() => setAudioReward((v) => !v)}
-                style={audioReward ? clinicianBtnPrimary : clinicianBtn}
-                aria-label="Toggle audio reward"
+                style={{ ...(audioReward ? clinicianBtnPrimary : clinicianBtn), display: "inline-flex", alignItems: "center", gap: 6 }}
+                aria-label={audioReward ? "Mute reward sound" : "Unmute reward sound"}
               >
-                {audioReward ? "🔊 Audio reward: ON" : "🔇 Audio reward: OFF"}
+                {audioReward ? <Volume2 size={13} strokeWidth={2} /> : <VolumeX size={13} strokeWidth={2} />}
+                {audioReward ? "Sound on" : "Sound off"}
               </button>
               <button
                 onClick={() => setShowClientApp(true)}
-                style={clinicianBtn}
-                aria-label="Preview client mobile app"
+                style={{ ...clinicianBtn, display: "inline-flex", alignItems: "center", gap: 6 }}
+                aria-label="Show what the client sees"
               >
-                📱 Preview client app
+                <Smartphone size={13} strokeWidth={2} />
+                Show client view
               </button>
               <div style={{ display: "inline-flex", alignItems: "center", gap: 4, marginLeft: "auto" }}>
                 <span style={{ fontSize: 11, color: "#94A3B8", fontWeight: 600, marginRight: 4 }}>Window:</span>
@@ -1792,7 +1799,7 @@ export default function DemoPage() {
               </div>
               {markers.length === 0 ? (
                 <div style={{ fontSize: 12, color: "#64748B", fontStyle: "italic", padding: "10px 0", textAlign: "center" }}>
-                  No markers yet — tap + Marker to flag a moment
+                  No moments flagged yet — tap &ldquo;Mark moment&rdquo; to flag something for later review
                 </div>
               ) : (
                 <div style={{ position: "relative", height: 28, background: "#1E293B", borderRadius: 8, overflow: "visible" }}>
@@ -2230,11 +2237,11 @@ export default function DemoPage() {
               <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 12 }}>Import overnight HRV and sleep data from wearables. If the client slept poorly, the AI suggests a lower-intensity session today.</p>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {[
-                  { name: "Oura Ring", icon: "💍", status: "Connected · Last sync 6h ago", active: true },
-                  { name: "Apple Watch", icon: "⌚", status: "Connect →", active: false },
-                  { name: "Garmin", icon: "🏃", status: "Connect →", active: false },
-                  { name: "Whoop", icon: "💪", status: "Connect →", active: false },
-                ].map(({ name, icon, status, active }) => {
+                  { name: "Oura Ring",   abbr: "OR", color: "#A78BFA", status: "Connected · Last sync 6h ago", active: true },
+                  { name: "Apple Watch", abbr: "AW", color: "#06B6D4", status: "Connect →", active: false },
+                  { name: "Garmin",      abbr: "G",  color: "#10B981", status: "Connect →", active: false },
+                  { name: "Whoop",       abbr: "W",  color: "#F59E0B", status: "Connect →", active: false },
+                ].map(({ name, abbr, color, status, active }) => {
                   const isConnected = active || connectedWearables.has(name);
                   const displayStatus = isConnected ? (active ? status : "Paired ✓ — HRV streaming") : status;
                   return (
@@ -2260,7 +2267,7 @@ export default function DemoPage() {
                         font: "inherit",
                       }}
                     >
-                      <span style={{ fontSize: 18 }}>{icon}</span>
+                      <span style={{ width: 28, height: 28, borderRadius: 6, background: `${color}1A`, color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, letterSpacing: "-0.02em", flexShrink: 0, border: `1px solid ${color}33` }}>{abbr}</span>
                       <div>
                         <div style={{ fontSize: 12, fontWeight: 700, color: "#F1F5F9" }}>{name}</div>
                         <div style={{ fontSize: 11, color: isConnected ? "#10B981" : "#94A3B8" }}>{displayStatus}</div>
@@ -2413,7 +2420,7 @@ export default function DemoPage() {
                     onClick={() => setRecommendationApplied(true)}
                     style={{ fontSize: 12, fontWeight: 700, padding: "6px 14px", background: recommendationApplied ? "#10B981" : "#F59E0B", color: "white", border: "none", borderRadius: 6, cursor: "pointer" }}
                   >
-                    {recommendationApplied ? "✓ Protocol Updated to Alpha-Theta" : "Apply Recommendation"}
+                    {recommendationApplied ? "✓ Switched to Alpha-Theta" : `Switch ${demoClient.name.split(" ")[0]} to Alpha-Theta`}
                   </button>
                   <button onClick={() => setShowSimilarCasesModal(true)} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", background: "#1E293B", color: "#FCD34D", border: "1px solid #92400E", borderRadius: 6, cursor: "pointer" }}>
                     View 847 Similar Profiles
@@ -2664,7 +2671,7 @@ export default function DemoPage() {
                     onClick={() => setRecommendationApplied(true)}
                     style={{ fontSize: 13, fontWeight: 700, padding: "8px 18px", background: recommendationApplied ? "#10B981" : "#059669", color: "white", border: "none", borderRadius: 8, cursor: "pointer" }}
                   >
-                    {recommendationApplied ? "✓ Protocol Updated" : "Apply Recommendation"}
+                    {recommendationApplied ? "✓ Switched to Alpha-Theta" : `Switch ${demoClient.name.split(" ")[0]} to Alpha-Theta`}
                   </button>
                   <button onClick={() => setShowSimilarCasesModal(true)} style={{ fontSize: 13, fontWeight: 600, padding: "8px 18px", background: "transparent", color: "#6EE7B7", border: "1px solid #059669", borderRadius: 8, cursor: "pointer" }}>
                     View 847 Similar Profiles
