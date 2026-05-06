@@ -296,6 +296,22 @@ export default function DemoPage() {
   const [showClinicianOverlay, setShowClinicianOverlay] = useState(true);
   const [gameDifficulty, setGameDifficulty] = useState<"Easy" | "Medium" | "Hard">("Medium");
   const [hoveredMarker, setHoveredMarker] = useState<number | null>(null);
+  // Advanced clinician controls
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [rewardPct, setRewardPct] = useState(70);
+  const [holdTime, setHoldTime] = useState(0.5);
+  const [smoothing, setSmoothing] = useState(2.0);
+  const [autoThreshold, setAutoThreshold] = useState(false);
+  const [masterVolume, setMasterVolume] = useState(75);
+  const [rewardSoundVolume, setRewardSoundVolume] = useState(60);
+  const [emgThreshold, setEmgThreshold] = useState(50);
+  const [eyeBlinkRejection, setEyeBlinkRejection] = useState(true);
+  const [emgRejection, setEmgRejection] = useState(true);
+  const [thetaRange, setThetaRange] = useState<[number, number]>([4, 8]);
+  const [alphaRange, setAlphaRange] = useState<[number, number]>([8, 12]);
+  const [betaRange, setBetaRange] = useState<[number, number]>([15, 20]);
+  const [sessionDuration, setSessionDuration] = useState(30);
+  const [yAxisAutoscale, setYAxisAutoscale] = useState(true);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -1044,7 +1060,134 @@ export default function DemoPage() {
                 />
               </div>
               <span style={{ fontSize: 11, color: "#64748B", marginLeft: "auto" }}>Adjust to recalibrate &quot;On target&quot; in real time</span>
+              <button
+                onClick={() => setShowAdvanced((v) => !v)}
+                style={{
+                  fontSize: 11, fontWeight: 600, padding: "6px 12px", borderRadius: 8,
+                  background: showAdvanced ? "#1E293B" : "transparent",
+                  color: showAdvanced ? "#60A5FA" : "#94A3B8",
+                  border: "1px solid #334155",
+                  cursor: "pointer",
+                }}
+              >
+                {showAdvanced ? "▾ Hide advanced" : "▸ Advanced controls"}
+              </button>
             </div>
+
+            {/* ── ADVANCED CLINICIAN CONTROLS ── */}
+            {showAdvanced && (
+              <div style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 14, padding: 20, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 24px -16px rgba(0,0,0,0.5)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, paddingBottom: 12, borderBottom: "1px solid #1E293B" }}>
+                  <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(96,165,250,0.15)", color: "#60A5FA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, border: "1px solid rgba(96,165,250,0.3)" }}>⚙</div>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Advanced Clinician Controls</div>
+                    <div style={{ fontSize: 11, color: "#64748B" }}>Fine-tune protocol parameters · changes apply in real time</div>
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }} className="demo-grid-2">
+                  {/* REWARD PARAMETERS */}
+                  <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 14 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#34D399", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>Reward parameters</div>
+                    {[
+                      { label: "Reward %", value: rewardPct, set: setRewardPct, min: 30, max: 95, step: 5, unit: "%", hint: "% of time in zone to trigger reward" },
+                      { label: "Hold time", value: holdTime, set: setHoldTime, min: 0, max: 3, step: 0.1, unit: "s", hint: "Sustain target for X seconds" },
+                    ].map((s) => (
+                      <div key={s.label} style={{ marginBottom: 10 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
+                          <span style={{ color: "#CBD5E1", fontWeight: 600 }}>{s.label}</span>
+                          <span style={{ color: "#34D399", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{s.value}{s.unit}</span>
+                        </div>
+                        <input type="range" min={s.min} max={s.max} step={s.step} value={s.value} onChange={(e) => s.set(Number(e.target.value))} style={{ width: "100%", accentColor: "#10B981" }} aria-label={s.label} />
+                        <div style={{ fontSize: 10, color: "#64748B", marginTop: 2 }}>{s.hint}</div>
+                      </div>
+                    ))}
+                    <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#CBD5E1", cursor: "pointer", marginTop: 8 }}>
+                      <input type="checkbox" checked={autoThreshold} onChange={(e) => setAutoThreshold(e.target.checked)} style={{ accentColor: "#10B981" }} />
+                      Auto-adapt threshold
+                      <span style={{ fontSize: 10, color: "#64748B", marginLeft: 4 }}>(ANT mode)</span>
+                    </label>
+                  </div>
+
+                  {/* SIGNAL PROCESSING */}
+                  <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 14 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#60A5FA", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>Signal processing</div>
+                    <div style={{ marginBottom: 10 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
+                        <span style={{ color: "#CBD5E1", fontWeight: 600 }}>Smoothing</span>
+                        <span style={{ color: "#60A5FA", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{smoothing.toFixed(1)}s</span>
+                      </div>
+                      <input type="range" min={0.5} max={5.0} step={0.1} value={smoothing} onChange={(e) => setSmoothing(Number(e.target.value))} style={{ width: "100%", accentColor: "#3B82F6" }} aria-label="Smoothing window" />
+                      <div style={{ fontSize: 10, color: "#64748B", marginTop: 2 }}>Moving average window</div>
+                    </div>
+                    <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#CBD5E1", cursor: "pointer", marginTop: 8 }}>
+                      <input type="checkbox" checked={yAxisAutoscale} onChange={(e) => setYAxisAutoscale(e.target.checked)} style={{ accentColor: "#3B82F6" }} />
+                      Auto-scale chart Y-axis
+                    </label>
+                    <div style={{ marginTop: 10 }}>
+                      <div style={{ fontSize: 11, color: "#CBD5E1", fontWeight: 600, marginBottom: 6 }}>Session duration</div>
+                      <div style={{ display: "flex", gap: 6 }}>
+                        {[20, 30, 45, 60].map((d) => (
+                          <button key={d} onClick={() => setSessionDuration(d)} style={{ flex: 1, fontSize: 11, fontWeight: 600, padding: "5px 0", borderRadius: 6, border: sessionDuration === d ? "1px solid #3B82F6" : "1px solid #334155", background: sessionDuration === d ? "#3B82F6" : "#1E293B", color: sessionDuration === d ? "white" : "#94A3B8", cursor: "pointer" }}>{d}m</button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* FREQUENCY BAND RANGES */}
+                  <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 14 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#A78BFA", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>Frequency band ranges (Hz)</div>
+                    {[
+                      { name: "Theta", range: thetaRange, set: setThetaRange, color: "#F59E0B", min: 1, max: 12 },
+                      { name: "Alpha", range: alphaRange, set: setAlphaRange, color: "#EF4444", min: 6, max: 14 },
+                      { name: "Beta",  range: betaRange,  set: setBetaRange,  color: "#EC4899", min: 12, max: 30 },
+                    ].map((b) => (
+                      <div key={b.name} style={{ marginBottom: 10, display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: b.color, width: 38 }}>{b.name}</span>
+                        <input type="number" value={b.range[0]} min={b.min} max={b.range[1] - 1} step={0.5} onChange={(e) => b.set([Number(e.target.value), b.range[1]])} style={{ width: 50, padding: "4px 6px", fontSize: 11, background: "#1E293B", border: "1px solid #334155", color: "#F1F5F9", borderRadius: 6, fontVariantNumeric: "tabular-nums" }} />
+                        <span style={{ color: "#64748B", fontSize: 10 }}>—</span>
+                        <input type="number" value={b.range[1]} min={b.range[0] + 1} max={b.max} step={0.5} onChange={(e) => b.set([b.range[0], Number(e.target.value)])} style={{ width: 50, padding: "4px 6px", fontSize: 11, background: "#1E293B", border: "1px solid #334155", color: "#F1F5F9", borderRadius: 6, fontVariantNumeric: "tabular-nums" }} />
+                        <span style={{ fontSize: 10, color: "#64748B" }}>Hz</span>
+                      </div>
+                    ))}
+                    <div style={{ fontSize: 10, color: "#64748B", marginTop: 4 }}>Custom band tuning per protocol</div>
+                  </div>
+
+                  {/* AUDIO + ARTIFACT REJECTION */}
+                  <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 14 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#F472B6", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>Audio &amp; artifacts</div>
+                    {[
+                      { label: "Master volume", value: masterVolume, set: setMasterVolume, unit: "%" },
+                      { label: "Reward sound", value: rewardSoundVolume, set: setRewardSoundVolume, unit: "%" },
+                      { label: "EMG threshold", value: emgThreshold, set: setEmgThreshold, unit: "µV" },
+                    ].map((s) => (
+                      <div key={s.label} style={{ marginBottom: 10 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
+                          <span style={{ color: "#CBD5E1", fontWeight: 600 }}>{s.label}</span>
+                          <span style={{ color: "#F472B6", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{s.value}{s.unit}</span>
+                        </div>
+                        <input type="range" min={0} max={100} value={s.value} onChange={(e) => s.set(Number(e.target.value))} style={{ width: "100%", accentColor: "#EC4899" }} aria-label={s.label} />
+                      </div>
+                    ))}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 8 }}>
+                      <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#CBD5E1", cursor: "pointer" }}>
+                        <input type="checkbox" checked={emgRejection} onChange={(e) => setEmgRejection(e.target.checked)} style={{ accentColor: "#EC4899" }} />
+                        EMG artifact rejection
+                      </label>
+                      <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#CBD5E1", cursor: "pointer" }}>
+                        <input type="checkbox" checked={eyeBlinkRejection} onChange={(e) => setEyeBlinkRejection(e.target.checked)} style={{ accentColor: "#EC4899" }} />
+                        Eye blink rejection
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: 14, padding: "8px 12px", background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 8, fontSize: 11, color: "#93C5FD", display: "flex", gap: 8, alignItems: "center" }}>
+                  <span style={{ fontWeight: 700 }}>Tip:</span>
+                  Settings are saved to the protocol. Changes here update the live signal pipeline immediately.
+                </div>
+              </div>
+            )}
 
             {/* Z-score strip */}
             <div style={{ background: "linear-gradient(135deg, #0F172A, #1E293B)", border: "1px solid #334155", borderRadius: 12, padding: "12px 20px", marginBottom: 16, display: "flex", gap: 32, flexWrap: "wrap", alignItems: "center" }}>
@@ -1176,7 +1319,7 @@ export default function DemoPage() {
                   borderTop: !enabled
                     ? "1px solid #1E293B"
                     : isTarget
-                    ? "3px solid #EC4899"
+                    ? "3px solid #10B981"
                     : isSuppressed
                     ? "3px solid #F59E0B"
                     : "1px solid #1E293B",
@@ -1202,7 +1345,7 @@ export default function DemoPage() {
                   >
                     {enabled ? "✓ In reward" : "○ Disabled"}
                   </button>
-                  {enabled && isTarget && <div style={{ position: "absolute", top: 8, right: 10, fontSize: 10, fontWeight: 700, color: "#EC4899", background: "rgba(236,72,153,0.15)", padding: "2px 7px", borderRadius: 99 }}>REWARD ↑</div>}
+                  {enabled && isTarget && <div style={{ position: "absolute", top: 8, right: 10, fontSize: 10, fontWeight: 700, color: "#10B981", background: "rgba(16,185,129,0.15)", padding: "2px 7px", borderRadius: 99 }}>REWARD ↑</div>}
                   {enabled && isSuppressed && <div style={{ position: "absolute", top: 8, right: 10, fontSize: 10, fontWeight: 700, color: "#D97706", background: "rgba(245,158,11,0.15)", padding: "2px 7px", borderRadius: 99 }}>SUPPRESS ↓</div>}
                   <div style={{ height: 22 }} />
                   {sampleCount === 0 ? (
@@ -1434,14 +1577,17 @@ export default function DemoPage() {
             {/* Metrics row */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }} className="demo-grid-2">
               {[
-                { label: "Score", value: rewardVal != null ? rewardVal.toFixed(1) : "—", color: rewardColor },
-                { label: "Focus band (β)", value: sample?.beta != null ? (sample.beta * 100).toFixed(1) + "%" : "—", color: "#EC4899" },
-                { label: "Heart rate", value: sample?.heartRate != null ? sample.heartRate.toFixed(0) + " bpm" : "—", color: "#F59E0B" },
-                { label: "HRV", value: sample?.hrvRmssd != null ? sample.hrvRmssd.toFixed(1) + " ms" : "—", color: "#8B5CF6" },
-              ].map(({ label, value, color }) => (
-                <div key={label} style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 12, padding: "16px 18px", textAlign: "center" }}>
-                  <div style={{ fontSize: 11, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>{label}</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color, fontVariantNumeric: "tabular-nums" }}>{value}</div>
+                { label: "Score", value: rewardVal != null ? rewardVal.toFixed(1) : "—", dot: rewardColor },
+                { label: "Focus band (β)", value: sample?.beta != null ? (sample.beta * 100).toFixed(1) + "%" : "—", dot: "#EC4899" },
+                { label: "Heart rate", value: sample?.heartRate != null ? sample.heartRate.toFixed(0) + " bpm" : "—", dot: "#10B981" },
+                { label: "HRV", value: sample?.hrvRmssd != null ? sample.hrvRmssd.toFixed(1) + " ms" : "—", dot: "#8B5CF6" },
+              ].map(({ label, value, dot }) => (
+                <div key={label} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 12, padding: "16px 18px", textAlign: "center", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 6 }}>
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: dot, boxShadow: `0 0 8px ${dot}` }} />
+                    <div style={{ fontSize: 11, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>{label}</div>
+                  </div>
+                  <div style={{ fontSize: 22, fontWeight: 800, color: "#F1F5F9", fontVariantNumeric: "tabular-nums", letterSpacing: "-0.02em" }}>{value}</div>
                 </div>
               ))}
             </div>
@@ -1750,16 +1896,19 @@ export default function DemoPage() {
             {/* Reward trajectory */}
             <div style={{ ...card, marginBottom: 16 }}>
               <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 16 }}>Reward Score Trajectory</h3>
-              <div style={{ display: "flex", gap: 4, alignItems: "flex-end", height: 100 }}>
+              <div style={{ display: "flex", gap: 4, alignItems: "flex-end", height: 120, position: "relative", paddingBottom: 4 }}>
+                {/* Reference baseline at 50 */}
+                <div style={{ position: "absolute", left: 0, right: 0, bottom: `${(50 / 100) * 116 + 4}px`, height: 1, borderTop: "1px dashed rgba(148,163,184,0.18)", pointerEvents: "none" }} />
                 {SESSION_HISTORY.map((s) => (
-                  <div key={s.session} onClick={() => setDetailModal({ type: "session", data: s as unknown as Record<string, unknown> })} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer" }}>
+                  <div key={s.session} onClick={() => setDetailModal({ type: "session", data: s as unknown as Record<string, unknown> })} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "center", gap: 4, cursor: "pointer", height: "100%" }}>
                     <div
                       title={`Session ${s.session}: ${s.reward.toFixed(1)} — click for details`}
                       style={{
-                        flex: 1, width: "100%", borderRadius: "4px 4px 0 0",
+                        width: "100%", borderRadius: "4px 4px 0 0",
                         background: `linear-gradient(180deg, ${s.reward >= 70 ? "#10B981" : s.reward >= 50 ? "#F59E0B" : "#EF4444"}, ${s.reward >= 70 ? "#6EE7B7" : s.reward >= 50 ? "#FCD34D" : "#FCA5A5"})`,
-                        height: `${(s.reward / 100) * 88}px`,
+                        height: `${Math.max(2, (s.reward / 100) * 110)}px`,
                         transition: "transform 0.15s",
+                        boxShadow: `0 0 8px ${s.reward >= 70 ? "rgba(16,185,129,0.4)" : s.reward >= 50 ? "rgba(245,158,11,0.3)" : "rgba(239,68,68,0.25)"}`,
                       }}
                       onMouseEnter={(e) => (e.currentTarget.style.transform = "scaleY(1.05)")}
                       onMouseLeave={(e) => (e.currentTarget.style.transform = "scaleY(1)")}
@@ -1859,8 +2008,8 @@ export default function DemoPage() {
                             +{s.thetaBeta.toFixed(2)}
                           </span>
                         </td>
-                        <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums", color: "#94A3B8" }}>{s.phq9}</td>
-                        <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums", color: "#94A3B8" }}>{s.gad7}</td>
+                        <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums", color: s.phq9 <= 5 ? "#10B981" : s.phq9 <= 10 ? "#F59E0B" : "#EF4444", fontWeight: 600 }}>{s.phq9}</td>
+                        <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums", color: s.gad7 <= 5 ? "#10B981" : s.gad7 <= 10 ? "#F59E0B" : "#EF4444", fontWeight: 600 }}>{s.gad7}</td>
                         <td style={{ padding: "10px 16px" }}>
                           <button onClick={(e) => { e.stopPropagation(); switchTab("ai"); }} style={{ fontSize: 11, color: "#2563EB", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>AI Note</button>
                         </td>
@@ -2312,8 +2461,7 @@ export default function DemoPage() {
                         </div>
                       )}
                       {selectedProtocol !== p.id && (
-                        <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #334155", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span style={{ fontSize: 11, color: "#94A3B8" }}>{p.duration.split("·")[0].trim()}</span>
+                        <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #334155", display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
                           <button
                             onClick={(e) => { e.stopPropagation(); setRecommendationApplied(true); switchTab("session"); }}
                             style={{ fontSize: 12, fontWeight: 600, color: "#60A5FA", background: "none", border: "1px solid #334155", borderRadius: 6, padding: "4px 12px", cursor: "pointer" }}
