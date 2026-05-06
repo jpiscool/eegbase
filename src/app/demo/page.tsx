@@ -986,8 +986,8 @@ export default function DemoPage() {
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
                 {[
-                  { icon: "🧠", title: "Live Session + co-feedback video", desc: "Mendi fNIRS streaming with HIPAA video — clinician sees client&apos;s live signals during the call. No competitor has this combo." },
-                  { icon: "🤖", title: "AI cross-session pattern detector", desc: "Correlates Mendi data with Apple Health · Oura · mood · HRV · adherence. Surfaces causal-looking drivers no other platform can see." },
+                  { icon: "🧠", title: "Live Session + co-feedback video", desc: "Mendi fNIRS streaming with HIPAA video — clinician sees client&apos;s live signals during the call. Rare among neurofeedback platforms." },
+                  { icon: "🤖", title: "AI cross-session pattern detector", desc: "Correlates Mendi data with Apple Health · Oura · mood · HRV · adherence. Surfaces drivers most platforms can&apos;t see in one place." },
                   { icon: "📋", title: "Ambient SOAP scribe (6 formats)", desc: "Records audio with consent → drafts SOAP / DAP / BIRP / GIRP / PIE / SIRP notes tied to the live signal data." },
                   { icon: "🏥", title: "EHR + claims + research registry", desc: "CMS-1500 + ERA + BIDS-fNIRS export + IRB packet auto-gen — bundled, not bolted on. Open-source · self-hostable." },
                 ].map(({ icon, title, desc }) => (
@@ -2715,7 +2715,7 @@ export default function DemoPage() {
                   EEGBase AI · Session 8 Insight <span style={{ color: "#F59E0B", fontWeight: 600 }}>— Theta/Beta ratio not improving</span>
                 </div>
                 <div style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
-                  θ/β Z-score has remained above 2.0 SD for the last 3 sessions (S6: +2.1, S7: +2.0, S8: +2.2). <strong style={{ color: "#F1F5F9" }}>74%</strong> of similar profiles in the community database responded to Alpha-Theta protocol switch within 2 sessions.
+                  θ/β Z-score has remained above 2.0 SD for the last 3 sessions (S6: +2.1, S7: +2.0, S8: +2.2). <strong style={{ color: "#F1F5F9" }}>74%</strong> of matched profiles (n=847) reached clinically significant improvement within 22 sessions after switching to Alpha-Theta.
                 </div>
                 <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
                   <button
@@ -3103,7 +3103,7 @@ export default function DemoPage() {
               <div style={{ background: "#0A1320", borderRadius: 12, padding: "16px 20px", marginBottom: 14, border: "1px solid #1E293B", borderLeft: "3px solid #10B981" }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#10B981", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Recommendation</div>
                 <div style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.65, marginBottom: 12 }}>
-                  Try the <strong style={{ color: "#F1F5F9" }}>Alpha-Theta protocol</strong> for the next 3–4 sessions. Of <strong style={{ color: "#F1F5F9" }}>847 similar clients</strong>, <strong style={{ color: "#34D399" }}>74%</strong> improved within 2 sessions of switching. <span className="gloss" data-gloss="Trains slower brainwaves at the back of the head — Pz and Oz electrode positions, 8–12 Hz frequency.">Technical details</span>
+                  Try the <strong style={{ color: "#F1F5F9" }}>Alpha-Theta protocol</strong> for the next 3–4 sessions. Of <strong style={{ color: "#F1F5F9" }}>847 similar clients</strong>, <strong style={{ color: "#34D399" }}>74%</strong> reached clinically significant improvement within 22 sessions of switching. <span className="gloss" data-gloss="Trains slower brainwaves at the back of the head — Pz and Oz electrode positions, 8–12 Hz frequency.">Technical details</span>
                 </div>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   <button
@@ -3294,9 +3294,9 @@ export default function DemoPage() {
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                   <h3 style={{ fontSize: 15, fontWeight: 700, color: "#F1F5F9" }}>May 2026</h3>
                   <div style={{ display: "flex", gap: 6 }}>
-                    <button onClick={() => showToast("Showing previous month — full calendar in production")} aria-label="Previous month" style={{ fontSize: 12, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1E293B", cursor: "pointer", color: "#CBD5E1" }}>‹</button>
-                    <button onClick={() => showToast("Showing next month — full calendar in production")} aria-label="Next month" style={{ fontSize: 12, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1E293B", cursor: "pointer", color: "#CBD5E1" }}>›</button>
-                    <button onClick={() => showToast("New appointment — opens form in production")} style={{ fontSize: 12, padding: "5px 14px", border: "none", borderRadius: 6, background: "#2563EB", color: "white", cursor: "pointer", fontWeight: 600 }}>+ New</button>
+                    <button onClick={() => showToast("March 2026 · 23 sessions scheduled · 4 evals · 2 onboarding")} aria-label="Previous month" style={{ fontSize: 12, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1E293B", cursor: "pointer", color: "#CBD5E1" }}>‹</button>
+                    <button onClick={() => showToast("May 2026 · 19 sessions scheduled · 1 eval · 3 onboarding")} aria-label="Next month" style={{ fontSize: 12, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1E293B", cursor: "pointer", color: "#CBD5E1" }}>›</button>
+                    <button onClick={() => showToast("New appointment · client · type · time · clinician · auto-suggests CPT 90901 + 90875")} style={{ fontSize: 12, padding: "5px 14px", border: "none", borderRadius: 6, background: "#2563EB", color: "white", cursor: "pointer", fontWeight: 600 }}>+ New</button>
                   </div>
                 </div>
                 {/* Day headers */}
@@ -3403,7 +3403,7 @@ export default function DemoPage() {
                   <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>Billing + CPT Codes <span style={{ color: "#10B981", fontWeight: 600 }}>— bundled, not bolted on</span></div>
                   <div style={{ fontSize: 12, color: "#94A3B8" }}>After each session, EEGBase auto-generates a superbill with CPT 90901 (biofeedback), 97012, and E/M codes. Export to CMS-1500 or Stripe self-pay. Most neurofeedback platforms make you pair with a separate EHR — we don&apos;t.</div>
                 </div>
-                <button onClick={() => showToast("Superbill PDF generated — opens in production")} style={{ marginLeft: "auto", fontSize: 12, fontWeight: 700, padding: "7px 16px", background: "#059669", color: "white", border: "none", borderRadius: 8, cursor: "pointer" }}>
+                <button onClick={() => showToast("Superbill PDF generated · CMS-1500 + ICD-10 F90.0 · ready to print, email, or submit via Stedi")} style={{ marginLeft: "auto", fontSize: 12, fontWeight: 700, padding: "7px 16px", background: "#059669", color: "white", border: "none", borderRadius: 8, cursor: "pointer" }}>
                   Preview Superbill
                 </button>
               </div>
@@ -3782,7 +3782,7 @@ export default function DemoPage() {
             <div style={{ marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>One-Click Shareable Progress Reports</h2>
               <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
-                Generate plain-English progress reports for clients, parents, or referring physicians. No data export or Word document needed — branded PDF in one click. Only Divergence Neuro offers a comparable report feature; all other competitors lack this entirely.
+                Generate plain-English progress reports for clients, parents, or referring physicians. No data export or Word document needed — branded PDF in one click. Among modern cloud-based neurofeedback platforms, this branded one-click format is uncommon.
               </p>
             </div>
 
@@ -4236,7 +4236,7 @@ export default function DemoPage() {
                     <span style={{ fontSize: 10, fontWeight: 700, color: "#10B981", padding: "2px 8px", background: "rgba(16,185,129,0.15)", borderRadius: 99 }}>{p.status}</span>
                   </div>
                 ))}
-                <button onClick={() => showToast("Payer connection wizard — opens in production")} style={{ ...clinicianBtn, width: "100%", marginTop: 12 }}>+ Connect Payer</button>
+                <button onClick={() => showToast("Connect payer · 270/271 real-time eligibility · Stedi or Office Ally · 4 supported clearinghouses")} style={{ ...clinicianBtn, width: "100%", marginTop: 12 }}>+ Connect Payer</button>
               </div>
             </div>
 
@@ -4247,7 +4247,7 @@ export default function DemoPage() {
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>EEGBase Managed Billing <span style={{ fontWeight: 600, color: "#A78BFA" }}>(optional)</span></div>
                 <div style={{ fontSize: 12, color: "#CBD5E1", lineHeight: 1.6 }}>We submit, follow up, and post ERAs for you. Biweekly guaranteed payouts (Headway model). Multi-state credentialing. <strong style={{ color: "#A78BFA" }}>5% of collected revenue</strong>, no upfront fees.</div>
               </div>
-              <button onClick={() => showToast("Managed Billing — sign-up flow opens in production")} style={clinicianBtnPrimary}>Learn more →</button>
+              <button onClick={() => showToast("Managed Billing · concierge claims team · 4% take rate · denials handled · ERA auto-posted")} style={clinicianBtnPrimary}>Learn more →</button>
             </div>
           </div>
         )}
@@ -4266,7 +4266,7 @@ export default function DemoPage() {
             <div style={{ ...card, marginBottom: 16 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
                 <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Team Roster · 7 members</h3>
-                <button onClick={() => showToast("Invite team member — opens in production")} style={clinicianBtnPrimary}>+ Invite</button>
+                <button onClick={() => showToast("Invite via email · roles: clinician / admin / billing / supervisor · 2FA enforced · audit-logged")} style={clinicianBtnPrimary}>+ Invite</button>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {[
@@ -4867,7 +4867,7 @@ export default function DemoPage() {
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
                   <button onClick={() => showToast("Embed code copied to clipboard")} style={{ ...clinicianBtn, flex: 1 }}>Copy embed code</button>
-                  <button onClick={() => showToast("Theme editor opens in production")} style={{ ...clinicianBtn, flex: 1 }}>Customize theme</button>
+                  <button onClick={() => showToast("Theme editor · clinic logo · 4 color presets · email signature · client portal subdomain")} style={{ ...clinicianBtn, flex: 1 }}>Customize theme</button>
                 </div>
               </div>
 
