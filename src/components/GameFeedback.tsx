@@ -7,14 +7,19 @@ interface Props {
   threshold: number;
 }
 
-interface Particle {
+interface Orb {
   id: number;
   x: number;
-  baseY: number;
-  speed: number;
-  size: number;
+  y: number;
+  collected: boolean;
+  bornAt: number;
   hue: number;
-  twinkleOffset: number;
+}
+
+interface Achievement {
+  id: number;
+  text: string;
+  bornAt: number;
 }
 
 function zoneLabel(score: number, threshold: number): string {
@@ -26,34 +31,36 @@ function zoneLabel(score: number, threshold: number): string {
 }
 
 function zoneTint(score: number, threshold: number): { primary: string; secondary: string } {
-  if (score < threshold - 15) return { primary: "#475569", secondary: "#1E293B" };  // grey
-  if (score < threshold) return { primary: "#7C3AED", secondary: "#312E81" };       // purple
-  if (score < threshold + 10) return { primary: "#06B6D4", secondary: "#164E63" };  // teal
-  if (score < threshold + 25) return { primary: "#10B981", secondary: "#064E3B" };  // emerald
-  return { primary: "#F59E0B", secondary: "#78350F" };                              // amber
+  if (score < threshold - 15) return { primary: "#475569", secondary: "#1E293B" };
+  if (score < threshold) return { primary: "#7C3AED", secondary: "#312E81" };
+  if (score < threshold + 10) return { primary: "#06B6D4", secondary: "#164E63" };
+  if (score < threshold + 25) return { primary: "#10B981", secondary: "#064E3B" };
+  return { primary: "#F59E0B", secondary: "#78350F" };
 }
 
 export function GameFeedback({ score, threshold }: Props) {
-  const s = score ?? 0;
-  const tint = zoneTint(s, threshold);
-  const intensity = Math.max(0.15, s / 100);
-  const zone = score == null ? "Awaiting signal…" : zoneLabel(s, threshold);
-  const isPeak = s >= threshold + 10;
-  const isFlow = s >= threshold + 25;
+  // Manual override mode lets viewer play with the demo
+  const [manualMode, setManualMode] = useState(false);
+  const [manualScore, setManualScore] = useState(50);
+  const [orbs, setOrbs] = useState<Orb[]>([]);
+  const [collected, setCollected] = useState(0);
+  const [streak, setStreak] = useState(0); // consecutive ticks in zone
+  const [bestStreak, setBestStreak] = useState(0);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
+  const [draggingThreshold, setDraggingThreshold] = useState(false);
+  const [localThreshold, setLocalThreshold] = useState(threshold);
+  const svgRef = useRef<SVGSVGElement>(null);
 
-  // Generate stars once
-  const starsRef = useRef<Particle[]>([]);
-  if (starsRef.current.length === 0) {
-    starsRef.current = Array.from({ length: 60 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 400,
-      baseY: 20 + Math.random() * 200,
-      speed: 0.3 + Math.random() * 0.7,
-      size: 0.4 + Math.random() * 1.4,
-      hue: 200 + Math.random() * 60,
-      twinkleOffset: Math.random() * Math.PI * 2,
-    }));
-  }
+  // Effective score: manual override or live brain score
+  const effectiveScore = manualMode ? manualScore : (score ?? 0);
+  const effectiveThreshold = localThreshold;
+  const tint = zoneTint(effectiveScore, effectiveThreshold);
+  const intensity = Math.max(0.15, effectiveScore / 100);
+  const zone = score == null && !manualMode ? "Awaiting signal…" : zoneLabel(effectiveScore, effectiveThreshold);
+  const isPeak = effectiveScore >= effectiveThreshold + 10;
+  const isFlow = effectiveScore >= effectiveThreshold + 25;
+  const inTargetZone = effectiveScore >= effectiveThreshold;
 
   // Animation tick
   const [tick, setTick] = useState(0);
@@ -72,28 +79,129 @@ export function GameFeedback({ score, threshold }: Props) {
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  // Streak tracking — reward consecutive time in target zone
+  useEffect(() => {
+    if (inTargetZone) {
+      setStreak((s) => {
+        const next = s + 1;
+        setBestStreak((b) => Math.max(b, next));
+        // Trigger achievements at streak milestones
+        if (next === 30) addAchievement("✦ 1 second in zone");
+        if (next === 90) addAchievement("✦✦ 3 seconds in zone");
+        if (next === 300) addAchievement("✦✦✦ 10 seconds in flow!");
+        return next;
+      });
+    } else {
+      setStreak(0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tick, inTargetZone]);
+
+  // Spawn collectible orbs randomly
+  useEffect(() => {
+    if (tick % 60 === 0 && orbs.filter((o) => !o.collected).length < 3) {
+      setOrbs((prev) => [
+        ...prev.slice(-15),
+        {
+          id: Date.now() + Math.random(),
+          x: 60 + Math.random() * 280,
+          y: 100 + Math.random() * 160,
+          collected: false,
+          bornAt: tick,
+          hue: 200 + Math.random() * 120,
+        },
+      ]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tick]);
+
+  // Auto-collect orbs when figure passes through them
+  useEffect(() => {
+    const figureY = 360 - (effectiveScore / 100) * 240; // figure altitude
+    const figureX = 200;
+    setOrbs((prev) =>
+      prev.map((orb) => {
+        if (orb.collected) return orb;
+        const dx = orb.x - figureX;
+        const dy = orb.y - figureY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < 30) {
+          setCollected((c) => c + 1);
+          if (collected > 0 && (collected + 1) % 5 === 0) {
+            addAchievement(`◇ ${collected + 1} orbs collected`);
+          }
+          return { ...orb, collected: true };
+        }
+        return orb;
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tick, effectiveScore]);
+
+  function addAchievement(text: string) {
+    const a = { id: Date.now() + Math.random(), text, bornAt: performance.now() };
+    setAchievements((prev) => [...prev.slice(-2), a]);
+    setTimeout(() => setAchievements((prev) => prev.filter((x) => x.id !== a.id)), 2500);
+  }
+
+  // SVG mouse handlers
+  function svgPoint(e: React.MouseEvent<SVGSVGElement>): { x: number; y: number } {
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect) return { x: 0, y: 0 };
+    const x = ((e.clientX - rect.left) / rect.width) * 400;
+    const y = ((e.clientY - rect.top) / rect.height) * 400;
+    return { x, y };
+  }
+
+  function handleMouseMove(e: React.MouseEvent<SVGSVGElement>) {
+    const p = svgPoint(e);
+    setHoverPos(p);
+    if (draggingThreshold) {
+      // Drag the threshold line
+      const newThreshold = Math.round(Math.max(20, Math.min(95, ((360 - p.y) / 240) * 100)));
+      setLocalThreshold(newThreshold);
+    } else if (manualMode && e.buttons === 1) {
+      // Drag to adjust manual score
+      const newScore = Math.round(Math.max(0, Math.min(100, ((360 - p.y) / 240) * 100)));
+      setManualScore(newScore);
+    }
+  }
+
+  function handleMouseLeave() {
+    setHoverPos(null);
+    setDraggingThreshold(false);
+  }
+
+  function handleMouseDown(e: React.MouseEvent<SVGSVGElement>) {
+    const p = svgPoint(e);
+    const thresholdY = 360 - (effectiveThreshold / 100) * 240;
+    if (Math.abs(p.y - thresholdY) < 12) {
+      setDraggingThreshold(true);
+    } else if (manualMode) {
+      const newScore = Math.round(Math.max(0, Math.min(100, ((360 - p.y) / 240) * 100)));
+      setManualScore(newScore);
+    }
+  }
+
+  function handleMouseUp() {
+    setDraggingThreshold(false);
+  }
+
+  // Generate stars once
+  const starsRef = useRef<{ x: number; y: number; size: number; offset: number }[]>([]);
+  if (starsRef.current.length === 0) {
+    starsRef.current = Array.from({ length: 50 }, () => ({
+      x: Math.random() * 400,
+      y: Math.random() * 220,
+      size: 0.3 + Math.random() * 1.2,
+      offset: Math.random() * Math.PI * 2,
+    }));
+  }
+
   const t = tick * 0.04;
-
-  // Aurora ribbon paths — each computed with sine wave drift
-  const auroraRibbons = [
-    { yBase: 80, amp: 18, phase: 0, opacity: 0.6 + intensity * 0.4 },
-    { yBase: 100, amp: 22, phase: 1.4, opacity: 0.45 + intensity * 0.5 },
-    { yBase: 130, amp: 16, phase: 2.8, opacity: 0.35 + intensity * 0.55 },
-  ];
-
-  // Twinkling stars
-  const starOpacities = starsRef.current.map((star) => {
-    const twinkle = 0.4 + 0.6 * (Math.sin(t * star.speed + star.twinkleOffset) * 0.5 + 0.5);
-    return twinkle * (0.3 + intensity * 0.7);
-  });
-
-  // Floating particles for peak / flow state
-  const ascendParticles = Array.from({ length: 12 }, (_, i) => ({
-    id: i,
-    x: 40 + (i * 30 + (tick * 0.6) % 40) % 320,
-    y: 280 - ((tick * (1 + i * 0.15)) % 200),
-    size: 1.2 + (i % 3) * 0.8,
-  }));
+  const figureY = 360 - (effectiveScore / 100) * 240;
+  const figureX = 200;
+  const thresholdY = 360 - (effectiveThreshold / 100) * 240;
 
   return (
     <div
@@ -106,273 +214,294 @@ export function GameFeedback({ score, threshold }: Props) {
         border: "1px solid #1E293B",
         boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 12px 36px -16px rgba(0,0,0,0.6)",
       }}
-      aria-label={`Aurora neurofeedback game · score ${s.toFixed(0)}`}
     >
       <style>{`
         @keyframes auroraShimmer { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
-        @keyframes badgeFade { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
-        @keyframes mountainGlow { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.6; } }
+        @keyframes orbCollected { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2.2); opacity: 0; } }
+        @keyframes achBadge { 0% { opacity: 0; transform: translate(-50%, 12px) scale(0.92); } 30% { opacity: 1; transform: translate(-50%, 0) scale(1); } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -12px) scale(1.04); } }
+        @keyframes figureBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
       `}</style>
 
-      <svg viewBox="0 0 400 400" width="100%" style={{ display: "block" }}>
+      {/* Manual mode toggle (overlay button) */}
+      <div style={{ position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)", zIndex: 5, display: "flex", gap: 6 }}>
+        <button
+          onClick={() => setManualMode(false)}
+          style={{
+            fontSize: 11, fontWeight: 600, padding: "6px 12px", borderRadius: 999,
+            background: !manualMode ? tint.primary : "rgba(2,6,23,0.7)",
+            color: !manualMode ? "white" : "#94A3B8",
+            border: !manualMode ? `1px solid ${tint.primary}` : "1px solid #334155",
+            cursor: "pointer", letterSpacing: "0.02em",
+            transition: "all 0.15s",
+          }}
+        >
+          ● Live brain
+        </button>
+        <button
+          onClick={() => setManualMode(true)}
+          style={{
+            fontSize: 11, fontWeight: 600, padding: "6px 12px", borderRadius: 999,
+            background: manualMode ? tint.primary : "rgba(2,6,23,0.7)",
+            color: manualMode ? "white" : "#94A3B8",
+            border: manualMode ? `1px solid ${tint.primary}` : "1px solid #334155",
+            cursor: "pointer", letterSpacing: "0.02em",
+            transition: "all 0.15s",
+          }}
+        >
+          ✋ Try it yourself
+        </button>
+      </div>
+
+      <svg
+        ref={svgRef}
+        viewBox="0 0 400 400"
+        width="100%"
+        style={{ display: "block", cursor: draggingThreshold ? "ns-resize" : manualMode ? "ns-resize" : "crosshair" }}
+        onMouseMove={handleMouseMove}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+      >
         <defs>
-          {/* Sky gradient — shifts with score */}
           <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={tint.secondary} />
             <stop offset="50%" stopColor="#020617" />
             <stop offset="100%" stopColor="#0F172A" />
           </linearGradient>
 
-          {/* Aurora gradient — color flows from primary to transparent */}
           <linearGradient id="auroraGrad1" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stopColor={tint.primary} stopOpacity="0" />
             <stop offset="40%" stopColor={tint.primary} stopOpacity="0.7" />
             <stop offset="60%" stopColor={tint.primary} stopOpacity="0.7" />
             <stop offset="100%" stopColor={tint.primary} stopOpacity="0" />
           </linearGradient>
-          <linearGradient id="auroraGrad2" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#A855F7" stopOpacity="0" />
-            <stop offset="50%" stopColor="#A855F7" stopOpacity={isFlow ? "0.5" : "0.25"} />
-            <stop offset="100%" stopColor="#A855F7" stopOpacity="0" />
-          </linearGradient>
 
-          {/* Reflection gradient on water */}
           <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={tint.secondary} stopOpacity="0.3" />
             <stop offset="100%" stopColor="#020617" />
           </linearGradient>
 
-          {/* Star glow filter */}
-          <filter id="starGlow">
-            <feGaussianBlur stdDeviation="0.8" />
-          </filter>
-          <filter id="auroraGlow">
-            <feGaussianBlur stdDeviation="6" />
-          </filter>
-          <filter id="strongGlow">
-            <feGaussianBlur stdDeviation="3" />
-          </filter>
+          <radialGradient id="figureGrad">
+            <stop offset="0%" stopColor="white" stopOpacity="1" />
+            <stop offset="40%" stopColor={tint.primary} stopOpacity="0.95" />
+            <stop offset="100%" stopColor={tint.primary} stopOpacity="0" />
+          </radialGradient>
 
-          {/* Mountain silhouette */}
           <linearGradient id="mountainGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#0F172A" />
             <stop offset="100%" stopColor="#020617" />
           </linearGradient>
+
+          <filter id="orbGlow"><feGaussianBlur stdDeviation="2" /></filter>
+          <filter id="strongGlow"><feGaussianBlur stdDeviation="5" /></filter>
         </defs>
 
-        {/* Sky background */}
+        {/* Sky */}
         <rect width="400" height="280" fill="url(#skyGrad)" />
 
-        {/* Distant stars */}
-        {starsRef.current.slice(0, 40).map((star, i) => {
-          const opacity = starOpacities[i] ?? 0.3;
-          if (star.baseY > 220) return null;
+        {/* Stars */}
+        {starsRef.current.map((star, i) => {
+          const twinkle = 0.4 + 0.6 * (Math.sin(t + star.offset) * 0.5 + 0.5);
           return (
             <circle
-              key={star.id}
+              key={i}
               cx={star.x}
-              cy={star.baseY}
+              cy={star.y}
               r={star.size}
               fill="white"
-              opacity={opacity}
-              filter="url(#starGlow)"
+              opacity={twinkle * (0.3 + intensity * 0.6)}
             />
           );
         })}
 
-        {/* Aurora ribbons — flowing horizontal curves */}
-        <g style={{ animation: "auroraShimmer 4s ease-in-out infinite" }}>
-          {auroraRibbons.map((ribbon, ri) => {
-            const points: string[] = [];
-            const samples = 40;
-            for (let i = 0; i <= samples; i++) {
-              const x = (i / samples) * 400;
-              // Each ribbon has slightly different wave function
-              const wave = Math.sin(x * 0.018 + t * 0.6 + ribbon.phase) * ribbon.amp +
-                           Math.sin(x * 0.04 + t * 0.4 + ri) * (ribbon.amp * 0.4);
-              const y = ribbon.yBase + wave;
-              points.push(`${x},${y}`);
-            }
-            // Bottom edge of ribbon (wider for soft fade)
-            for (let i = samples; i >= 0; i--) {
-              const x = (i / samples) * 400;
-              const wave = Math.sin(x * 0.018 + t * 0.6 + ribbon.phase) * ribbon.amp +
-                           Math.sin(x * 0.04 + t * 0.4 + ri) * (ribbon.amp * 0.4);
-              const y = ribbon.yBase + wave + 28 + intensity * 16;
-              points.push(`${x},${y}`);
-            }
-            return (
-              <polygon
-                key={ri}
-                points={points.join(" ")}
-                fill={ri === 1 ? "url(#auroraGrad2)" : "url(#auroraGrad1)"}
-                opacity={ribbon.opacity}
-                filter="url(#auroraGlow)"
-              />
-            );
-          })}
-        </g>
-
-        {/* Sharper aurora line on top of ribbon */}
-        {isPeak && (
-          <g>
-            {auroraRibbons.slice(0, 2).map((ribbon, ri) => {
-              const points: string[] = [];
-              const samples = 40;
-              for (let i = 0; i <= samples; i++) {
-                const x = (i / samples) * 400;
-                const wave = Math.sin(x * 0.018 + t * 0.6 + ribbon.phase) * ribbon.amp +
-                             Math.sin(x * 0.04 + t * 0.4 + ri) * (ribbon.amp * 0.4);
-                const y = ribbon.yBase + wave;
-                points.push(`${x},${y}`);
-              }
-              return (
-                <polyline
-                  key={`line-${ri}`}
-                  points={points.join(" ")}
-                  fill="none"
-                  stroke={tint.primary}
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  opacity={0.9}
-                />
-              );
-            })}
-          </g>
-        )}
-
-        {/* Floating particles (only in flow state) */}
-        {isFlow && ascendParticles.map((p) => (
-          <circle
-            key={p.id}
-            cx={p.x}
-            cy={p.y}
-            r={p.size}
-            fill={tint.primary}
-            opacity={Math.max(0.2, 1 - (280 - p.y) / 200)}
-            filter="url(#starGlow)"
-          />
-        ))}
+        {/* Aurora ribbons */}
+        {[
+          { yBase: 90, amp: 16, phase: 0 },
+          { yBase: 110, amp: 20, phase: 1.4 },
+          { yBase: 140, amp: 14, phase: 2.8 },
+        ].map((ribbon, ri) => {
+          const points: string[] = [];
+          for (let i = 0; i <= 40; i++) {
+            const x = (i / 40) * 400;
+            const wave = Math.sin(x * 0.018 + t * 0.6 + ribbon.phase) * ribbon.amp;
+            points.push(`${x},${ribbon.yBase + wave}`);
+          }
+          for (let i = 40; i >= 0; i--) {
+            const x = (i / 40) * 400;
+            const wave = Math.sin(x * 0.018 + t * 0.6 + ribbon.phase) * ribbon.amp;
+            points.push(`${x},${ribbon.yBase + wave + 26 + intensity * 14}`);
+          }
+          return (
+            <polygon
+              key={ri}
+              points={points.join(" ")}
+              fill="url(#auroraGrad1)"
+              opacity={0.4 + intensity * 0.5}
+              filter="url(#strongGlow)"
+              style={{ animation: "auroraShimmer 4s ease-in-out infinite" }}
+            />
+          );
+        })}
 
         {/* Mountain silhouette */}
         <path
-          d="M 0 280
-             L 30 250
-             L 60 240
-             L 95 220
-             L 130 245
-             L 165 215
-             L 200 232
-             L 240 200
-             L 275 222
-             L 315 205
-             L 355 235
-             L 400 218
-             L 400 280 Z"
+          d="M 0 280 L 30 250 L 60 240 L 95 220 L 130 245 L 165 215 L 200 232 L 240 200 L 275 222 L 315 205 L 355 235 L 400 218 L 400 280 Z"
           fill="url(#mountainGrad)"
         />
 
-        {/* Mountain peak glow when peaking */}
-        {isPeak && (
-          <path
-            d="M 200 232
-               L 240 200
-               L 275 222"
-            fill="none"
+        {/* Water */}
+        <rect x="0" y="280" width="400" height="120" fill="url(#waterGrad)" />
+
+        {/* Threshold line — draggable */}
+        <g style={{ cursor: "ns-resize" }}>
+          <line
+            x1="0" y1={thresholdY} x2="400" y2={thresholdY}
             stroke={tint.primary}
-            strokeWidth="0.5"
-            opacity="0.6"
+            strokeWidth={draggingThreshold ? 2 : 1}
+            strokeDasharray="4 6"
+            opacity={draggingThreshold ? 0.95 : 0.55}
+          />
+          <rect x="0" y={thresholdY - 8} width="400" height="16" fill="transparent" style={{ cursor: "ns-resize" }} />
+          <g transform={`translate(380, ${thresholdY})`}>
+            <rect x="-2" y="-10" width="14" height="20" rx="3" fill={tint.primary} opacity="0.85" />
+            <text x="5" y="4" textAnchor="middle" fontSize="10" fontWeight="700" fill="white">⇅</text>
+          </g>
+          <text x="8" y={thresholdY - 4} fontSize="9" fontWeight="700" fill={tint.primary} letterSpacing="0.06em">TARGET {effectiveThreshold}</text>
+        </g>
+
+        {/* Collectible orbs */}
+        {orbs.map((orb) => (
+          <g key={orb.id}>
+            {orb.collected ? (
+              <circle
+                cx={orb.x} cy={orb.y} r="6"
+                fill={`hsl(${orb.hue}, 90%, 65%)`}
+                opacity="0.7"
+                filter="url(#orbGlow)"
+                style={{ animation: "orbCollected 0.5s ease-out forwards" }}
+              />
+            ) : (
+              <>
+                <circle
+                  cx={orb.x} cy={orb.y} r="9"
+                  fill="none"
+                  stroke={`hsl(${orb.hue}, 90%, 65%)`}
+                  strokeWidth="0.8"
+                  opacity={0.45 + Math.sin(t * 2 + orb.id) * 0.2}
+                />
+                <circle
+                  cx={orb.x} cy={orb.y} r="4"
+                  fill={`hsl(${orb.hue}, 90%, 70%)`}
+                  filter="url(#orbGlow)"
+                />
+              </>
+            )}
+          </g>
+        ))}
+
+        {/* Hover trail particle */}
+        {hoverPos && (
+          <circle
+            cx={hoverPos.x}
+            cy={hoverPos.y}
+            r="14"
+            fill={tint.primary}
+            opacity="0.18"
             filter="url(#strongGlow)"
-            style={{ animation: "mountainGlow 3s ease-in-out infinite" }}
+            pointerEvents="none"
           />
         )}
 
-        {/* Water reflection — mirror of sky */}
-        <rect x="0" y="280" width="400" height="120" fill="url(#waterGrad)" />
-
-        {/* Water reflection of aurora (subtle, blurred) */}
-        <g opacity="0.35" transform="translate(0, 560) scale(1, -1)">
-          {auroraRibbons.map((ribbon, ri) => {
-            const points: string[] = [];
-            const samples = 20;
-            for (let i = 0; i <= samples; i++) {
-              const x = (i / samples) * 400;
-              const wave = Math.sin(x * 0.018 + t * 0.6 + ribbon.phase) * ribbon.amp;
-              const y = ribbon.yBase + wave;
-              points.push(`${x},${y}`);
-            }
-            for (let i = samples; i >= 0; i--) {
-              const x = (i / samples) * 400;
-              const wave = Math.sin(x * 0.018 + t * 0.6 + ribbon.phase) * ribbon.amp;
-              const y = ribbon.yBase + wave + 20;
-              points.push(`${x},${y}`);
-            }
-            return (
-              <polygon
-                key={`refl-${ri}`}
-                points={points.join(" ")}
-                fill={ri === 1 ? "url(#auroraGrad2)" : "url(#auroraGrad1)"}
-                opacity="0.5"
-                filter="url(#auroraGlow)"
-              />
-            );
-          })}
+        {/* Figure (the "you" in the journey) */}
+        <g style={{ animation: "figureBob 2.5s ease-in-out infinite" }}>
+          {/* Glow halo */}
+          <circle cx={figureX} cy={figureY} r={18 + intensity * 8} fill="url(#figureGrad)" opacity={0.6 + intensity * 0.4} />
+          {/* Solid core */}
+          <circle cx={figureX} cy={figureY} r="6" fill="white" />
+          <circle cx={figureX} cy={figureY} r="9" fill="none" stroke={tint.primary} strokeWidth="1.5" opacity="0.9" />
+          {/* Trail */}
+          {!isFlow && (
+            <line x1={figureX} y1={figureY + 4} x2={figureX} y2={figureY + 14} stroke={tint.primary} strokeWidth="1" opacity="0.4" />
+          )}
         </g>
 
-        {/* Subtle ripple lines on water */}
-        {[300, 320, 340, 360].map((y, i) => (
-          <line
-            key={`ripple-${y}`}
-            x1={20 + Math.sin(t * 0.5 + i) * 8}
-            y1={y}
-            x2={380 + Math.sin(t * 0.5 + i + 0.5) * 8}
-            y2={y}
-            stroke={tint.primary}
-            strokeWidth="0.3"
-            opacity={0.15 + intensity * 0.2}
-          />
-        ))}
-
-        {/* HUD: Score in top-left corner */}
-        <g>
-          <rect x="14" y="14" width="80" height="40" rx="10" fill="rgba(2,6,23,0.6)" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+        {/* Score HUD top-left */}
+        <g pointerEvents="none">
+          <rect x="14" y="14" width="80" height="40" rx="10" fill="rgba(2,6,23,0.7)" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
           <text x="22" y="28" fontSize="9" fontWeight="700" fill="#94A3B8" letterSpacing="0.12em">SCORE</text>
           <text x="22" y="48" fontSize="20" fontWeight="800" fill="white" style={{ fontVariantNumeric: "tabular-nums", letterSpacing: "-0.03em" }}>
-            {score == null ? "—" : s.toFixed(0)}
+            {score == null && !manualMode ? "—" : effectiveScore.toFixed(0)}
           </text>
         </g>
 
-        {/* HUD: Threshold marker top-right */}
-        <g>
-          <rect x="306" y="14" width="80" height="40" rx="10" fill="rgba(2,6,23,0.6)" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-          <text x="314" y="28" fontSize="9" fontWeight="700" fill="#94A3B8" letterSpacing="0.12em">TARGET</text>
+        {/* Streak/Orbs HUD top-right */}
+        <g pointerEvents="none">
+          <rect x="306" y="14" width="80" height="40" rx="10" fill="rgba(2,6,23,0.7)" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+          <text x="314" y="28" fontSize="9" fontWeight="700" fill="#94A3B8" letterSpacing="0.12em">ORBS</text>
           <text x="314" y="48" fontSize="20" fontWeight="800" fill={tint.primary} style={{ fontVariantNumeric: "tabular-nums", letterSpacing: "-0.03em" }}>
-            ▲ {threshold}
+            ◇ {collected}
           </text>
         </g>
 
-        {/* Score thermometer on left edge */}
-        <rect x="20" y="70" width="4" height="200" fill="rgba(255,255,255,0.06)" rx="2" />
-        <rect
-          x="20"
-          y={270 - (s / 100) * 200}
-          width="4"
-          height={(s / 100) * 200}
-          fill={tint.primary}
-          rx="2"
-          opacity="0.85"
-          filter="url(#strongGlow)"
-        />
-        <line x1="14" y1={270 - (threshold / 100) * 200} x2="30" y2={270 - (threshold / 100) * 200} stroke={tint.primary} strokeWidth="1" strokeDasharray="2 2" />
+        {/* Streak strip bottom */}
+        <g pointerEvents="none">
+          <rect x="14" y="362" width="80" height="28" rx="14" fill="rgba(2,6,23,0.7)" stroke={inTargetZone ? tint.primary : "rgba(255,255,255,0.06)"} strokeWidth="1" />
+          <text x="54" y="380" textAnchor="middle" fontSize="11" fontWeight="700" fill={inTargetZone ? tint.primary : "#64748B"}>
+            ⏱ {(streak / 30).toFixed(1)}s
+          </text>
+        </g>
 
-        {/* Zone label — bottom center */}
-        <g style={{ animation: "badgeFade 0.4s ease-out" }} key={zone}>
-          <rect x="100" y="362" width="200" height="28" rx="14" fill="rgba(2,6,23,0.7)" stroke={tint.primary} strokeWidth="1" />
+        {/* Best streak */}
+        <g pointerEvents="none">
+          <rect x="306" y="362" width="80" height="28" rx="14" fill="rgba(2,6,23,0.7)" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+          <text x="346" y="380" textAnchor="middle" fontSize="11" fontWeight="700" fill="#94A3B8">
+            best {(bestStreak / 30).toFixed(1)}s
+          </text>
+        </g>
+
+        {/* Zone label center bottom */}
+        <g style={{ animation: "achBadge 0.4s ease-out" }} key={zone} pointerEvents="none">
+          <rect x="110" y="362" width="180" height="28" rx="14" fill="rgba(2,6,23,0.85)" stroke={tint.primary} strokeWidth="1" />
           <text x="200" y="380" textAnchor="middle" fontSize="12" fontWeight="700" fill={tint.primary} letterSpacing="0.02em">
             {zone}
           </text>
         </g>
+
+        {/* Achievement banners */}
+        {achievements.map((a, i) => (
+          <g key={a.id} pointerEvents="none">
+            <rect
+              x="125" y={210 - i * 36} width="150" height="32" rx="16"
+              fill="rgba(2,6,23,0.92)" stroke={tint.primary} strokeWidth="1.5"
+              style={{ animation: "achBadge 2.5s ease-out forwards" }}
+            />
+            <text
+              x="200" y={230 - i * 36} textAnchor="middle"
+              fontSize="12" fontWeight="700" fill={tint.primary}
+              style={{ animation: "achBadge 2.5s ease-out forwards" }}
+            >
+              {a.text}
+            </text>
+          </g>
+        ))}
+
+        {/* Manual mode hint */}
+        {manualMode && (
+          <text x="200" y="65" textAnchor="middle" fontSize="11" fontWeight="600" fill="#94A3B8" pointerEvents="none">
+            ↕ Click and drag anywhere to adjust simulated brain score
+          </text>
+        )}
       </svg>
+
+      {/* Footer info strip — always visible explanation */}
+      <div style={{ background: "#0F172A", borderTop: "1px solid #1E293B", padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 11, color: "#94A3B8", flexWrap: "wrap", gap: 8 }}>
+        <span>
+          <strong style={{ color: "#F1F5F9", fontWeight: 600 }}>Drag the dashed line</strong> to adjust target threshold · <strong style={{ color: "#F1F5F9", fontWeight: 600 }}>collect orbs</strong> by sustaining target zone
+        </span>
+        <span style={{ color: "#64748B" }}>
+          Streak best: <strong style={{ color: tint.primary, fontWeight: 700 }}>{(bestStreak / 30).toFixed(1)}s</strong>
+        </span>
+      </div>
     </div>
   );
 }
