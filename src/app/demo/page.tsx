@@ -240,14 +240,14 @@ export default function DemoPage() {
     if (rewardVal == null) return null;
     const thetaN = thetaZ ? parseFloat(thetaZ) : 0;
     const betaN  = betaZ  ? parseFloat(betaZ)  : 0;
-    if (rewardVal >= 75) return { icon: "🌟", text: "Peak focus — target pattern sustained. Excellent session.", color: "#34D399", bg: "rgba(6,78,59,0.35)", border: "#065F46" };
-    if (rewardVal >= 60) return { icon: "✓",  text: "On target — reward threshold met. Maintain this state.", color: "#6EE7B7", bg: "rgba(6,78,59,0.35)", border: "#065F46" };
+    if (rewardVal >= 75) return { icon: "✓✓", text: "Peak focus — target pattern sustained. Excellent session.", color: "#34D399", accent: "#10B981", bg: "#0F172A", border: "#1E293B" };
+    if (rewardVal >= 60) return { icon: "✓",  text: "On target — reward threshold met. Maintain this state.", color: "#34D399", accent: "#10B981", bg: "#0F172A", border: "#1E293B" };
     if (rewardVal >= 40) {
-      if (thetaN > 1.5) return { icon: "↗", text: "Building up — theta is slightly elevated. Slow, focused breathing helps calm it.", color: "#FCD34D", bg: "rgba(120,53,15,0.3)", border: "#92400E" };
-      if (betaN < 0)    return { icon: "↗", text: "Building up — beta focus band is below average. Try a light mental task to activate it.", color: "#FCD34D", bg: "rgba(120,53,15,0.3)", border: "#92400E" };
-      return { icon: "↗", text: "Building up — patterns are forming. Stay relaxed but alert.", color: "#FCD34D", bg: "rgba(120,53,15,0.3)", border: "#92400E" };
+      if (thetaN > 1.5) return { icon: "↗", text: "Building up — theta is slightly elevated. Slow, focused breathing helps calm it.", color: "#FCD34D", accent: "#F59E0B", bg: "#0F172A", border: "#1E293B" };
+      if (betaN < 0)    return { icon: "↗", text: "Building up — beta focus band is below average. Try a light mental task to activate it.", color: "#FCD34D", accent: "#F59E0B", bg: "#0F172A", border: "#1E293B" };
+      return { icon: "↗", text: "Building up — patterns are forming. Stay relaxed but alert.", color: "#FCD34D", accent: "#F59E0B", bg: "#0F172A", border: "#1E293B" };
     }
-    return { icon: "◌", text: "Starting up — takes a moment for brainwave patterns to stabilize. Breathe naturally.", color: "#94A3B8", bg: "#1E293B", border: "#334155" };
+    return { icon: "◌", text: "Starting up — takes a moment for brainwave patterns to stabilize. Breathe naturally.", color: "#CBD5E1", accent: "#64748B", bg: "#0F172A", border: "#1E293B" };
   })();
 
   const TABS: { id: MainTab; label: string; groupStart?: string }[] = [
@@ -847,10 +847,10 @@ export default function DemoPage() {
         {tab === "session" && (
           <>
             {/* Context strip */}
-            <div style={{ background: "#1E293B", boxShadow: "0 1px 4px rgba(0,0,0,0.06), 0 0 0 1px rgba(37,99,235,0.12)", borderRadius: 12, padding: "10px 16px", marginBottom: 16, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", borderLeft: "3px solid #2563EB" }}>
-              <span style={{ fontSize: 16 }}>👩‍⚕️</span>
-              <span style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.5 }}>
-                <strong style={{ color: "#93C5FD" }}>Clinician view</strong> — you&apos;re watching {demoClient.name}&apos;s brain signals in real time (simulated). The <strong>Reward Score</strong> rises when the client&apos;s brain is producing the target pattern. Switch to <button onClick={() => switchTab("game")} style={{ background: "none", border: "none", color: "#60A5FA", fontWeight: 700, cursor: "pointer", padding: 0, fontSize: 13, textDecoration: "underline" }}>Game Mode</button> to see what the client sees.
+            <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #2563EB", borderRadius: 12, padding: "12px 18px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(37,99,235,0.15)", color: "#60A5FA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 14, fontWeight: 700 }}>i</div>
+              <span style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.5, flex: 1, minWidth: 0 }}>
+                <strong style={{ color: "#F1F5F9" }}>Clinician view</strong> — you&apos;re watching {demoClient.name}&apos;s brain signals in real time (simulated). The <strong style={{ color: "#F1F5F9" }}>Reward Score</strong> rises when the client&apos;s brain is producing the target pattern. Switch to <button onClick={() => switchTab("game")} style={{ background: "none", border: "none", color: "#60A5FA", fontWeight: 700, cursor: "pointer", padding: 0, fontSize: 13, textDecoration: "underline" }}>Game Mode</button> to see what the client sees.
               </span>
             </div>
 
@@ -1078,9 +1078,9 @@ export default function DemoPage() {
 
             {/* Dynamic plain-English status */}
             {sessionStatus && (
-              <div style={{ background: sessionStatus.bg, border: `1px solid ${sessionStatus.border}`, borderRadius: 10, padding: "10px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 10, transition: "background 1s ease, border-color 1s ease" }}>
-                <span style={{ fontSize: 16, fontWeight: 700, color: sessionStatus.color, flexShrink: 0 }}>{sessionStatus.icon}</span>
-                <span style={{ fontSize: 13, color: sessionStatus.color, fontWeight: 500, lineHeight: 1.5 }}>{sessionStatus.text}</span>
+              <div style={{ background: sessionStatus.bg, border: `1px solid ${sessionStatus.border}`, borderLeft: `3px solid ${sessionStatus.accent}`, borderRadius: 10, padding: "10px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 10, transition: "border-color 0.6s ease", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: sessionStatus.accent, flexShrink: 0 }}>{sessionStatus.icon}</span>
+                <span style={{ fontSize: 13, color: "#CBD5E1", fontWeight: 500, lineHeight: 1.5 }}>{sessionStatus.text}</span>
               </div>
             )}
 
@@ -1172,14 +1172,17 @@ export default function DemoPage() {
                 return (
                 <div key={label} style={{
                   background: "#0F172A",
-                  border: "none",
-                  boxShadow: !enabled
-                    ? "0 0 0 1px #334155"
+                  border: "1px solid #1E293B",
+                  borderTop: !enabled
+                    ? "1px solid #1E293B"
                     : isTarget
-                    ? "0 0 0 2px #EC4899, 0 4px 20px rgba(236,72,153,0.16)"
+                    ? "3px solid #EC4899"
                     : isSuppressed
-                    ? "0 0 0 2px #F59E0B, 0 4px 20px rgba(245,158,11,0.14)"
-                    : "0 1px 4px rgba(0,0,0,0.3), 0 0 0 1px #334155",
+                    ? "3px solid #F59E0B"
+                    : "1px solid #1E293B",
+                  boxShadow: enabled
+                    ? "0 8px 24px -12px rgba(0,0,0,0.5), 0 1px 0 0 rgba(255,255,255,0.04) inset"
+                    : "0 1px 0 0 rgba(255,255,255,0.02) inset",
                   borderRadius: 14, padding: 18, position: "relative",
                   opacity: enabled ? 1 : 0.45,
                   transition: "opacity 0.2s, box-shadow 0.2s",
@@ -1709,22 +1712,22 @@ export default function DemoPage() {
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>Longitudinal Progress Dashboard</h2>
               <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                 <span style={{ fontSize: 13, color: "#CBD5E1" }}>Sarah Mitchell · 20 sessions</span>
-                <span style={{ background: "rgba(120,53,15,0.4)", border: "1px solid #92400E", borderRadius: 99, padding: "3px 12px", fontSize: 12, fontWeight: 700, color: "#FCD34D" }}>🔥 8-session streak</span>
-                <span style={{ background: "rgba(6,78,59,0.4)", border: "1px solid #065F46", borderRadius: 99, padding: "3px 12px", fontSize: 12, fontWeight: 700, color: "#34D399" }}>✓ 95% attendance</span>
-                <span style={{ background: "rgba(30,58,138,0.4)", border: "1px solid #3B82F6", borderRadius: 99, padding: "3px 12px", fontSize: 12, fontWeight: 700, color: "#60A5FA" }}>↑ Top 12% of clients</span>
+                <span style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 99, padding: "4px 12px", fontSize: 12, fontWeight: 600, color: "#FCD34D", display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: "#F59E0B" }} />8-session streak</span>
+                <span style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 99, padding: "4px 12px", fontSize: 12, fontWeight: 600, color: "#34D399", display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981" }} />95% attendance</span>
+                <span style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 99, padding: "4px 12px", fontSize: 12, fontWeight: 600, color: "#93C5FD", display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: "#3B82F6" }} />Top 12% of clients</span>
               </div>
             </div>
 
             {/* AI stall detection banner */}
             {!stallAlertDismissed && (
-            <div style={{ background: "rgba(120,53,15,0.3)", border: "1.5px solid #92400E", borderRadius: 12, padding: "14px 18px", marginBottom: 20, display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-start" }}>
-              <span style={{ fontSize: 20 }}>⚠️</span>
+            <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #F59E0B", borderRadius: 12, padding: "14px 18px", marginBottom: 20, display: "flex", gap: 14, flexWrap: "wrap", alignItems: "flex-start", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(245,158,11,0.15)", color: "#F59E0B", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 14, fontWeight: 700 }}>!</div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#FCD34D", marginBottom: 4 }}>
-                  EEGBase AI · Session 8 Insight — Theta/Beta ratio not improving
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>
+                  EEGBase AI · Session 8 Insight <span style={{ color: "#F59E0B", fontWeight: 600 }}>— Theta/Beta ratio not improving</span>
                 </div>
-                <div style={{ fontSize: 13, color: "#FDE68A", lineHeight: 1.6 }}>
-                  θ/β Z-score has remained above 2.0 SD for the last 3 sessions (S6: +2.1, S7: +2.0, S8: +2.2). 74% of similar profiles in the community database responded to Alpha-Theta protocol switch within 2 sessions.
+                <div style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
+                  θ/β Z-score has remained above 2.0 SD for the last 3 sessions (S6: +2.1, S7: +2.0, S8: +2.2). <strong style={{ color: "#F1F5F9" }}>74%</strong> of similar profiles in the community database responded to Alpha-Theta protocol switch within 2 sessions.
                 </div>
                 <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
                   <button
