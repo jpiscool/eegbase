@@ -141,6 +141,10 @@ export default function DemoPage() {
   const [recommendationApplied, setRecommendationApplied] = useState(false);
   const [stallAlertDismissed, setStallAlertDismissed] = useState(false);
   const [showClientApp, setShowClientApp] = useState(false);
+  const [detailModal, setDetailModal] = useState<{ type: "session" | "competitor" | "scoreBreakdown" | "zscore" | "phq9hist"; data: Record<string, unknown> } | null>(null);
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [hoveredRegion, setHoveredRegion] = useState<{ name: string; x: number; y: number } | null>(null);
+  const [connectedWearables, setConnectedWearables] = useState<Set<string>>(new Set());
   const [featureCategory, setFeatureCategory] = useState<string | null>(null);
   const [reportExported, setReportExported] = useState(false);
   const [protocolSearch, setProtocolSearch] = useState("");
@@ -480,6 +484,147 @@ export default function DemoPage() {
         </div>
       )}
 
+      {/* Universal Detail Modal */}
+      {detailModal && (
+        <div onClick={() => setDetailModal(null)} style={{ position: "fixed", inset: 0, background: "rgba(2,6,23,0.85)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 28, maxWidth: 560, width: "100%", maxHeight: "85vh", overflowY: "auto" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, gap: 12 }}>
+              <h2 style={{ color: "#F1F5F9", fontSize: 18, fontWeight: 700 }}>
+                {detailModal.type === "session" && `Session ${(detailModal.data as { session: number }).session} · ${(detailModal.data as { date: string }).date}`}
+                {detailModal.type === "competitor" && `${(detailModal.data as { label: string }).label} · ${(detailModal.data as { sub: string }).sub}`}
+                {detailModal.type === "scoreBreakdown" && "Reward score breakdown"}
+                {detailModal.type === "zscore" && `${(detailModal.data as { band: string }).band} Z-score: ${(detailModal.data as { value: number }).value.toFixed(2)} SD`}
+                {detailModal.type === "phq9hist" && "PHQ-9 score distribution"}
+              </h2>
+              <button onClick={() => setDetailModal(null)} aria-label="Close" style={{ background: "none", border: "1px solid #334155", borderRadius: 22, color: "#94A3B8", fontSize: 18, cursor: "pointer", width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>✕</button>
+            </div>
+
+            {detailModal.type === "session" && (() => {
+              const s = detailModal.data as { session: number; date: string; duration: number; reward: number; thetaBeta: number; phq9: number; gad7: number };
+              return (
+                <div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 18 }}>
+                    {[
+                      { l: "Reward score", v: s.reward.toFixed(1), c: s.reward >= 70 ? "#10B981" : "#F59E0B" },
+                      { l: "Duration", v: `${s.duration} min`, c: "#F1F5F9" },
+                      { l: "θ/β Z-score", v: `+${s.thetaBeta.toFixed(2)} SD`, c: s.thetaBeta > 2 ? "#EF4444" : "#F59E0B" },
+                      { l: "PHQ-9", v: String(s.phq9), c: s.phq9 < 10 ? "#10B981" : "#F59E0B" },
+                      { l: "GAD-7", v: String(s.gad7), c: s.gad7 < 10 ? "#10B981" : "#F59E0B" },
+                      { l: "Protocol", v: "SMR · Cz", c: "#60A5FA" },
+                    ].map((m) => (
+                      <div key={m.l} style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 10, padding: 12 }}>
+                        <div style={{ fontSize: 11, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>{m.l}</div>
+                        <div style={{ fontSize: 18, fontWeight: 800, color: m.c }}>{m.v}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 10, padding: 14, marginBottom: 14 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Session reward curve</div>
+                    <svg viewBox="0 0 200 50" style={{ width: "100%", height: 60 }}>
+                      <polyline
+                        points={Array.from({ length: 30 }, (_, i) => `${(i / 29) * 200},${48 - (s.reward / 100) * 36 + Math.sin(i * 0.4 + s.session) * 6}`).join(" ")}
+                        fill="none"
+                        stroke={s.reward >= 70 ? "#10B981" : "#F59E0B"}
+                        strokeWidth="1.5"
+                      />
+                    </svg>
+                  </div>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button onClick={() => { setDetailModal(null); switchTab("ai"); }} style={{ ...clinicianBtnPrimary, flex: 1 }}>Open SOAP note →</button>
+                    <button onClick={() => setDetailModal(null)} style={{ ...clinicianBtn, flex: 1 }}>Close</button>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {detailModal.type === "competitor" && (() => {
+              const c = detailModal.data as { key: string; label: string; sub: string };
+              const profiles: Record<string, { strengths: string[]; weaknesses: string[]; verdict: string }> = {
+                myndlift:    { strengths: ["Polished consumer app", "Active community", "700+ studies cited"], weaknesses: ["Locked to Muse hardware", "$1,990 onboarding fee", "Reviews say 'not real neurofeedback'"], verdict: "Best for cash-pay coaching practices, weak on clinical EEG" },
+                divergence:  { strengths: ["AI brain assessments", "Multivariate coherence", "HIPAA + GDPR"], weaknesses: ["No native mobile app", "$255–490/mo subscription", "Web-only desktop"], verdict: "Strongest competitor — clinical workflow, but expensive and dated UX" },
+                eeger:       { strengths: ["Long clinical history", "Solid signal processing"], weaknesses: ["Windows-only desktop", "Steep learning curve", "Looks like 2003"], verdict: "Trusted by veterans but feels like time-travel software" },
+                brainpaint:  { strengths: ["Per-session pricing", "Trauma/addiction focus"], weaknesses: ["Hardware lock-in", "Limited modalities", "Art-only feedback"], verdict: "Niche clinical tool, not a full practice platform" },
+                neuroptimal: { strengths: ["No subscription, own outright", "Passive training model"], weaknesses: ["$7,495–10,995 upfront", "Proprietary closed system", "Limited customization"], verdict: "Pricey investment for a one-protocol approach" },
+                neuroguide:  { strengths: ["Gold-standard QEEG", "Thatcher database", "Source localization"], weaknesses: ["$3,500–6,000+ price", "Requires certification", "QEEG only — no live streaming"], verdict: "Best-in-class assessment, no live training workflow" },
+                brainavatar: { strengths: ["Hardware-agnostic-ish", "Brain Trainer integration"], weaknesses: ["Hardware bundle required", "Windows desktop UX", "Limited mobile/web"], verdict: "Mid-market hardware bundle, feels behind on UX" },
+              };
+              const p = profiles[c.key] ?? { strengths: [], weaknesses: [], verdict: "" };
+              return (
+                <div>
+                  <div style={{ marginBottom: 16, padding: 14, background: "#1E293B", border: "1px solid #334155", borderRadius: 10 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>Verdict</div>
+                    <div style={{ fontSize: 14, color: "#F1F5F9", lineHeight: 1.5 }}>{p.verdict}</div>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+                    <div style={{ background: "rgba(6,78,59,0.35)", border: "1px solid #065F46", borderRadius: 10, padding: 12 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#34D399", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Strengths</div>
+                      <ul style={{ margin: 0, paddingLeft: 16, fontSize: 12, color: "#D1FAE5", lineHeight: 1.7 }}>{p.strengths.map((x) => <li key={x}>{x}</li>)}</ul>
+                    </div>
+                    <div style={{ background: "rgba(127,29,29,0.3)", border: "1px solid #991B1B", borderRadius: 10, padding: 12 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#FCA5A5", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Weaknesses</div>
+                      <ul style={{ margin: 0, paddingLeft: 16, fontSize: 12, color: "#FECACA", lineHeight: 1.7 }}>{p.weaknesses.map((x) => <li key={x}>{x}</li>)}</ul>
+                    </div>
+                  </div>
+                  <button onClick={() => setDetailModal(null)} style={{ ...clinicianBtnPrimary, width: "100%" }}>Got it →</button>
+                </div>
+              );
+            })()}
+
+            {detailModal.type === "scoreBreakdown" && (() => {
+              const score = (detailModal.data as { score: number }).score;
+              return (
+                <div>
+                  <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>Your reward score is a weighted blend of three brainwave bands. Each band&apos;s contribution depends on the protocol — for SMR, reduced theta and increased SMR/beta both raise the score.</p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    {[
+                      { band: "Theta (4–8 Hz)", contribution: 35, color: "#F59E0B", note: "Lower is better — drowsiness reduces score" },
+                      { band: "SMR (12–15 Hz)", contribution: 45, color: "#10B981", note: "Target band — sustained activity raises score" },
+                      { band: "Beta (15–25 Hz)", contribution: 20, color: "#EC4899", note: "High beta penalized to avoid anxiety state" },
+                    ].map((b) => (
+                      <div key={b.band} style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 10, padding: 12 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                          <span style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>{b.band}</span>
+                          <span style={{ fontSize: 13, fontWeight: 700, color: b.color }}>{b.contribution}%</span>
+                        </div>
+                        <div style={{ background: "#0F172A", borderRadius: 6, height: 8, overflow: "hidden", marginBottom: 6 }}>
+                          <div style={{ background: b.color, height: "100%", width: `${b.contribution}%` }} />
+                        </div>
+                        <div style={{ fontSize: 11, color: "#94A3B8" }}>{b.note}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginTop: 16, padding: 12, background: "rgba(30,58,138,0.25)", border: "1px solid #1E40AF", borderRadius: 10, fontSize: 12, color: "#93C5FD" }}>
+                    Current overall score: <strong style={{ color: "#F1F5F9" }}>{score.toFixed(1)} / 100</strong>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {detailModal.type === "zscore" && (() => {
+              const d = detailModal.data as { band: string; value: number };
+              return (
+                <div>
+                  <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>Your client&apos;s {d.band} power compared to the EEGBase normative database (n=847 healthy adults aged 25–35).</p>
+                  <svg viewBox="0 0 400 140" style={{ width: "100%", height: 160, background: "#1E293B", borderRadius: 10, padding: 8 }}>
+                    {Array.from({ length: 50 }).map((_, i) => {
+                      const x = (i / 49) * 380 + 10;
+                      const z = (i / 49 - 0.5) * 8;
+                      const height = Math.exp(-z * z / 2) * 100;
+                      const isClient = Math.abs(z - d.value) < 0.16;
+                      return <rect key={i} x={x - 3.5} y={130 - height} width={7} height={height} fill={isClient ? "#EF4444" : "#475569"} opacity={isClient ? 1 : 0.7} />;
+                    })}
+                    <line x1={10 + 380 * 0.5} y1={20} x2={10 + 380 * 0.5} y2={130} stroke="#94A3B8" strokeWidth="1" strokeDasharray="3 3" />
+                    <text x={10 + 380 * 0.5} y={14} textAnchor="middle" fontSize="10" fill="#94A3B8">Norm (0 SD)</text>
+                    <text x={10 + 380 * (0.5 + d.value / 8)} y={140} textAnchor="middle" fontSize="11" fontWeight="700" fill="#EF4444">Client: +{d.value.toFixed(2)}</text>
+                  </svg>
+                  <p style={{ color: "#475569", fontSize: 12, marginTop: 12 }}>The red bar shows where your client falls in the population. Values above +2 SD are clinically elevated.</p>
+                </div>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+
       {/* Client App Preview Modal */}
       {showClientApp && (
         <div onClick={() => setShowClientApp(false)} style={{ position: "fixed", inset: 0, background: "rgba(2,6,23,0.85)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
@@ -803,7 +948,7 @@ export default function DemoPage() {
                         style={{ transition: "stroke-dashoffset 0.6s ease, stroke 1.5s ease", filter: `drop-shadow(0 0 8px ${rewardColor}99)` }}
                       />
                     </svg>
-                    <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                    <div onClick={() => setDetailModal({ type: "scoreBreakdown", data: { score: rewardVal ?? 0 } })} title="Click to see score breakdown" style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
                       <div style={{ fontSize: "2.1rem", fontWeight: 800, color: "white", lineHeight: 1, fontVariantNumeric: "tabular-nums", letterSpacing: "-0.03em" }}>
                         {rewardVal != null ? rewardVal.toFixed(0) : "—"}
                       </div>
@@ -900,7 +1045,7 @@ export default function DemoPage() {
                 const n = val ? parseFloat(val) : 0;
                 const devColor = Math.abs(n) > 2 ? "#EF4444" : Math.abs(n) > 1 ? "#F59E0B" : "#10B981";
                 return (
-                  <div key={label} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div key={label} onClick={() => val && setDetailModal({ type: "zscore", data: { band: label, value: n } })} title="Click to see normative distribution" style={{ display: "flex", alignItems: "center", gap: 10, cursor: val ? "pointer" : "default", padding: "4px 6px", borderRadius: 6, transition: "background 0.15s" }} onMouseEnter={(e) => val && (e.currentTarget.style.background = "#0F172A")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
                     <span style={{ fontSize: 12, color, fontWeight: 600, width: 36 }}>{label}</span>
                     <span style={{ fontSize: 18, fontWeight: 800, color: devColor, fontVariantNumeric: "tabular-nums", width: 52 }}>
                       {val ? (n > 0 ? "+" : "") + val : "—"}
@@ -1395,15 +1540,40 @@ export default function DemoPage() {
                   { name: "Apple Watch", icon: "⌚", status: "Connect →", active: false },
                   { name: "Garmin", icon: "🏃", status: "Connect →", active: false },
                   { name: "Whoop", icon: "💪", status: "Connect →", active: false },
-                ].map(({ name, icon, status, active }) => (
-                  <div key={name} style={{ background: active ? "#1E293B" : "#243148", border: active ? "1.5px solid #10B981" : "1px solid #334155", borderRadius: 10, padding: "10px 14px", display: "flex", gap: 8, alignItems: "center" }}>
-                    <span style={{ fontSize: 18 }}>{icon}</span>
-                    <div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "#F1F5F9" }}>{name}</div>
-                      <div style={{ fontSize: 11, color: active ? "#10B981" : "#94A3B8" }}>{status}</div>
-                    </div>
-                  </div>
-                ))}
+                ].map(({ name, icon, status, active }) => {
+                  const isConnected = active || connectedWearables.has(name);
+                  const displayStatus = isConnected ? (active ? status : "Paired ✓ — HRV streaming") : status;
+                  return (
+                    <button
+                      key={name}
+                      type="button"
+                      onClick={() => {
+                        if (isConnected) return;
+                        setConnectedWearables((prev) => new Set(prev).add(name));
+                        showToast(`${name} paired ✓ — HRV streaming`);
+                      }}
+                      aria-label={`Connect ${name} for HRV streaming`}
+                      style={{
+                        background: isConnected ? "#1E293B" : "#243148",
+                        border: isConnected ? "1.5px solid #10B981" : "1px solid #334155",
+                        borderRadius: 10,
+                        padding: "10px 14px",
+                        display: "flex",
+                        gap: 8,
+                        alignItems: "center",
+                        cursor: isConnected ? "default" : "pointer",
+                        textAlign: "left",
+                        font: "inherit",
+                      }}
+                    >
+                      <span style={{ fontSize: 18 }}>{icon}</span>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: "#F1F5F9" }}>{name}</div>
+                        <div style={{ fontSize: 11, color: isConnected ? "#10B981" : "#94A3B8" }}>{displayStatus}</div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -1565,14 +1735,17 @@ export default function DemoPage() {
               <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 16 }}>Reward Score Trajectory</h3>
               <div style={{ display: "flex", gap: 4, alignItems: "flex-end", height: 100 }}>
                 {SESSION_HISTORY.map((s) => (
-                  <div key={s.session} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                  <div key={s.session} onClick={() => setDetailModal({ type: "session", data: s as unknown as Record<string, unknown> })} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer" }}>
                     <div
-                      title={`Session ${s.session}: ${s.reward.toFixed(1)}`}
+                      title={`Session ${s.session}: ${s.reward.toFixed(1)} — click for details`}
                       style={{
                         flex: 1, width: "100%", borderRadius: "4px 4px 0 0",
                         background: `linear-gradient(180deg, ${s.reward >= 70 ? "#10B981" : s.reward >= 50 ? "#F59E0B" : "#EF4444"}, ${s.reward >= 70 ? "#6EE7B7" : s.reward >= 50 ? "#FCD34D" : "#FCA5A5"})`,
                         height: `${(s.reward / 100) * 88}px`,
+                        transition: "transform 0.15s",
                       }}
+                      onMouseEnter={(e) => (e.currentTarget.style.transform = "scaleY(1.05)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.transform = "scaleY(1)")}
                     />
                   </div>
                 ))}
@@ -1655,7 +1828,7 @@ export default function DemoPage() {
                   </thead>
                   <tbody>
                     {[...SESSION_HISTORY].reverse().slice(0, 15).map((s) => (
-                      <tr key={s.session} style={{ borderTop: "1px solid #334155" }}>
+                      <tr key={s.session} onClick={() => setDetailModal({ type: "session", data: s as unknown as Record<string, unknown> })} style={{ borderTop: "1px solid #334155", cursor: "pointer", transition: "background 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#1E293B")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
                         <td style={{ padding: "10px 16px", color: "#94A3B8", fontWeight: 600 }}>{s.session}</td>
                         <td style={{ padding: "10px 16px", color: "#94A3B8" }}>{s.date}</td>
                         <td style={{ padding: "10px 16px", color: "#94A3B8" }}>{s.duration} min</td>
@@ -1672,7 +1845,7 @@ export default function DemoPage() {
                         <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums", color: "#94A3B8" }}>{s.phq9}</td>
                         <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums", color: "#94A3B8" }}>{s.gad7}</td>
                         <td style={{ padding: "10px 16px" }}>
-                          <button onClick={() => switchTab("ai")} style={{ fontSize: 11, color: "#2563EB", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>AI Note</button>
+                          <button onClick={(e) => { e.stopPropagation(); switchTab("ai"); }} style={{ fontSize: 11, color: "#2563EB", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>AI Note</button>
                         </td>
                       </tr>
                     ))}
@@ -1826,17 +1999,22 @@ export default function DemoPage() {
                     const hasAppt = [6, 7, 8, 9, 10, 13, 14, 15, 16, 20, 21].includes(day);
                     const todayDate = new Date().getDate();
                     const isToday = day === todayDate;
+                    const isSelected = selectedDay === day;
                     return (
-                      <div key={day} style={{
+                      <div key={day} onClick={() => { setSelectedDay(day); if (hasAppt) showToast(`May ${day} appointments highlighted on the right`); }} style={{
                         aspectRatio: "1", borderRadius: 8, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                        background: isToday ? "#2563EB" : hasAppt ? "rgba(30,58,138,0.25)" : "transparent",
-                        border: isToday ? "none" : hasAppt ? "1px solid #3B82F6" : "1px solid transparent",
-                        cursor: "pointer", fontSize: 13, fontWeight: isToday ? 800 : 500,
-                        color: isToday ? "white" : "#CBD5E1",
+                        background: isSelected ? "#7C3AED" : isToday ? "#2563EB" : hasAppt ? "rgba(30,58,138,0.25)" : "transparent",
+                        border: isSelected ? "2px solid #A855F7" : isToday ? "none" : hasAppt ? "1px solid #3B82F6" : "1px solid transparent",
+                        cursor: "pointer", fontSize: 13, fontWeight: isToday || isSelected ? 800 : 500,
+                        color: isToday || isSelected ? "white" : "#CBD5E1",
                         position: "relative",
-                      }}>
+                        transition: "transform 0.1s",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.08)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                      >
                         {day}
-                        {hasAppt && !isToday && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#2563EB", marginTop: 2 }} />}
+                        {hasAppt && !isToday && !isSelected && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#2563EB", marginTop: 2 }} />}
                       </div>
                     );
                   })}
@@ -2345,11 +2523,12 @@ export default function DemoPage() {
                     <tr style={{ background: "#1E293B", borderBottom: "2px solid #334155" }}>
                       <th style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#94A3B8", minWidth: 220, position: "sticky", left: 0, background: "#1E293B" }}>Feature</th>
                       {COMPETITORS.map((c) => (
-                        <th key={c.key} style={{
+                        <th key={c.key} onClick={() => !c.highlight && setDetailModal({ type: "competitor", data: c as unknown as Record<string, unknown> })} style={{
                           padding: "12px 12px", textAlign: "center", fontSize: 11, fontWeight: 700,
                           color: c.highlight ? "#60A5FA" : "#94A3B8",
                           background: c.highlight ? "rgba(30,58,138,0.3)" : undefined,
                           minWidth: 90,
+                          cursor: c.highlight ? "default" : "pointer",
                         }}>
                           {c.label}
                           <div style={{ fontSize: 9, fontWeight: 500, color: c.highlight ? "#93C5FD" : "#94A3B8", marginTop: 2 }}>{c.sub}</div>
