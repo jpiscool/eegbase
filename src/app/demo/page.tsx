@@ -1341,7 +1341,8 @@ export default function DemoPage() {
                           for (let x = 0; x <= 160; x += 2) {
                             const tau = (x - 20) / 12;
                             const y = tau < 0 ? 48 : 48 - 32 * Math.pow(tau, 5) * Math.exp(-tau) / 24;
-                            points.push(`${x},${Math.max(8, Math.min(56, y))}`);
+                            const yClamped = Math.max(8, Math.min(56, y));
+                            points.push(`${x},${yClamped.toFixed(2)}`);
                           }
                           return "M " + points.join(" L ");
                         })()}
