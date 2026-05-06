@@ -8,7 +8,7 @@ import { BrainMapPanel } from "@/components/BrainMapPanel";
 import { ClinicalQuestionnaire } from "@/components/ClinicalQuestionnaire";
 
 const MAX_POINTS = 60;
-type MainTab = "session" | "game" | "brain" | "outcomes" | "progress" | "ai" | "schedule" | "hrv" | "protocols" | "reports" | "compare" | "devices";
+type MainTab = "session" | "game" | "brain" | "outcomes" | "progress" | "ai" | "schedule" | "hrv" | "protocols" | "reports" | "compare" | "devices" | "billing" | "team" | "compliance" | "marketing";
 
 function fmt(sec: number) {
   return `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`;
@@ -262,6 +262,10 @@ export default function DemoPage() {
     { id: "schedule",  label: "📅 Schedule" },
     { id: "reports",   label: "📊 Reports" },
     { id: "compare",   label: "🏆 Compare" },
+    { id: "billing",   label: "💳 Billing & Claims",       groupStart: "Practice Operations" },
+    { id: "team",      label: "👥 Team & Roles" },
+    { id: "compliance",label: "🔐 Compliance" },
+    { id: "marketing", label: "📣 Marketing" },
     { id: "devices",   label: "🛠 Devices & API",          groupStart: "Integrations" },
   ];
 
@@ -444,6 +448,25 @@ export default function DemoPage() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           {/* Client switcher */}
+          <button
+            onClick={() => showToast("⌘K · Search clients, sessions, protocols, claims · Ready")}
+            aria-label="Search (Cmd+K)"
+            className="demo-topbar-hide-mobile"
+            style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 8, padding: "5px 12px 5px 10px", display: "flex", alignItems: "center", gap: 8, color: "#94A3B8", fontSize: 12, cursor: "pointer", fontWeight: 500 }}
+          >
+            <span style={{ fontSize: 11 }}>🔍</span>
+            <span>Search...</span>
+            <kbd style={{ fontSize: 10, fontFamily: "ui-monospace, monospace", background: "#0F172A", border: "1px solid #334155", borderRadius: 4, padding: "1px 6px", color: "#64748B" }}>⌘K</kbd>
+          </button>
+          <button
+            onClick={() => showToast("3 new alerts: Sarah's PHQ-9 down 3 pts · James co-sign needed · Aetna ERA posted")}
+            aria-label="Notifications"
+            className="demo-topbar-hide-mobile"
+            style={{ position: "relative", background: "#1E293B", border: "1px solid #334155", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#CBD5E1" }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+            <span style={{ position: "absolute", top: -3, right: -3, background: "#EF4444", color: "white", fontSize: 9, fontWeight: 700, borderRadius: 99, padding: "1px 5px", border: "1.5px solid #0F172A" }}>3</span>
+          </button>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <span className="demo-topbar-client-label" style={{ fontSize: "0.72rem", color: "#94A3B8", fontWeight: 600 }}>Client:</span>
             <select
@@ -2058,6 +2081,70 @@ export default function DemoPage() {
               </p>
             </div>
 
+            {/* AI Ambient Scribe */}
+            <div style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", borderRadius: 16, padding: 22, marginBottom: 16, border: "1px solid #1E293B", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 12px 36px -16px rgba(0,0,0,0.6)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, paddingBottom: 12, borderBottom: "1px solid #1E293B" }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(239,68,68,0.18)", color: "#F87171", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 12, fontWeight: 700, border: "1px solid rgba(239,68,68,0.3)" }}>●</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Ambient Session Scribe</div>
+                  <div style={{ fontSize: 11, color: "#94A3B8" }}>Records session audio (with consent) · auto-generates SOAP from transcript · Mentalyc/Heidi-style</div>
+                </div>
+                <button onClick={() => showToast("Recording started · client consent required (HIPAA)")} style={{ ...clinicianBtnPrimary, fontSize: 12, padding: "8px 16px", background: "#DC2626" }}>
+                  ● Start Recording
+                </button>
+                <span style={{ fontSize: 11, color: "#34D399", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34D399", animation: "pulse 1.5s infinite" }} />
+                  Listening · 24:18
+                </span>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }} className="demo-grid-2">
+                {/* Live transcript */}
+                <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 12 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
+                    <span>Live Transcript</span>
+                    <span style={{ color: "#64748B", fontWeight: 600 }}>147 lines · 91% conf</span>
+                  </div>
+                  <div style={{ fontSize: 11, lineHeight: 1.8, maxHeight: 180, overflowY: "auto", paddingRight: 8 }}>
+                    <div style={{ color: "#94A3B8", marginBottom: 6 }}><strong style={{ color: "#60A5FA" }}>Clinician (10:34):</strong> How has your sleep been since last week?</div>
+                    <div style={{ color: "#CBD5E1", marginBottom: 6 }}><strong style={{ color: "#A78BFA" }}>Sarah (10:34):</strong> Better most nights. I&apos;ve been waking up around 4am still — maybe twice last week.</div>
+                    <div style={{ color: "#94A3B8", marginBottom: 6 }}><strong style={{ color: "#60A5FA" }}>Clinician (10:35):</strong> Any change in your overall mood?</div>
+                    <div style={{ color: "#CBD5E1", marginBottom: 6 }}><strong style={{ color: "#A78BFA" }}>Sarah (10:35):</strong> I think so. Less foggy in the mornings. Work feels less heavy.</div>
+                    <div style={{ color: "#94A3B8", marginBottom: 6 }}><strong style={{ color: "#60A5FA" }}>Clinician (10:36):</strong> Are you still tracking your check-ins in the client app daily?</div>
+                    <div style={{ color: "#CBD5E1", marginBottom: 6 }}><strong style={{ color: "#A78BFA" }}>Sarah (10:36):</strong> Most days. Missed two days last weekend when traveling.</div>
+                    <div style={{ background: "rgba(239,68,68,0.12)", borderLeft: "2px solid #EF4444", padding: "4px 8px", marginBottom: 6, borderRadius: 4 }}>
+                      <span style={{ fontSize: 9, fontWeight: 700, color: "#FCA5A5", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 2 }}>⚠ Risk language detected</span>
+                      <span style={{ color: "#CBD5E1" }}>...sometimes I feel like nothing matters but I&apos;d never...</span>
+                    </div>
+                    <div style={{ color: "#64748B", fontStyle: "italic" }}>— continuing transcription —</div>
+                  </div>
+                </div>
+
+                {/* Auto-generated insights */}
+                <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 12 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#34D399", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>AI-Extracted from Transcript</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 11 }}>
+                    {[
+                      { tag: "Sleep", val: "Improved · waking 4am 2x/wk (was 5x)", color: "#10B981" },
+                      { tag: "Mood", val: "Improved · less brain fog, work less heavy", color: "#10B981" },
+                      { tag: "Adherence", val: "Mostly on · missed 2 check-ins (travel)", color: "#F59E0B" },
+                      { tag: "Risk flag", val: "PHQ-9 item 9 phrasing — assess + document", color: "#EF4444" },
+                      { tag: "CPT suggestion", val: "90901 (biofeedback) + 90875 (psychophys 30 min)", color: "#A78BFA" },
+                      { tag: "Plan changes", val: "Continue Alpha-Theta · review sleep hygiene", color: "#60A5FA" },
+                    ].map((i) => (
+                      <div key={i.tag} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                        <span style={{ fontSize: 9, fontWeight: 700, color: i.color, padding: "2px 7px", background: `${i.color}1A`, border: `1px solid ${i.color}33`, borderRadius: 6, flexShrink: 0, textTransform: "uppercase", letterSpacing: "0.06em" }}>{i.tag}</span>
+                        <span style={{ color: "#CBD5E1", lineHeight: 1.5 }}>{i.val}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={() => showToast("SOAP note regenerated from current transcript")} style={{ ...clinicianBtnPrimary, fontSize: 11, padding: "8px 14px", width: "100%", marginTop: 12 }}>
+                    Generate SOAP note from transcript
+                  </button>
+                </div>
+              </div>
+            </div>
+
             {/* Protocol recommendation card */}
             <div style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", borderRadius: 16, padding: 24, marginBottom: 16, border: "1px solid #1E293B", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 12px 36px -16px rgba(0,0,0,0.6)" }}>
               <div style={{ display: "flex", gap: 12, marginBottom: 18, alignItems: "center" }}>
@@ -2787,6 +2874,454 @@ export default function DemoPage() {
                   <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>{note}</div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── BILLING & CLAIMS ── */}
+        {tab === "billing" && (
+          <div>
+            <div style={{ marginBottom: 20 }}>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>Billing &amp; Insurance Claims</h2>
+              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
+                Auto-generate CMS-1500 claims and superbills from session data. Submit electronically to Office Ally / Apex EDI clearinghouse. Track claim status, post ERAs, and manage patient statements — without leaving EEGBase.
+              </p>
+            </div>
+
+            {/* Billing dashboard summary */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }} className="demo-grid-4">
+              {[
+                { label: "Submitted YTD", value: "$48,250", sub: "126 claims", color: "#3B82F6" },
+                { label: "Paid (current AR)", value: "$41,830", sub: "87% collection rate", color: "#10B981" },
+                { label: "Pending", value: "$4,120", sub: "8 claims awaiting", color: "#F59E0B" },
+                { label: "Denied (action req)", value: "$2,300", sub: "3 claims · resubmit", color: "#EF4444" },
+              ].map((s) => (
+                <div key={s.label} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 12, padding: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: s.color, boxShadow: `0 0 8px ${s.color}` }} />
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em" }}>{s.label}</div>
+                  </div>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums" }}>{s.value}</div>
+                  <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>{s.sub}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Recent claims table */}
+            <div style={{ ...card, marginBottom: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Recent Claims</h3>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button onClick={() => showToast("Generating CMS-1500 form for Sarah Mitchell · Session 8")} style={clinicianBtnPrimary}>+ New Claim</button>
+                  <button onClick={() => showToast("ERA payment posted: $1,240 across 4 claims")} style={clinicianBtn}>Post ERA</button>
+                </div>
+              </div>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, minWidth: 720 }}>
+                  <thead>
+                    <tr style={{ background: "#1E293B", borderBottom: "1px solid #334155" }}>
+                      {["Claim #", "Date", "Client", "CPT", "Diagnosis", "Amount", "Payer", "Status"].map((h) => (
+                        <th key={h} style={{ padding: "10px 14px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.06em" }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { id: "CL-2026-0124", date: "May 5", client: "Sarah Mitchell",  cpt: "90901", dx: "F90.0", amt: "$185", payer: "BCBS",      status: "Paid",        color: "#10B981" },
+                      { id: "CL-2026-0123", date: "May 4", client: "James Okafor",    cpt: "90901", dx: "F41.1", amt: "$185", payer: "Aetna",     status: "Submitted",   color: "#3B82F6" },
+                      { id: "CL-2026-0122", date: "May 4", client: "Priya Sharma",    cpt: "95816", dx: "Z00.00",amt: "$420", payer: "United",    status: "Pending info",color: "#F59E0B" },
+                      { id: "CL-2026-0121", date: "May 3", client: "Daniel Cruz",     cpt: "90875", dx: "F43.10",amt: "$235", payer: "Cigna",     status: "Paid",        color: "#10B981" },
+                      { id: "CL-2026-0120", date: "May 2", client: "Emily Tanaka",    cpt: "90901", dx: "G93.3", amt: "$185", payer: "Medicare",  status: "Denied",      color: "#EF4444" },
+                      { id: "CL-2026-0119", date: "May 1", client: "Sarah Mitchell",  cpt: "90901", dx: "F90.0", amt: "$185", payer: "BCBS",      status: "Paid",        color: "#10B981" },
+                    ].map((c) => (
+                      <tr key={c.id} style={{ borderTop: "1px solid #334155", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.background = "#1E293B"} onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
+                        <td style={{ padding: "10px 14px", color: "#A5B4FC", fontFamily: "ui-monospace, monospace", fontSize: 11 }}>{c.id}</td>
+                        <td style={{ padding: "10px 14px", color: "#94A3B8" }}>{c.date}</td>
+                        <td style={{ padding: "10px 14px", color: "#F1F5F9", fontWeight: 600 }}>{c.client}</td>
+                        <td style={{ padding: "10px 14px", color: "#94A3B8", fontFamily: "ui-monospace, monospace" }}>{c.cpt}</td>
+                        <td style={{ padding: "10px 14px", color: "#94A3B8", fontFamily: "ui-monospace, monospace" }}>{c.dx}</td>
+                        <td style={{ padding: "10px 14px", color: "#F1F5F9", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{c.amt}</td>
+                        <td style={{ padding: "10px 14px", color: "#CBD5E1" }}>{c.payer}</td>
+                        <td style={{ padding: "10px 14px" }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: c.color, padding: "2px 8px", background: `${c.color}1A`, borderRadius: 99 }}>{c.status}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* CPT code library + payer setup */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }} className="demo-grid-2">
+              <div style={{ ...card }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>CPT Code Library</h3>
+                <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 12 }}>Auto-suggested by AI based on session content</p>
+                {[
+                  { code: "90901", desc: "Biofeedback training, any modality", rate: "$185" },
+                  { code: "90875", desc: "Psychophysiological therapy w/ biofeedback (20–30 min)", rate: "$235" },
+                  { code: "90876", desc: "Psychophysiological therapy w/ biofeedback (45–50 min)", rate: "$285" },
+                  { code: "95816", desc: "EEG awake & drowsy", rate: "$420" },
+                  { code: "95957", desc: "Quantitative EEG (QEEG)", rate: "$385" },
+                  { code: "96132", desc: "Neuropsych testing eval (first hour)", rate: "$340" },
+                ].map((c) => (
+                  <div key={c.code} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 10px", borderTop: "1px solid #1E293B" }}>
+                    <code style={{ fontSize: 12, fontFamily: "ui-monospace, monospace", color: "#A5B4FC", fontWeight: 700, width: 60 }}>{c.code}</code>
+                    <div style={{ flex: 1, fontSize: 11, color: "#CBD5E1" }}>{c.desc}</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#10B981", fontVariantNumeric: "tabular-nums" }}>{c.rate}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ ...card }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Payer Connections</h3>
+                <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 12 }}>Submit claims to 1,200+ payers via Office Ally / Apex EDI</p>
+                {[
+                  { name: "Blue Cross Blue Shield", id: "BCBS-FL-001", status: "Active", days: "12 day avg" },
+                  { name: "Aetna", id: "AETNA-021", status: "Active", days: "15 day avg" },
+                  { name: "United Healthcare", id: "UHC-441", status: "Active", days: "21 day avg" },
+                  { name: "Cigna", id: "CIGNA-088", status: "Active", days: "10 day avg" },
+                  { name: "Medicare", id: "MCR-CMS", status: "Active", days: "30 day avg" },
+                ].map((p) => (
+                  <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 10px", borderTop: "1px solid #1E293B" }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: "#F1F5F9" }}>{p.name}</div>
+                      <code style={{ fontSize: 10, color: "#64748B", fontFamily: "ui-monospace, monospace" }}>{p.id}</code>
+                    </div>
+                    <div style={{ fontSize: 10, color: "#94A3B8" }}>{p.days}</div>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "#10B981", padding: "2px 8px", background: "rgba(16,185,129,0.15)", borderRadius: 99 }}>{p.status}</span>
+                  </div>
+                ))}
+                <button onClick={() => showToast("Payer connection wizard — opens in production")} style={{ ...clinicianBtn, width: "100%", marginTop: 12 }}>+ Connect Payer</button>
+              </div>
+            </div>
+
+            {/* Headway-style managed billing pitch */}
+            <div style={{ marginTop: 16, background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 14, padding: 20, display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
+              <div style={{ width: 48, height: 48, borderRadius: 12, background: "rgba(167,139,250,0.2)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 22 }}>$</div>
+              <div style={{ flex: 1, minWidth: 280 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>EEGBase Managed Billing <span style={{ fontWeight: 600, color: "#A78BFA" }}>(optional)</span></div>
+                <div style={{ fontSize: 12, color: "#CBD5E1", lineHeight: 1.6 }}>We submit, follow up, and post ERAs for you. Biweekly guaranteed payouts (Headway model). Multi-state credentialing. <strong style={{ color: "#A78BFA" }}>5% of collected revenue</strong>, no upfront fees.</div>
+              </div>
+              <button onClick={() => showToast("Managed Billing — sign-up flow opens in production")} style={clinicianBtnPrimary}>Learn more →</button>
+            </div>
+          </div>
+        )}
+
+        {/* ── TEAM & ROLES ── */}
+        {tab === "team" && (
+          <div>
+            <div style={{ marginBottom: 20 }}>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>Team, Roles &amp; Supervision</h2>
+              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
+                Multi-clinician practices with role-based access. Supervisors can join live sessions, co-sign trainee notes, and review caseload at a glance. SAML/SSO supported for clinics &gt; 5 seats.
+              </p>
+            </div>
+
+            {/* Team roster */}
+            <div style={{ ...card, marginBottom: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Team Roster · 7 members</h3>
+                <button onClick={() => showToast("Invite team member — opens in production")} style={clinicianBtnPrimary}>+ Invite</button>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {[
+                  { name: "Dr. Jamie Chen, PhD", role: "Owner", license: "BCN, BCB", caseload: 24, color: "#A78BFA", status: "online" },
+                  { name: "Dr. Maya Patel, PsyD", role: "Clinician", license: "LCSW, BCN", caseload: 18, color: "#60A5FA", status: "online" },
+                  { name: "Dr. Marcus Reyes, MD", role: "Supervisor", license: "MD, Psychiatry", caseload: 12, color: "#10B981", status: "in session" },
+                  { name: "Sarah Kim, LMFT-A", role: "Trainee", license: "LMFT-A (supervised)", caseload: 6, color: "#F59E0B", status: "online" },
+                  { name: "Olivia Brooks, LCSW", role: "Clinician", license: "LCSW", caseload: 16, color: "#60A5FA", status: "offline" },
+                  { name: "Tyler Zhang", role: "Front Desk", license: "—", caseload: 0, color: "#64748B", status: "online" },
+                  { name: "Rita Alvarez", role: "Biller", license: "—", caseload: 0, color: "#EC4899", status: "online" },
+                ].map((m) => (
+                  <div key={m.name} style={{ display: "flex", alignItems: "center", gap: 14, padding: "10px 14px", background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: `${m.color}33`, color: m.color, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 13, position: "relative", flexShrink: 0 }}>
+                      {m.name.split(" ").slice(-1)[0].slice(0, 1)}{m.name.split(" ")[0].replace("Dr.", "").trim().slice(0, 1)}
+                      {m.status === "online" && <span style={{ position: "absolute", bottom: 0, right: 0, width: 10, height: 10, background: "#10B981", borderRadius: "50%", border: "2px solid #0A1320" }} />}
+                      {m.status === "in session" && <span style={{ position: "absolute", bottom: 0, right: 0, width: 10, height: 10, background: "#F59E0B", borderRadius: "50%", border: "2px solid #0A1320" }} />}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>{m.name}</div>
+                      <div style={{ fontSize: 11, color: "#64748B" }}>{m.license}</div>
+                    </div>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: m.color, padding: "3px 10px", background: `${m.color}1A`, borderRadius: 99, border: `1px solid ${m.color}33` }}>{m.role}</span>
+                    <div style={{ fontSize: 11, color: "#94A3B8", width: 100, textAlign: "right" }}>{m.caseload > 0 ? `${m.caseload} clients` : "—"}</div>
+                    {m.status === "in session" && (
+                      <button onClick={() => showToast(`Joining ${m.name.split(",")[0]}'s live session as supervisor`)} style={{ ...clinicianBtn, fontSize: 11, padding: "5px 10px" }}>Join Live</button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Co-sign queue */}
+            <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 14 }} className="demo-grid-2">
+              <div style={{ ...card }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Co-Sign Queue · 3 pending</h3>
+                  <span style={{ fontSize: 11, color: "#F59E0B", fontWeight: 600 }}>Action required</span>
+                </div>
+                <p style={{ fontSize: 11, color: "#94A3B8", marginBottom: 12 }}>Trainee notes awaiting supervisor signature — required before insurance claim submission.</p>
+                {[
+                  { trainee: "Sarah Kim, LMFT-A", client: "Anonymous · TX-21", session: "Session 4 · May 5", note: "DAP note · 32 lines · ICD-10 F33.1" },
+                  { trainee: "Sarah Kim, LMFT-A", client: "Anonymous · TX-22", session: "Session 7 · May 4", note: "SOAP note · 28 lines · ICD-10 F41.1" },
+                  { trainee: "Sarah Kim, LMFT-A", client: "Anonymous · TX-19", session: "Session 12 · May 4", note: "DAP note · 41 lines · ICD-10 F90.0" },
+                ].map((q) => (
+                  <div key={q.session} style={{ padding: 12, background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, marginBottom: 8 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: "#F1F5F9" }}>{q.client}</span>
+                      <span style={{ fontSize: 11, color: "#94A3B8" }}>{q.session}</span>
+                    </div>
+                    <div style={{ fontSize: 11, color: "#64748B", marginBottom: 8 }}>{q.trainee} · {q.note}</div>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button onClick={() => showToast("Note approved & co-signed")} style={{ ...clinicianBtnPrimary, fontSize: 11, padding: "5px 12px" }}>Review &amp; Sign</button>
+                      <button onClick={() => showToast("Note returned to trainee with comments")} style={{ ...clinicianBtn, fontSize: 11, padding: "5px 12px" }}>Return for revision</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Permission matrix */}
+              <div style={{ ...card }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Role Permissions</h3>
+                <p style={{ fontSize: 11, color: "#94A3B8", marginBottom: 12 }}>SCIM provisioning · SAML SSO supported</p>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+                  <thead>
+                    <tr><th style={{ textAlign: "left", padding: "4px 0", color: "#94A3B8", fontWeight: 600 }}>Action</th><th style={{ color: "#A78BFA", fontWeight: 600 }}>O</th><th style={{ color: "#10B981", fontWeight: 600 }}>S</th><th style={{ color: "#60A5FA", fontWeight: 600 }}>C</th><th style={{ color: "#F59E0B", fontWeight: 600 }}>T</th><th style={{ color: "#EC4899", fontWeight: 600 }}>B</th></tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { a: "View own client charts", p: ["✓","✓","✓","✓","—"] },
+                      { a: "View all client charts", p: ["✓","✓","—","—","—"] },
+                      { a: "Run live sessions", p: ["✓","✓","✓","✓","—"] },
+                      { a: "Sign clinical notes", p: ["✓","✓","✓","—","—"] },
+                      { a: "Submit claims", p: ["✓","—","—","—","✓"] },
+                      { a: "Edit treatment plans", p: ["✓","✓","✓","—","—"] },
+                      { a: "Co-sign trainee notes", p: ["✓","✓","—","—","—"] },
+                      { a: "Manage team / billing", p: ["✓","—","—","—","—"] },
+                    ].map((r) => (
+                      <tr key={r.a} style={{ borderTop: "1px solid #1E293B" }}>
+                        <td style={{ padding: "5px 0", color: "#CBD5E1" }}>{r.a}</td>
+                        {r.p.map((v, i) => <td key={i} style={{ textAlign: "center", color: v === "✓" ? "#34D399" : "#475569", padding: "5px 0" }}>{v}</td>)}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div style={{ fontSize: 9, color: "#64748B", marginTop: 8 }}>O=Owner · S=Supervisor · C=Clinician · T=Trainee · B=Biller</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── COMPLIANCE ── */}
+        {tab === "compliance" && (
+          <div>
+            <div style={{ marginBottom: 20 }}>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>Compliance &amp; Security</h2>
+              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
+                Designed from day one for HIPAA, SOC 2, and GDPR. Every PHI access is logged. Encryption at rest and in transit. Optional regional data residency for EU and Canada clinics.
+              </p>
+            </div>
+
+            {/* Compliance badge row */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }} className="demo-grid-4">
+              {[
+                { label: "HIPAA",   sub: "BAA available · audit-ready", status: "Compliant", color: "#10B981" },
+                { label: "SOC 2 Type II", sub: "Audit completed Q1 2026", status: "Certified",  color: "#10B981" },
+                { label: "GDPR",    sub: "EU data residency option",     status: "Compliant", color: "#10B981" },
+                { label: "HITRUST CSF", sub: "Self-assessment 2026",     status: "In progress", color: "#F59E0B" },
+              ].map((b) => (
+                <div key={b.label} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: `1px solid ${b.color}33`, borderRadius: 12, padding: 16, position: "relative" }}>
+                  <span style={{ position: "absolute", top: 10, right: 10, fontSize: 9, fontWeight: 700, color: b.color, padding: "2px 8px", background: `${b.color}1A`, borderRadius: 99 }}>{b.status}</span>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: `${b.color}1A`, color: b.color, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8, fontSize: 16, fontWeight: 700, border: `1px solid ${b.color}33` }}>✓</div>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.01em" }}>{b.label}</div>
+                  <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>{b.sub}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Audit log + data residency */}
+            <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 14, marginBottom: 16 }} className="demo-grid-2">
+              <div style={{ ...card }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Audit Log · last 24h</h3>
+                  <button onClick={() => showToast("Full audit log exported as CSV")} style={clinicianBtn}>Export CSV</button>
+                </div>
+                <p style={{ fontSize: 11, color: "#94A3B8", marginBottom: 12 }}>Every PHI access tracked per HIPAA Security Rule §164.312(b). 7-year retention.</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 320, overflowY: "auto" }}>
+                  {[
+                    { t: "10:42 AM", who: "Dr. Jamie Chen", action: "Viewed client chart", target: "Sarah Mitchell", ip: "192.168.1.42" },
+                    { t: "10:38 AM", who: "Dr. Jamie Chen", action: "Started session",     target: "Sarah Mitchell · Session 8", ip: "192.168.1.42" },
+                    { t: "10:35 AM", who: "Rita Alvarez",   action: "Submitted claim",     target: "CL-2026-0124", ip: "192.168.1.51" },
+                    { t: "09:28 AM", who: "Sarah Kim",     action: "Edited SOAP note",    target: "Anonymous TX-21 Session 4", ip: "192.168.1.66" },
+                    { t: "09:15 AM", who: "Dr. Marcus Reyes", action: "Co-signed note",   target: "Anonymous TX-22 Session 7", ip: "192.168.1.62" },
+                    { t: "09:01 AM", who: "Olivia Brooks",  action: "Viewed client chart", target: "James Okafor", ip: "73.221.18.4 (off-site)" },
+                    { t: "08:54 AM", who: "Dr. Maya Patel", action: "Generated PDF report", target: "Priya Sharma", ip: "192.168.1.45" },
+                    { t: "08:21 AM", who: "system", action: "Daily encrypted backup",   target: "All PHI · 14.2 GB", ip: "—" },
+                    { t: "Yesterday", who: "Tyler Zhang",   action: "Booked appointment",  target: "Daniel Cruz · May 6", ip: "192.168.1.31" },
+                  ].map((e, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 10px", background: "#0A1320", border: "1px solid #1E293B", borderRadius: 8, fontSize: 11 }}>
+                      <span style={{ color: "#64748B", fontFamily: "ui-monospace, monospace", width: 70, fontSize: 10 }}>{e.t}</span>
+                      <span style={{ color: "#F1F5F9", fontWeight: 600, width: 130 }}>{e.who}</span>
+                      <span style={{ color: "#94A3B8", flex: 1 }}>{e.action} · <strong style={{ color: "#CBD5E1" }}>{e.target}</strong></span>
+                      <span style={{ color: e.ip.includes("off-site") ? "#F59E0B" : "#475569", fontFamily: "ui-monospace, monospace", fontSize: 10 }}>{e.ip}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ ...card }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 10 }}>Data Residency</h3>
+                {[
+                  { region: "United States", primary: true, info: "us-east-1 · AWS · Tier IV", flag: "🇺🇸" },
+                  { region: "European Union", primary: false, info: "eu-west-3 · Frankfurt · GDPR-compliant", flag: "🇪🇺" },
+                  { region: "Canada", primary: false, info: "ca-central-1 · PHIPA-compliant", flag: "🇨🇦" },
+                ].map((r) => (
+                  <div key={r.region} style={{ display: "flex", alignItems: "center", gap: 12, padding: 10, background: r.primary ? "rgba(96,165,250,0.08)" : "#0A1320", border: `1px solid ${r.primary ? "#3B82F6" : "#1E293B"}`, borderRadius: 10, marginBottom: 8 }}>
+                    <span style={{ fontSize: 22 }}>{r.flag}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: "#F1F5F9" }}>{r.region}</div>
+                      <div style={{ fontSize: 10, color: "#64748B" }}>{r.info}</div>
+                    </div>
+                    {r.primary && <span style={{ fontSize: 9, fontWeight: 700, color: "#60A5FA", padding: "2px 8px", background: "rgba(96,165,250,0.15)", borderRadius: 99 }}>Primary</span>}
+                  </div>
+                ))}
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginTop: 16, marginBottom: 10 }}>Security Settings</h3>
+                {[
+                  { label: "2FA enforced for all users", on: true },
+                  { label: "SAML / SSO (Okta, Google)",  on: true },
+                  { label: "Auto-logout after 15 min idle", on: true },
+                  { label: "Encryption at rest (AES-256)", on: true },
+                  { label: "TLS 1.3 in transit", on: true },
+                  { label: "IP allowlist (clinic only)", on: false },
+                ].map((s) => (
+                  <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", borderTop: "1px solid #1E293B", fontSize: 11 }}>
+                    <span style={{ width: 14, height: 14, borderRadius: 4, background: s.on ? "#10B981" : "#475569", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 9, fontWeight: 700 }}>{s.on ? "✓" : "○"}</span>
+                    <span style={{ color: "#CBD5E1", flex: 1 }}>{s.label}</span>
+                    <span style={{ color: s.on ? "#34D399" : "#64748B", fontWeight: 600, fontSize: 10 }}>{s.on ? "On" : "Off"}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── MARKETING ── */}
+        {tab === "marketing" && (
+          <div>
+            <div style={{ marginBottom: 20 }}>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>Marketing &amp; Growth</h2>
+              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
+                Branded white-label client experience. Public booking page, referral program with QR codes, Psychology Today directory sync, and email drip campaigns — all built in.
+              </p>
+            </div>
+
+            {/* Marketing performance summary */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }} className="demo-grid-4">
+              {[
+                { label: "New leads (30d)",   val: "47", sub: "+18% vs prior", color: "#3B82F6" },
+                { label: "Conversion rate",    val: "62%", sub: "lead → first session", color: "#10B981" },
+                { label: "Referral credits",   val: "$2,400", sub: "12 referrals · this Q", color: "#A78BFA" },
+                { label: "Avg. client LTV",    val: "$3,840", sub: "20 sessions × $192", color: "#F59E0B" },
+              ].map((s) => (
+                <div key={s.label} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 12, padding: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: s.color, boxShadow: `0 0 8px ${s.color}` }} />
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em" }}>{s.label}</div>
+                  </div>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums" }}>{s.val}</div>
+                  <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>{s.sub}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }} className="demo-grid-2">
+              <div style={{ ...card }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Public Booking Page</h3>
+                <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 12 }}>cedarvalley.eegbase.app — embed on your website</p>
+                <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 14, marginBottom: 12 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 6, background: "#2563EB", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 12 }}>CV</div>
+                    <div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: "#F1F5F9" }}>Cedar Valley Neurofeedback</div>
+                      <div style={{ fontSize: 10, color: "#64748B" }}>Book a free 15-min consultation</div>
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
+                    {["Mon", "Tue", "Wed", "Thu", "Fri"].map((d) => (
+                      <div key={d} style={{ flex: 1, fontSize: 10, color: "#94A3B8", textAlign: "center", padding: "4px 0", background: "#1E293B", borderRadius: 4 }}>{d}</div>
+                    ))}
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 4 }}>
+                    {["9:00", "9:30", "10:00", "10:30", "1:00", "1:30", "2:00", "2:30"].map((t) => (
+                      <div key={t} style={{ fontSize: 11, color: "#CBD5E1", padding: 6, background: "#1E293B", border: "1px solid #334155", borderRadius: 4, textAlign: "center" }}>{t}</div>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button onClick={() => showToast("Embed code copied to clipboard")} style={{ ...clinicianBtn, flex: 1 }}>Copy embed code</button>
+                  <button onClick={() => showToast("Theme editor opens in production")} style={{ ...clinicianBtn, flex: 1 }}>Customize theme</button>
+                </div>
+              </div>
+
+              <div style={{ ...card }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Referral Program</h3>
+                <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 12 }}>$200 credit per referred clinician · QR codes printable</p>
+                <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 14, marginBottom: 12, display: "flex", alignItems: "center", gap: 14 }}>
+                  <div style={{ width: 80, height: 80, background: "white", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, padding: 4 }}>
+                    <svg viewBox="0 0 80 80" width="72" height="72">
+                      {Array.from({ length: 9 * 9 }).map((_, i) => {
+                        const r = Math.floor(i / 9), c = i % 9;
+                        const blk = (r * 17 + c * 23 + r * c) % 3 === 0;
+                        return blk ? <rect key={i} x={c * 8 + 4} y={r * 8 + 4} width={7} height={7} fill="#0F172A" /> : null;
+                      })}
+                      <rect x="2" y="2" width="22" height="22" fill="none" stroke="#0F172A" strokeWidth="3" />
+                      <rect x="56" y="2" width="22" height="22" fill="none" stroke="#0F172A" strokeWidth="3" />
+                      <rect x="2" y="56" width="22" height="22" fill="none" stroke="#0F172A" strokeWidth="3" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 11, color: "#94A3B8" }}>Your referral link</div>
+                    <code style={{ fontSize: 11, color: "#A5B4FC", fontFamily: "ui-monospace, monospace", display: "block", marginTop: 2, wordBreak: "break-all" }}>eegbase.app/r/cv-jchen</code>
+                    <div style={{ fontSize: 11, color: "#34D399", marginTop: 6 }}>12 referrals · $2,400 credited</div>
+                  </div>
+                </div>
+                <button onClick={() => showToast("Referral link copied · scan QR to share")} style={{ ...clinicianBtn, width: "100%" }}>Copy link · Print QR poster</button>
+              </div>
+
+              <div style={{ ...card }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Email Drip Campaigns</h3>
+                <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 12 }}>Automated education sequences for new clients</p>
+                {[
+                  { name: "New client onboarding (5 emails)", on: true, opens: "82%" },
+                  { name: "Mid-treatment progress check (3)", on: true, opens: "67%" },
+                  { name: "Post-discharge maintenance (4)", on: true, opens: "54%" },
+                  { name: "Lapsed client reactivation (2)", on: false, opens: "—" },
+                ].map((d) => (
+                  <div key={d.name} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderTop: "1px solid #1E293B", fontSize: 11 }}>
+                    <span style={{ width: 10, height: 10, borderRadius: "50%", background: d.on ? "#10B981" : "#475569" }} />
+                    <span style={{ color: "#CBD5E1", flex: 1 }}>{d.name}</span>
+                    <span style={{ color: "#94A3B8", fontVariantNumeric: "tabular-nums" }}>{d.opens}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ ...card }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Directory Sync</h3>
+                <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 12 }}>Auto-sync clinic profile to provider directories</p>
+                {[
+                  { name: "Psychology Today", connected: true, note: "Profile · 1,247 views/mo" },
+                  { name: "Google Business",  connected: true, note: "4.9★ · 38 reviews" },
+                  { name: "Apple Maps",       connected: false, note: "—" },
+                  { name: "ISNR Directory",   connected: true, note: "BCN-listed" },
+                  { name: "Zocdoc",           connected: false, note: "—" },
+                ].map((p) => (
+                  <div key={p.name} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderTop: "1px solid #1E293B", fontSize: 11 }}>
+                    <span style={{ fontSize: 13 }}>{p.connected ? "✓" : "○"}</span>
+                    <span style={{ color: "#F1F5F9", fontWeight: 600, flex: 1 }}>{p.name}</span>
+                    <span style={{ color: p.connected ? "#34D399" : "#64748B" }}>{p.note}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
