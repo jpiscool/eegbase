@@ -162,6 +162,10 @@ export default function DemoPage() {
   const [faxSent, setFaxSent] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showSimilarCasesModal, setShowSimilarCasesModal] = useState(false);
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
+  const [showCmdK, setShowCmdK] = useState(false);
+  const [cmdKQuery, setCmdKQuery] = useState("");
+  const [tourStep, setTourStep] = useState<number | null>(null);
   const [gameMode, setGameMode] = useState<"orb" | "art" | "audio">("orb");
   const [reminderToggles, setReminderToggles] = useState({ sms: true, email: true, noshow: true, lapsed: false });
   const [peakFlash, setPeakFlash] = useState(false);
@@ -237,6 +241,36 @@ export default function DemoPage() {
     if (rewardVal != null && rewardVal < 50) peakReachedRef.current = false;
   }, [rewardVal]);
 
+  // Cmd-K / Ctrl-K command palette keyboard shortcut
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setShowCmdK((v) => !v);
+      }
+      if (e.key === "Escape") {
+        setShowCmdK(false);
+        setTourStep(null);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
+  // 60-second guided tour orchestrator
+  useEffect(() => {
+    if (tourStep === null) return;
+    const TOUR_TABS: MainTab[] = ["session", "ai", "brain", "reports", "marketing", "devices"];
+    if (tourStep >= TOUR_TABS.length) {
+      setTourStep(null);
+      return;
+    }
+    const t = TOUR_TABS[tourStep];
+    setTab(t);
+    const timer = setTimeout(() => setTourStep((s) => (s === null ? null : s + 1)), 10000);
+    return () => clearTimeout(timer);
+  }, [tourStep]);
+
   // Live Z-score simulation from current EEG data
   const thetaZ = sample?.theta != null ? ((sample.theta - 0.28) / 0.08).toFixed(2) : null;
   const alphaZ = sample?.alpha != null ? ((sample.alpha - 0.42) / 0.09).toFixed(2) : null;
@@ -257,23 +291,23 @@ export default function DemoPage() {
     return { icon: "◌", text: "Starting up — takes a moment for brainwave patterns to stabilize. Breathe naturally.", color: "#CBD5E1", accent: "#64748B", bg: "#0F172A", border: "#1E293B" };
   })();
 
-  const TABS: { id: MainTab; label: string; icon: React.ComponentType<{ size?: number; strokeWidth?: number }>; groupStart?: string }[] = [
-    { id: "session",   label: "Live Session",       icon: Activity,       groupStart: "During a Session" },
+  const TABS: { id: MainTab; label: string; icon: React.ComponentType<{ size?: number; strokeWidth?: number }>; groupStart?: string; badge?: string }[] = [
+    { id: "session",   label: "Live Session",       icon: Activity,       groupStart: "During a Session", badge: "FOR MENDI" },
     { id: "game",      label: "Game Mode",          icon: Gamepad2 },
     { id: "brain",     label: "Brain Map",          icon: Brain },
     { id: "hrv",       label: "Heart & Breathing",  icon: HeartPulse },
     { id: "outcomes",  label: "Questionnaires",     icon: ClipboardList,  groupStart: "Client Records" },
     { id: "progress",  label: "Progress",           icon: TrendingUp },
-    { id: "ai",        label: "AI Insights",        icon: Sparkles },
+    { id: "ai",        label: "AI Insights",        icon: Sparkles,       badge: "FOR MENDI" },
     { id: "protocols", label: "Protocols",          icon: Target,         groupStart: "Practice Tools" },
     { id: "schedule",  label: "Schedule",           icon: Calendar },
-    { id: "reports",   label: "Reports",            icon: FileText },
+    { id: "reports",   label: "Reports",            icon: FileText,       badge: "FOR MENDI" },
     { id: "compare",   label: "Compare",            icon: BarChart3 },
     { id: "billing",   label: "Billing & Claims",   icon: CreditCard,     groupStart: "Practice Operations" },
     { id: "team",      label: "Team & Roles",       icon: Users },
     { id: "compliance",label: "Compliance",         icon: ShieldCheck },
-    { id: "marketing", label: "Marketing",          icon: Megaphone },
-    { id: "devices",   label: "Devices & API",      icon: Plug,           groupStart: "Integrations" },
+    { id: "marketing", label: "Marketing",          icon: Megaphone,      badge: "FOR MENDI" },
+    { id: "devices",   label: "Devices & API",      icon: Plug,           groupStart: "Integrations", badge: "FOR MENDI" },
   ];
 
   const DEMO_CLIENTS = [
@@ -407,6 +441,27 @@ export default function DemoPage() {
         @keyframes overlayIn { 0% { opacity: 0; backdrop-filter: blur(0px); } 100% { opacity: 1; backdrop-filter: blur(12px); } }
         @keyframes orbDrift { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, -20px); } }
         @keyframes premiumGlow { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.6; } }
+
+        /* Staggered card entrance — micro-delight on tab switch */
+        @keyframes cardSlideIn { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
+        [role="tabpanel"] > div > * { animation: cardSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+        [role="tabpanel"] > div > *:nth-child(1) { animation-delay: 0ms; }
+        [role="tabpanel"] > div > *:nth-child(2) { animation-delay: 50ms; }
+        [role="tabpanel"] > div > *:nth-child(3) { animation-delay: 100ms; }
+        [role="tabpanel"] > div > *:nth-child(4) { animation-delay: 150ms; }
+        [role="tabpanel"] > div > *:nth-child(5) { animation-delay: 200ms; }
+        [role="tabpanel"] > div > *:nth-child(6) { animation-delay: 250ms; }
+        @media (prefers-reduced-motion: reduce) {
+          [role="tabpanel"] > div > * { animation: none; }
+        }
+
+        /* Visible focus rings — WCAG 2.4.7 compliance */
+        button:focus-visible, a:focus-visible, [role="button"]:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+          outline: 2px solid #60A5FA;
+          outline-offset: 2px;
+          border-radius: 4px;
+        }
+
         .skeleton { background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%); background-size: 800px 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
         .demo-section-label { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.1em; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #1E293B; }
         select option { background: #1E293B; color: white; }
@@ -852,7 +907,7 @@ export default function DemoPage() {
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           {/* Client switcher */}
           <button
-            onClick={() => showToast("⌘K · Search clients, sessions, protocols, claims · Ready")}
+            onClick={() => setShowCmdK(true)}
             aria-label="Search (Cmd+K)"
             className="demo-topbar-hide-mobile"
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 8px 6px 12px", display: "flex", alignItems: "center", gap: 8, color: "#94A3B8", fontSize: 12, cursor: "pointer", fontWeight: 500 }}
@@ -860,6 +915,16 @@ export default function DemoPage() {
             <Search size={13} strokeWidth={2} />
             <span>Search...</span>
             <kbd style={{ fontSize: 10, fontFamily: "ui-monospace, monospace", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 4, padding: "1px 6px", color: "#CBD5E1", fontWeight: 600 }}>⌘K</kbd>
+          </button>
+          <button
+            onClick={() => setTourStep(0)}
+            aria-label="Start 60-second tour"
+            className="demo-topbar-hide-mobile"
+            title="60-second highlight reel — auto-walks through the 6 most important tabs for a Mendi pitch"
+            style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.18), rgba(79,70,229,0.18))", border: "1px solid rgba(167,139,250,0.4)", borderRadius: 8, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6, color: "#C4B5FD", fontSize: 12, cursor: "pointer", fontWeight: 700 }}
+          >
+            <span aria-hidden="true">▶</span>
+            <span>60-sec tour</span>
           </button>
           <button
             onClick={() => showToast("3 new alerts: Sarah's PHQ-9 down 3 pts · James co-sign needed · Aetna ERA posted")}
@@ -889,6 +954,15 @@ export default function DemoPage() {
               LIVE · {fmt(elapsed)}
             </span>
           )}
+          {/* Compliance strip — persistent trust signal */}
+          <span className="demo-topbar-hide-mobile" title="HIPAA · Schrems II · AES-256 · SOC 2 · WCAG 2.2 AA" style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "0.66rem", color: "#94A3B8", fontWeight: 700, padding: "3px 8px", background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 99, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+            <span aria-hidden="true">🛡</span>
+            <span>HIPAA</span>
+            <span style={{ color: "#475569" }}>·</span>
+            <span>Schrems II</span>
+            <span style={{ color: "#475569" }}>·</span>
+            <span>SOC 2</span>
+          </span>
           <a href="/login" style={{ fontSize: "0.82rem", fontWeight: 700, padding: "7px 16px", background: "#2563EB", color: "white", borderRadius: 8, textDecoration: "none", letterSpacing: "0.01em" }}>
             Get Access →
           </a>
@@ -1155,13 +1229,80 @@ export default function DemoPage() {
         </div>
       )}
 
-      {/* Clinician control toast */}
-      {toast && (
-        <div style={{ position: "fixed", bottom: 80, right: 20, zIndex: 999, background: "#0F172A", border: "1px solid #14B8A6", color: "#F1F5F9", borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, boxShadow: "0 8px 32px rgba(0,0,0,0.4)", animation: "fadeIn 0.2s ease", display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#14B8A6" }} />
-          {toast}
+      {/* Cmd-K command palette */}
+      {showCmdK && (() => {
+        const cmds = [
+          ...TABS.map((t) => ({ kind: "Tab" as const, label: t.label, action: () => { setTab(t.id); setShowCmdK(false); } })),
+          { kind: "Action" as const, label: "Start 60-second tour", action: () => { setTourStep(0); setShowCmdK(false); } },
+          { kind: "Action" as const, label: "Pair Mendi headset",   action: () => { showToast("Mendi headset paired ✓"); setShowCmdK(false); } },
+          { kind: "Action" as const, label: "Generate SOAP note",   action: () => { showToast("SOAP note generated"); setShowCmdK(false); } },
+          { kind: "Action" as const, label: "Export BIDS-fNIRS",    action: () => { showToast("BIDS-fNIRS export queued"); setShowCmdK(false); } },
+          { kind: "Action" as const, label: "Switch protocol",      action: () => { showToast("Protocol switcher open"); setShowCmdK(false); } },
+        ];
+        const filtered = cmdKQuery ? cmds.filter((c) => c.label.toLowerCase().includes(cmdKQuery.toLowerCase())) : cmds;
+        return (
+          <div onClick={() => setShowCmdK(false)} className="demo-modal-backdrop" style={{ position: "fixed", inset: 0, background: "rgba(2,6,23,0.6)", zIndex: 1100, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 100, animation: "overlayIn 0.15s ease-out" }}>
+            <div onClick={(e) => e.stopPropagation()} style={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 12, width: "100%", maxWidth: 560, boxShadow: "0 32px 80px rgba(0,0,0,0.6)", overflow: "hidden", animation: "modalIn 0.2s ease" }}>
+              <input
+                autoFocus
+                placeholder="Search tabs, clients, actions..."
+                value={cmdKQuery}
+                onChange={(e) => setCmdKQuery(e.target.value)}
+                style={{ width: "100%", padding: "16px 20px", background: "transparent", border: "none", borderBottom: "1px solid #1E293B", color: "#F1F5F9", fontSize: 14, outline: "none" }}
+              />
+              <div style={{ maxHeight: 400, overflowY: "auto", padding: 8 }}>
+                {filtered.length === 0 ? (
+                  <div style={{ padding: 24, textAlign: "center", color: "#64748B", fontSize: 12 }}>No matches for &ldquo;{cmdKQuery}&rdquo;</div>
+                ) : (
+                  filtered.map((c) => (
+                    <button
+                      key={c.label}
+                      onClick={c.action}
+                      style={{ width: "100%", textAlign: "left", padding: "10px 14px", background: "transparent", border: "none", color: "#CBD5E1", fontSize: 13, cursor: "pointer", borderRadius: 6, display: "flex", alignItems: "center", gap: 12 }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(96,165,250,0.08)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                    >
+                      <span style={{ fontSize: 9, fontWeight: 700, color: c.kind === "Tab" ? "#60A5FA" : "#A78BFA", padding: "2px 7px", background: c.kind === "Tab" ? "rgba(96,165,250,0.12)" : "rgba(167,139,250,0.12)", borderRadius: 4, textTransform: "uppercase", letterSpacing: "0.06em", flexShrink: 0 }}>{c.kind}</span>
+                      <span>{c.label}</span>
+                    </button>
+                  ))
+                )}
+              </div>
+              <div style={{ padding: "8px 16px", background: "#0A1320", borderTop: "1px solid #1E293B", fontSize: 10, color: "#64748B", display: "flex", justifyContent: "space-between" }}>
+                <span><kbd style={{ fontFamily: "ui-monospace, monospace", background: "#1E293B", padding: "1px 5px", borderRadius: 3, color: "#CBD5E1" }}>↵</kbd> select · <kbd style={{ fontFamily: "ui-monospace, monospace", background: "#1E293B", padding: "1px 5px", borderRadius: 3, color: "#CBD5E1", marginLeft: 4 }}>esc</kbd> close</span>
+                <span>{filtered.length} result{filtered.length === 1 ? "" : "s"}</span>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Tour HUD — shown during 60-second auto-tour */}
+      {tourStep !== null && (
+        <div style={{ position: "fixed", bottom: 24, left: 24, zIndex: 998, background: "linear-gradient(135deg, #1E1B4B, #0F172A)", border: "1px solid rgba(167,139,250,0.4)", borderRadius: 12, padding: "12px 16px", boxShadow: "0 16px 48px rgba(0,0,0,0.5)", maxWidth: 320 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#A78BFA", animation: "pulse 1.5s infinite" }} />
+            <span style={{ fontSize: 10, fontWeight: 700, color: "#C4B5FD", textTransform: "uppercase", letterSpacing: "0.08em" }}>60-second tour · step {tourStep + 1} of 6</span>
+            <button onClick={() => setTourStep(null)} aria-label="Stop tour" style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94A3B8", fontSize: 14, cursor: "pointer", padding: 0 }}>×</button>
+          </div>
+          <div style={{ fontSize: 11, color: "#CBD5E1", lineHeight: 1.5 }}>
+            Auto-advancing every 10 seconds through the 6 most important tabs for a Mendi pitch. Press <kbd style={{ fontFamily: "ui-monospace, monospace", background: "#1E293B", padding: "1px 5px", borderRadius: 3, color: "#CBD5E1", fontSize: 10 }}>esc</kbd> to stop.
+          </div>
+          <div style={{ marginTop: 8, height: 3, background: "#1E293B", borderRadius: 99, overflow: "hidden" }}>
+            <div style={{ width: `${((tourStep + 1) / 6) * 100}%`, height: "100%", background: "linear-gradient(90deg, #A78BFA, #60A5FA)", transition: "width 0.5s ease" }} />
+          </div>
         </div>
       )}
+
+      {/* Clinician control toast — ARIA live region for screen readers (WCAG 4.1.3) */}
+      <div role="status" aria-live="polite" aria-atomic="true" style={{ position: "fixed", bottom: 80, right: 20, zIndex: 999, pointerEvents: toast ? "auto" : "none" }}>
+        {toast && (
+          <div style={{ background: "#0F172A", border: "1px solid #14B8A6", color: "#F1F5F9", borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, boxShadow: "0 8px 32px rgba(0,0,0,0.4)", animation: "fadeIn 0.2s ease", display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#14B8A6" }} aria-hidden="true" />
+            {toast}
+          </div>
+        )}
+      </div>
 
       {/* Peak achievement flash */}
       {peakFlash && (
@@ -1277,6 +1418,9 @@ export default function DemoPage() {
                   >
                     <Icon size={16} strokeWidth={1.75} />
                     <span>{t.label}</span>
+                    {t.badge && (
+                      <span style={{ marginLeft: "auto", fontSize: 8, fontWeight: 800, color: "#C4B5FD", background: "rgba(167,139,250,0.18)", border: "1px solid rgba(167,139,250,0.4)", borderRadius: 4, padding: "1px 5px", letterSpacing: "0.04em", flexShrink: 0 }}>{t.badge}</span>
+                    )}
                   </button>
                 </div>
               );
@@ -1286,6 +1430,36 @@ export default function DemoPage() {
 
         {/* Right column */}
         <div style={{ flex: 1, minWidth: 0 }}>
+        {/* Sticky "what you're seeing" caption per tab — progressive onboarding */}
+        {(() => {
+          const captions: Record<string, { what: string; lookFor: string }> = {
+            session:    { what: "Live Session",       lookFor: "the HIPAA video co-feedback panel at the top — clinician sees the client's live signals during the call. Mode toggle above (1-on-1 / Group / Couples / Family)." },
+            game:       { what: "Game Mode",          lookFor: "what the client sees on their screen — the reward feedback that drives engagement. 3 modes: Aurora, Generative Art, Audio Interrupt." },
+            brain:      { what: "Brain Map",          lookFor: "the new normative database comparison — Sarah's z-scores vs n=847 healthy controls. Theta + low alpha = classic ADHD signature." },
+            hrv:        { what: "Heart & Breathing",  lookFor: "the connected wearables strip at top — Apple Health · Oura · Whoop feed into the cross-session pattern detector." },
+            outcomes:   { what: "Questionnaires",     lookFor: "PHQ-9, GAD-7, custom scales · auto-scored · longitudinal trend overlaid with neurofeedback signal." },
+            progress:   { what: "Progress",           lookFor: "20-session arc with PHQ-9 18→5, GAD-7 14→4, reward score +131%. Branded PDF in one click." },
+            ai:         { what: "AI Insights",        lookFor: "the cross-session pattern detector — uniquely correlates Mendi data with sleep/mood/HRV. Plus 6-format note selector and tone analytics with fNIRS overlay." },
+            protocols:  { what: "Protocols",          lookFor: "50+ evidence-based protocols, searchable by condition. Open library — clinicians can fork and contribute." },
+            schedule:   { what: "Schedule",           lookFor: "calendar with smart slot suggestions, automated reminders, Mendi pre-call hardware checks." },
+            reports:    { what: "Reports",            lookFor: "the live outcomes registry (47k sessions, 412 clinics) + pre-print citation + Co-author CTA + IRB packet for Mendi science team." },
+            compare:    { what: "Compare",            lookFor: "8-column matrix of EEGBase vs every legacy + modern competitor. Filter by capability." },
+            billing:    { what: "Billing & Claims",   lookFor: "the 3-tier pricing strip (Solo / Practice / Enterprise) with annual toggle (save 17%). CMS-1500 auto-gen below." },
+            team:       { what: "Team & Roles",       lookFor: "RBAC matrix, supervisor co-sign workflow, audit trail of every clinician action." },
+            compliance: { what: "Compliance",         lookFor: "Schrems II + EU SCCs, SOC 2 Type II + Bishop Fox pen-test downloads, P0 Incident SLA, FDA general wellness posture." },
+            marketing:  { what: "Marketing",          lookFor: "white-label Mendi Clinical mode (B2B story), coaching marketplace, corporate wellness, 4-quarter roadmap, RCT enrollment portal." },
+            devices:    { what: "Devices & API",      lookFor: "Mendi flagship card with calibration drift sparkline + BIDS-fNIRS sidecar JSON + 6 migration importers (BrainPaint/EEGer/NeuroGuide/etc)." },
+          };
+          const cap = captions[tab];
+          if (!cap) return null;
+          return (
+            <div style={{ position: "sticky", top: 0, zIndex: 10, background: "#0A1320", borderBottom: "1px solid #1E293B", padding: "8px 20px", display: "flex", alignItems: "center", gap: 10, fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>
+              <span style={{ fontSize: 9, fontWeight: 700, color: "#A5B4FC", padding: "2px 7px", background: "rgba(167,139,250,0.12)", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em", flexShrink: 0 }}>👀 You&apos;re seeing</span>
+              <span><strong style={{ color: "#F1F5F9" }}>{cap.what}</strong> — look for {cap.lookFor}</span>
+            </div>
+          );
+        })()}
+
         <div
           role="tabpanel"
           id={`tabpanel-${tab}`}
@@ -3871,26 +4045,91 @@ export default function DemoPage() {
               </p>
             </div>
 
-            {/* EEGBase pricing strip — clinic-side SaaS */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10, marginBottom: 12 }} className="demo-grid-4">
-              {[
-                { tier: "Pay per session", price: "$19/session",       seats: "Trial · no commitment",        ribbon: "Frictionless", color: "#10B981" },
-                { tier: "Starter",         price: "$149/clinic/mo",    seats: "1 clinician · 25 clients",     ribbon: null,            color: "#64748B" },
-                { tier: "Practice",        price: "$349/clinic/mo",    seats: "5 clinicians · unlimited",     ribbon: "Most popular",   color: "#3B82F6" },
-                { tier: "Group",           price: "$899/clinic/mo",    seats: "20 seats · multi-location",    ribbon: null,            color: "#A78BFA" },
-                { tier: "Enterprise",      price: "Custom",            seats: "Unlimited · SSO · SLA",        ribbon: "Mendi partners", color: "#F59E0B" },
-              ].map((p) => (
-                <div key={p.tier} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: `1px solid ${p.ribbon ? p.color : "#1E293B"}`, borderRadius: 12, padding: 14, position: "relative" }}>
-                  {p.ribbon && <span style={{ position: "absolute", top: -8, right: 10, fontSize: 9, fontWeight: 700, color: "white", background: p.color, padding: "2px 8px", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>{p.ribbon}</span>}
-                  <div style={{ fontSize: 10, fontWeight: 700, color: p.color, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>{p.tier}</div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.02em", marginBottom: 2 }}>{p.price}</div>
-                  <div style={{ fontSize: 10, color: "#94A3B8" }}>{p.seats}</div>
-                </div>
-              ))}
+            {/* EEGBase pricing strip — 3 tiers per CRO research (158% lift vs 5 tiers) */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 14 }}>
+              <span style={{ fontSize: 11, color: billingPeriod === "monthly" ? "#F1F5F9" : "#94A3B8", fontWeight: 700 }}>Monthly</span>
+              <button
+                onClick={() => setBillingPeriod(billingPeriod === "monthly" ? "annual" : "monthly")}
+                aria-label={`Switch to ${billingPeriod === "monthly" ? "annual" : "monthly"} billing`}
+                style={{ position: "relative", width: 42, height: 22, borderRadius: 99, background: billingPeriod === "annual" ? "#10B981" : "#334155", border: "none", cursor: "pointer", padding: 0, transition: "background 0.2s" }}
+              >
+                <span style={{ position: "absolute", top: 2, left: billingPeriod === "annual" ? 22 : 2, width: 18, height: 18, borderRadius: "50%", background: "white", transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
+              </button>
+              <span style={{ fontSize: 11, color: billingPeriod === "annual" ? "#F1F5F9" : "#94A3B8", fontWeight: 700 }}>Annual <span style={{ color: "#34D399", fontWeight: 800, marginLeft: 4 }}>save 17%</span></span>
             </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 14 }} className="demo-grid-3">
+              {[
+                {
+                  tier: "Solo",
+                  monthly: 19,
+                  monthlyUnit: "/ session",
+                  annual: 149,
+                  annualUnit: "/ mo",
+                  seats: "1 clinician · pay-per-session OR $149/mo",
+                  ribbon: null,
+                  color: "#10B981",
+                  features: ["Live Session + co-feedback video", "AI Insights + ambient SOAP scribe", "BIDS / SNIRF / EDF+ export", "1 device pairing"],
+                  excluded: ["Multi-clinician seats", "Insurance claims (CMS-1500)", "White-label"],
+                },
+                {
+                  tier: "Practice",
+                  monthly: 349,
+                  monthlyUnit: "/ clinic / mo",
+                  annual: 290,
+                  annualUnit: "/ clinic / mo",
+                  seats: "Up to 5 clinicians · unlimited clients",
+                  ribbon: "Most popular",
+                  color: "#3B82F6",
+                  features: ["Everything in Solo", "Up to 5 clinicians", "CMS-1500 + ERA + claim tracking", "All 6 SOAP/DAP/BIRP formats", "Cross-session pattern detector", "Coaching marketplace seat", "Group + couples + family modes"],
+                  excluded: ["White-label", "SSO + SAML", "Custom SLA"],
+                },
+                {
+                  tier: "Enterprise",
+                  monthly: 0,
+                  monthlyUnit: "Custom",
+                  annual: 0,
+                  annualUnit: "Custom",
+                  seats: "Unlimited seats · multi-location",
+                  ribbon: "Mendi partners",
+                  color: "#F59E0B",
+                  features: ["Everything in Practice", "White-label / Mendi Clinical mode", "SSO + SAML + IP allowlist", "99.97% uptime SLA + dedicated CSM", "Multi-region · RTO 15 min", "Corporate wellness dashboard", "Custom DPA + 42 CFR Part 2"],
+                  excluded: [],
+                },
+              ].map((p) => {
+                const isMostPopular = p.ribbon === "Most popular";
+                const displayPrice = p.tier === "Enterprise" ? "Custom" : (billingPeriod === "annual" ? `$${p.annual}` : `$${p.monthly}`);
+                const displayUnit = p.tier === "Enterprise" ? p.monthlyUnit : (billingPeriod === "annual" ? p.annualUnit : p.monthlyUnit);
+                return (
+                  <div key={p.tier} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: `${isMostPopular ? "2" : "1"}px solid ${p.ribbon ? p.color : "#1E293B"}`, borderRadius: 14, padding: 18, position: "relative", boxShadow: isMostPopular ? `0 8px 32px -16px ${p.color}` : "none" }}>
+                    {p.ribbon && <span style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", fontSize: 9, fontWeight: 700, color: "white", background: p.color, padding: "3px 10px", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em", whiteSpace: "nowrap" }}>{p.ribbon}</span>}
+                    <div style={{ fontSize: 11, fontWeight: 700, color: p.color, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>{p.tier}</div>
+                    <div style={{ fontSize: 28, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.03em", lineHeight: 1, marginBottom: 4, fontVariantNumeric: "tabular-nums" }}>{displayPrice}<span style={{ fontSize: 12, color: "#94A3B8", fontWeight: 600, marginLeft: 4 }}>{displayUnit}</span></div>
+                    <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 12, minHeight: 32 }}>{p.seats}</div>
+                    <button onClick={() => showToast(`Started ${p.tier} ${billingPeriod} trial · 30 days · no card`)} style={{ width: "100%", padding: "8px 12px", background: isMostPopular ? p.color : "transparent", color: isMostPopular ? "white" : p.color, border: `1px solid ${p.color}`, borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer", marginBottom: 14 }}>
+                      {p.tier === "Enterprise" ? "Talk to us" : "Start free trial"}
+                    </button>
+                    <div style={{ borderTop: "1px solid #1E293B", paddingTop: 12 }}>
+                      <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 6 }}>
+                        {p.features.map((f) => (
+                          <li key={f} style={{ fontSize: 11, color: "#CBD5E1", display: "flex", gap: 8, lineHeight: 1.5 }}>
+                            <span style={{ color: "#34D399", flexShrink: 0, fontWeight: 700 }}>✓</span><span>{f}</span>
+                          </li>
+                        ))}
+                        {p.excluded.map((f) => (
+                          <li key={f} style={{ fontSize: 11, color: "#475569", display: "flex", gap: 8, lineHeight: 1.5 }}>
+                            <span style={{ color: "#475569", flexShrink: 0 }}>—</span><span>{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16, justifyContent: "center" }}>
               <span style={{ fontSize: 10, fontWeight: 700, color: "#34D399", padding: "4px 10px", background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)", borderRadius: 99 }}>30-day free trial · no card required</span>
-              <span style={{ fontSize: 10, fontWeight: 700, color: "#A78BFA", padding: "4px 10px", background: "rgba(167,139,250,0.1)", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 99 }}>Mendi-attached clinics: 20% off Practice/Group</span>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#A78BFA", padding: "4px 10px", background: "rgba(167,139,250,0.1)", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 99 }}>Mendi-attached clinics: 20% off Practice</span>
               <span style={{ fontSize: 10, fontWeight: 700, color: "#60A5FA", padding: "4px 10px", background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.3)", borderRadius: 99 }}>HIPAA BAA · BIDS export · cancel anytime</span>
             </div>
 
