@@ -2169,18 +2169,18 @@ export default function DemoPage() {
                     return (
                       <div key={day} onClick={() => { setSelectedDay(day); if (hasAppt) showToast(`May ${day} appointments highlighted on the right`); }} style={{
                         aspectRatio: "1", borderRadius: 8, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                        background: isSelected ? "#7C3AED" : isToday ? "#2563EB" : hasAppt ? "rgba(30,58,138,0.25)" : "transparent",
-                        border: isSelected ? "2px solid #A855F7" : isToday ? "none" : hasAppt ? "1px solid #3B82F6" : "1px solid transparent",
-                        cursor: "pointer", fontSize: 13, fontWeight: isToday || isSelected ? 800 : 500,
-                        color: isToday || isSelected ? "white" : "#CBD5E1",
+                        background: isSelected ? "#2563EB" : "transparent",
+                        border: isToday && !isSelected ? "2px solid #60A5FA" : isSelected ? "1px solid #3B82F6" : "1px solid transparent",
+                        cursor: "pointer", fontSize: 13, fontWeight: isToday || isSelected ? 700 : 500,
+                        color: isSelected ? "white" : isToday ? "#60A5FA" : "#CBD5E1",
                         position: "relative",
-                        transition: "transform 0.1s",
+                        transition: "transform 0.1s, background 0.15s",
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.08)")}
-                      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                      onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.08)"; if (!isSelected) e.currentTarget.style.background = "#1E293B"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; if (!isSelected) e.currentTarget.style.background = "transparent"; }}
                       >
                         {day}
-                        {hasAppt && !isToday && !isSelected && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#2563EB", marginTop: 2 }} />}
+                        {hasAppt && <div style={{ width: 4, height: 4, borderRadius: "50%", background: isSelected ? "white" : "#3B82F6", marginTop: 2 }} />}
                       </div>
                     );
                   })}
@@ -2662,10 +2662,10 @@ export default function DemoPage() {
             {/* Why EEGBase summary */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }} className="demo-grid-2">
               {[
-                { label: "Only platform with fNIRS + EEG + HRV", sub: "Competitors offer one modality; we offer all three", color: "#60A5FA" },
-                { label: "AI protocol recommendations", sub: "74% of stalled clients improve within 2 sessions", color: "#A78BFA" },
-                { label: "Zero cost · Open source", sub: "Competitors charge $95–$650/mo. We charge nothing.", color: "#34D399" },
-                { label: "Browser-based · No install", sub: "Runs on any device — no Windows-only requirement", color: "#38BDF8" },
+                { label: "Only platform with fNIRS + EEG + HRV", sub: "Competitors offer one modality; we offer all three", color: "#06B6D4" },
+                { label: "AI protocol recommendations", sub: "74% of stalled clients improve within 2 sessions", color: "#A855F7" },
+                { label: "Zero cost · Open source", sub: "Competitors charge $95–$650/mo. We charge nothing.", color: "#10B981" },
+                { label: "Browser-based · No install", sub: "Runs on any device — no Windows-only requirement", color: "#F59E0B" },
               ].map(({ label, sub, color }) => (
                 <div key={label} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 14, padding: "16px 18px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 24px -16px rgba(0,0,0,0.5)" }}>
                   <div style={{ width: 8, height: 8, borderRadius: "50%", background: color, marginBottom: 10, boxShadow: `0 0 12px ${color}` }} />
