@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 interface Props {
   oxyHbLeft: number | null;
   oxyHbRight: number | null;
@@ -11,27 +13,42 @@ interface Props {
   title?: string;
 }
 
-function lerp(t: number, lo: number, hi: number) {
-  return lo + t * (hi - lo);
-}
-
-function oxyColor(val: number | null): string {
-  if (val == null) return "var(--border-default)";
-  const t = Math.min(1, Math.max(0, val + 0.5));
-  // blue (0,100,255) → green (0,200,100) → red (255,60,60)
-  if (t < 0.5) {
-    const s = t * 2;
-    return `rgb(${Math.round(lerp(s, 0, 0))}, ${Math.round(lerp(s, 100, 200))}, ${Math.round(lerp(s, 255, 100))})`;
-  } else {
-    const s = (t - 0.5) * 2;
-    return `rgb(${Math.round(lerp(s, 0, 255))}, ${Math.round(lerp(s, 200, 60))}, ${Math.round(lerp(s, 100, 60))})`;
+// Heat-map color: cool blue (low) → cyan (mid-low) → green (target) → amber (mid-high) → red (high)
+function heatColor(t: number): string {
+  // t in [0, 1]
+  const x = Math.max(0, Math.min(1, t));
+  const stops: Array<[number, [number, number, number]]> = [
+    [0.0, [37, 99, 235]],     // blue
+    [0.3, [6, 182, 212]],     // cyan
+    [0.55, [16, 185, 129]],   // green
+    [0.75, [245, 158, 11]],   // amber
+    [1.0, [239, 68, 68]],     // red
+  ];
+  for (let i = 0; i < stops.length - 1; i++) {
+    const [t0, c0] = stops[i];
+    const [t1, c1] = stops[i + 1];
+    if (x >= t0 && x <= t1) {
+      const k = (x - t0) / (t1 - t0);
+      const r = Math.round(c0[0] + (c1[0] - c0[0]) * k);
+      const g = Math.round(c0[1] + (c1[1] - c0[1]) * k);
+      const b = Math.round(c0[2] + (c1[2] - c0[2]) * k);
+      return `rgb(${r},${g},${b})`;
+    }
   }
+  return "rgb(100,100,100)";
 }
 
-function bandColor(val: number | null): string {
-  if (val == null) return "var(--border-default)";
-  const t = Math.min(1, Math.max(0, val));
-  return `rgb(${Math.round(lerp(t, 0, 255))}, ${Math.round(lerp(t, 100, 60))}, ${Math.round(lerp(t, 255, 60))})`;
+// Map a raw value to [0,1] heat range
+function normalizeOxy(v: number | null): number {
+  if (v == null) return -1;
+  // values typically -0.5 to +0.5; remap to 0–1
+  return (v + 0.5);
+}
+
+function normalizeBand(v: number | null): number {
+  if (v == null) return -1;
+  // 0–1 range for normalized band power
+  return v;
 }
 
 function fmtOxy(v: number | null) {
@@ -44,117 +61,209 @@ function fmtBand(v: number | null) {
   return v.toFixed(2);
 }
 
+interface Region {
+  id: string;
+  cx: number;
+  cy: number;
+  r: number;
+  label: string;
+  electrode: string;
+  metric: "oxyL" | "oxyR" | "alpha" | "theta" | "beta";
+  rawValue: number | null;
+  normValue: number;
+  band: string;
+}
+
 export function BrainMapPanel({
   oxyHbLeft,
   oxyHbRight,
   alpha,
   theta,
   beta,
-  title = "Brain Activity Map",
+  title = "Live Prefrontal fNIRS",
 }: Props) {
-  const colorL = oxyColor(oxyHbLeft);
-  const colorR = oxyColor(oxyHbRight);
-  const colorAlpha = bandColor(alpha);
-  const colorTheta = bandColor(theta);
-  const colorBeta = bandColor(beta);
+  const [hoveredRegion, setHoveredRegion] = useState<Region | null>(null);
+
+  // Build the regions array — top-down brain view
+  const regions: Region[] = [
+    { id: "fp1", cx: 78, cy: 60,  r: 13, label: "Prefrontal L", electrode: "Fp1", metric: "oxyL",  rawValue: oxyHbLeft,  normValue: normalizeOxy(oxyHbLeft),  band: "OxyHb" },
+    { id: "fp2", cx: 142, cy: 60, r: 13, label: "Prefrontal R", electrode: "Fp2", metric: "oxyR",  rawValue: oxyHbRight, normValue: normalizeOxy(oxyHbRight), band: "OxyHb" },
+    { id: "f3",  cx: 65,  cy: 100,r: 11, label: "Frontal L",    electrode: "F3",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta" },
+    { id: "fz",  cx: 110, cy: 95, r: 11, label: "Frontal Mid",  electrode: "Fz",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta" },
+    { id: "f4",  cx: 155, cy: 100,r: 11, label: "Frontal R",    electrode: "F4",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta" },
+    { id: "t3",  cx: 38,  cy: 145,r: 11, label: "Temporal L",   electrode: "T3",  metric: "theta", rawValue: theta,      normValue: normalizeBand(theta),      band: "Theta" },
+    { id: "cz",  cx: 110, cy: 145,r: 12, label: "Central",      electrode: "Cz",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha" },
+    { id: "t4",  cx: 182, cy: 145,r: 11, label: "Temporal R",   electrode: "T4",  metric: "theta", rawValue: theta,      normValue: normalizeBand(theta),      band: "Theta" },
+    { id: "p3",  cx: 70,  cy: 195,r: 11, label: "Parietal L",   electrode: "P3",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha" },
+    { id: "pz",  cx: 110, cy: 200,r: 11, label: "Parietal Mid", electrode: "Pz",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha" },
+    { id: "p4",  cx: 150, cy: 195,r: 11, label: "Parietal R",   electrode: "P4",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha" },
+    { id: "o1",  cx: 90,  cy: 245,r: 10, label: "Occipital L",  electrode: "O1",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha" },
+    { id: "o2",  cx: 130, cy: 245,r: 10, label: "Occipital R",  electrode: "O2",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha" },
+  ];
 
   return (
-    <div
-      className="rounded-xl border p-5"
-      style={{ background: "var(--surface-raised)" }}
-    >
-      {title && (
-        <p
-          className="text-xs font-semibold uppercase tracking-wider mb-4"
-          style={{ color: "var(--text-tertiary)" }}
-        >
-          {title}
-        </p>
-      )}
+    <div style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 18, padding: 20, position: "relative", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 32px -16px rgba(0,0,0,0.6)" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            {title}
+          </div>
+          <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>
+            Top-down view · 13 channels · live
+          </div>
+        </div>
+        <div style={{ fontSize: 10, color: "#64748B", display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981", boxShadow: "0 0 6px #10B981" }} />
+          <span style={{ fontWeight: 600 }}>RECORDING</span>
+        </div>
+      </div>
 
       <svg
-        viewBox="0 0 200 240"
+        viewBox="0 0 220 300"
         width="100%"
-        style={{ display: "block", maxWidth: 220, margin: "0 auto" }}
-        aria-label="Brain activity map"
+        style={{ display: "block", maxWidth: 320, margin: "0 auto" }}
+        aria-label="Brain activity map · top-down view"
       >
-        {/* Head outline */}
-        <ellipse
-          cx="100"
-          cy="120"
-          rx="85"
-          ry="105"
-          fill="none"
-          stroke="var(--border-default)"
-          strokeWidth="2"
-        />
+        <defs>
+          {/* Brain background with subtle radial */}
+          <radialGradient id="brainBg" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stopColor="#1E293B" />
+            <stop offset="100%" stopColor="#0F172A" />
+          </radialGradient>
+          {/* Heat halo gradient */}
+          <radialGradient id="haloFade">
+            <stop offset="0%" stopColor="white" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="white" stopOpacity="0" />
+          </radialGradient>
+          {/* Glow filter */}
+          <filter id="electrodeGlow"><feGaussianBlur stdDeviation="3" /></filter>
+          <filter id="electrodeSoft"><feGaussianBlur stdDeviation="1" /></filter>
+        </defs>
 
-        {/* Prefrontal Left — OxyHb Left */}
-        <ellipse cx="65" cy="50" rx="28" ry="20" fill={colorL} opacity="0.7">
-          <title>Prefrontal Left · OxyHb: {fmtOxy(oxyHbLeft)}</title>
-        </ellipse>
-        <text x="65" y="52" textAnchor="middle" fontSize="8" fill="white" fontWeight="600">
-          {fmtOxy(oxyHbLeft)}
-        </text>
+        {/* Brain silhouette — stylized top-down */}
+        <g>
+          <path
+            d="M 110 12
+               C 60 12, 22 50, 22 110
+               C 22 165, 35 220, 65 260
+               C 80 280, 95 290, 110 290
+               C 125 290, 140 280, 155 260
+               C 185 220, 198 165, 198 110
+               C 198 50, 160 12, 110 12 Z"
+            fill="url(#brainBg)"
+            stroke="#334155"
+            strokeWidth="1.5"
+          />
+          {/* Central sulcus suggestion */}
+          <line x1="110" y1="14" x2="110" y2="288" stroke="#1E293B" strokeWidth="1" strokeDasharray="2 4" opacity="0.5" />
+          {/* Lobe boundary curves (subtle) */}
+          <path d="M 30 110 Q 110 100 190 110" fill="none" stroke="#1E293B" strokeWidth="0.8" opacity="0.5" />
+          <path d="M 35 175 Q 110 165 185 175" fill="none" stroke="#1E293B" strokeWidth="0.8" opacity="0.5" />
+        </g>
 
-        {/* Prefrontal Right — OxyHb Right */}
-        <ellipse cx="135" cy="50" rx="28" ry="20" fill={colorR} opacity="0.7">
-          <title>Prefrontal Right · OxyHb: {fmtOxy(oxyHbRight)}</title>
-        </ellipse>
-        <text x="135" y="52" textAnchor="middle" fontSize="8" fill="white" fontWeight="600">
-          {fmtOxy(oxyHbRight)}
-        </text>
+        {/* Nose direction indicator (top) */}
+        <path d="M 105 8 L 110 0 L 115 8 Z" fill="#475569" />
+        <text x="110" y="-2" textAnchor="middle" fontSize="7" fontWeight="700" fill="#64748B" letterSpacing="0.1em">NASION</text>
 
-        {/* Occipital — Alpha */}
-        <ellipse cx="100" cy="195" rx="35" ry="22" fill={colorAlpha} opacity="0.7">
-          <title>Occipital · Alpha: {fmtBand(alpha)}</title>
-        </ellipse>
-        <text x="100" y="197" textAnchor="middle" fontSize="8" fill="white" fontWeight="600">
-          {fmtBand(alpha)}
-        </text>
+        {/* Ear indicators */}
+        <ellipse cx="18" cy="135" rx="3" ry="8" fill="#334155" />
+        <ellipse cx="202" cy="135" rx="3" ry="8" fill="#334155" />
+        <text x="10" y="138" fontSize="6" fontWeight="700" fill="#64748B">L</text>
+        <text x="208" y="138" fontSize="6" fontWeight="700" fill="#64748B">R</text>
 
-        {/* Temporal Left — Theta */}
-        <ellipse cx="25" cy="120" rx="22" ry="30" fill={colorTheta} opacity="0.7">
-          <title>Temporal Left · Theta: {fmtBand(theta)}</title>
-        </ellipse>
-        <text x="25" y="122" textAnchor="middle" fontSize="8" fill="white" fontWeight="600">
-          {fmtBand(theta)}
-        </text>
-
-        {/* Temporal Right — Theta */}
-        <ellipse cx="175" cy="120" rx="22" ry="30" fill={colorTheta} opacity="0.7">
-          <title>Temporal Right · Theta: {fmtBand(theta)}</title>
-        </ellipse>
-        <text x="175" y="122" textAnchor="middle" fontSize="8" fill="white" fontWeight="600">
-          {fmtBand(theta)}
-        </text>
-
-        {/* Frontal Midline — Beta */}
-        <ellipse cx="100" cy="35" rx="18" ry="12" fill={colorBeta} opacity="0.7">
-          <title>Frontal Midline · Beta: {fmtBand(beta)}</title>
-        </ellipse>
-        <text x="100" y="37" textAnchor="middle" fontSize="8" fill="white" fontWeight="600">
-          {fmtBand(beta)}
-        </text>
+        {/* Electrode regions */}
+        {regions.map((region) => {
+          const hasValue = region.normValue >= 0;
+          const color = hasValue ? heatColor(region.normValue) : "#475569";
+          const isHovered = hoveredRegion?.id === region.id;
+          return (
+            <g
+              key={region.id}
+              onMouseEnter={() => setHoveredRegion(region)}
+              onMouseLeave={() => setHoveredRegion(null)}
+              style={{ cursor: "pointer" }}
+            >
+              {/* Outer glow halo */}
+              {hasValue && (
+                <circle
+                  cx={region.cx}
+                  cy={region.cy}
+                  r={region.r * 1.6}
+                  fill={color}
+                  opacity={0.18 + region.normValue * 0.25}
+                  filter="url(#electrodeGlow)"
+                />
+              )}
+              {/* Electrode circle */}
+              <circle
+                cx={region.cx}
+                cy={region.cy}
+                r={region.r}
+                fill={color}
+                opacity={hasValue ? 0.85 : 0.4}
+                stroke={isHovered ? "white" : "rgba(255,255,255,0.25)"}
+                strokeWidth={isHovered ? 2 : 1}
+                filter="url(#electrodeSoft)"
+              />
+              {/* Inner highlight */}
+              {hasValue && (
+                <circle
+                  cx={region.cx - region.r * 0.3}
+                  cy={region.cy - region.r * 0.3}
+                  r={region.r * 0.4}
+                  fill="white"
+                  opacity="0.28"
+                />
+              )}
+              {/* Electrode label */}
+              <text
+                x={region.cx}
+                y={region.cy + 1}
+                textAnchor="middle"
+                fontSize="9"
+                fontWeight="700"
+                fill="white"
+                style={{ pointerEvents: "none", letterSpacing: "0.04em" }}
+              >
+                {region.electrode}
+              </text>
+            </g>
+          );
+        })}
       </svg>
 
-      {/* Legend */}
-      <div className="flex items-center justify-center gap-5 mt-3">
-        <div className="flex items-center gap-1.5">
-          <div
-            className="w-3 h-3 rounded-full"
-            style={{ background: "linear-gradient(90deg, rgb(0,100,255), rgb(0,200,100), rgb(255,60,60))" }}
-          />
-          <span className="text-xs" style={{ color: "var(--text-secondary)" }}>OxyHb</span>
+      {/* Hover detail panel */}
+      <div style={{ minHeight: 60, marginTop: 14, padding: "10px 14px", background: "#1E293B", border: "1px solid #334155", borderRadius: 10, transition: "border-color 0.15s" }}>
+        {hoveredRegion ? (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>
+                {hoveredRegion.electrode} · {hoveredRegion.label}
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>
+                {hoveredRegion.band}: {hoveredRegion.metric.startsWith("oxy") ? fmtOxy(hoveredRegion.rawValue) : fmtBand(hoveredRegion.rawValue)}
+              </div>
+            </div>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: heatColor(Math.max(0, hoveredRegion.normValue)), boxShadow: "0 2px 12px " + heatColor(Math.max(0, hoveredRegion.normValue)) + "55" }} />
+          </div>
+        ) : (
+          <div style={{ fontSize: 11, color: "#64748B", textAlign: "center", padding: "4px 0" }}>
+            Hover any electrode to see its live value
+          </div>
+        )}
+      </div>
+
+      {/* Heat scale legend */}
+      <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ flex: 1, height: 8, borderRadius: 4, background: "linear-gradient(90deg, rgb(37,99,235) 0%, rgb(6,182,212) 30%, rgb(16,185,129) 55%, rgb(245,158,11) 75%, rgb(239,68,68) 100%)" }} />
+        <div style={{ display: "flex", flexDirection: "column", fontSize: 9, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700, gap: 2 }}>
+          <span>LOW → HIGH</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-full" style={{ background: colorAlpha }} />
-          <span className="text-xs" style={{ color: "var(--text-secondary)" }}>Alpha</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-full" style={{ background: colorTheta }} />
-          <span className="text-xs" style={{ color: "var(--text-secondary)" }}>Theta</span>
-        </div>
+      </div>
+      <div style={{ marginTop: 4, display: "flex", justifyContent: "space-between", fontSize: 9, color: "#475569" }}>
+        <span>quiet</span>
+        <span>normal</span>
+        <span>elevated</span>
       </div>
     </div>
   );
