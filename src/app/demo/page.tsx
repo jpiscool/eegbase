@@ -139,6 +139,8 @@ export default function DemoPage() {
   const [sampleCount, setSampleCount] = useState(0);
   const [soapCopied, setSoapCopied] = useState(false);
   const [recommendationApplied, setRecommendationApplied] = useState(false);
+  const [stallAlertDismissed, setStallAlertDismissed] = useState(false);
+  const [showClientApp, setShowClientApp] = useState(false);
   const [featureCategory, setFeatureCategory] = useState<string | null>(null);
   const [reportExported, setReportExported] = useState(false);
   const [protocolSearch, setProtocolSearch] = useState("");
@@ -373,6 +375,11 @@ export default function DemoPage() {
         .demo-section-label { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.07em; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #334155; }
         select option { background: #1E293B; color: white; }
         .demo-mobile-nav { display: none; }
+        @media (max-width: 900px) {
+          .demo-grid-4 { grid-template-columns: 1fr 1fr !important; }
+          .demo-schedule-grid { grid-template-columns: 1fr !important; }
+          .demo-compare-summary { grid-template-columns: 1fr 1fr !important; }
+        }
         @media (max-width: 640px) {
           .demo-grid-2 { grid-template-columns: 1fr !important; }
           .demo-grid-3 { grid-template-columns: 1fr !important; }
@@ -382,6 +389,11 @@ export default function DemoPage() {
           .demo-mobile-nav { display: block !important; }
           .demo-topbar-hide-mobile { display: none !important; }
           .demo-topbar { padding: 0 12px !important; gap: 8px !important; }
+          .demo-paper-preview { padding: 16px !important; }
+        }
+        @media (max-width: 480px) {
+          .demo-topbar-logo-text { display: none !important; }
+          .demo-topbar-client-label { display: none !important; }
         }
         /* Hide Next.js dev-mode error/issue badge overlay */
         [data-nextjs-toast], nextjs-portal, #__next-build-watcher, .__next-error-overlay-wrapper { display: none !important; }
@@ -390,7 +402,7 @@ export default function DemoPage() {
       {/* Top bar */}
       <div className="demo-topbar" style={{ background: "#0F172A", borderBottom: "1px solid #1E293B", padding: "0 24px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <a href="/" style={{ fontSize: "1.05rem", fontWeight: 800, letterSpacing: "-0.03em", color: "white", textDecoration: "none" }}>
+          <a href="/" className="demo-topbar-logo-text" style={{ fontSize: "1.05rem", fontWeight: 800, letterSpacing: "-0.03em", color: "white", textDecoration: "none" }}>
             EEG<span style={{ color: "#60A5FA" }}>Base</span>
           </a>
           <span className="demo-topbar-hide-mobile" style={{ background: "#1E293B", color: "#60A5FA", fontSize: "0.68rem", fontWeight: 700, padding: "3px 10px", borderRadius: 99, border: "1px solid #334155", textTransform: "uppercase", letterSpacing: "0.05em" }}>
@@ -400,7 +412,7 @@ export default function DemoPage() {
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           {/* Client switcher */}
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ fontSize: "0.72rem", color: "#94A3B8", fontWeight: 600 }}>Client:</span>
+            <span className="demo-topbar-client-label" style={{ fontSize: "0.72rem", color: "#94A3B8", fontWeight: 600 }}>Client:</span>
             <select
               aria-label="Select demo client"
               value={demoClientIdx}
@@ -468,13 +480,47 @@ export default function DemoPage() {
         </div>
       )}
 
+      {/* Client App Preview Modal */}
+      {showClientApp && (
+        <div onClick={() => setShowClientApp(false)} style={{ position: "fixed", inset: 0, background: "rgba(2,6,23,0.85)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "#0F172A", borderRadius: 32, padding: 8, border: "10px solid #1E293B", width: 320, maxHeight: "92vh", overflowY: "auto", position: "relative" }}>
+            <button onClick={() => setShowClientApp(false)} aria-label="Close client app preview" style={{ position: "absolute", top: -54, right: 0, width: 44, height: 44, background: "rgba(15,23,42,0.85)", border: "1px solid #334155", borderRadius: 22, color: "#F1F5F9", cursor: "pointer", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+            <div style={{ background: "#020617", borderRadius: 24, padding: "20px 16px", color: "#F1F5F9" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, color: "#94A3B8", marginBottom: 14 }}>
+                <span>9:41</span>
+                <span>📶 🔋</span>
+              </div>
+              <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 4, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>Today&apos;s Session</div>
+              <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 16 }}>{demoClient.name.split(" ")[0]}&apos;s brain training</div>
+              <div style={{ background: "linear-gradient(180deg, #1E1B4B 0%, #0F172A 100%)", borderRadius: 16, padding: 24, textAlign: "center", marginBottom: 14 }}>
+                <div style={{ fontSize: 56, marginBottom: 8 }}>🧠</div>
+                <div style={{ fontSize: 36, fontWeight: 800, color: "#34D399" }}>{Math.round(rewardVal ?? 64)}</div>
+                <div style={{ fontSize: 11, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700 }}>Score</div>
+                <div style={{ marginTop: 12, fontSize: 14, color: "#34D399", fontWeight: 700 }}>● Live · {fmt(elapsed)}</div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
+                {[{l:"Streak", v:"8 days", icon:"🔥"}, {l:"Sessions", v:"20 / 30", icon:"📊"}, {l:"Best score", v:"94", icon:"🏆"}, {l:"Avg this week", v:"71", icon:"📈"}].map((s) => (
+                  <div key={s.l} style={{ background: "#0F172A", borderRadius: 12, padding: 12 }}>
+                    <div style={{ fontSize: 18, marginBottom: 4 }}>{s.icon}</div>
+                    <div style={{ fontSize: 18, fontWeight: 800 }}>{s.v}</div>
+                    <div style={{ fontSize: 10, color: "#94A3B8" }}>{s.l}</div>
+                  </div>
+                ))}
+              </div>
+              <button style={{ width: "100%", background: "#2563EB", color: "white", border: "none", borderRadius: 14, padding: "14px 0", fontSize: 14, fontWeight: 700, marginBottom: 8, cursor: "pointer" }}>💬 Message Dr. Chen</button>
+              <button style={{ width: "100%", background: "#1E293B", color: "#F1F5F9", border: "1px solid #334155", borderRadius: 14, padding: "14px 0", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>📊 See your progress</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Similar Cases Modal */}
       {showSimilarCasesModal && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setShowSimilarCasesModal(false)}>
           <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 32, maxWidth: 680, width: "90%", maxHeight: "80vh", overflowY: "auto" }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
               <h2 style={{ color: "#F1F5F9", fontSize: 18, fontWeight: 700 }}>847 Similar Client Profiles</h2>
-              <button onClick={() => setShowSimilarCasesModal(false)} aria-label="Close" style={{ background: "none", border: "none", color: "#94A3B8", fontSize: 20, cursor: "pointer" }}>✕</button>
+              <button onClick={() => setShowSimilarCasesModal(false)} aria-label="Close" style={{ background: "none", border: "none", color: "#94A3B8", fontSize: 20, cursor: "pointer", width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
             </div>
             <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 20 }}>Anonymized profiles from the EEGBase normative database matching Sarah Mitchell&apos;s theta elevation pattern, age range (25–35), and SMR non-response history.</p>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
@@ -637,7 +683,7 @@ export default function DemoPage() {
           id={`tabpanel-${tab}`}
           aria-labelledby={`tab-${tab}`}
           className="demo-content"
-          style={{ padding: "24px 20px", maxWidth: 920 }}
+          style={{ padding: "24px 20px", maxWidth: 1180, width: "100%", flex: 1, minWidth: 0 }}
         >
 
         {/* ── LIVE SESSION ── */}
@@ -673,6 +719,13 @@ export default function DemoPage() {
                 aria-label="Toggle audio reward"
               >
                 {audioReward ? "🔊 Audio reward: ON" : "🔇 Audio reward: OFF"}
+              </button>
+              <button
+                onClick={() => setShowClientApp(true)}
+                style={clinicianBtn}
+                aria-label="Preview client mobile app"
+              >
+                📱 Preview client app
               </button>
               <div style={{ display: "inline-flex", alignItems: "center", gap: 4, marginLeft: "auto" }}>
                 <span style={{ fontSize: 11, color: "#94A3B8", fontWeight: 600, marginRight: 4 }}>Window:</span>
@@ -1240,7 +1293,7 @@ export default function DemoPage() {
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             <div style={{ marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Heart & Breathing (HRV)</h2>
-              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>Monitor heart rate variability and breathing coherence alongside EEG — all in one view. Helps clients learn to combine calm breathing with focused brain states.</p>
+              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>Monitor heart rate variability and breathing coherence alongside EEG — all in one view. Helps clients learn to combine calm breathing with focused brain states.</p>
             </div>
 
             {/* Live HRV metrics */}
@@ -1445,7 +1498,7 @@ export default function DemoPage() {
           <div>
             <div style={{ marginBottom: 20 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>Questionnaires</h2>
-              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
+              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
                 Send depression and anxiety check-ins to clients on a schedule (e.g. every 5 sessions). Clients fill them out on their phone, and scores automatically appear alongside their brain data.
               </p>
             </div>
@@ -1481,6 +1534,7 @@ export default function DemoPage() {
             </div>
 
             {/* AI stall detection banner */}
+            {!stallAlertDismissed && (
             <div style={{ background: "rgba(120,53,15,0.3)", border: "1.5px solid #92400E", borderRadius: 12, padding: "14px 18px", marginBottom: 20, display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-start" }}>
               <span style={{ fontSize: 20 }}>⚠️</span>
               <div style={{ flex: 1 }}>
@@ -1500,10 +1554,11 @@ export default function DemoPage() {
                   <button onClick={() => setShowSimilarCasesModal(true)} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", background: "#1E293B", color: "#FCD34D", border: "1px solid #92400E", borderRadius: 6, cursor: "pointer" }}>
                     View 847 Similar Profiles
                   </button>
-                  <button style={{ fontSize: 12, color: "#94A3B8", background: "none", border: "none", cursor: "pointer", padding: "6px 0" }}>Dismiss</button>
+                  <button onClick={() => setStallAlertDismissed(true)} style={{ fontSize: 12, color: "#94A3B8", background: "none", border: "none", cursor: "pointer", padding: "6px 0" }}>Dismiss</button>
                 </div>
               </div>
             </div>
+            )}
 
             {/* Reward trajectory */}
             <div style={{ ...card, marginBottom: 16 }}>
@@ -1633,7 +1688,7 @@ export default function DemoPage() {
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             <div style={{ marginBottom: 20 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>AI Insights</h2>
-              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
+              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
                 EEGBase AI watches session data and flags when a client is stalled — then suggests the next protocol to try, compared against <strong style={{ color: "#A5B4FC" }}>847 anonymized client profiles</strong>. It also drafts clinical notes you can copy straight to your EHR.
               </p>
             </div>
@@ -1741,20 +1796,20 @@ export default function DemoPage() {
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             <div style={{ marginBottom: 20 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>Scheduling</h2>
-              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
+              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
                 Book appointments, send reminders, and view session history — all in one place. No need for a separate tool like Calendly or SimplePractice.
               </p>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 16, alignItems: "start" }} className="demo-grid-2">
+            <div style={{ display: "grid", gridTemplateColumns: "minmax(280px, 1fr) minmax(0, 1.2fr)", gap: 16, alignItems: "start" }} className="demo-schedule-grid">
               {/* Calendar */}
               <div style={{ ...card }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                   <h3 style={{ fontSize: 15, fontWeight: 700, color: "#F1F5F9" }}>May 2026</h3>
                   <div style={{ display: "flex", gap: 6 }}>
-                    <button style={{ fontSize: 12, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1E293B", cursor: "pointer", color: "#CBD5E1" }}>‹</button>
-                    <button style={{ fontSize: 12, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1E293B", cursor: "pointer", color: "#CBD5E1" }}>›</button>
-                    <button style={{ fontSize: 12, padding: "5px 14px", border: "none", borderRadius: 6, background: "#2563EB", color: "white", cursor: "pointer", fontWeight: 600 }}>+ New</button>
+                    <button onClick={() => showToast("Showing previous month — full calendar in production")} aria-label="Previous month" style={{ fontSize: 12, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1E293B", cursor: "pointer", color: "#CBD5E1" }}>‹</button>
+                    <button onClick={() => showToast("Showing next month — full calendar in production")} aria-label="Next month" style={{ fontSize: 12, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1E293B", cursor: "pointer", color: "#CBD5E1" }}>›</button>
+                    <button onClick={() => showToast("New appointment — opens form in production")} style={{ fontSize: 12, padding: "5px 14px", border: "none", borderRadius: 6, background: "#2563EB", color: "white", cursor: "pointer", fontWeight: 600 }}>+ New</button>
                   </div>
                 </div>
                 {/* Day headers */}
@@ -1832,7 +1887,7 @@ export default function DemoPage() {
                     <div style={{ fontSize: 12, fontWeight: 700, color: "#94A3B8", marginBottom: 8 }}>Sync to calendar</div>
                     <div style={{ display: "flex", gap: 8 }}>
                       {["Google Calendar", "iCal"].map((cal) => (
-                        <button key={cal} style={{ fontSize: 11, fontWeight: 600, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1E293B", cursor: "pointer", color: "#CBD5E1" }}>
+                        <button key={cal} onClick={() => showToast(cal === "Google Calendar" ? "Connected to Google Calendar ✓" : "Calendar feed URL copied to clipboard")} style={{ fontSize: 11, fontWeight: 600, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1E293B", cursor: "pointer", color: "#CBD5E1" }}>
                           {cal}
                         </button>
                       ))}
@@ -1850,7 +1905,7 @@ export default function DemoPage() {
                   <div style={{ fontSize: 13, fontWeight: 700, color: "#34D399", marginBottom: 2 }}>Billing + CPT Codes — Zero competitors have this</div>
                   <div style={{ fontSize: 12, color: "#6EE7B7" }}>After each session, EEGBase auto-generates a superbill with CPT 90901 (biofeedback), 97012, and E/M codes. Export to CMS-1500 or Stripe self-pay. No separate billing software needed.</div>
                 </div>
-                <button style={{ marginLeft: "auto", fontSize: 12, fontWeight: 700, padding: "7px 16px", background: "#059669", color: "white", border: "none", borderRadius: 8, cursor: "pointer" }}>
+                <button onClick={() => showToast("Superbill PDF generated — opens in production")} style={{ marginLeft: "auto", fontSize: 12, fontWeight: 700, padding: "7px 16px", background: "#059669", color: "white", border: "none", borderRadius: 8, cursor: "pointer" }}>
                   Preview Superbill
                 </button>
               </div>
@@ -1863,7 +1918,7 @@ export default function DemoPage() {
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             <div style={{ marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Condition-Specific Protocol Library</h2>
-              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
+              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
                 50+ evidence-based protocols organized by condition. Search, preview, and apply in one click — no more looking up papers or guessing electrode placement. Zero competitors have a searchable protocol library.
               </p>
             </div>
@@ -2113,7 +2168,7 @@ export default function DemoPage() {
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             <div style={{ marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>One-Click Shareable Progress Reports</h2>
-              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
+              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
                 Generate plain-English progress reports for clients, parents, or referring physicians. No data export or Word document needed — branded PDF in one click. Only Divergence Neuro offers a comparable report feature; all other competitors lack this entirely.
               </p>
             </div>
@@ -2146,7 +2201,7 @@ export default function DemoPage() {
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
                   <div>
                     <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 4 }}>EEGBase Progress Report</div>
-                    <div style={{ fontSize: 13, opacity: 0.8 }}>Client: Sarah Mitchell · Sessions 1–20 · Generated May 4, 2026</div>
+                    <div style={{ fontSize: 13, opacity: 0.8 }}>Client: {demoClient.name} · Sessions 1–20 · Generated {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</div>
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: 11, opacity: 0.7, marginBottom: 2 }}>Clinician</div>
@@ -2168,7 +2223,7 @@ export default function DemoPage() {
                   ].map(({ label, val, sub, color }, i) => (
                     <div key={label} style={{ textAlign: "center", padding: 16, background: "#F8FAFC", borderRadius: 12, animation: `statPop 0.45s ease ${i * 0.1}s both` }}>
                       <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 6 }}>{label}</div>
-                      <div style={{ fontSize: 22, fontWeight: 800, color, marginBottom: 2 }}>{val}</div>
+                      <div style={{ fontSize: 22, fontWeight: 800, color, marginBottom: 2, whiteSpace: "nowrap" }}>{val}</div>
                       <div style={{ fontSize: 11, color: "#64748B" }}>{sub}</div>
                     </div>
                   ))}
@@ -2252,7 +2307,7 @@ export default function DemoPage() {
           <div>
             <div style={{ marginBottom: 20 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>EEGBase vs All Competitors</h2>
-              <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6 }}>
+              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
                 Compiled May 2026 from platform docs, clinician reviews, and NeuroBB forums. EEGBase is the only platform that covers every layer — live signal, QEEG, AI, clinical workflow, practice management — in one open-source web app.
               </p>
             </div>
