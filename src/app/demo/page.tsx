@@ -1336,17 +1336,7 @@ export default function DemoPage() {
                       <line x1="20" y1="0" x2="20" y2="64" stroke="rgba(6,182,212,0.3)" strokeWidth="1" strokeDasharray="2 3" />
                       <text x="22" y="10" fontSize="7" fill="#64748B">stim</text>
                       <path
-                        suppressHydrationWarning
-                        d={(() => {
-                          const points: string[] = [];
-                          for (let x = 0; x <= 160; x += 2) {
-                            const tau = (x - 20) / 12;
-                            const y = tau < 0 ? 48 : 48 - 32 * Math.pow(tau, 5) * Math.exp(-tau) / 24;
-                            const yClamped = Math.max(8, Math.min(56, y));
-                            points.push(`${x},${yClamped.toFixed(1)}`);
-                          }
-                          return "M " + points.join(" L ");
-                        })()}
+                        d="M 0,48 L 20,48 L 30,46 L 40,38 L 50,24 L 60,15 L 70,12 L 80,14 L 90,22 L 100,32 L 110,40 L 120,44 L 130,46 L 140,47 L 150,48 L 160,48"
                         fill="none"
                         stroke="#06B6D4"
                         strokeWidth="2"
