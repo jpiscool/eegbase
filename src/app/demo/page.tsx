@@ -421,8 +421,8 @@ export default function DemoPage() {
           <a href="/" className="demo-topbar-logo-text" style={{ fontSize: "1.05rem", fontWeight: 800, letterSpacing: "-0.03em", color: "white", textDecoration: "none" }}>
             EEG<span style={{ color: "#60A5FA" }}>Base</span>
           </a>
-          <span className="demo-topbar-hide-mobile" style={{ background: "#1E293B", color: "#60A5FA", fontSize: "0.68rem", fontWeight: 700, padding: "3px 10px", borderRadius: 99, border: "1px solid #334155", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            Demo Mode
+          <span className="demo-topbar-hide-mobile" style={{ background: "rgba(96,165,250,0.12)", color: "#93C5FD", fontSize: "11px", fontWeight: 600, padding: "3px 8px", borderRadius: 6, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            Demo
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -446,7 +446,7 @@ export default function DemoPage() {
               LIVE · {fmt(elapsed)}
             </span>
           )}
-          <a href="/login" style={{ fontSize: "0.82rem", fontWeight: 700, padding: "7px 16px", background: "linear-gradient(135deg, #2563EB, #7C3AED)", color: "white", borderRadius: 8, textDecoration: "none", letterSpacing: "0.01em" }}>
+          <a href="/login" style={{ fontSize: "0.82rem", fontWeight: 700, padding: "7px 16px", background: "#2563EB", color: "white", borderRadius: 8, textDecoration: "none", letterSpacing: "0.01em" }}>
             Get Access →
           </a>
         </div>
@@ -486,7 +486,7 @@ export default function DemoPage() {
               <button
                 aria-label="Close welcome modal and start exploring"
                 onClick={() => { sessionStorage.setItem("demo-onboarding-dismissed", "1"); setShowOnboarding(false); }}
-                style={{ width: "100%", padding: "13px 20px", background: "linear-gradient(135deg, #2563EB, #7C3AED)", color: "white", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer", letterSpacing: "0.01em" }}
+                style={{ width: "100%", padding: "13px 20px", background: "#2563EB", color: "white", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer", letterSpacing: "0.01em" }}
               >
                 Start Exploring →
               </button>
@@ -821,7 +821,7 @@ export default function DemoPage() {
                     width: "100%", textAlign: "left",
                     background: tab === t.id ? "rgba(96,165,250,0.12)" : "transparent",
                     border: "none", borderLeft: tab === t.id ? "3px solid #60A5FA" : "3px solid transparent",
-                    padding: "9px 16px", fontSize: 13, fontWeight: tab === t.id ? 600 : 400,
+                    padding: "9px 16px", fontSize: 13, fontWeight: tab === t.id ? 600 : 500,
                     color: tab === t.id ? "#E2E8F0" : "#64748B", cursor: "pointer", display: "block", lineHeight: 1.3,
                     transition: "background 0.15s, color 0.15s",
                   }}
@@ -1248,11 +1248,11 @@ export default function DemoPage() {
         {tab === "game" && (
           <div>
             {/* Clinician context banner */}
-            <div style={{ background: "rgba(6,78,59,0.35)", border: "1px solid #065F46", borderRadius: 12, padding: "14px 18px", marginBottom: 16, display: "flex", gap: 14 }}>
-              <span style={{ fontSize: 22, lineHeight: 1 }}>👨‍⚕️</span>
+            <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #10B981", borderRadius: 12, padding: "14px 18px", marginBottom: 16, display: "flex", gap: 14, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(16,185,129,0.15)", color: "#10B981", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 14, fontWeight: 700 }}>i</div>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#34D399", marginBottom: 4 }}>How clinicians use Game Mode</div>
-                <p style={{ fontSize: 13, color: "#6EE7B7", lineHeight: 1.6, margin: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>How clinicians use Game Mode</div>
+                <p style={{ fontSize: 13, color: "#94A3B8", lineHeight: 1.6, margin: 0 }}>
                   Turn your monitor toward the client during a session. Pick a feedback style below — all update in real time from live EEG. Green = on target. Clients engage 2–3× longer with visual feedback vs. a progress bar.
                 </p>
               </div>
@@ -1387,7 +1387,7 @@ export default function DemoPage() {
                   <div style={{ display: "flex", gap: 20, alignItems: "center", marginBottom: 20 }}>
                     <div style={{
                       width: 72, height: 72, borderRadius: 12, flexShrink: 0,
-                      background: "linear-gradient(135deg, #2563EB, #7C3AED)",
+                      background: "#2563EB",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       animation: rewardVal != null && rewardVal >= 60 ? "spin 12s linear infinite" : "none",
                     }}>
@@ -1543,9 +1543,9 @@ export default function DemoPage() {
             </div>
 
             {/* Wearable import */}
-            <div style={{ background: "rgba(6,78,59,0.35)", border: "1px solid #065F46", borderRadius: 12, padding: "16px 20px" }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#34D399", marginBottom: 8 }}>📱 Wearable Data Import</div>
-              <p style={{ fontSize: 12, color: "#6EE7B7", marginBottom: 12 }}>Import overnight HRV and sleep data from wearables. If the client slept poorly, the AI suggests a lower-intensity session today.</p>
+            <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #06B6D4", borderRadius: 12, padding: "16px 20px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 8 }}>Wearable Data Import</div>
+              <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 12 }}>Import overnight HRV and sleep data from wearables. If the client slept poorly, the AI suggests a lower-intensity session today.</p>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {[
                   { name: "Oura Ring", icon: "💍", status: "Connected · Last sync 6h ago", active: true },
@@ -1686,14 +1686,14 @@ export default function DemoPage() {
             </div>
 
             {/* Questionnaire schedule demo */}
-            <div style={{ background: "rgba(6,78,59,0.35)", border: "1px solid #065F46", borderRadius: 12, padding: "14px 18px", marginBottom: 20, display: "flex", gap: 20, flexWrap: "wrap", alignItems: "center" }}>
+            <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #10B981", borderRadius: 12, padding: "14px 18px", marginBottom: 20, display: "flex", gap: 20, flexWrap: "wrap", alignItems: "center", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
               <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#34D399", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 3 }}>Automated Questionnaire Schedule</div>
-                <div style={{ fontSize: 13, color: "#6EE7B7" }}>PHQ-9 every 5 sessions · GAD-7 every 5 sessions · ADHD-RS at intake + discharge</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#10B981", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 3 }}>Automated Questionnaire Schedule</div>
+                <div style={{ fontSize: 13, color: "#CBD5E1" }}>PHQ-9 every 5 sessions · GAD-7 every 5 sessions · ADHD-RS at intake + discharge</div>
               </div>
               <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
                 {["PHQ-9", "GAD-7", "ADHD-RS", "DASS-21"].map((q) => (
-                  <span key={q} style={{ fontSize: 11, background: "rgba(6,78,59,0.4)", border: "1px solid #065F46", borderRadius: 6, padding: "4px 10px", color: "#34D399", fontWeight: 600 }}>{q}</span>
+                  <span key={q} style={{ fontSize: 11, background: "#1E293B", border: "1px solid #334155", borderRadius: 6, padding: "4px 10px", color: "#34D399", fontWeight: 600 }}>{q}</span>
                 ))}
               </div>
             </div>
@@ -2088,12 +2088,12 @@ export default function DemoPage() {
             </div>
 
             {/* Billing strip */}
-            <div style={{ marginTop: 16, background: "rgba(6,78,59,0.35)", border: "1px solid #065F46", borderRadius: 12, padding: "16px 20px" }}>
+            <div style={{ marginTop: 16, background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #10B981", borderRadius: 12, padding: "16px 20px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-                <span style={{ fontSize: 18 }}>💳</span>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(16,185,129,0.15)", color: "#10B981", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 16 }}>$</div>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#34D399", marginBottom: 2 }}>Billing + CPT Codes — Zero competitors have this</div>
-                  <div style={{ fontSize: 12, color: "#6EE7B7" }}>After each session, EEGBase auto-generates a superbill with CPT 90901 (biofeedback), 97012, and E/M codes. Export to CMS-1500 or Stripe self-pay. No separate billing software needed.</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>Billing + CPT Codes <span style={{ color: "#10B981", fontWeight: 600 }}>— Zero competitors have this</span></div>
+                  <div style={{ fontSize: 12, color: "#94A3B8" }}>After each session, EEGBase auto-generates a superbill with CPT 90901 (biofeedback), 97012, and E/M codes. Export to CMS-1500 or Stripe self-pay. No separate billing software needed.</div>
                 </div>
                 <button onClick={() => showToast("Superbill PDF generated — opens in production")} style={{ marginLeft: "auto", fontSize: 12, fontWeight: 700, padding: "7px 16px", background: "#059669", color: "white", border: "none", borderRadius: 8, cursor: "pointer" }}>
                   Preview Superbill
@@ -2474,9 +2474,9 @@ export default function DemoPage() {
             </div>
 
             {/* EHR integration */}
-            <div style={{ marginTop: 16, background: "rgba(6,78,59,0.35)", border: "1px solid #065F46", borderRadius: 12, padding: "16px 20px" }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#34D399", marginBottom: 8 }}>🏥 EHR Integration — Zero competitors have this</div>
-              <p style={{ fontSize: 12, color: "#6EE7B7", marginBottom: 12 }}>Session notes and progress data sync directly to your EHR — no copy-paste. Select your platform:</p>
+            <div style={{ marginTop: 16, background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #10B981", borderRadius: 12, padding: "16px 20px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 8 }}>EHR Integration <span style={{ color: "#10B981", fontWeight: 600 }}>— Zero competitors have this</span></div>
+              <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 12 }}>Session notes and progress data sync directly to your EHR — no copy-paste. Select your platform:</p>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {["SimplePractice", "TherapyNotes", "Jane App", "TheraNest", "Alma"].map((ehr) => (
                   <button
