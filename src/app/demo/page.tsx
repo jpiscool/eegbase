@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { SimulatorAdapter } from "@/lib/device/simulator";
 import type { DeviceSample } from "@/lib/device/adapter";
 import { LiveChart } from "@/components/LiveChart";
@@ -2542,15 +2542,15 @@ export default function DemoPage() {
                       const prevCat = i > 0 ? filteredFeatures[i - 1].category : null;
                       const showCat = f.category !== prevCat;
                       return (
-                        <>
+                        <React.Fragment key={f.feature}>
                           {showCat && (
-                            <tr key={`cat-${f.category}`}>
+                            <tr>
                               <td colSpan={COMPETITORS.length + 1} style={{ padding: "8px 16px 4px", fontSize: 10, fontWeight: 800, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.1em", background: "#243148", borderTop: i > 0 ? "2px solid #334155" : undefined }}>
                                 {f.category}
                               </td>
                             </tr>
                           )}
-                          <tr key={f.feature} style={{ borderTop: "1px solid #334155", background: i % 2 === 0 ? "#0F172A" : "#131C2E" }}>
+                          <tr style={{ borderTop: "1px solid #334155", background: i % 2 === 0 ? "#0F172A" : "#131C2E" }}>
                             <td style={{ padding: "9px 16px", color: "#CBD5E1", fontWeight: 500, fontSize: 12, position: "sticky", left: 0, background: i % 2 === 0 ? "#0F172A" : "#131C2E" }}>{f.feature}</td>
                             {COMPETITORS.map((c) => {
                               const has = f[c.key as keyof typeof f] as boolean;
@@ -2563,7 +2563,7 @@ export default function DemoPage() {
                               );
                             })}
                           </tr>
-                        </>
+                        </React.Fragment>
                       );
                     })}
                   </tbody>
