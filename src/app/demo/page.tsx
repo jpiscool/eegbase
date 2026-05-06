@@ -1463,14 +1463,16 @@ export default function DemoPage() {
                 { label: "HRV (RMSSD)", val: sample?.hrvRmssd, color: "#8B5CF6", unit: "ms", norm: "Target: >50 ms", icon: "📊" },
                 { label: "Coherence", val: sample?.hrvRmssd != null ? Math.min(9.9, (sample.hrvRmssd / 10)).toFixed(1) : null, color: "#10B981", unit: "/ 10", norm: "High: >8.0", icon: "🌊" },
                 { label: "Resonance Freq", val: "6.0", color: "#F59E0B", unit: "breaths/min", norm: "Personalized target", icon: "🫁" },
-              ].map(({ label, val, color, unit, norm, icon }) => (
-                <div key={label} style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 14, padding: "18px 20px" }}>
-                  <div style={{ fontSize: 20, marginBottom: 8 }}>{icon}</div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 6 }}>{label}</div>
-                  <div style={{ fontSize: 28, fontWeight: 800, color, fontVariantNumeric: "tabular-nums", marginBottom: 2 }}>
-                    {val != null ? (typeof val === "string" ? val : Number(val).toFixed(0)) : "—"} <span style={{ fontSize: 12, fontWeight: 500, color: "#94A3B8" }}>{unit}</span>
+              ].map(({ label, val, color, unit, norm }) => (
+                <div key={label} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 14, padding: "18px 20px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 24px -16px rgba(0,0,0,0.5)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: "50%", background: color, boxShadow: `0 0 10px ${color}` }} />
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em" }}>{label}</div>
                   </div>
-                  <div style={{ fontSize: 11, color: "#94A3B8" }}>{norm}</div>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: "#F1F5F9", fontVariantNumeric: "tabular-nums", marginBottom: 2, letterSpacing: "-0.02em" }}>
+                    {val != null ? (typeof val === "string" ? val : Number(val).toFixed(0)) : "—"} <span style={{ fontSize: 12, fontWeight: 500, color: "#64748B" }}>{unit}</span>
+                  </div>
+                  <div style={{ fontSize: 11, color: "#64748B" }}>{norm}</div>
                 </div>
               ))}
             </div>
@@ -1882,36 +1884,36 @@ export default function DemoPage() {
             </div>
 
             {/* Protocol recommendation card */}
-            <div style={{ background: "#1E1B4B", borderRadius: 16, padding: 24, marginBottom: 16, border: "1px solid #3730A3" }}>
-              <div style={{ display: "flex", gap: 10, marginBottom: 16, alignItems: "center" }}>
-                <span style={{ fontSize: 20 }}>🤖</span>
-                <span style={{ fontSize: 14, fontWeight: 700, color: "white" }}>EEGBase AI · Protocol Recommendation Engine</span>
-                <span style={{ marginLeft: "auto", fontSize: 10, background: "#4F46E5", color: "white", borderRadius: 99, padding: "3px 10px", fontWeight: 700 }}>Session 8 of 20</span>
+            <div style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", borderRadius: 16, padding: 24, marginBottom: 16, border: "1px solid #1E293B", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 12px 36px -16px rgba(0,0,0,0.6)" }}>
+              <div style={{ display: "flex", gap: 12, marginBottom: 18, alignItems: "center" }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(124,58,237,0.18)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 14, fontWeight: 700, border: "1px solid rgba(124,58,237,0.3)" }}>AI</div>
+                <span style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Protocol Recommendation Engine</span>
+                <span style={{ marginLeft: "auto", fontSize: 11, background: "rgba(124,58,237,0.18)", color: "#A78BFA", borderRadius: 99, padding: "3px 10px", fontWeight: 600 }}>Session 8 of 20</span>
               </div>
 
-              <div style={{ background: "#312E81", borderRadius: 12, padding: "16px 20px", marginBottom: 16 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 8 }}>Signal Detected · Stalled Progress</div>
-                <div style={{ fontSize: 14, color: "#E0E7FF", lineHeight: 1.7, marginBottom: 12 }}>
-                  Sarah Mitchell&apos;s <strong style={{ color: "#A5B4FC" }}>θ/β Z-score has not improved</strong> over sessions 6–8 (S6: +2.1 SD, S7: +2.0 SD, S8: +2.2 SD) despite consistent SMR training at Cz. Current protocol (SMR 12–15 Hz) appears insufficient to normalize elevated frontal theta.
+              <div style={{ background: "#0A1320", borderRadius: 12, padding: "16px 20px", marginBottom: 14, borderLeft: "3px solid #F59E0B", border: "1px solid #1E293B", borderLeftWidth: 3, borderLeftColor: "#F59E0B" }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#F59E0B", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Signal Detected · Stalled Progress</div>
+                <div style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.65, marginBottom: 14 }}>
+                  Sarah Mitchell&apos;s <strong style={{ color: "#F1F5F9" }}>θ/β Z-score has not improved</strong> over sessions 6–8 despite consistent SMR training at Cz. Current protocol (SMR 12–15 Hz) appears insufficient to normalize elevated frontal theta.
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }} className="demo-grid-3">
                   {[
-                    { label: "Session 6", val: "+2.1 SD", color: "#EF4444" },
-                    { label: "Session 7", val: "+2.0 SD", color: "#EF4444" },
-                    { label: "Session 8", val: "+2.2 SD", color: "#EF4444" },
-                  ].map(({ label, val, color }) => (
-                    <div key={label} style={{ background: "#1E1B4B", borderRadius: 8, padding: "10px 12px", textAlign: "center" }}>
-                      <div style={{ fontSize: 11, color: "#A5B4FC", marginBottom: 4 }}>{label}</div>
-                      <div style={{ fontSize: 18, fontWeight: 800, color, fontVariantNumeric: "tabular-nums" }}>{val}</div>
+                    { label: "Session 6", val: "+2.1 SD" },
+                    { label: "Session 7", val: "+2.0 SD" },
+                    { label: "Session 8", val: "+2.2 SD" },
+                  ].map(({ label, val }) => (
+                    <div key={label} style={{ background: "#1E293B", borderRadius: 8, padding: "10px 12px", textAlign: "center", border: "1px solid #334155" }}>
+                      <div style={{ fontSize: 10, color: "#94A3B8", marginBottom: 4, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</div>
+                      <div style={{ fontSize: 16, fontWeight: 800, color: "#FCA5A5", fontVariantNumeric: "tabular-nums" }}>{val}</div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div style={{ background: "#065F46", borderRadius: 12, padding: "16px 20px", marginBottom: 16 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#6EE7B7", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 8 }}>Recommendation</div>
-                <div style={{ fontSize: 14, color: "#D1FAE5", lineHeight: 1.7, marginBottom: 10 }}>
-                  Switch to <strong style={{ color: "#6EE7B7" }}>Alpha-Theta (Pz/Oz, 8–12 Hz reward)</strong> for sessions 9–12. Based on <strong style={{ color: "#6EE7B7" }}>847 similar client profiles</strong> in the EEGBase community database, <strong style={{ color: "#6EE7B7" }}>74%</strong> showed θ/β improvement within 2 sessions after this protocol transition.
+              <div style={{ background: "#0A1320", borderRadius: 12, padding: "16px 20px", marginBottom: 14, border: "1px solid #1E293B", borderLeft: "3px solid #10B981" }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#10B981", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Recommendation</div>
+                <div style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.65, marginBottom: 12 }}>
+                  Switch to <strong style={{ color: "#F1F5F9" }}>Alpha-Theta (Pz/Oz, 8–12 Hz reward)</strong> for sessions 9–12. Based on <strong style={{ color: "#F1F5F9" }}>847 similar client profiles</strong> in the EEGBase community database, <strong style={{ color: "#34D399" }}>74%</strong> showed θ/β improvement within 2 sessions after this protocol transition.
                 </div>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   <button

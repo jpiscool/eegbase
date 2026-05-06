@@ -152,13 +152,26 @@ export function ClinicalQuestionnaire({ clientName, onComplete, readOnly = false
                       setAnswers(next as (number | null)[]);
                     }}
                     style={{
-                      padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: readOnly ? "default" : "pointer",
-                      border: answers[i] === opt.value
-                        ? "2px solid var(--brand, #2563EB)"
-                        : "1px solid #334155",
-                      background: answers[i] === opt.value ? "var(--brand, #2563EB)" : "#1E293B",
-                      color: answers[i] === opt.value ? "#fff" : "#94A3B8",
-                      transition: "all 0.1s",
+                      padding: "8px 14px", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: readOnly ? "default" : "pointer",
+                      border: answers[i] === opt.value ? "1px solid #2563EB" : "1px solid #334155",
+                      background: answers[i] === opt.value ? "#2563EB" : "#1E293B",
+                      color: answers[i] === opt.value ? "#fff" : "#CBD5E1",
+                      boxShadow: answers[i] === opt.value
+                        ? "0 0 0 3px rgba(37,99,235,0.18), 0 4px 12px -4px rgba(37,99,235,0.4)"
+                        : "0 1px 0 0 rgba(255,255,255,0.04) inset",
+                      transition: "all 0.15s",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (answers[i] !== opt.value && !readOnly) {
+                        e.currentTarget.style.borderColor = "#475569";
+                        e.currentTarget.style.background = "#293548";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (answers[i] !== opt.value && !readOnly) {
+                        e.currentTarget.style.borderColor = "#334155";
+                        e.currentTarget.style.background = "#1E293B";
+                      }
                     }}
                   >
                     {answers[i] === opt.value ? "✓ " : ""}{opt.label}
