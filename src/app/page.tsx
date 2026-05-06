@@ -268,18 +268,30 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="max-w-5xl mx-auto px-6 pt-24 pb-20 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-100 rounded-full text-xs font-medium text-blue-700 mb-6">
-          <span className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+      <section className="relative max-w-5xl mx-auto px-6 pt-24 pb-20 text-center" style={{ overflow: "visible" }}>
+        {/* Premium animated gradient orbs */}
+        <style>{`
+          @keyframes orbDrift1 { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(40px, -30px) scale(1.1); } 66% { transform: translate(-30px, 20px) scale(0.95); } }
+          @keyframes orbDrift2 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-50px, 40px) scale(1.15); } }
+          @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(37,99,235,0.4), 0 8px 24px -8px rgba(37,99,235,0.5); } 50% { box-shadow: 0 0 0 8px rgba(37,99,235,0), 0 12px 32px -8px rgba(37,99,235,0.6); } }
+          @keyframes statReveal { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+        `}</style>
+        <div aria-hidden style={{ position: "absolute", top: "-80px", left: "10%", width: 480, height: 480, borderRadius: "50%", background: "radial-gradient(closest-side, rgba(37,99,235,0.18), transparent 70%)", filter: "blur(48px)", animation: "orbDrift1 18s ease-in-out infinite", pointerEvents: "none", zIndex: 0 }} />
+        <div aria-hidden style={{ position: "absolute", top: "20px", right: "5%", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(closest-side, rgba(168,85,247,0.14), transparent 70%)", filter: "blur(48px)", animation: "orbDrift2 22s ease-in-out infinite", pointerEvents: "none", zIndex: 0 }} />
+        <div aria-hidden style={{ position: "absolute", top: "-40px", left: "50%", width: 600, height: 600, transform: "translateX(-50%)", borderRadius: "50%", background: "radial-gradient(closest-side, rgba(6,182,212,0.08), transparent 70%)", filter: "blur(60px)", pointerEvents: "none", zIndex: 0 }} />
+
+        <div style={{ position: "relative", zIndex: 1 }}>
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium text-blue-700 mb-7" style={{ background: "rgba(255,255,255,0.7)", border: "1px solid rgba(37,99,235,0.18)", backdropFilter: "blur(12px)", boxShadow: "0 1px 0 0 rgba(255,255,255,0.6) inset, 0 4px 12px -4px rgba(37,99,235,0.15)" }}>
+          <span className="w-1.5 h-1.5 bg-blue-500 rounded-full" style={{ boxShadow: "0 0 8px rgba(37,99,235,0.6)" }} />
           Free for licensed clinicians
         </div>
-        <h1 className="text-5xl font-extrabold text-gray-900 tracking-tight leading-tight mb-5">
+        <h1 className="font-extrabold text-gray-900 mb-5" style={{ fontSize: "clamp(2.6rem, 5.2vw, 4rem)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
           Run your whole neurofeedback
           <br />
           practice from{" "}
-          <span className="text-blue-600">one app</span>
+          <span style={{ background: "linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #06B6D4 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>one app</span>
         </h1>
-        <p className="text-lg text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+        <p className="text-gray-500 max-w-2xl mx-auto mb-10" style={{ fontSize: "1.075rem", lineHeight: 1.65, letterSpacing: "-0.005em" }}>
           Stop juggling four tools to run one session. EEGBase replaces your
           streaming software, EHR, scheduler, and report builder — with live
           brain data, AI session notes, and progress tracking in one place.
@@ -287,7 +299,8 @@ export default function LandingPage() {
         <div className="flex items-center justify-center gap-4">
           <Link
             href="/demo"
-            className="px-6 py-3 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors shadow-sm"
+            className="px-7 py-3.5 text-white text-sm font-semibold rounded-xl transition-all"
+            style={{ background: "#2563EB", animation: "pulseGlow 2.4s ease-in-out infinite", boxShadow: "0 1px 0 0 rgba(255,255,255,0.15) inset, 0 8px 24px -8px rgba(37,99,235,0.5)" }}
           >
             Try the live demo →
           </Link>
@@ -295,10 +308,14 @@ export default function LandingPage() {
             href="https://github.com/eegbase/eegbase"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-6 py-3 border border-gray-200 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-50 transition-colors"
+            className="px-7 py-3.5 text-gray-700 text-sm font-medium rounded-xl transition-all"
+            style={{ background: "rgba(255,255,255,0.7)", border: "1px solid rgba(0,0,0,0.08)", backdropFilter: "blur(12px)" }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(0,0,0,0.16)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(0,0,0,0.08)"; e.currentTarget.style.transform = "translateY(0)"; }}
           >
             View on GitHub
           </a>
+        </div>
         </div>
 
         {/* Metrics strip */}

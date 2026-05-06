@@ -376,13 +376,13 @@ export default function DemoPage() {
     borderBottom: active ? "2px solid #2563EB" : "2px solid transparent",
   });
 
-  const card: React.CSSProperties = { background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 18, padding: 24, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 32px -16px rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,0.4)" };
+  const card: React.CSSProperties = { background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 18, padding: 24, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 1px 2px rgba(0,0,0,0.6), 0 8px 32px -16px rgba(0,0,0,0.7), 0 24px 48px -24px rgba(0,0,0,0.5)" };
 
   const categories = [...new Set(FEATURES.map((f) => f.category))];
   const filteredFeatures = featureCategory ? FEATURES.filter((f) => f.category === featureCategory) : FEATURES;
 
   return (
-    <div style={{ fontFamily: "Inter, system-ui, sans-serif", background: "#F0F4F8", minHeight: "100vh" }}>
+    <div className="demo-grain" style={{ fontFamily: "Inter, system-ui, sans-serif", background: "linear-gradient(180deg, #EEF2F8 0%, #F0F4F8 100%)", minHeight: "100vh" }}>
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
@@ -396,21 +396,35 @@ export default function DemoPage() {
         @keyframes floatA { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-12px) scale(1.08); } }
         @keyframes floatB { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(10px) scale(0.92); } }
         @keyframes statPop { 0% { opacity: 0; transform: translateY(14px) scale(0.96); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
-        @keyframes modalIn { 0% { opacity: 0; transform: translateY(8px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
-        @keyframes overlayIn { 0% { opacity: 0; backdrop-filter: blur(0px); } 100% { opacity: 1; backdrop-filter: blur(8px); } }
+        @keyframes modalIn { 0% { opacity: 0; transform: translateY(12px) scale(0.97); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes overlayIn { 0% { opacity: 0; backdrop-filter: blur(0px); } 100% { opacity: 1; backdrop-filter: blur(12px); } }
+        @keyframes orbDrift { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, -20px); } }
+        @keyframes premiumGlow { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.6; } }
         .skeleton { background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%); background-size: 800px 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
-        .demo-section-label { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.08em; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #1E293B; }
+        .demo-section-label { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.1em; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #1E293B; }
         select option { background: #1E293B; color: white; }
-        /* Modern button hover system */
-        button { transition: transform 0.12s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease; }
+        /* Premium button hover system — refined cubic-bezier */
+        button { transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, opacity 0.18s ease; }
         button:not(:disabled):hover { transform: translateY(-1px); }
-        button:not(:disabled):active { transform: translateY(0); }
-        /* Smooth focus rings */
-        button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid #60A5FA; outline-offset: 2px; }
-        /* Heading typography refinement */
-        h1, h2, h3 { letter-spacing: -0.02em; }
+        button:not(:disabled):active { transform: translateY(0) scale(0.98); }
+        /* Premium focus rings */
+        button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid #60A5FA; outline-offset: 2px; box-shadow: 0 0 0 4px rgba(96,165,250,0.15); }
+        /* Heading typography refinement — Linear/Vercel feel */
+        h1, h2, h3 { letter-spacing: -0.025em; font-feature-settings: "ss01", "cv11"; }
         /* Backdrop blur for modals */
-        .demo-modal-backdrop { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .demo-modal-backdrop { backdrop-filter: blur(12px) saturate(140%); -webkit-backdrop-filter: blur(12px) saturate(140%); }
+        /* Premium card hover — subtle lift + glow */
+        .demo-premium-card { transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease; }
+        .demo-premium-card:hover { transform: translateY(-2px); border-color: #334155; box-shadow: 0 1px 0 0 rgba(255,255,255,0.06) inset, 0 12px 32px -12px rgba(0,0,0,0.7), 0 0 0 1px rgba(96,165,250,0.1); }
+        /* Subtle SVG noise/grain texture overlay (premium paper-like quality) */
+        .demo-grain { position: relative; }
+        .demo-grain::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.025; mix-blend-mode: overlay; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='0.4'/></svg>"); }
+        /* Number reveal animation */
+        @keyframes numberCountUp { 0% { opacity: 0; transform: translateY(6px); } 100% { opacity: 1; transform: translateY(0); } }
+        .demo-stat-reveal { animation: numberCountUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        /* Premium glow on flagship cards — outer ring + soft drop */
+        .demo-flagship { position: relative; box-shadow: 0 1px 0 0 rgba(255,255,255,0.06) inset, 0 0 0 1px rgba(124,58,237,0.5), 0 0 32px -8px rgba(124,58,237,0.4), 0 16px 40px -16px rgba(0,0,0,0.7) !important; transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .demo-flagship:hover { box-shadow: 0 1px 0 0 rgba(255,255,255,0.08) inset, 0 0 0 1px rgba(168,85,247,0.7), 0 0 48px -8px rgba(124,58,237,0.55), 0 20px 48px -16px rgba(0,0,0,0.75) !important; }
         .demo-mobile-nav { display: none; }
         @media (max-width: 900px) {
           .demo-grid-4 { grid-template-columns: 1fr 1fr !important; }
@@ -2327,7 +2341,7 @@ export default function DemoPage() {
             </div>
 
             {/* MENDI HOME-CONTINUITY BRIDGE */}
-            <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 20, marginBottom: 16, boxShadow: "0 12px 36px -16px rgba(79,70,229,0.4)", position: "relative", overflow: "hidden" }}>
+            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 20, marginBottom: 16, boxShadow: "0 12px 36px -16px rgba(79,70,229,0.4)", position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, color: "#A5B4FC", background: "rgba(79,70,229,0.2)", padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(79,70,229,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Mendi Home-Continuity</div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(167,139,250,0.2)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, border: "1px solid rgba(167,139,250,0.3)" }}>↔</div>
@@ -2561,7 +2575,7 @@ export default function DemoPage() {
             </div>
 
             {/* Mendi-Optimized Protocols (pinned) */}
-            <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 14, padding: 18, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(79,70,229,0.4)" }}>
+            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 14, padding: 18, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(79,70,229,0.4)" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(167,139,250,0.2)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, border: "1px solid rgba(167,139,250,0.3)" }}>M</div>
@@ -2844,7 +2858,7 @@ export default function DemoPage() {
         {tab === "reports" && (
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             {/* Mendi Outcomes Registry */}
-            <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 24, marginBottom: 20, boxShadow: "0 12px 36px -16px rgba(79,70,229,0.4)", position: "relative", overflow: "hidden" }}>
+            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 24, marginBottom: 20, boxShadow: "0 12px 36px -16px rgba(79,70,229,0.4)", position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, color: "#A5B4FC", background: "rgba(79,70,229,0.2)", padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(79,70,229,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Mendi Co-Published</div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
                 <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(79,70,229,0.25)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, border: "1px solid rgba(79,70,229,0.4)" }}>📊</div>
@@ -3251,7 +3265,7 @@ export default function DemoPage() {
             </div>
 
             {/* Headway-style managed billing pitch */}
-            <div style={{ marginTop: 16, background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 14, padding: 20, display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
+            <div className="demo-flagship" style={{ marginTop: 16, background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 14, padding: 20, display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap", position: "relative" }}>
               <div style={{ width: 48, height: 48, borderRadius: 12, background: "rgba(167,139,250,0.2)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 22 }}>$</div>
               <div style={{ flex: 1, minWidth: 280 }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>EEGBase Managed Billing <span style={{ fontWeight: 600, color: "#A78BFA" }}>(optional)</span></div>
@@ -3490,7 +3504,7 @@ export default function DemoPage() {
             </div>
 
             {/* Mendi Clinical Case Studies */}
-            <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 14, padding: 20, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(79,70,229,0.4)" }}>
+            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 14, padding: 20, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(79,70,229,0.4)" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em" }}>Mendi Co-Branded Case Studies</div>
@@ -3629,7 +3643,7 @@ export default function DemoPage() {
             </div>
 
             {/* Featured: Mendi flagship integration */}
-            <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 24, marginBottom: 20, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 12px 32px -12px rgba(79,70,229,0.3)", position: "relative", overflow: "hidden" }}>
+            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 24, marginBottom: 20, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 12px 32px -12px rgba(79,70,229,0.3)", position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, color: "#A5B4FC", background: "rgba(79,70,229,0.2)", padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(79,70,229,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Flagship Partner</div>
               <div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "center" }}>
                 <div style={{ width: 120, height: 120, borderRadius: 24, background: "linear-gradient(135deg, #4F46E5, #7C3AED)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: "0 8px 32px -8px rgba(79,70,229,0.5)" }}>
@@ -3687,7 +3701,7 @@ export default function DemoPage() {
               </div>
 
               {/* Drop-ship Mendi to client */}
-              <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 18, boxShadow: "0 8px 24px -12px rgba(79,70,229,0.3)" }}>
+              <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 18, boxShadow: "0 8px 24px -12px rgba(79,70,229,0.3)" }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>Order Mendi for Client</div>
                 <div style={{ fontSize: 13, color: "#F1F5F9", marginBottom: 4, fontWeight: 700 }}>Ship to client&apos;s home</div>
                 <div style={{ fontSize: 12, color: "#CBD5E1", lineHeight: 1.5, marginBottom: 12 }}>Drop-ship a Mendi headset to your client. Pre-paired to their EEGBase account, opens in-app already provisioned.</div>
