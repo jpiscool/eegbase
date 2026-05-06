@@ -906,16 +906,16 @@ export default function DemoPage() {
           <div style={{ background: "white", borderRadius: 20, maxWidth: 520, width: "100%", boxShadow: "0 32px 80px rgba(0,0,0,0.5)", animation: "fadeIn 0.25s ease", overflow: "hidden" }}>
             <div style={{ height: 4, background: "linear-gradient(90deg, #2563EB, #7C3AED, #EC4899)" }} />
             <div style={{ padding: "28px 32px 32px" }}>
-              <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>Welcome to EEGBase Demo</div>
+              <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>The clinical layer for any neurofeedback hardware</div>
               <p style={{ fontSize: 14, color: "#64748B", marginBottom: 24, lineHeight: 1.7 }}>
-                A live simulator running real-time synthetic EEG + fNIRS data. No hardware needed.
+                Mendi · Muse · Polar HRV · Apple Health → one client record, one SOAP note, one billable session. This demo runs synthetic data — no hardware needed.
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
                 {[
-                  { icon: "📡", title: "Live Session + Brain Map", desc: "EEG, fNIRS, and HRV streaming with Z-score comparison to 847 healthy adults — no hardware needed." },
-                  { icon: "🎮", title: "3 Feedback Modes", desc: "Aurora Nightscape, Generative Art, or Audio Interrupt — show the client what their brain is doing in real time." },
-                  { icon: "🤖", title: "AI Insights + SOAP Notes", desc: "Protocol recommendations, 20-session trend analysis, and one-click clinical notes ready for your EHR." },
-                  { icon: "📊", title: "Progress Reports + Compare", desc: "Branded PDF reports for clients and physicians. See how EEGBase compares to 7 competitors." },
+                  { icon: "🧠", title: "Live Session + co-feedback video", desc: "Mendi fNIRS streaming with HIPAA video — clinician sees client&apos;s live signals during the call. No competitor has this combo." },
+                  { icon: "🤖", title: "AI cross-session pattern detector", desc: "Correlates Mendi data with Apple Health · Oura · mood · HRV · adherence. Surfaces causal-looking drivers no other platform can see." },
+                  { icon: "📋", title: "Ambient SOAP scribe (6 formats)", desc: "Records audio with consent → drafts SOAP / DAP / BIRP / GIRP / PIE / SIRP notes tied to the live signal data." },
+                  { icon: "🏥", title: "EHR + claims + research registry", desc: "CMS-1500 + ERA + BIDS-fNIRS export + IRB packet auto-gen — bundled, not bolted on. Open-source · self-hostable." },
                 ].map(({ icon, title, desc }) => (
                   <div key={title} style={{ display: "flex", gap: 14, alignItems: "flex-start", padding: "10px 14px", background: "#F8FAFC", borderRadius: 12 }}>
                     <div style={{ fontSize: 20, lineHeight: 1.3 }}>{icon}</div>
@@ -2691,11 +2691,19 @@ export default function DemoPage() {
         {/* ── AI INSIGHTS ── */}
         {tab === "ai" && (
           <div style={{ animation: "fadeIn 0.3s ease" }}>
-            <div style={{ marginBottom: 20 }}>
+            <div style={{ marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>AI Insights</h2>
               <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
-                EEGBase AI watches session data and flags when a client is stalled — then suggests the next protocol to try, compared against <strong style={{ color: "#A5B4FC" }}>847 anonymized client profiles</strong>. It also drafts clinical notes you can copy straight to your EHR.
+                EEGBase AI watches session data and flags when a client is stalled — then suggests the next protocol to try, compared against the EEGBase community registry. It also drafts clinical notes you can copy straight to your EHR.
               </p>
+            </div>
+
+            {/* AI is decision-support · not medical advice — clinical safety disclaimer */}
+            <div style={{ marginBottom: 16, padding: "10px 14px", background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 10, display: "flex", alignItems: "flex-start", gap: 10 }}>
+              <span style={{ fontSize: 14, lineHeight: 1.4 }}>ℹ️</span>
+              <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.6 }}>
+                <strong style={{ color: "#60A5FA", fontWeight: 700 }}>AI insights are decision-support tools, not medical advice.</strong> Every suggestion shown here is an aid to clinician judgment — not a replacement. The licensed clinician approves, modifies, or rejects every protocol change, every SOAP draft, and every risk flag before anything is saved to the client record. Models are trained on de-identified data from consenting EEGBase clinics and audited quarterly for bias. Powered by Claude Haiku 4.5 · OpenAI GPT-4o fallback.
+              </div>
             </div>
 
             {/* Cross-session pattern detector — Mendi data + multi-modal correlation */}
