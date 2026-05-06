@@ -46,9 +46,9 @@ const features = [
 ];
 
 const metrics = [
-  { value: "2 min", label: "From signup to first session" },
-  { value: "$0/mo", label: "Forever — no subscription" },
-  { value: "MIT", label: "Open source license" },
+  { value: "16", label: "Tabs in the live demo" },
+  { value: "6 min", label: "Avg time to first session" },
+  { value: "0", label: "Lines of vendor lock-in" },
 ];
 
 const faqs = [
@@ -460,29 +460,29 @@ export default function LandingPage() {
             </ul>
           </div>
 
-          {/* Right — EEGBase */}
-          <div className="border-2 border-blue-200 rounded-2xl p-6 bg-blue-50/40">
+          {/* Right — EEGBase clinical layer (Mendi-violet to echo partnership context) */}
+          <div className="border-2 border-violet-200 rounded-2xl p-6" style={{ background: "linear-gradient(135deg, rgba(237,233,254,0.5), rgba(245,243,255,0.7))" }}>
             <div className="flex items-center gap-2 mb-5">
-              <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
+              <div className="w-7 h-7 bg-violet-600 rounded-lg flex items-center justify-center">
                 <Brain size={14} className="text-white" />
               </div>
-              <span className="text-sm font-bold text-blue-700 uppercase tracking-wide">In EEGBase</span>
-              <span className="text-xs text-blue-400 font-normal">(clinician view)</span>
+              <span className="text-sm font-bold text-violet-700 uppercase tracking-wide">In EEGBase</span>
+              <span className="text-xs text-violet-400 font-normal">(clinician view)</span>
             </div>
             <ul className="space-y-3">
               {[
                 "All clients in one dashboard",
-                "OxyHb/DeoxyHb bilateral analysis",
-                "Pre/post questionnaire deltas (focus, mood, anxiety, energy)",
-                "SOAP clinical notes + session annotations",
-                "AI-generated clinical summary",
-                "Shareable progress reports",
-                "Billing, scheduling, outcome measures",
-                "Export to EDF+ / CSV / PDF",
+                "Live HIPAA-video co-feedback during the session",
+                "AI cross-session pattern detector — Mendi data ↔ sleep · mood · HRV",
+                "SOAP / DAP / BIRP / GIRP / PIE / SIRP scribe (6 formats)",
+                "Pre/post questionnaire deltas (PHQ-9, GAD-7, custom)",
+                "Branded one-click PDF reports for clients + referrers",
+                "CMS-1500 + ERA + ICD-10 · insurance bundled in",
+                "BIDS-fNIRS / SNIRF / EDF+ · zero lock-in",
               ].map((item) => (
-                <li key={item} className="flex items-center gap-2.5 text-sm text-blue-900">
-                  <CheckCircle size={15} className="text-blue-500 shrink-0" />
-                  {item}
+                <li key={item} className="flex items-start gap-2.5 text-sm text-violet-900">
+                  <CheckCircle size={15} className="text-violet-500 shrink-0 mt-0.5" />
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
@@ -693,7 +693,7 @@ export default function LandingPage() {
               { gap: "Native iOS + Android client apps (currently web)", eta: "Target Q3 2026" },
               { gap: "3D LORETA source localization", eta: "Target Q4 2026" },
               { gap: "Sham-controlled RCT publication", eta: "Submission Q1 2027 · pre-print available now" },
-              { gap: "FDA 510(k) device clearance", eta: "Out of scope — we&apos;re a software platform, not a device. Mendi/Muse/Polar handle hardware classification." },
+              { gap: "FDA 510(k) device clearance", eta: "Out of scope — we're a software platform, not a device. Mendi/Muse/Polar handle hardware classification." },
             ].map((g) => (
               <li key={g.gap} className="flex items-start gap-3">
                 <span className="text-amber-500 flex-shrink-0 mt-0.5">○</span>
