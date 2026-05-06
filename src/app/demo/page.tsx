@@ -355,7 +355,7 @@ export default function DemoPage() {
     borderBottom: active ? "2px solid #2563EB" : "2px solid transparent",
   });
 
-  const card: React.CSSProperties = { background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 24 };
+  const card: React.CSSProperties = { background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 18, padding: 24, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 32px -16px rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,0.4)" };
 
   const categories = [...new Set(FEATURES.map((f) => f.category))];
   const filteredFeatures = featureCategory ? FEATURES.filter((f) => f.category === featureCategory) : FEATURES;
@@ -375,9 +375,21 @@ export default function DemoPage() {
         @keyframes floatA { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-12px) scale(1.08); } }
         @keyframes floatB { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(10px) scale(0.92); } }
         @keyframes statPop { 0% { opacity: 0; transform: translateY(14px) scale(0.96); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes modalIn { 0% { opacity: 0; transform: translateY(8px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes overlayIn { 0% { opacity: 0; backdrop-filter: blur(0px); } 100% { opacity: 1; backdrop-filter: blur(8px); } }
         .skeleton { background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%); background-size: 800px 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
-        .demo-section-label { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.07em; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #334155; }
+        .demo-section-label { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.08em; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #1E293B; }
         select option { background: #1E293B; color: white; }
+        /* Modern button hover system */
+        button { transition: transform 0.12s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease; }
+        button:not(:disabled):hover { transform: translateY(-1px); }
+        button:not(:disabled):active { transform: translateY(0); }
+        /* Smooth focus rings */
+        button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid #60A5FA; outline-offset: 2px; }
+        /* Heading typography refinement */
+        h1, h2, h3 { letter-spacing: -0.02em; }
+        /* Backdrop blur for modals */
+        .demo-modal-backdrop { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         .demo-mobile-nav { display: none; }
         @media (max-width: 900px) {
           .demo-grid-4 { grid-template-columns: 1fr 1fr !important; }
@@ -447,7 +459,7 @@ export default function DemoPage() {
 
       {/* Onboarding overlay */}
       {showOnboarding && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(2,6,23,0.85)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+        <div className="demo-modal-backdrop" style={{ position: "fixed", inset: 0, background: "rgba(2,6,23,0.75)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, animation: "overlayIn 0.2s ease-out" }}>
           <div style={{ background: "white", borderRadius: 20, maxWidth: 520, width: "100%", boxShadow: "0 32px 80px rgba(0,0,0,0.5)", animation: "fadeIn 0.25s ease", overflow: "hidden" }}>
             <div style={{ height: 4, background: "linear-gradient(90deg, #2563EB, #7C3AED, #EC4899)" }} />
             <div style={{ padding: "28px 32px 32px" }}>
@@ -458,7 +470,7 @@ export default function DemoPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
                 {[
                   { icon: "📡", title: "Live Session + Brain Map", desc: "EEG, fNIRS, and HRV streaming with Z-score comparison to 847 healthy adults — no hardware needed." },
-                  { icon: "🎮", title: "3 Feedback Modes", desc: "Energy Orb, Generative Art, or Audio Interrupt — show the client what their brain is doing in real time." },
+                  { icon: "🎮", title: "3 Feedback Modes", desc: "Aurora Nightscape, Generative Art, or Audio Interrupt — show the client what their brain is doing in real time." },
                   { icon: "🤖", title: "AI Insights + SOAP Notes", desc: "Protocol recommendations, 20-session trend analysis, and one-click clinical notes ready for your EHR." },
                   { icon: "📊", title: "Progress Reports + Compare", desc: "Branded PDF reports for clients and physicians. See how EEGBase compares to 7 competitors." },
                 ].map(({ icon, title, desc }) => (
@@ -486,7 +498,7 @@ export default function DemoPage() {
 
       {/* Universal Detail Modal */}
       {detailModal && (
-        <div onClick={() => setDetailModal(null)} style={{ position: "fixed", inset: 0, background: "rgba(2,6,23,0.85)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+        <div onClick={() => setDetailModal(null)} className="demo-modal-backdrop" style={{ position: "fixed", inset: 0, background: "rgba(2,6,23,0.75)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, animation: "overlayIn 0.2s ease-out" }}>
           <div onClick={(e) => e.stopPropagation()} style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 28, maxWidth: 560, width: "100%", maxHeight: "85vh", overflowY: "auto" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, gap: 12 }}>
               <h2 style={{ color: "#F1F5F9", fontSize: 18, fontWeight: 700 }}>
@@ -627,7 +639,7 @@ export default function DemoPage() {
 
       {/* Client App Preview Modal */}
       {showClientApp && (
-        <div onClick={() => setShowClientApp(false)} style={{ position: "fixed", inset: 0, background: "rgba(2,6,23,0.85)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+        <div onClick={() => setShowClientApp(false)} className="demo-modal-backdrop" style={{ position: "fixed", inset: 0, background: "rgba(2,6,23,0.75)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, animation: "overlayIn 0.2s ease-out" }}>
           <div onClick={(e) => e.stopPropagation()} style={{ background: "#0F172A", borderRadius: 32, padding: 8, border: "10px solid #1E293B", width: 320, maxHeight: "92vh", overflowY: "auto", position: "relative" }}>
             <button onClick={() => setShowClientApp(false)} aria-label="Close client app preview" style={{ position: "absolute", top: -54, right: 0, width: 44, height: 44, background: "rgba(15,23,42,0.85)", border: "1px solid #334155", borderRadius: 22, color: "#F1F5F9", cursor: "pointer", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
             <div style={{ background: "#020617", borderRadius: 24, padding: "20px 16px", color: "#F1F5F9" }}>
@@ -1250,7 +1262,7 @@ export default function DemoPage() {
             <div style={{ display: "flex", gap: 8, marginBottom: 16, background: "#1E293B", borderRadius: 12, padding: 6, border: "1px solid #334155", alignItems: "center", flexWrap: "wrap" }}>
               <span style={{ fontSize: 12, color: "#94A3B8", fontWeight: 600, paddingLeft: 6, whiteSpace: "nowrap" }}>Feedback style:</span>
               {([
-                { id: "orb",   icon: "🔮", label: "Energy Orb" },
+                { id: "orb",   icon: "🌌", label: "Aurora" },
                 { id: "art",   icon: "🎨", label: "Generative Art" },
                 { id: "audio", icon: "🎵", label: "Audio Interrupt" },
               ] as const).map(({ id, icon, label }) => (
@@ -1314,8 +1326,8 @@ export default function DemoPage() {
               <div style={{ ...card, marginBottom: 16 }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
                   <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>Energy Orb — Client View</div>
-                    <div style={{ fontSize: 12, color: "#94A3B8" }}>Threshold: {rewardThreshold} · Orb grows + turns green above threshold{showClinicianOverlay ? "" : " · score hidden from client"}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>Aurora Nightscape — Client View</div>
+                    <div style={{ fontSize: 12, color: "#94A3B8" }}>Threshold: {rewardThreshold} · Aurora intensifies + colors warm above threshold{showClinicianOverlay ? "" : " · score hidden from client"}</div>
                   </div>
                 </div>
                 <GameFeedback score={showClinicianOverlay ? (rewardVal ?? null) : null} threshold={rewardThreshold} />
