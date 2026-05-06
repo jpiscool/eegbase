@@ -1305,6 +1305,20 @@ export default function DemoPage() {
               </span>
             </div>
 
+            {/* Group therapy toggle — closes Sessions Health gap, opens corporate wellness */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 14px", background: "#0F172A", border: "1px solid #1E293B", borderRadius: 10, marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "#A78BFA", padding: "2px 8px", background: "rgba(167,139,250,0.12)", border: "1px solid rgba(167,139,250,0.35)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Mode</span>
+                <div style={{ display: "flex", gap: 4, padding: 3, background: "#0A1320", border: "1px solid #1E293B", borderRadius: 8 }}>
+                  <button onClick={() => showToast("Switched to 1-on-1 mode")} style={{ fontSize: 11, padding: "4px 12px", background: "#1E293B", color: "#F1F5F9", border: "none", borderRadius: 5, cursor: "pointer", fontWeight: 700 }}>1-on-1 ✓</button>
+                  <button onClick={() => showToast("Group session · 8 client tiles · shared protocol · individual signal panels · CPT 90849 group psychotherapy")} style={{ fontSize: 11, padding: "4px 12px", background: "transparent", color: "#94A3B8", border: "none", borderRadius: 5, cursor: "pointer", fontWeight: 600 }}>Group (up to 8)</button>
+                  <button onClick={() => showToast("Couples · 2 client tiles · shared dashboard with individual privacy")} style={{ fontSize: 11, padding: "4px 12px", background: "transparent", color: "#94A3B8", border: "none", borderRadius: 5, cursor: "pointer", fontWeight: 600 }}>Couples</button>
+                  <button onClick={() => showToast("Family · multiple participants · IFS / family-systems mode")} style={{ fontSize: 11, padding: "4px 12px", background: "transparent", color: "#94A3B8", border: "none", borderRadius: 5, cursor: "pointer", fontWeight: 600 }}>Family</button>
+                </div>
+              </div>
+              <span style={{ fontSize: 10, color: "#64748B" }}>Group sessions are CPT 90849 reimbursable · scales clinic capacity 4–8× · supports corporate wellness deployment</span>
+            </div>
+
             {/* Telehealth co-feedback panel — unique combo: HIPAA video + live signals */}
             <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #0F172A 0%, #0A1A2E 100%)", border: "1px solid #2563EB", borderRadius: 14, padding: 14, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(37,99,235,0.4)" }}>
               <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 14, alignItems: "stretch" }}>
@@ -2359,6 +2373,44 @@ export default function DemoPage() {
         {/* ── BRAIN MAP + Z-SCORE ── */}
         {tab === "brain" && (
           <div>
+            {/* Normative database comparison — closes NeuroGuide gap */}
+            <div style={{ ...card, marginBottom: 16, padding: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 8 }}>
+                <div>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Normative database comparison</h3>
+                  <p style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>Sarah&apos;s Z-scores vs age- and sex-matched cohort · n=4,210 healthy controls · LORETA source localization on roadmap</p>
+                </div>
+                <div style={{ display: "flex", gap: 4, padding: 3, background: "#0A1320", border: "1px solid #1E293B", borderRadius: 8 }}>
+                  {["Eyes-closed", "Eyes-open", "Task"].map((m, i) => (
+                    <button key={m} onClick={() => showToast(`Switched to ${m} norm comparison`)} style={{ fontSize: 10, padding: "4px 10px", background: i === 0 ? "#1E293B" : "transparent", color: i === 0 ? "#F1F5F9" : "#94A3B8", border: "none", borderRadius: 5, cursor: "pointer", fontWeight: 700 }}>{m} {i === 0 && "✓"}</button>
+                  ))}
+                </div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 6 }}>
+                {[
+                  { band: "Delta",   z: -0.4, status: "ok"   },
+                  { band: "Theta",   z: +2.2, status: "high" },
+                  { band: "Alpha",   z: -1.6, status: "low"  },
+                  { band: "Beta",    z: +0.3, status: "ok"   },
+                  { band: "Hi-Beta", z: +1.8, status: "high" },
+                  { band: "Gamma",   z: -0.2, status: "ok"   },
+                ].map((b) => {
+                  const color = b.status === "ok" ? "#34D399" : b.status === "low" ? "#FCD34D" : "#FCA5A5";
+                  const bg = b.status === "ok" ? "rgba(52,211,153,0.1)" : b.status === "low" ? "rgba(252,211,77,0.1)" : "rgba(252,165,165,0.12)";
+                  return (
+                    <div key={b.band} style={{ background: bg, border: `1px solid ${color}40`, borderRadius: 8, padding: "8px 10px" }}>
+                      <div style={{ fontSize: 9, fontWeight: 700, color, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>{b.band}</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums" }}>{b.z >= 0 ? "+" : ""}{b.z.toFixed(1)}<span style={{ fontSize: 9, color: "#94A3B8", fontWeight: 600 }}> SD</span></div>
+                      <div style={{ fontSize: 9, color: color, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", marginTop: 2 }}>{b.status === "ok" ? "Within ±1 SD" : b.status === "low" ? "Below norm" : "Above norm"}</div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div style={{ marginTop: 10, padding: "6px 10px", background: "rgba(15,23,42,0.5)", borderRadius: 6, fontSize: 10, color: "#94A3B8", lineHeight: 1.55 }}>
+                <strong style={{ color: "#FCA5A5" }}>Pattern:</strong> elevated theta + low alpha is a classic ADHD signature (Arns et al., 2013). Recommended protocol: SMR up-train at Cz with theta inhibit. <strong style={{ color: "#A5B4FC" }}>3D LORETA source localization</strong> ships Q4 2026.
+              </div>
+            </div>
+
             <div style={{ ...card, marginBottom: 16 }}>
               <h2 style={{ fontSize: 15, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Prefrontal Activity Map</h2>
               <p style={{ fontSize: 13, color: "#CBD5E1", marginBottom: 12, lineHeight: 1.6 }}>
@@ -2716,11 +2768,11 @@ export default function DemoPage() {
 
             {/* AI Ambient Scribe */}
             <div style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", borderRadius: 16, padding: 22, marginBottom: 16, border: "1px solid #1E293B", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 12px 36px -16px rgba(0,0,0,0.6)" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, paddingBottom: 12, borderBottom: "1px solid #1E293B" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid #1E293B", flexWrap: "wrap" }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(239,68,68,0.18)", color: "#F87171", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 12, fontWeight: 700, border: "1px solid rgba(239,68,68,0.3)" }}>●</div>
-                <div style={{ flex: 1 }}>
+                <div style={{ flex: 1, minWidth: 220 }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Ambient Session Scribe</div>
-                  <div style={{ fontSize: 11, color: "#94A3B8" }}>Records session audio (with consent) · auto-generates SOAP from transcript · Mentalyc/Heidi-style</div>
+                  <div style={{ fontSize: 11, color: "#94A3B8" }}>Records audio with consent · drafts notes from transcript · 6 therapy-specific formats · Mentalyc/Upheal/DeepCura-class</div>
                 </div>
                 <button onClick={() => showToast("Recording started · client consent required (HIPAA)")} style={{ ...clinicianBtnPrimary, fontSize: 12, padding: "8px 16px", background: "#DC2626" }}>
                   ● Start Recording
@@ -2774,6 +2826,67 @@ export default function DemoPage() {
                   <button onClick={() => showToast("SOAP note regenerated from current transcript")} style={{ ...clinicianBtnPrimary, fontSize: 11, padding: "8px 14px", width: "100%", marginTop: 12 }}>
                     Generate SOAP note from transcript
                   </button>
+                </div>
+              </div>
+
+              {/* Note format selector — closes the Mentalyc/Upheal/ICANotes 6-format gap */}
+              <div style={{ marginTop: 14, padding: "10px 12px", background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Note format · pick one — same transcript, different structure</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {[
+                    { fmt: "SOAP",  desc: "Subjective · Objective · Assessment · Plan",       active: true },
+                    { fmt: "DAP",   desc: "Data · Assessment · Plan",                          active: false },
+                    { fmt: "BIRP",  desc: "Behavior · Intervention · Response · Plan",         active: false },
+                    { fmt: "GIRP",  desc: "Goal · Intervention · Response · Plan",             active: false },
+                    { fmt: "PIE",   desc: "Problem · Intervention · Evaluation",               active: false },
+                    { fmt: "SIRP",  desc: "Situation · Intervention · Response · Plan",        active: false },
+                  ].map((f) => (
+                    <button
+                      key={f.fmt}
+                      onClick={() => showToast(`Regenerated as ${f.fmt} · ${f.desc}`)}
+                      style={{ fontSize: 10, padding: "5px 10px", background: f.active ? "rgba(167,139,250,0.18)" : "transparent", border: `1px solid ${f.active ? "#A78BFA" : "#1E293B"}`, color: f.active ? "#C4B5FD" : "#94A3B8", borderRadius: 6, cursor: "pointer", fontWeight: 700 }}
+                      title={f.desc}
+                    >
+                      {f.fmt} {f.active && "✓"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Conversation analytics with fNIRS overlay — uniquely combines Upheal-style insight with Mendi data */}
+              <div style={{ marginTop: 14, padding: 12, background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em" }}>Conversation analytics · w/ fNIRS overlay</div>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: "#A78BFA", padding: "2px 7px", background: "rgba(167,139,250,0.12)", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Unique combo</span>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginBottom: 10 }}>
+                  {[
+                    { k: "Clinician talk-time", v: "38%",  bar: 38,  color: "#60A5FA" },
+                    { k: "Client talk-time",    v: "54%",  bar: 54,  color: "#A78BFA" },
+                    { k: "Silence (reflective)", v: "8%",   bar: 8,   color: "#34D399" },
+                    { k: "Tone (avg valence)",  v: "+0.42", bar: 70,  color: "#FCD34D" },
+                  ].map((m) => (
+                    <div key={m.k} style={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 8, padding: 8 }}>
+                      <div style={{ fontSize: 9, color: "#94A3B8", marginBottom: 3 }}>{m.k}</div>
+                      <div style={{ fontSize: 14, fontWeight: 800, color: m.color, fontVariantNumeric: "tabular-nums", marginBottom: 4 }}>{m.v}</div>
+                      <div style={{ height: 3, background: "#1E293B", borderRadius: 99, overflow: "hidden" }}>
+                        <div style={{ width: `${m.bar}%`, height: "100%", background: m.color }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 8, padding: 10 }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>Topic timeline · prefrontal OxyHb overlay</div>
+                  <svg viewBox="0 0 400 60" width="100%" height="60" style={{ display: "block" }}>
+                    <defs><linearGradient id="oxyG" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#A78BFA" stopOpacity="0.5"/><stop offset="100%" stopColor="#A78BFA" stopOpacity="0"/></linearGradient></defs>
+                    <path d="M 0,30 L 30,28 L 60,25 L 90,22 L 120,28 L 150,42 L 180,48 L 210,45 L 240,32 L 270,26 L 300,24 L 330,28 L 360,30 L 400,29 L 400,60 L 0,60 Z" fill="url(#oxyG)" />
+                    <path d="M 0,30 L 30,28 L 60,25 L 90,22 L 120,28 L 150,42 L 180,48 L 210,45 L 240,32 L 270,26 L 300,24 L 330,28 L 360,30 L 400,29" fill="none" stroke="#A78BFA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <line x1="150" y1="0" x2="150" y2="60" stroke="#EF4444" strokeWidth="0.8" strokeDasharray="3 3" />
+                    <text x="155" y="10" fontSize="8" fill="#FCA5A5" fontWeight="700">Father topic introduced @ 12:15</text>
+                  </svg>
+                  <div style={{ fontSize: 10, color: "#CBD5E1", lineHeight: 1.5, marginTop: 6 }}>
+                    Sarah&apos;s prefrontal OxyHb dropped <strong style={{ color: "#FCA5A5" }}>−0.28 μM</strong> when the topic shifted to her father at 12:15 — a stronger physiological reaction than self-reported. Auto-flagged for SOAP &quot;Plan&quot; section.
+                  </div>
                 </div>
               </div>
             </div>
@@ -3751,23 +3864,26 @@ export default function DemoPage() {
             </div>
 
             {/* EEGBase pricing strip — clinic-side SaaS */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 16 }} className="demo-grid-4">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10, marginBottom: 12 }} className="demo-grid-4">
               {[
-                { tier: "Starter",  price: "$149/clinic/mo",  seats: "1 clinician · 25 clients",  ribbon: null,            color: "#64748B" },
-                { tier: "Practice", price: "$349/clinic/mo",  seats: "5 clinicians · unlimited",   ribbon: "Most popular",   color: "#3B82F6" },
-                { tier: "Group",    price: "$899/clinic/mo",  seats: "20 seats · multi-location",  ribbon: null,            color: "#A78BFA" },
-                { tier: "Enterprise", price: "Custom",        seats: "Unlimited · SSO · SLA",      ribbon: "Mendi partners", color: "#F59E0B" },
+                { tier: "Pay per session", price: "$19/session",       seats: "Trial · no commitment",        ribbon: "Frictionless", color: "#10B981" },
+                { tier: "Starter",         price: "$149/clinic/mo",    seats: "1 clinician · 25 clients",     ribbon: null,            color: "#64748B" },
+                { tier: "Practice",        price: "$349/clinic/mo",    seats: "5 clinicians · unlimited",     ribbon: "Most popular",   color: "#3B82F6" },
+                { tier: "Group",           price: "$899/clinic/mo",    seats: "20 seats · multi-location",    ribbon: null,            color: "#A78BFA" },
+                { tier: "Enterprise",      price: "Custom",            seats: "Unlimited · SSO · SLA",        ribbon: "Mendi partners", color: "#F59E0B" },
               ].map((p) => (
                 <div key={p.tier} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: `1px solid ${p.ribbon ? p.color : "#1E293B"}`, borderRadius: 12, padding: 14, position: "relative" }}>
                   {p.ribbon && <span style={{ position: "absolute", top: -8, right: 10, fontSize: 9, fontWeight: 700, color: "white", background: p.color, padding: "2px 8px", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>{p.ribbon}</span>}
                   <div style={{ fontSize: 10, fontWeight: 700, color: p.color, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>{p.tier}</div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.02em", marginBottom: 2 }}>{p.price}</div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.02em", marginBottom: 2 }}>{p.price}</div>
                   <div style={{ fontSize: 10, color: "#94A3B8" }}>{p.seats}</div>
                 </div>
               ))}
             </div>
-            <div style={{ marginBottom: 16, padding: "8px 12px", background: "rgba(15,23,42,0.5)", border: "1px solid #1E293B", borderRadius: 8, fontSize: 11, color: "#94A3B8", lineHeight: 1.55 }}>
-              All tiers include unlimited sessions, claims/superbills, BIDS export, and HIPAA BAA. Mendi-attached clinics get <strong style={{ color: "#A78BFA" }}>20% off Practice/Group tiers</strong>. Cancel anytime · 30-day refund.
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#34D399", padding: "4px 10px", background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)", borderRadius: 99 }}>30-day free trial · no card required</span>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#A78BFA", padding: "4px 10px", background: "rgba(167,139,250,0.1)", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 99 }}>Mendi-attached clinics: 20% off Practice/Group</span>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#60A5FA", padding: "4px 10px", background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.3)", borderRadius: 99 }}>HIPAA BAA · BIDS export · cancel anytime</span>
             </div>
 
             {/* Billing dashboard summary */}
@@ -4077,6 +4193,16 @@ export default function DemoPage() {
 
                 {/* Regulatory + accessibility posture pills */}
                 <div className="ios-section-header" style={{ marginTop: 18, padding: "0 0 8px" }}>Regulatory &amp; Accessibility Posture</div>
+
+                {/* Future certifications roadmap */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#FCD34D", padding: "3px 9px", background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.3)", borderRadius: 99 }}>ONC HIT 2025 Edition · target Q1 2027</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#FCD34D", padding: "3px 9px", background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.3)", borderRadius: 99 }}>EPCS / PDMP via DrFirst · target Q4 2026</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#FCD34D", padding: "3px 9px", background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.3)", borderRadius: 99 }}>USCDI+ Behavioral Health · ONC pilot Q2 2026</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#FCD34D", padding: "3px 9px", background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.3)", borderRadius: 99 }}>FHIR R4 SMART-on-FHIR · Q3 2026</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#FCD34D", padding: "3px 9px", background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.3)", borderRadius: 99 }}>42 CFR Part 2 (SUD records) · Q4 2026</span>
+                </div>
+
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 10 }}>
                   <div style={{ padding: 10, background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 10 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
@@ -4185,6 +4311,134 @@ export default function DemoPage() {
               <span style={{ fontSize: 11, fontWeight: 700, color: "#FCD34D", padding: "4px 10px", background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.3)", borderRadius: 99, display: "inline-flex", alignItems: "center", gap: 6 }}>
                 <span>⚡</span> Avg time to first session · 6 min
               </span>
+            </div>
+
+            {/* WHITE-LABEL TOGGLE — Mendi B2B story (this is the big one) */}
+            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 14, padding: 20, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(79,70,229,0.4)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 14 }}>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em" }}>White-label · Mendi Clinical mode</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginTop: 2 }}>Rebrand the entire clinical platform as &ldquo;Mendi Clinical&rdquo; — Mendi&apos;s B2B SaaS arm</div>
+                  <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>One toggle hides EEGBase branding · applies Mendi logo / palette / domain · Mendi keeps the customer relationship</div>
+                </div>
+                <button onClick={() => showToast("White-label preview · Mendi-branded theme would render across all 16 tabs · contact for enterprise pricing")} style={{ ...clinicianBtnPrimary, fontSize: 12, background: "#7C3AED" }}>Preview Mendi Clinical →</button>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
+                {[
+                  { label: "Branding",       val: "Full",     sub: "Logo · colors · domain · email" },
+                  { label: "Mendi rev share", val: "60% / 40%", sub: "Mendi gets majority of clinic SaaS ARR" },
+                  { label: "Engineering",    val: "0 hrs",    sub: "Theme switcher only · no fork" },
+                  { label: "Time-to-launch", val: "2 weeks",  sub: "DPA + co-mark + DNS · done" },
+                ].map((s) => (
+                  <div key={s.label} style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(79,70,229,0.3)", borderRadius: 10, padding: 10 }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em" }}>{s.label}</div>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums" }}>{s.val}</div>
+                    <div style={{ fontSize: 9, color: "#94A3B8", marginTop: 2, lineHeight: 1.4 }}>{s.sub}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* COACHING MARKETPLACE — closes Myndlift's #1 moat */}
+            <div style={{ ...card, marginBottom: 16, padding: 18 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 12 }}>
+                <div>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Clinician-in-loop coaching marketplace</h3>
+                  <p style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>Mendi at-home users can pay for a licensed clinician to review data weekly + adjust protocol · Myndlift charges $150/mo for this</p>
+                </div>
+                <span style={{ fontSize: 9, fontWeight: 700, color: "#FCD34D", padding: "3px 8px", background: "rgba(251,191,36,0.12)", border: "1px solid rgba(251,191,36,0.35)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Q3 2026 · Beta</span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
+                {[
+                  { tier: "Self-guided",  price: "Included",   sub: "AI insights · no human review",     color: "#64748B" },
+                  { tier: "Coaching",     price: "$79/mo",    sub: "Weekly clinician review · email",   color: "#3B82F6" },
+                  { tier: "Coaching+",    price: "$149/mo",   sub: "Bi-weekly video + protocol updates", color: "#A78BFA" },
+                ].map((t) => (
+                  <div key={t.tier} style={{ background: "#0A1320", border: `1px solid ${t.color}40`, borderRadius: 10, padding: 12 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: t.color, textTransform: "uppercase", letterSpacing: "0.08em" }}>{t.tier}</div>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.02em", marginTop: 2 }}>{t.price}</div>
+                    <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>{t.sub}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 10, padding: "6px 10px", background: "rgba(15,23,42,0.5)", borderRadius: 6, fontSize: 10, color: "#64748B" }}>
+                Mendi gets 30% of coaching revenue · clinicians keep 60% · 10% platform fee · payouts via Stripe Connect
+              </div>
+            </div>
+
+            {/* CORPORATE WELLNESS — Divergence's territory */}
+            <div style={{ ...card, marginBottom: 16, padding: 18 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Corporate wellness · workforce deployment</h3>
+                <span style={{ fontSize: 9, fontWeight: 700, color: "#06B6D4", padding: "3px 8px", background: "rgba(6,182,212,0.12)", border: "1px solid rgba(6,182,212,0.35)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Cohort mode</span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
+                {[
+                  { label: "Active employees", val: "284", sub: "of 320 enrolled · 89% activation" },
+                  { label: "Avg sessions / wk", val: "3.2", sub: "vs 1.4 in self-guided cohorts" },
+                  { label: "Burnout (MBI-EE)",  val: "−14%", sub: "12-week cohort · n=180" },
+                  { label: "ROI · sick-day reduction", val: "$4.20", sub: "per $1 spent on Mendi-clinic program" },
+                ].map((s) => (
+                  <div key={s.label} style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 10 }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em" }}>{s.label}</div>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums" }}>{s.val}</div>
+                    <div style={{ fontSize: 9, color: "#94A3B8", marginTop: 2, lineHeight: 1.4 }}>{s.sub}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* MOBILE APP PREVIEW — closes Myndlift's #2 moat */}
+            <div style={{ ...card, marginBottom: 16, padding: 18 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Patient mobile app · iOS &amp; Android</h3>
+                <span style={{ fontSize: 9, fontWeight: 700, color: "#A78BFA", padding: "3px 8px", background: "rgba(167,139,250,0.12)", border: "1px solid rgba(167,139,250,0.35)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Q3 2026</span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
+                {[
+                  { name: "Pair Mendi",      icon: "🔗", sub: "BLE auto-pair · 1.4s reconnect" },
+                  { name: "Daily check-in",  icon: "📝", sub: "Mood · sleep · meds · 30 sec" },
+                  { name: "Streak + reward", icon: "🔥", sub: "Gamified · matches Mendi UX" },
+                  { name: "Share with clinician", icon: "👥", sub: "1-tap · revocable consent" },
+                ].map((f) => (
+                  <div key={f.name} style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 12 }}>
+                    <div style={{ fontSize: 22, marginBottom: 4 }}>{f.icon}</div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>{f.name}</div>
+                    <div style={{ fontSize: 9, color: "#94A3B8", lineHeight: 1.5 }}>{f.sub}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 10, padding: "6px 10px", background: "rgba(15,23,42,0.5)", borderRadius: 6, fontSize: 10, color: "#64748B" }}>
+                React Native · published to App Store + Play Store under Mendi or EEGBase brand · same codebase as web · TestFlight beta open
+              </div>
+            </div>
+
+            {/* RCT ENROLLMENT PORTAL + PBM + SDK — research credibility row */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 16 }} className="demo-grid-3">
+              <div style={{ ...card, padding: 14 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#34D399", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>RCT enrollment portal</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>One-click clinic onboarding</div>
+                <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>
+                  Public sign-up for the sham-controlled ADHD RCT · auto-handles consent + randomization + IRB amendment per site · Mendi science team gets live enrollment dashboard.
+                </div>
+                <button onClick={() => showToast("RCT portal · NCT06912xxx enrollment kit emailed")} style={{ marginTop: 10, fontSize: 11, padding: "5px 10px", background: "rgba(52,211,153,0.15)", color: "#86EFAC", border: "1px solid rgba(52,211,153,0.35)", borderRadius: 6, cursor: "pointer", fontWeight: 700 }}>Enroll our clinic →</button>
+              </div>
+              <div style={{ ...card, padding: 14 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#F59E0B", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>Photobiomodulation</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>PBM dose tracking · Sens.ai-style</div>
+                <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>
+                  Co-log Vielight · Coronet · Cellumed PBM headset dosing alongside fNIRS sessions. Joules / wavelength / minutes auto-attached to BIDS sidecar.
+                </div>
+                <div style={{ marginTop: 10, fontSize: 10, color: "#64748B" }}>3 PBM headsets supported · expandable</div>
+              </div>
+              <div style={{ ...card, padding: 14 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#06B6D4", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>Hardware adapter SDK</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Add any BLE device in &lt;200 lines</div>
+                <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>
+                  Public TypeScript adapter interface · CI runs synthetic Mendi/Muse/Polar streams against every PR · community drivers auto-merge on green.
+                </div>
+                <a onClick={() => showToast("docs.eegbase.io/sdk · TypeScript types + Mendi reference impl")} style={{ marginTop: 10, fontSize: 10, color: "#22D3EE", cursor: "pointer", fontWeight: 700, display: "inline-block" }}>docs.eegbase.io/sdk →</a>
+              </div>
             </div>
 
             {/* Why us — competitive moat row */}
@@ -4790,6 +5044,33 @@ board.start_stream()`}</pre>
                         <div style={{ fontSize: 10, color: "#64748B" }}>{o.desc}</div>
                       </div>
                       <span style={{ fontSize: 9, color: "#475569" }}>↓</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Migration importer — switching cost killer */}
+              <div style={{ marginTop: 14, padding: 12, background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 8 }}>
+                  <div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#F1F5F9" }}>Switching from another platform?</div>
+                    <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>One-click import keeps every session, every note, every claim · zero data loss</div>
+                  </div>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: "#34D399", padding: "2px 8px", background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.35)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Avg migration · 38 min</span>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8 }}>
+                  {[
+                    { from: "BrainPaint",      fmt: ".bpf · session log",   ready: true  },
+                    { from: "EEGer",           fmt: ".edf+ + protocol XML", ready: true  },
+                    { from: "NeuroGuide",      fmt: ".nguide · qEEG",       ready: true  },
+                    { from: "BioExplorer",     fmt: ".ncb · designs",       ready: true  },
+                    { from: "SimplePractice", fmt: "Client CSV + notes",   ready: true  },
+                    { from: "TherapyNotes",    fmt: "PDF + claim XML",      ready: true  },
+                  ].map((m) => (
+                    <button key={m.from} onClick={() => showToast(`${m.from} importer · upload ${m.fmt} → all clients + sessions migrated`)} style={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 8, padding: "8px 6px", cursor: "pointer", textAlign: "center" }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>{m.from}</div>
+                      <div style={{ fontSize: 9, color: "#94A3B8" }}>{m.fmt}</div>
+                      <div style={{ fontSize: 9, color: "#34D399", marginTop: 3, fontWeight: 700 }}>Import →</div>
                     </button>
                   ))}
                 </div>

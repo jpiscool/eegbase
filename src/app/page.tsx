@@ -286,15 +286,15 @@ export default function LandingPage() {
           Free for licensed clinicians
         </div>
         <h1 className="font-extrabold text-gray-900 mb-5" style={{ fontSize: "clamp(2.6rem, 5.2vw, 4rem)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
-          Run your whole neurofeedback
+          The clinical layer
           <br />
-          practice from{" "}
-          <span style={{ background: "linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #06B6D4 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>one app</span>
+          for{" "}
+          <span style={{ background: "linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #06B6D4 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>any neurofeedback hardware</span>
         </h1>
         <p className="text-gray-500 max-w-2xl mx-auto mb-10" style={{ fontSize: "1.075rem", lineHeight: 1.65, letterSpacing: "-0.005em" }}>
-          Stop juggling four tools to run one session. EEGBase replaces your
-          streaming software, EHR, scheduler, and report builder — with live
-          brain data, AI session notes, and progress tracking in one place.
+          Mendi at home, Muse in clinic, Polar HRV, and Apple Health become one
+          client record, one SOAP note, one billable session. AI session notes,
+          progress tracking, claims, and HIPAA video — all in one open-source app.
         </p>
         <div className="flex items-center justify-center gap-4">
           <Link
@@ -577,6 +577,33 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Switching-from section — switching cost killer */}
+      <section className="max-w-5xl mx-auto px-6 pb-24">
+        <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">Switching from another platform?</h2>
+        <p className="text-sm text-gray-500 text-center mb-10 max-w-2xl mx-auto">
+          One-click import keeps every session, every note, and every claim. Average migration is 38 minutes. Your old data stays yours — exported as BIDS, EDF+, or PDF anytime.
+        </p>
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-3 max-w-4xl mx-auto">
+          {[
+            { from: "BrainPaint",      fmt: ".bpf · sessions" },
+            { from: "EEGer",           fmt: ".edf+ · protocols" },
+            { from: "NeuroGuide",      fmt: ".nguide · qEEG" },
+            { from: "BioExplorer",     fmt: ".ncb · designs" },
+            { from: "SimplePractice",  fmt: "Clients · notes" },
+            { from: "TherapyNotes",    fmt: "PDF · claims" },
+          ].map((m) => (
+            <div key={m.from} className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-300 transition-colors">
+              <p className="text-sm font-bold text-gray-900 mb-1">{m.from}</p>
+              <p className="text-xs text-gray-500 mb-2">{m.fmt}</p>
+              <p className="text-xs text-blue-600 font-semibold">Import →</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-8 text-center text-xs text-gray-400">
+          Don&apos;t see your platform? <a href="mailto:hello@eegbase.com" className="text-blue-600 hover:underline">Email us</a> · we&apos;ll build the importer.
         </div>
       </section>
 
