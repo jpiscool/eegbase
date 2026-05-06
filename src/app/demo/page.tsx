@@ -6,6 +6,11 @@ import { LiveChart } from "@/components/LiveChart";
 import { GameFeedback } from "@/components/GameFeedback";
 import { BrainMapPanel } from "@/components/BrainMapPanel";
 import { ClinicalQuestionnaire } from "@/components/ClinicalQuestionnaire";
+import {
+  Activity, Gamepad2, Brain, HeartPulse, ClipboardList, TrendingUp,
+  Sparkles, Target, Calendar, FileText, BarChart3, CreditCard,
+  Users, ShieldCheck, Megaphone, Plug, Search, Bell,
+} from "lucide-react";
 
 const MAX_POINTS = 60;
 type MainTab = "session" | "game" | "brain" | "outcomes" | "progress" | "ai" | "schedule" | "hrv" | "protocols" | "reports" | "compare" | "devices" | "billing" | "team" | "compliance" | "marketing";
@@ -250,23 +255,23 @@ export default function DemoPage() {
     return { icon: "◌", text: "Starting up — takes a moment for brainwave patterns to stabilize. Breathe naturally.", color: "#CBD5E1", accent: "#64748B", bg: "#0F172A", border: "#1E293B" };
   })();
 
-  const TABS: { id: MainTab; label: string; groupStart?: string }[] = [
-    { id: "session",   label: "📡 Live Session",       groupStart: "During a Session" },
-    { id: "game",      label: "🎮 Game Mode" },
-    { id: "brain",     label: "🧠 Brain Map" },
-    { id: "hrv",       label: "💓 Heart & Breathing" },
-    { id: "outcomes",  label: "📋 Questionnaires",     groupStart: "Client Records" },
-    { id: "progress",  label: "📈 Progress" },
-    { id: "ai",        label: "🤖 AI Insights" },
-    { id: "protocols", label: "🎯 Protocols",          groupStart: "Practice Tools" },
-    { id: "schedule",  label: "📅 Schedule" },
-    { id: "reports",   label: "📊 Reports" },
-    { id: "compare",   label: "🏆 Compare" },
-    { id: "billing",   label: "💳 Billing & Claims",       groupStart: "Practice Operations" },
-    { id: "team",      label: "👥 Team & Roles" },
-    { id: "compliance",label: "🔐 Compliance" },
-    { id: "marketing", label: "📣 Marketing" },
-    { id: "devices",   label: "🛠 Devices & API",          groupStart: "Integrations" },
+  const TABS: { id: MainTab; label: string; icon: React.ComponentType<{ size?: number; strokeWidth?: number }>; groupStart?: string }[] = [
+    { id: "session",   label: "Live Session",       icon: Activity,       groupStart: "During a Session" },
+    { id: "game",      label: "Game Mode",          icon: Gamepad2 },
+    { id: "brain",     label: "Brain Map",          icon: Brain },
+    { id: "hrv",       label: "Heart & Breathing",  icon: HeartPulse },
+    { id: "outcomes",  label: "Questionnaires",     icon: ClipboardList,  groupStart: "Client Records" },
+    { id: "progress",  label: "Progress",           icon: TrendingUp },
+    { id: "ai",        label: "AI Insights",        icon: Sparkles },
+    { id: "protocols", label: "Protocols",          icon: Target,         groupStart: "Practice Tools" },
+    { id: "schedule",  label: "Schedule",           icon: Calendar },
+    { id: "reports",   label: "Reports",            icon: FileText },
+    { id: "compare",   label: "Compare",            icon: BarChart3 },
+    { id: "billing",   label: "Billing & Claims",   icon: CreditCard,     groupStart: "Practice Operations" },
+    { id: "team",      label: "Team & Roles",       icon: Users },
+    { id: "compliance",label: "Compliance",         icon: ShieldCheck },
+    { id: "marketing", label: "Marketing",          icon: Megaphone },
+    { id: "devices",   label: "Devices & API",      icon: Plug,           groupStart: "Integrations" },
   ];
 
   const DEMO_CLIENTS = [
@@ -425,6 +430,24 @@ export default function DemoPage() {
         /* Premium glow on flagship cards — outer ring + soft drop */
         .demo-flagship { position: relative; box-shadow: 0 1px 0 0 rgba(255,255,255,0.06) inset, 0 0 0 1px rgba(124,58,237,0.5), 0 0 32px -8px rgba(124,58,237,0.4), 0 16px 40px -16px rgba(0,0,0,0.7) !important; transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         .demo-flagship:hover { box-shadow: 0 1px 0 0 rgba(255,255,255,0.08) inset, 0 0 0 1px rgba(168,85,247,0.7), 0 0 48px -8px rgba(124,58,237,0.55), 0 20px 48px -16px rgba(0,0,0,0.75) !important; }
+        /* Premium tabular numerics globally for stat values */
+        .demo-content [data-stat],
+        .demo-content [class*="stat-"] [class*="value"],
+        .demo-content table td,
+        .demo-content kbd,
+        .demo-content code,
+        .demo-content pre {
+          font-variant-numeric: tabular-nums;
+          font-feature-settings: "tnum" 1, "ss01" 1, "cv11" 1;
+        }
+        /* Sidebar inherits Geist (no Inter override) — refined scrollbar */
+        .demo-sidebar { font-family: inherit; }
+        .demo-sidebar::-webkit-scrollbar { width: 6px; }
+        .demo-sidebar::-webkit-scrollbar-track { background: transparent; }
+        .demo-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+        .demo-sidebar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
+        /* Refined kbd globally */
+        kbd { font-family: ui-monospace, monospace; }
         .demo-mobile-nav { display: none; }
         @media (max-width: 900px) {
           .demo-grid-4 { grid-template-columns: 1fr 1fr !important; }
@@ -466,19 +489,19 @@ export default function DemoPage() {
             onClick={() => showToast("⌘K · Search clients, sessions, protocols, claims · Ready")}
             aria-label="Search (Cmd+K)"
             className="demo-topbar-hide-mobile"
-            style={{ background: "#1E293B", border: "1px solid #334155", borderRadius: 8, padding: "5px 12px 5px 10px", display: "flex", alignItems: "center", gap: 8, color: "#94A3B8", fontSize: 12, cursor: "pointer", fontWeight: 500 }}
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 8px 6px 12px", display: "flex", alignItems: "center", gap: 8, color: "#94A3B8", fontSize: 12, cursor: "pointer", fontWeight: 500 }}
           >
-            <span style={{ fontSize: 11 }}>🔍</span>
+            <Search size={13} strokeWidth={2} />
             <span>Search...</span>
-            <kbd style={{ fontSize: 10, fontFamily: "ui-monospace, monospace", background: "#0F172A", border: "1px solid #334155", borderRadius: 4, padding: "1px 6px", color: "#64748B" }}>⌘K</kbd>
+            <kbd style={{ fontSize: 10, fontFamily: "ui-monospace, monospace", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 4, padding: "1px 6px", color: "#CBD5E1", fontWeight: 600 }}>⌘K</kbd>
           </button>
           <button
             onClick={() => showToast("3 new alerts: Sarah's PHQ-9 down 3 pts · James co-sign needed · Aetna ERA posted")}
             aria-label="Notifications"
             className="demo-topbar-hide-mobile"
-            style={{ position: "relative", background: "#1E293B", border: "1px solid #334155", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#CBD5E1" }}
+            style={{ position: "relative", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#CBD5E1" }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+            <Bell size={14} strokeWidth={1.75} />
             <span style={{ position: "absolute", top: -3, right: -3, background: "#EF4444", color: "white", fontSize: 9, fontWeight: 700, borderRadius: 99, padding: "1px 5px", border: "1.5px solid #0F172A" }}>3</span>
           </button>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -861,29 +884,37 @@ export default function DemoPage() {
         {/* Left sidebar nav */}
         <nav aria-label="Demo sections" className="demo-sidebar" style={{ width: 216, background: "#0F172A", flexShrink: 0, position: "sticky", top: 56, height: "calc(100vh - 60px)", overflowY: "auto", zIndex: 10, borderRight: "1px solid #1E293B" }}>
           <div style={{ padding: "14px 0 28px" }}>
-            {TABS.map((t, i) => (
-              <div key={t.id}>
-                {t.groupStart && (
-                  <div style={{ padding: i === 0 ? "6px 16px 8px" : "20px 16px 8px", fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.14em" }}>
-                    {t.groupStart}
-                  </div>
-                )}
-                <button
-                  aria-current={tab === t.id ? "page" : undefined}
-                  onClick={() => switchTab(t.id)}
-                  style={{
-                    width: "100%", textAlign: "left",
-                    background: tab === t.id ? "rgba(96,165,250,0.12)" : "transparent",
-                    border: "none", borderLeft: tab === t.id ? "3px solid #60A5FA" : "3px solid transparent",
-                    padding: "9px 16px", fontSize: 13, fontWeight: tab === t.id ? 600 : 500,
-                    color: tab === t.id ? "#E2E8F0" : "#64748B", cursor: "pointer", display: "block", lineHeight: 1.3,
-                    transition: "background 0.15s, color 0.15s",
-                  }}
-                >
-                  {t.label}
-                </button>
-              </div>
-            ))}
+            {TABS.map((t, i) => {
+              const Icon = t.icon;
+              const isActive = tab === t.id;
+              return (
+                <div key={t.id}>
+                  {t.groupStart && (
+                    <div style={{ padding: i === 0 ? "6px 18px 8px" : "20px 18px 8px", fontSize: 10, fontWeight: 700, color: "#71717A", textTransform: "uppercase", letterSpacing: "0.12em" }}>
+                      {t.groupStart}
+                    </div>
+                  )}
+                  <button
+                    aria-current={isActive ? "page" : undefined}
+                    onClick={() => switchTab(t.id)}
+                    style={{
+                      width: "100%", textAlign: "left",
+                      background: isActive ? "linear-gradient(90deg, rgba(96,165,250,0.14), rgba(96,165,250,0.04))" : "transparent",
+                      border: "none", borderLeft: isActive ? "2px solid #60A5FA" : "2px solid transparent",
+                      padding: "8px 18px", fontSize: 13, fontWeight: isActive ? 600 : 500,
+                      color: isActive ? "#F1F5F9" : "#94A3B8", cursor: "pointer",
+                      display: "flex", alignItems: "center", gap: 10, lineHeight: 1.3,
+                      transition: "background 0.18s ease, color 0.18s ease",
+                    }}
+                    onMouseEnter={(e) => { if (!isActive) { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "#CBD5E1"; } }}
+                    onMouseLeave={(e) => { if (!isActive) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#94A3B8"; } }}
+                  >
+                    <Icon size={16} strokeWidth={1.75} />
+                    <span>{t.label}</span>
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </nav>
 
