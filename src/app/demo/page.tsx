@@ -308,24 +308,28 @@ export default function DemoPage() {
         .skeleton { background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%); background-size: 800px 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
         .demo-section-label { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.07em; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #334155; }
         select option { background: #1E293B; color: white; }
+        .demo-mobile-nav { display: none; }
         @media (max-width: 640px) {
           .demo-grid-2 { grid-template-columns: 1fr !important; }
           .demo-grid-3 { grid-template-columns: 1fr !important; }
           .demo-grid-4 { grid-template-columns: 1fr 1fr !important; }
           .demo-sidebar { display: none !important; }
           .demo-content { padding: 16px !important; }
+          .demo-mobile-nav { display: block !important; }
+          .demo-topbar-hide-mobile { display: none !important; }
+          .demo-topbar { padding: 0 12px !important; gap: 8px !important; }
         }
         /* Hide Next.js dev-mode error/issue badge overlay */
         [data-nextjs-toast], nextjs-portal, #__next-build-watcher, .__next-error-overlay-wrapper { display: none !important; }
       `}</style>
 
       {/* Top bar */}
-      <div style={{ background: "#0F172A", borderBottom: "1px solid #1E293B", padding: "0 24px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div className="demo-topbar" style={{ background: "#0F172A", borderBottom: "1px solid #1E293B", padding: "0 24px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <a href="/" style={{ fontSize: "1.05rem", fontWeight: 800, letterSpacing: "-0.03em", color: "white", textDecoration: "none" }}>
             EEG<span style={{ color: "#60A5FA" }}>Base</span>
           </a>
-          <span style={{ background: "#1E293B", color: "#60A5FA", fontSize: "0.68rem", fontWeight: 700, padding: "3px 10px", borderRadius: 99, border: "1px solid #334155", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+          <span className="demo-topbar-hide-mobile" style={{ background: "#1E293B", color: "#60A5FA", fontSize: "0.68rem", fontWeight: 700, padding: "3px 10px", borderRadius: 99, border: "1px solid #334155", textTransform: "uppercase", letterSpacing: "0.05em" }}>
             Demo Mode
           </span>
         </div>
@@ -345,7 +349,7 @@ export default function DemoPage() {
             </select>
           </div>
           {running && (
-            <span style={{ fontSize: "0.78rem", color: "#34D399", fontWeight: 700, display: "flex", alignItems: "center", gap: 6, letterSpacing: "0.04em" }}>
+            <span className="demo-topbar-hide-mobile" style={{ fontSize: "0.78rem", color: "#34D399", fontWeight: 700, display: "flex", alignItems: "center", gap: 6, letterSpacing: "0.04em" }}>
               <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#34D399", display: "inline-block", animation: "pulse 1.5s infinite", boxShadow: "0 0 8px #34D39988" }} />
               LIVE · {fmt(elapsed)}
             </span>
@@ -456,7 +460,7 @@ export default function DemoPage() {
 
       {/* Guided tour checklist */}
       {!tourDismissed && (
-        <div style={{ position: "fixed", bottom: 20, right: 20, zIndex: 90, background: "white", border: "1px solid #E2E8F0", borderRadius: 14, padding: "14px 16px", boxShadow: "0 8px 32px rgba(0,0,0,0.12)", minWidth: 200, animation: "fadeIn 0.3s ease" }}>
+        <div className="demo-topbar-hide-mobile" style={{ position: "fixed", bottom: 20, right: 20, zIndex: 90, background: "white", border: "1px solid #E2E8F0", borderRadius: 14, padding: "14px 16px", boxShadow: "0 8px 32px rgba(0,0,0,0.12)", minWidth: 200, animation: "fadeIn 0.3s ease" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
             <span style={{ fontSize: 12, fontWeight: 700, color: "#0F172A" }}>Explore the demo</span>
             <button onClick={() => setTourDismissed(true)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, color: "#94A3B8", padding: 0 }}>✕</button>
@@ -487,6 +491,40 @@ export default function DemoPage() {
           )}
         </div>
       )}
+
+      {/* Mobile tab nav (visible <640px only) */}
+      <div className="demo-mobile-nav" style={{ background: "#0F172A", borderBottom: "1px solid #1E293B", padding: "10px 16px", position: "sticky", top: 52, zIndex: 9 }}>
+        <label htmlFor="demo-mobile-tab" style={{ display: "block", fontSize: 10, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 6 }}>
+          Section
+        </label>
+        <select
+          id="demo-mobile-tab"
+          aria-label="Navigate demo sections"
+          value={tab}
+          onChange={(e) => switchTab(e.target.value as MainTab)}
+          style={{ width: "100%", background: "#1E293B", color: "#F1F5F9", border: "1px solid #334155", borderRadius: 8, padding: "10px 12px", fontSize: 14, fontWeight: 600, appearance: "none", backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%2394A3B8' stroke-width='2' fill='none' stroke-linecap='round'/></svg>\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center", paddingRight: 32 }}
+        >
+          {(() => {
+            const groups: { label: string; items: typeof TABS }[] = [];
+            let current: { label: string; items: typeof TABS } | null = null;
+            for (const t of TABS) {
+              if (t.groupStart) {
+                current = { label: t.groupStart, items: [t] };
+                groups.push(current);
+              } else if (current) {
+                current.items.push(t);
+              }
+            }
+            return groups.map((g) => (
+              <optgroup key={g.label} label={g.label}>
+                {g.items.map((t) => (
+                  <option key={t.id} value={t.id}>{t.label}</option>
+                ))}
+              </optgroup>
+            ));
+          })()}
+        </select>
+      </div>
 
       {/* Sidebar + Content layout */}
       <div style={{ display: "flex", alignItems: "flex-start", background: "#F0F4F8", minHeight: "calc(100vh - 60px)" }}>
