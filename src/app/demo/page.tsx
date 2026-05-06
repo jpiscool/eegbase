@@ -1305,6 +1305,49 @@ export default function DemoPage() {
               </span>
             </div>
 
+            {/* Telehealth co-feedback panel — unique combo: HIPAA video + live signals */}
+            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #0F172A 0%, #0A1A2E 100%)", border: "1px solid #2563EB", borderRadius: 14, padding: 14, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(37,99,235,0.4)" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 14, alignItems: "stretch" }}>
+                {/* Video tile */}
+                <div style={{ position: "relative", borderRadius: 10, overflow: "hidden", background: "linear-gradient(135deg, #1E293B 0%, #0F172A 100%)", aspectRatio: "4 / 3", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, #60A5FA, #A78BFA)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, fontWeight: 800, color: "white" }}>SM</div>
+                  <span style={{ position: "absolute", top: 8, left: 8, fontSize: 9, fontWeight: 700, color: "#34D399", padding: "2px 7px", background: "rgba(0,0,0,0.6)", borderRadius: 99, display: "inline-flex", alignItems: "center", gap: 4 }}>
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#EF4444", animation: "pulse 1.2s infinite" }} />REC
+                  </span>
+                  <span style={{ position: "absolute", bottom: 8, left: 8, fontSize: 10, fontWeight: 700, color: "white", textShadow: "0 1px 2px rgba(0,0,0,0.6)" }}>Sarah Mitchell</span>
+                  <span style={{ position: "absolute", bottom: 8, right: 8, fontSize: 9, color: "#94A3B8", padding: "2px 6px", background: "rgba(0,0,0,0.6)", borderRadius: 4, fontFamily: "ui-monospace, monospace" }}>HD · E2E</span>
+                </div>
+                {/* Co-feedback overlay */}
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                    <span style={{ fontSize: 9, fontWeight: 700, color: "#60A5FA", padding: "2px 7px", background: "rgba(37,99,235,0.15)", border: "1px solid rgba(37,99,235,0.35)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.08em" }}>HIPAA Video · Co-Feedback</span>
+                    <span style={{ fontSize: 10, color: "#94A3B8" }}>Telehealth + live Mendi signals — clinician sees in real time what the at-home client&apos;s brain is doing</span>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginBottom: 8 }}>
+                    {[
+                      { k: "Latency",     v: "120 ms",   sub: "WebRTC end-to-end" },
+                      { k: "Signal sync", v: "± 80 ms",  sub: "stamped to LSL clock" },
+                      { k: "Encryption",  v: "DTLS 1.3", sub: "AES-256-GCM" },
+                      { k: "BAA",         v: "Daily.co", sub: "signed · audited" },
+                    ].map((s) => (
+                      <div key={s.k} style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 8, padding: "6px 8px" }}>
+                        <div style={{ fontSize: 9, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 700 }}>{s.k}</div>
+                        <div style={{ fontSize: 13, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.01em", fontVariantNumeric: "tabular-nums" }}>{s.v}</div>
+                        <div style={{ fontSize: 9, color: "#64748B" }}>{s.sub}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+                    <button onClick={() => showToast("Mic muted on clinician side")} style={{ fontSize: 10, padding: "5px 10px", background: "#0A1320", color: "#CBD5E1", border: "1px solid #334155", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>🎙 Mute</button>
+                    <button onClick={() => showToast("Camera off · audio still live")} style={{ fontSize: 10, padding: "5px 10px", background: "#0A1320", color: "#CBD5E1", border: "1px solid #334155", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>📷 Cam off</button>
+                    <button onClick={() => showToast("Sharing protocol-control screen with client")} style={{ fontSize: 10, padding: "5px 10px", background: "#0A1320", color: "#CBD5E1", border: "1px solid #334155", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>🖥 Share</button>
+                    <button onClick={() => showToast("Session bookmark added at 14:23 · auto-included in SOAP draft")} style={{ fontSize: 10, padding: "5px 10px", background: "#0A1320", color: "#CBD5E1", border: "1px solid #334155", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>🔖 Bookmark moment</button>
+                    <span style={{ marginLeft: "auto", fontSize: 10, color: "#34D399", fontWeight: 700 }}>↑ Reward score visible to client during call</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Signal Quality Strip — fNIRS / EEG sensor health */}
             <div style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 12, padding: "12px 16px", marginBottom: 12, display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
               <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em", marginRight: 4 }}>Signal Quality</span>
@@ -2161,6 +2204,39 @@ export default function DemoPage() {
               ))}
             </div>
 
+            {/* Connected wearables — passive data sources */}
+            <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 18, marginBottom: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                <div>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Connected wearables · passive data</h3>
+                  <p style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>Apple Health · Oura · Whoop · Garmin · Fitbit — auto-streamed via Spike API · normalized to one schema · feeds into the cross-session pattern detector</p>
+                </div>
+                <span style={{ fontSize: 9, fontWeight: 700, color: "#34D399", padding: "3px 8px", background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>3 of 5 syncing</span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10 }}>
+                {[
+                  { name: "Apple Health",  icon: "🍎", connected: true,  metrics: ["HRV", "Sleep", "Mindful min"], lastSync: "2 min ago", color: "#94A3B8" },
+                  { name: "Oura Ring",     icon: "💍", connected: true,  metrics: ["Sleep score", "Body temp", "HRV"], lastSync: "5 min ago", color: "#A855F7" },
+                  { name: "Whoop 4.0",     icon: "🟦", connected: true,  metrics: ["Recovery", "Strain", "Sleep need"], lastSync: "8 min ago", color: "#06B6D4" },
+                  { name: "Garmin",        icon: "🟢", connected: false, metrics: ["Stress", "Body Battery"], lastSync: "—", color: "#10B981" },
+                  { name: "Fitbit",        icon: "🟣", connected: false, metrics: ["Sleep stages", "SpO₂"], lastSync: "—", color: "#EC4899" },
+                ].map((w) => (
+                  <div key={w.name} style={{ background: w.connected ? "#0A1320" : "rgba(15,23,42,0.4)", border: `1px solid ${w.connected ? w.color + "40" : "#1E293B"}`, borderRadius: 10, padding: 12, opacity: w.connected ? 1 : 0.55 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                      <span style={{ fontSize: 18 }}>{w.icon}</span>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#F1F5F9" }}>{w.name}</div>
+                      {w.connected && <span style={{ marginLeft: "auto", width: 6, height: 6, borderRadius: "50%", background: "#34D399", boxShadow: "0 0 6px #34D399" }} />}
+                    </div>
+                    <div style={{ fontSize: 9, color: "#94A3B8", marginBottom: 4, lineHeight: 1.5 }}>{w.metrics.join(" · ")}</div>
+                    <div style={{ fontSize: 9, color: "#64748B" }}>{w.connected ? `Synced ${w.lastSync}` : "Tap to connect"}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 10, padding: "6px 10px", background: "rgba(15,23,42,0.5)", borderRadius: 6, fontSize: 9, color: "#64748B", display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ color: "#A5B4FC", fontWeight: 700 }}>↗</span> Sleep efficiency from Oura is the strongest predictor of Sarah&apos;s next-session ΔHbO gain (r=+0.74) — see AI Insights.
+              </div>
+            </div>
+
             {/* HRV trend chart */}
             <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 20, marginBottom: 16 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
@@ -2568,6 +2644,74 @@ export default function DemoPage() {
               <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
                 EEGBase AI watches session data and flags when a client is stalled — then suggests the next protocol to try, compared against <strong style={{ color: "#A5B4FC" }}>847 anonymized client profiles</strong>. It also drafts clinical notes you can copy straight to your EHR.
               </p>
+            </div>
+
+            {/* Cross-session pattern detector — Mendi data + multi-modal correlation */}
+            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 14, padding: 20, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(79,70,229,0.4)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, gap: 12, flexWrap: "wrap" }}>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em" }}>Cross-Session Pattern Detector</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginTop: 2 }}>What moved Sarah&apos;s prefrontal OxyHb up over the last 8 sessions?</div>
+                  <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>Auto-correlates Mendi fNIRS · check-in mood · sleep · HRV · medication adherence — surfaces the strongest drivers</div>
+                </div>
+                <span style={{ fontSize: 9, fontWeight: 700, color: "#34D399", padding: "3px 8px", background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>3 strong signals · p&lt;0.01</span>
+              </div>
+
+              {/* Top-3 correlations */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 12 }}>
+                {[
+                  { driver: "Sleep efficiency (Oura)",  r: "+0.74", n: 8, dir: "up", note: "Sessions following ≥85% sleep efficiency saw +18% mean ΔHbO vs <85% nights" },
+                  { driver: "Pre-session mood (check-in)", r: "+0.62", n: 8, dir: "up", note: "Days Sarah self-reported mood ≥7 produced higher reward score (mean 78 vs 61)" },
+                  { driver: "Caffeine within 2 h",        r: "−0.58", n: 6, dir: "down", note: "Sessions after late caffeine showed elevated theta and lower OxyHb gain" },
+                ].map((c) => (
+                  <div key={c.driver} style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(79,70,229,0.3)", borderRadius: 10, padding: 12 }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.06em" }}>{c.driver}</div>
+                      <span style={{ fontSize: 14, color: c.dir === "up" ? "#34D399" : "#FCA5A5" }}>{c.dir === "up" ? "↑" : "↓"}</span>
+                    </div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums" }}>r = {c.r}</div>
+                    <div style={{ fontSize: 9, color: "#94A3B8", marginBottom: 6 }}>n = {c.n} sessions · Spearman</div>
+                    <div style={{ fontSize: 10, color: "#CBD5E1", lineHeight: 1.5 }}>{c.note}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Mini correlation grid */}
+              <div style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 10, padding: 12, marginBottom: 12 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Multi-modal correlation matrix · last 8 sessions</div>
+                <div style={{ display: "grid", gridTemplateColumns: "120px repeat(6, 1fr)", gap: 2, fontSize: 9, fontFamily: "ui-monospace, monospace" }}>
+                  <div></div>
+                  {["ΔHbO", "Reward", "Mood", "Sleep", "HRV", "Adherence"].map((h) => (
+                    <div key={h} style={{ padding: 4, color: "#94A3B8", textAlign: "center", fontWeight: 700 }}>{h}</div>
+                  ))}
+                  {[
+                    { label: "ΔHbO L (Mendi)",   vals: [1.00, 0.81, 0.62, 0.74, 0.41, 0.33] },
+                    { label: "Reward Score",     vals: [0.81, 1.00, 0.55, 0.68, 0.47, 0.29] },
+                    { label: "Mood (check-in)",  vals: [0.62, 0.55, 1.00, 0.51, 0.38, 0.44] },
+                    { label: "Sleep efficiency", vals: [0.74, 0.68, 0.51, 1.00, 0.59, 0.22] },
+                    { label: "HRV RMSSD",        vals: [0.41, 0.47, 0.38, 0.59, 1.00, 0.18] },
+                    { label: "Med adherence",    vals: [0.33, 0.29, 0.44, 0.22, 0.18, 1.00] },
+                  ].flatMap((row) => [
+                    <div key={`${row.label}-label`} style={{ padding: "4px 6px", color: "#CBD5E1", fontWeight: 600 }}>{row.label}</div>,
+                    ...row.vals.map((v, i) => {
+                      const intensity = Math.abs(v);
+                      const positive = v >= 0;
+                      const bg = positive ? `rgba(52, 211, 153, ${intensity * 0.6})` : `rgba(239, 68, 68, ${intensity * 0.6})`;
+                      return (
+                        <div key={`${row.label}-${i}`} style={{ padding: 4, background: bg, color: intensity > 0.55 ? "#0F172A" : "#F1F5F9", textAlign: "center", borderRadius: 3, fontWeight: 700 }}>
+                          {v.toFixed(2)}
+                        </div>
+                      );
+                    }),
+                  ])}
+                </div>
+              </div>
+
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", fontSize: 11 }}>
+                <button onClick={() => showToast("Recommended: 'Sleep-coupled session' — 8 AM start after ≥85% sleep efficiency. Auto-suggested calendar slots.")} style={{ ...clinicianBtnPrimary, background: "#7C3AED", fontSize: 12 }}>Apply finding to schedule →</button>
+                <button onClick={() => showToast("Pattern saved to research registry · auto-tagged for Mendi science team review")} style={{ ...clinicianBtn, fontSize: 12 }}>Send to research registry</button>
+                <span style={{ marginLeft: "auto", fontSize: 10, color: "#94A3B8" }}>Powered by Claude · only patterns at p&lt;0.05 surfaced</span>
+              </div>
             </div>
 
             {/* AI Ambient Scribe */}
