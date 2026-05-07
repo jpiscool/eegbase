@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="50%" stop-color="#1E1B4B"/>
+      <stop offset="100%" stop-color="#3B0764"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="50%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.85" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- Decorative concentric rings on right -->
+  <g transform="translate(950, 315)" opacity="0.15">
+    <circle r="260" fill="none" stroke="#7C3AED" stroke-width="1.5"/>
+    <circle r="200" fill="none" stroke="#A78BFA" stroke-width="1.5"/>
+    <circle r="140" fill="none" stroke="#C4B5FD" stroke-width="1.5"/>
+  </g>
+
+  <!-- Top eyebrow -->
+  <text x="80" y="100" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" fill="#94A3B8" letter-spacing="3">
+    EEGBASE — OPEN-SOURCE NEUROFEEDBACK PLATFORM
+  </text>
+
+  <!-- Main title -->
+  <text x="80" y="220" font-family="system-ui, -apple-system, sans-serif" font-size="76" font-weight="800" fill="#FFFFFF" letter-spacing="-2.5">
+    The clinical layer
+  </text>
+  <text x="80" y="310" font-family="system-ui, -apple-system, sans-serif" font-size="76" font-weight="800" fill="url(#accent)" letter-spacing="-2.5">
+    for any neurofeedback
+  </text>
+  <text x="80" y="400" font-family="system-ui, -apple-system, sans-serif" font-size="76" font-weight="800" fill="url(#accent)" letter-spacing="-2.5">
+    hardware
+  </text>
+
+  <!-- Subtitle -->
+  <text x="80" y="470" font-family="system-ui, -apple-system, sans-serif" font-size="22" fill="#CBD5E1">
+    Mendi at home · Muse in clinic · Polar HRV · Apple Health
+  </text>
+  <text x="80" y="500" font-family="system-ui, -apple-system, sans-serif" font-size="22" fill="#CBD5E1">
+    → one client record, one SOAP note, one billable session.
+  </text>
+
+  <!-- Trust pills -->
+  <g transform="translate(80, 540)">
+    <g>
+      <rect x="0" y="0" width="180" height="36" rx="18" fill="#FFFFFF" fill-opacity="0.08" stroke="#FFFFFF" stroke-opacity="0.15"/>
+      <text x="90" y="23" font-family="system-ui, sans-serif" font-size="14" font-weight="600" fill="#E2E8F0" text-anchor="middle">🛡 Schrems II + SCCs</text>
+    </g>
+    <g transform="translate(195, 0)">
+      <rect x="0" y="0" width="160" height="36" rx="18" fill="#FFFFFF" fill-opacity="0.08" stroke="#FFFFFF" stroke-opacity="0.15"/>
+      <text x="80" y="23" font-family="system-ui, sans-serif" font-size="14" font-weight="600" fill="#E2E8F0" text-anchor="middle">🔒 Bishop Fox audited</text>
+    </g>
+    <g transform="translate(370, 0)">
+      <rect x="0" y="0" width="125" height="36" rx="18" fill="#FFFFFF" fill-opacity="0.08" stroke="#FFFFFF" stroke-opacity="0.15"/>
+      <text x="62" y="23" font-family="system-ui, sans-serif" font-size="14" font-weight="600" fill="#E2E8F0" text-anchor="middle">📜 MIT licensed</text>
+    </g>
+    <g transform="translate(510, 0)">
+      <rect x="0" y="0" width="180" height="36" rx="18" fill="#FFFFFF" fill-opacity="0.08" stroke="#FFFFFF" stroke-opacity="0.15"/>
+      <text x="90" y="23" font-family="system-ui, sans-serif" font-size="14" font-weight="600" fill="#E2E8F0" text-anchor="middle">🌐 BIDS / SNIRF / EDF+</text>
+    </g>
+  </g>
+</svg>

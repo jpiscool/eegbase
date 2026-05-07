@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Brain, BarChart3, Wifi, ShieldCheck, Users, Zap, Bluetooth, FileText, Share2, CheckCircle, ChevronDown } from "lucide-react";
 import { LandingLivePreview } from "@/components/LandingLivePreview";
 import { RoiCalculator } from "@/components/RoiCalculator";
+import { WaitlistForm } from "@/components/WaitlistForm";
 
 const features = [
   {
@@ -672,9 +673,19 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
-        <p className="text-xs text-gray-400 text-center mt-6">
+        <p className="text-xs text-gray-400 text-center mt-6 mb-8">
           All plans · 30-day free trial · no card required · HIPAA BAA · BIDS/SNIRF/EDF+ export · cancel anytime
         </p>
+
+        {/* Waitlist email capture — paid plans launch Q3 2026 */}
+        <div className="bg-gradient-to-br from-blue-50 to-violet-50/40 border border-blue-100 rounded-2xl p-7 max-w-3xl mx-auto text-center">
+          <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-2">Get notified at launch</p>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Be one of the first 200 clinicians</h3>
+          <p className="text-sm text-gray-500 leading-relaxed mb-5 max-w-xl mx-auto">
+            Paid plans open Q3 2026. Join the waitlist for private-beta seats, early-access pricing, and direct line to the team.
+          </p>
+          <WaitlistForm />
+        </div>
       </section>
 
       {/* What we DON'T do yet — counterintuitive trust builder */}

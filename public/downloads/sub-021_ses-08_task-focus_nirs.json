@@ -1,0 +1,98 @@
+{
+  "TaskName": "Focus Boost · Mendi prefrontal alpha up-train",
+  "TaskDescription": "20-minute SMR + theta-suppress protocol at Cz with bilateral prefrontal fNIRS feedback. Client received auditory + visual feedback at 100ms update rate.",
+  "InstitutionName": "Cedar Valley Neurofeedback (de-identified)",
+  "InstitutionAddress": "1234 Sample St, Austin TX, USA",
+  "InstitutionalDepartmentName": "Adolescent ADHD Program",
+  "Manufacturer": "Mendi",
+  "ManufacturersModelName": "Mendi v3 Headband",
+  "DeviceSerialNumber": "MND-3-A4F92E (de-identified)",
+  "SoftwareVersions": "EEGBase/4.6.2 + Mendi-SDK/2.1.3",
+  "SamplingFrequency": 25,
+  "NIRSChannelCount": 4,
+  "NIRSSourceOptodeCount": 2,
+  "NIRSDetectorOptodeCount": 2,
+  "NIRSPlacementScheme": "International 10-10 system · Fp1 / Fp2",
+  "Wavelengths": [760, 850],
+  "ShortChannelCount": 0,
+  "RecordingDuration": 1320.4,
+  "RecordingType": "continuous",
+  "HardwareFilters": {
+    "HighpassFilter": { "CutoffFrequency": 0.01, "FilterType": "Butterworth", "Order": 2 },
+    "LowpassFilter":  { "CutoffFrequency": 5.0,  "FilterType": "Butterworth", "Order": 4 }
+  },
+  "MotionArtifactRejection": {
+    "Method": "Wavelet decomposition + temporal-derivative-distribution-repair (TDDR)",
+    "FalsePositiveRate": 0.008,
+    "DetectionAccuracy": 0.964,
+    "Reference": "Fishburn et al. 2019, doi:10.1016/j.neuroimage.2018.09.025"
+  },
+  "PreprocessingPipeline": [
+    "raw → optical-density",
+    "TDDR motion correction",
+    "Beer-Lambert law conversion (DPF age-adjusted)",
+    "0.01–0.5 Hz band-pass",
+    "GLM HRF deconvolution"
+  ],
+  "PreprocessingSoftware": "MNE-NIRS 0.5.1 + custom EEGBase pipeline",
+  "Subject": {
+    "ParticipantID": "sub-021",
+    "Age": 14,
+    "Sex": "F",
+    "Handedness": "right",
+    "Group": "ADHD-combined",
+    "InclusionCriteria": "DSM-5 ADHD diagnosis · age 12-17 · medication-naive or stable >6 weeks",
+    "ExclusionCriteria": "comorbid psychosis, substance use, head injury <12 months",
+    "DiagnosticCodes": ["F90.2"]
+  },
+  "Session": {
+    "SessionID": "ses-08",
+    "SessionNumber": 8,
+    "TotalProtocolSessions": 20,
+    "PriorBaselineMeasures": {
+      "ADHD-RS": 31,
+      "PHQ-9":   10,
+      "GAD-7":   7
+    },
+    "SameSessionMeasures": {
+      "Pre-session-mood-1to10":   7,
+      "Sleep-prior-night-hours":  7.4,
+      "Caffeine-within-2h":       false
+    }
+  },
+  "Outcomes": {
+    "MeanDeltaHbO_uM": 0.087,
+    "RewardScore_avg": 71.3,
+    "RewardScore_peak": 88.4,
+    "TimeAboveThreshold_pct": 64,
+    "ThetaBetaZ_change_from_baseline": -0.4
+  },
+  "Consent": {
+    "BIDSparticipationConsent": "obtained",
+    "RegistrySharing": "opt-in",
+    "DataDeletionRights": "active per HIPAA + GDPR · revocable",
+    "DUA": "EEGBase-Mendi-Registry-DUA-2026-04-12.pdf (NDA-gated)"
+  },
+  "BIDSVersion": "1.9.0",
+  "BIDSExtensionProposal": "BEP-030 (fNIRS) draft compliant",
+  "Validator": {
+    "Tool": "bids-validator",
+    "Version": "1.13.4",
+    "Result": "valid · 0 errors · 0 warnings"
+  },
+  "Authors": [
+    "Chen, J. (Cedar Valley NF)",
+    "Reyes, M. (BrightPath Clinic)",
+    "Patel, M. (Riverside Wellness)"
+  ],
+  "Acknowledgements": "Mendi for hardware support. Patient and guardian gave informed assent + consent.",
+  "Funding": ["EEGBase research-credits program 2026-Q2"],
+  "ReferencesAndLinks": [
+    "https://eegbase.vercel.app/demo",
+    "https://github.com/eegbase/eegbase",
+    "https://bids.neuroimaging.io/extensions/bep030_fnirs.html"
+  ],
+  "DatasetDOI": "10.31234/osf.io/8h2k4 (pre-print)",
+  "License": "CC-BY-4.0 for the sidecar metadata · raw waveforms remain at site-of-origin",
+  "_eegbase_demo_note": "This is an illustrative sidecar for the EEGBase × Mendi partnership pitch. Patient identifiers de-identified per HIPAA Safe Harbor + Expert Determination. Do not redistribute as if it were real clinical data."
+}

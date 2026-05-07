@@ -443,3 +443,16 @@ a, button, [role="button"] {
   transition: opacity 0.15s;
 }
 .annotation-marker:hover::after { opacity: 1; }
+
+/* ── Print stylesheet ────────────────────────────────────────────────────────
+   For /mendi, /mendi-clinical-preview, /privacy, /terms — clean print output. */
+@media print {
+  header, footer, nav, .demo-modal-backdrop, .no-print { display: none !important; }
+  body, html, main { background: #fff !important; color: #000 !important; }
+  h1, h2, h3 { page-break-after: avoid; }
+  section, article { page-break-inside: avoid; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 9pt; color: #666; }
+  * { box-shadow: none !important; text-shadow: none !important; }
+  @page { margin: 0.6in; }
+}
+

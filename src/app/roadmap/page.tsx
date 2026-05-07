@@ -1,0 +1,136 @@
+import Link from "next/link";
+
+export const metadata = {
+  title: "Roadmap · EEGBase",
+  description: "What's shipping next on the EEGBase platform.",
+};
+
+type Status = "now" | "next" | "planned" | "future";
+
+const QUARTERS: { quarter: string; label: Status; items: { title: string; desc: string; votes?: number }[] }[] = [
+  {
+    quarter: "Q2 2026",
+    label: "now",
+    items: [
+      { title: "Sham-controlled RCT enrollment portal", desc: "Multi-clinic registry · DSMB review · public clinic-recruitment landing page", votes: 47 },
+      { title: "Spanish + French i18n",                  desc: "Full UI translation · client-facing portal first, then clinician-facing", votes: 31 },
+      { title: "Mendi v3 native driver",                  desc: "Q4 2025 firmware compatibility · pinned-version validation", votes: 22 },
+      { title: "BIDS-fNIRS validator (browser-side)",     desc: "Real-time validation against bids-validator 1.13+", votes: 18 },
+    ],
+  },
+  {
+    quarter: "Q3 2026",
+    label: "next",
+    items: [
+      { title: "Native iOS + Android apps", desc: "React Native · same codebase as web · TestFlight beta · published to App Store + Play Store", votes: 124 },
+      { title: "FHIR R4 SMART-on-FHIR write-back", desc: "Bidirectional with Epic / Athena / eClinicalWorks", votes: 89 },
+      { title: "Hyperscanning v2 (4-person)", desc: "Multi-headset dyadic + group studies · sub-ms LSL alignment", votes: 41 },
+      { title: "Apple Watch HRV native",     desc: "WatchOS app · pairs with EEGBase session in real-time", votes: 38 },
+      { title: "Offline mode (PWA)",         desc: "Run a session without internet · sync when connection returns", votes: 27 },
+      { title: "Coaching marketplace · public beta", desc: "Mendi at-home users buy clinician oversight · Stripe Connect rev-share live", votes: 53 },
+    ],
+  },
+  {
+    quarter: "Q4 2026",
+    label: "planned",
+    items: [
+      { title: "FHIR R5 bidirectional",       desc: "When Epic adopts R5; we'll be ready", votes: 12 },
+      { title: "EU clinic onboarding waves",   desc: "Frankfurt region · French + German + Dutch first", votes: 22 },
+      { title: "EPCS / PDMP via DrFirst",      desc: "Psychiatrist-friendly · controlled-substance e-prescribing", votes: 16 },
+      { title: "42 CFR Part 2 SUD records",    desc: "Separate consent flow for substance-use treatment", votes: 11 },
+      { title: "3D LORETA source localization", desc: "Web-based · Three.js brain mesh · click any moment to see source", votes: 64 },
+      { title: "Group therapy v2",             desc: "Up to 30 participants · CPT 90849 reimbursable · screen-share protocol controls", votes: 19 },
+    ],
+  },
+  {
+    quarter: "Q1 2027",
+    label: "future",
+    items: [
+      { title: "RCT publication (Frontiers)",  desc: "Sham-controlled efficacy trial submission" },
+      { title: "Mendi consumer app deep-link", desc: "Clinic ↔ home seamlessly with single-tap consent" },
+      { title: "API GA + public SDK",          desc: "v1 stable · TypeScript / Python clients · Postman collection" },
+      { title: "ONC HIT 2025 Edition cert",    desc: "Apply for federal HIT certification through CHPL" },
+      { title: "AI co-author for clinic write-ups", desc: "From session data → submitted clinical case study, with author approval" },
+    ],
+  },
+];
+
+const COLOR: Record<Status, { bg: string; fg: string; ring: string }> = {
+  now:     { bg: "#DCFCE7", fg: "#15803D", ring: "#10B981" },
+  next:    { bg: "#DBEAFE", fg: "#1D4ED8", ring: "#3B82F6" },
+  planned: { bg: "#EDE9FE", fg: "#6D28D9", ring: "#A78BFA" },
+  future:  { bg: "#FEF3C7", fg: "#92400E", ring: "#F59E0B" },
+};
+
+export default function RoadmapPage() {
+  return (
+    <div style={{ minHeight: "100vh", background: "#FAFAFA", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <header style={{ borderBottom: "1px solid #E5E7EB", background: "#fff" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+            <div style={{ width: 32, height: 32, background: "#2563EB", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ color: "white", fontWeight: 800, fontSize: 14 }}>EB</span>
+            </div>
+            <span style={{ fontWeight: 700, fontSize: 16, color: "#111" }}>EEGBase</span>
+          </Link>
+          <div style={{ display: "flex", gap: 16, fontSize: 14 }}>
+            <Link href="/changelog" style={{ color: "#6B7280", textDecoration: "none" }}>Changelog →</Link>
+            <Link href="/status" style={{ color: "#6B7280", textDecoration: "none" }}>Status →</Link>
+          </div>
+        </div>
+      </header>
+
+      <main style={{ maxWidth: 1100, margin: "0 auto", padding: "48px 24px" }}>
+        <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Public roadmap · updated weekly</p>
+        <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>What ships next</h1>
+        <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
+          Vote-counts are illustrative for the demo. Real votes will come from clinicians once paid plans launch in Q3 2026. Also see what we&apos;re explicitly NOT doing on <Link href="/" style={{ color: "#2563EB" }}>the honest-gaps section</Link>.
+        </p>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+          {QUARTERS.map((q) => {
+            const c = COLOR[q.label];
+            return (
+              <section key={q.quarter} style={{ background: "white", border: "1px solid #E5E7EB", borderRadius: 14, padding: 20 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                  <span style={{ fontSize: 9, fontWeight: 800, color: c.fg, padding: "3px 9px", background: c.bg, borderRadius: 99, letterSpacing: "0.08em", textTransform: "uppercase" }}>{q.label}</span>
+                  <h2 style={{ fontSize: 20, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.01em" }}>{q.quarter}</h2>
+                </div>
+                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+                  {q.items.map((item) => (
+                    <li key={item.title} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 12, alignItems: "start", paddingBottom: 12, borderBottom: "1px solid #F3F4F6" }}>
+                      <div>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: "#111", marginBottom: 2 }}>{item.title}</div>
+                        <div style={{ fontSize: 12, color: "#6B7280", lineHeight: 1.55 }}>{item.desc}</div>
+                      </div>
+                      {item.votes !== undefined && (
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, padding: "4px 8px", border: `1px solid ${c.ring}40`, borderRadius: 8, minWidth: 36 }}>
+                          <span style={{ fontSize: 9, color: c.fg, fontWeight: 700 }}>▲</span>
+                          <span style={{ fontSize: 11, fontWeight: 800, color: "#111", lineHeight: 1 }}>{item.votes}</span>
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            );
+          })}
+        </div>
+
+        <div style={{ marginTop: 36, background: "white", border: "1px solid #E5E7EB", borderRadius: 14, padding: 24, textAlign: "center" }}>
+          <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 8 }}>Have a request?</h2>
+          <p style={{ fontSize: 14, color: "#64748B", lineHeight: 1.6, marginBottom: 16, maxWidth: 480, margin: "0 auto 16px" }}>
+            We read every email. If multiple clinicians ask for the same thing, it moves up the queue.
+          </p>
+          <a href="mailto:roadmap@eegbase.com?subject=Roadmap%20request" style={{ display: "inline-block", padding: "10px 18px", background: "#2563EB", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
+            Email a request →
+          </a>
+        </div>
+      </main>
+
+      <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
+        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/changelog" style={{ color: "#9CA3AF" }}>Changelog</Link>
+      </footer>
+    </div>
+  );
+}

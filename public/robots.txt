@@ -1,0 +1,32 @@
+# https://eegbase.vercel.app/robots.txt
+
+User-agent: *
+Allow: /
+
+# Disallow auth-protected and demo-only paths from crawl
+Disallow: /login
+Disallow: /forgot-password
+Disallow: /portal/
+Disallow: /share/
+Disallow: /checkin/
+Disallow: /supervise/
+Disallow: /clients/
+Disallow: /sessions/
+Disallow: /messages
+Disallow: /notifications
+Disallow: /settings/
+Disallow: /onboarding
+
+# Public marketing + demo
+Allow: /demo
+Allow: /mendi
+Allow: /mendi-clinical-preview
+Allow: /community
+Allow: /docs
+Allow: /privacy
+Allow: /terms
+Allow: /status
+Allow: /changelog
+Allow: /roadmap
+
+Sitemap: https://eegbase.vercel.app/sitemap.xml
