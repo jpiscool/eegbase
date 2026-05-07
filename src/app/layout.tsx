@@ -4,6 +4,7 @@ import { Geist } from "next/font/google";
 import { CookieBanner } from "@/components/CookieBanner";
 import { GlobalCommandK } from "@/components/GlobalCommandK";
 import { InstallPwaPrompt } from "@/components/InstallPwaPrompt";
+import { LiveChatWidget } from "@/components/LiveChatWidget";
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"] });
@@ -50,7 +51,15 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
   },
-  alternates: { canonical: SITE_URL },
+  alternates: {
+    canonical: SITE_URL,
+    languages: {
+      en: SITE_URL,
+      "x-default": SITE_URL,
+      es: `${SITE_URL}/es`,
+      fr: `${SITE_URL}/fr`,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -64,6 +73,7 @@ export default function RootLayout({
         {children}
         <GlobalCommandK />
         <InstallPwaPrompt />
+        <LiveChatWidget />
         <CookieBanner />
         {PLAUSIBLE_DOMAIN && (
           <Script

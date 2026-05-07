@@ -11,6 +11,9 @@ import { StickyDemoCTA } from "@/components/StickyDemoCTA";
 import { LiveStatusPill } from "@/components/LiveStatusPill";
 import { SearchableFAQ } from "@/components/SearchableFAQ";
 import { ExitIntentModal } from "@/components/ExitIntentModal";
+import { PartnerLogos } from "@/components/PartnerLogos";
+import { ChangelogWidget } from "@/components/ChangelogWidget";
+import { CurrencyTogglePricing } from "@/components/CurrencyTogglePricing";
 
 const features = [
   {
@@ -368,6 +371,9 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Partner logos · ecosystem signal */}
+      <PartnerLogos />
+
       {/* Outcome-story strip — a real session arc rendered visually */}
       <section className="max-w-5xl mx-auto px-6 pb-16">
         <div className="bg-gradient-to-br from-gray-50 to-blue-50/40 border border-gray-100 rounded-3xl p-8">
@@ -645,6 +651,9 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* From the changelog · proves momentum */}
+      <ChangelogWidget />
+
       {/* FAQ */}
       <section className="max-w-3xl mx-auto px-6 pb-24" id="faq">
         <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
@@ -659,30 +668,12 @@ export default function LandingPage() {
       {/* Pricing teaser — transparent pricing converts +15-25% per CRO research */}
       <section className="max-w-5xl mx-auto px-6 pb-24" id="pricing">
         <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">Simple, transparent pricing</h2>
-        <p className="text-sm text-gray-500 text-center mb-10">Free for licensed clinicians during private beta · paid plans launch Q3 2026.</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto">
-          {[
-            { tier: "Solo",     price: "$19",  unit: "per session",   sub: "No commitment · trial-friendly", border: "border-gray-200", btn: "bg-gray-100 text-gray-700 hover:bg-gray-200" },
-            { tier: "Practice", price: "$349", unit: "per clinic / mo", sub: "5 clinicians · unlimited clients", border: "border-blue-300 ring-2 ring-blue-100", btn: "bg-blue-600 text-white hover:bg-blue-700", popular: true },
-            { tier: "Enterprise", price: "Custom", unit: "white-label · SLA", sub: "Mendi-attached: 20% off · DPA · SSO", border: "border-violet-200", btn: "bg-violet-600 text-white hover:bg-violet-700" },
-          ].map((p) => (
-            <div key={p.tier} className={`relative bg-white border-2 rounded-2xl p-6 ${p.border}`}>
-              {p.popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-blue-600 text-white text-xs font-bold uppercase tracking-wider">Most popular</span>
-              )}
-              <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">{p.tier}</p>
-              <p className="text-3xl font-extrabold text-gray-900 tracking-tight mb-1">{p.price}<span className="text-sm font-medium text-gray-400 ml-1">{p.unit !== "per session" && p.unit !== "per clinic / mo" ? "" : ""}</span></p>
-              <p className="text-xs text-gray-500 mb-3">{p.unit}</p>
-              <p className="text-sm text-gray-600 mb-5 leading-relaxed">{p.sub}</p>
-              <Link href="/demo" className={`block text-center text-sm font-semibold rounded-lg px-4 py-2.5 transition-colors ${p.btn}`}>
-                {p.tier === "Enterprise" ? "Talk to us" : "Start free trial"}
-              </Link>
-            </div>
-          ))}
-        </div>
-        <p className="text-xs text-gray-400 text-center mt-6 mb-8">
-          All plans · 30-day free trial · no card required · HIPAA BAA · BIDS/SNIRF/EDF+ export · cancel anytime
-        </p>
+        <p className="text-sm text-gray-500 text-center mb-8">Free for licensed clinicians during private beta · paid plans launch Q3 2026.</p>
+
+        {/* 3-tier pricing with currency toggle (USD/EUR/GBP/CAD/AUD) */}
+        <CurrencyTogglePricing />
+        <div className="mb-8" />
+
 
         {/* Waitlist email capture — paid plans launch Q3 2026 */}
         <div className="bg-gradient-to-br from-blue-50 to-violet-50/40 border border-blue-100 rounded-2xl p-7 max-w-3xl mx-auto text-center">

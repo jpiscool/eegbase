@@ -321,11 +321,11 @@ export default function DemoPage() {
   ];
 
   const DEMO_CLIENTS = [
-    { name: "Sarah Mitchell",   protocol: "SMR · Cz (12–15 Hz)",        session: 8  },
-    { name: "James Okafor",     protocol: "Alpha-Theta · Pz/Oz",         session: 4  },
-    { name: "Priya Sharma",     protocol: "ILF · Fp1/Fp2",              session: 12 },
-    { name: "Daniel Cruz",      protocol: "Sleep Spindle · Cz/Pz",      session: 3  },
-    { name: "Emily Tanaka",     protocol: "Neuromuscular · C3/C4",       session: 6  },
+    { name: "Sarah Mitchell · ADHD adolescent",    protocol: "SMR · Cz (12–15 Hz)",         session: 8,  archetype: "ADHD" },
+    { name: "James Okafor · PTSD veteran",          protocol: "Alpha-Theta · Pz/Oz",         session: 4,  archetype: "PTSD" },
+    { name: "Priya Sharma · burnout exec",          protocol: "ILF · Fp1/Fp2",                session: 12, archetype: "Burnout" },
+    { name: "Daniel Cruz · sleep onset",            protocol: "Sleep Spindle · Cz/Pz",       session: 3,  archetype: "Sleep" },
+    { name: "Emily Tanaka · performance",            protocol: "Neuromuscular · C3/C4",        session: 6,  archetype: "Performance" },
   ];
 
   const PROTOCOL_GOALS: Record<string, string> = {

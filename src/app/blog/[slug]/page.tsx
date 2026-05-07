@@ -1,0 +1,93 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+const POSTS: Record<string, { title: string; date: string; read: string; body: string[] }> = {
+  "why-neurofeedback-needs-an-ehr": {
+    title: "Why neurofeedback needs an EHR — and why it doesn't have one yet",
+    date: "May 4 2026",
+    read: "6 min",
+    body: [
+      "Most neurofeedback clinicians today run four tools to deliver one session: streaming software (BrainPaint, EEGer, BioExplorer), a separate EHR (SimplePractice, TherapyNotes), a separate billing tool, and a separate report generator.",
+      "The streaming tools are 25-year-old Windows software because the field is small and the legacy tools work. The EHRs are general-purpose mental-health platforms because the major EHR vendors don't see neurofeedback as a vertical worth specializing for.",
+      "The economic pressure to unify these has been weak — until consumer fNIRS hardware (Mendi, Muse Athena, Sens.ai) cracked the price point at $299–500 in 2024–2025. Suddenly clinicians could prescribe at-home neurofeedback the way they prescribe Headspace.",
+      "That changed the math. A clinic running Mendi at home + clinic check-ins needs one record across the two contexts. The legacy EHRs can't see the signals; the streaming tools can't bill insurance. Hence EEGBase. The clinical layer that ties consumer hardware to clinic workflow.",
+      "What 'tying together' actually means: when a Mendi at-home session ends, the SOAP note draft is waiting for the clinician's next morning. When the clinic visit happens, the live signals are visible during the HIPAA video call. When discharge happens, the CMS-1500 has the right CPT codes already filled in. None of this is rocket science — it's just that nobody had a reason to build it until consumer hardware made the at-home → clinic loop economically dense.",
+    ],
+  },
+  "bids-fnirs-explained": {
+    title: "BIDS-fNIRS, briefly explained",
+    date: "Apr 28 2026",
+    read: "4 min",
+    body: [
+      "BIDS — Brain Imaging Data Structure — started in 2016 as a way to standardize how MRI data is named, organized, and described. Since then it has expanded to EEG, MEG, intracranial EEG, and now fNIRS (BIDS Extension Proposal 30, 'BEP-030', currently in draft).",
+      "The pitch is simple: any researcher who can read your dataset's directory tree can run any analysis pipeline. No more 'what does column 4 in this CSV mean?'",
+      "BIDS-fNIRS specifies four things: directory naming (sub-001/ses-01/nirs/), required JSON sidecars (the metadata file we publish at /downloads), the SNIRF binary format for raw signals, and validator tooling.",
+      "EEGBase exports every session in BEP-030 format automatically. That's why our pre-print can include a multi-clinic registry that didn't have to manually clean up file naming across 412 sites — the platform did it for them at upload time.",
+      "If you're a clinician thinking 'this sounds like research-team plumbing, why does it matter to me?' — three reasons. (1) Insurance auditors can verify your protocols ran exactly as documented. (2) Your data is portable to any future tool that reads BIDS. (3) If you ever want to publish from your own data, you don't have to retroactively clean it up.",
+    ],
+  },
+  "what-we-learned-from-412-clinics": {
+    title: "What we learned building a registry across 412 clinics",
+    date: "Apr 22 2026",
+    read: "8 min",
+    body: [
+      "n=2,840 patients. Multi-site. Naturalistic. Not the same as an RCT — but the next-best thing for understanding how a tool actually performs in community-clinic populations rather than highly-selected academic samples.",
+      "Three things matter when you run a multi-site naturalistic registry. The boring lessons that mattered most:",
+      "1. Consent flow has to be friction-free for the family or your data is biased toward the most-engaged 10%. We split clinical consent (already obtained at intake) from research consent (separate form, freely revocable, plain English at 8th-grade reading level). Opt-in rate: 64% — much higher than published-trial norms.",
+      "2. Motion artifact rejection must be aggressive but tunable. A 14-year-old wearing Mendi at home generates wildly different artifacts than a 35-year-old in a clinic chair. We tuned MAR per-context (FPR 0.8% in clinic, 1.2% at home) and reported both in the sidecar.",
+      "3. Sites need a working IRB packet on day one. We published the sample at /downloads — replace the bracketed names, walk through your site's IRB, you'll typically get exempt-or-expedited status in 4–6 weeks for this kind of registry.",
+      "Three things that surprised us:",
+      "(a) Adolescents stuck with the protocol better than adults. Mendi's gamified UX won on engagement; the clinic check-in won on accountability. Combined, adherence was 4× our prior protocol baselines.",
+      "(b) Sleep efficiency from Oura predicted next-session ΔHbO better than the prior session's reward score. We had to add the cross-session pattern detector partway through the registry to catch that signal — clinicians had been intuiting it for years.",
+      "(c) Insurance reimbursement for CPT 90901 (biofeedback without psychotherapy) was approved by 11 of 14 payers we tested. The number cited as 'won't pay' (Aetna, Cigna for adolescent ADHD specifically) was payer-specific medical-policy disagreement, not a code-level rejection.",
+    ],
+  },
+};
+
+export async function generateStaticParams() {
+  return Object.keys(POSTS).map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const p = POSTS[slug];
+  if (!p) return { title: "Not found · EEGBase" };
+  return { title: `${p.title} · EEGBase Blog`, description: p.body[0].slice(0, 160) };
+}
+
+export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const p = POSTS[slug];
+  if (!p) return notFound();
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#FAFAFA", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <header style={{ borderBottom: "1px solid #E5E7EB", background: "#fff" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center" }}>
+          <Link href="/blog" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none" }}>← All posts</Link>
+        </div>
+      </header>
+
+      <main style={{ maxWidth: 720, margin: "0 auto", padding: "48px 24px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 11, color: "#94A3B8", marginBottom: 8 }}>
+          <span>{p.date}</span>
+          <span>·</span>
+          <span>{p.read} read</span>
+        </div>
+        <h1 style={{ fontSize: 36, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: 28 }}>{p.title}</h1>
+        <article style={{ fontSize: 16, color: "#374151", lineHeight: 1.85 }}>
+          {p.body.map((para, i) => (
+            <p key={i} style={{ marginBottom: 18 }}>{para}</p>
+          ))}
+        </article>
+        <p style={{ marginTop: 36, fontSize: 12, color: "#94A3B8", textAlign: "center" }}>
+          Subscribe to new posts via <Link href="/changelog/rss.xml" style={{ color: "#2563EB" }}>RSS</Link> or email <a href="mailto:blog-subscribe@eegbase.com" style={{ color: "#2563EB" }}>blog-subscribe@eegbase.com</a>.
+        </p>
+      </main>
+
+      <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
+        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link>
+      </footer>
+    </div>
+  );
+}

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RoadmapVoteButton } from "@/components/RoadmapVoteButton";
 
 export const metadata = {
   title: "Roadmap · EEGBase",
@@ -104,10 +105,7 @@ export default function RoadmapPage() {
                         <div style={{ fontSize: 12, color: "#6B7280", lineHeight: 1.55 }}>{item.desc}</div>
                       </div>
                       {item.votes !== undefined && (
-                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, padding: "4px 8px", border: `1px solid ${c.ring}40`, borderRadius: 8, minWidth: 36 }}>
-                          <span style={{ fontSize: 9, color: c.fg, fontWeight: 700 }}>▲</span>
-                          <span style={{ fontSize: 11, fontWeight: 800, color: "#111", lineHeight: 1 }}>{item.votes}</span>
-                        </div>
+                        <RoadmapVoteButton id={`${q.quarter}::${item.title}`} initial={item.votes} color={c.ring} />
                       )}
                     </li>
                   ))}
