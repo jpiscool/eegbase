@@ -76,7 +76,7 @@ export default function MendiPartnershipPage() {
               See the clinical dashboard →
             </Link>
             <a
-              href="mailto:hello@eegbase.com"
+              href="#book-meeting"
               style={{
                 padding: "12px 24px", background: "rgba(255,255,255,0.1)",
                 border: "1px solid rgba(255,255,255,0.2)", color: "#fff",
@@ -84,9 +84,36 @@ export default function MendiPartnershipPage() {
                 textDecoration: "none", display: "inline-block",
               }}
             >
-              Contact us
+              Book a 30-min call →
             </a>
           </div>
+        </div>
+      </section>
+
+      {/* Book a meeting section — Calendly placeholder iframe */}
+      <section id="book-meeting" style={{ background: "#FAFAFA", padding: "48px 24px", borderBottom: "1px solid #E5E7EB" }}>
+        <div style={{ maxWidth: 880, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 24 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "#7C3AED", letterSpacing: "0.15em", marginBottom: 8, textTransform: "uppercase" }}>Book a meeting</p>
+            <h2 style={{ fontSize: 28, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", marginBottom: 8 }}>30 minutes · live demo · your team</h2>
+            <p style={{ fontSize: 14, color: "#64748B", lineHeight: 1.7, maxWidth: 600, margin: "0 auto" }}>
+              We&apos;ll walk through the demo, answer the 3 things you&apos;d most like answered, and end with a concrete next step. No slide deck unless you ask.
+            </p>
+          </div>
+          <div style={{ background: "white", border: "1px solid #E5E7EB", borderRadius: 16, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.04)" }}>
+            {/* Calendly embed — replace with real link once configured */}
+            <iframe
+              src="https://calendly.com/eegbase/mendi-30min"
+              title="Book a 30-minute call"
+              width="100%"
+              height={680}
+              style={{ border: "none", display: "block" }}
+              loading="lazy"
+            />
+          </div>
+          <p style={{ fontSize: 11, color: "#94A3B8", textAlign: "center", marginTop: 12 }}>
+            Calendar link pending live setup. Until then: <a href="mailto:hello@eegbase.com?subject=Mendi%20partnership%20call" style={{ color: "#2563EB" }}>email us</a> with 3 windows that work for you.
+          </p>
         </div>
       </section>
 

@@ -6,6 +6,11 @@ import { Brain, BarChart3, Wifi, ShieldCheck, Users, Zap, Bluetooth, FileText, S
 import { LandingLivePreview } from "@/components/LandingLivePreview";
 import { RoiCalculator } from "@/components/RoiCalculator";
 import { WaitlistForm } from "@/components/WaitlistForm";
+import { AnimatedCounter } from "@/components/AnimatedCounter";
+import { StickyDemoCTA } from "@/components/StickyDemoCTA";
+import { LiveStatusPill } from "@/components/LiveStatusPill";
+import { SearchableFAQ } from "@/components/SearchableFAQ";
+import { ExitIntentModal } from "@/components/ExitIntentModal";
 
 const features = [
   {
@@ -46,10 +51,10 @@ const features = [
   },
 ];
 
-const metrics = [
-  { value: "16", label: "Tabs in the live demo" },
-  { value: "6 min", label: "Avg time to first session" },
-  { value: "0", label: "Lines of vendor lock-in" },
+const metrics: { value: number | string; label: string; suffix?: string; prefix?: string }[] = [
+  { value: 16,        label: "Tabs in the live demo" },
+  { value: 6,         label: "Avg minutes to first session", suffix: " min" },
+  { value: 0,         label: "Lines of vendor lock-in" },
 ];
 
 const faqs = [
@@ -350,12 +355,14 @@ export default function LandingPage() {
         </p>
         </div>
 
-        {/* Metrics strip */}
+        {/* Metrics strip — animates on scroll into view */}
         <div className="flex items-center justify-center gap-12 mt-16 pt-10 border-t border-gray-100">
-          {metrics.map(({ value, label }) => (
-            <div key={label} className="text-center">
-              <p className="text-2xl font-bold text-gray-900">{value}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{label}</p>
+          {metrics.map((m) => (
+            <div key={m.label} className="text-center">
+              <p className="text-3xl font-bold text-gray-900 tracking-tight">
+                <AnimatedCounter value={m.value} suffix={m.suffix} prefix={m.prefix} />
+              </p>
+              <p className="text-xs text-gray-400 mt-0.5">{m.label}</p>
             </div>
           ))}
         </div>
@@ -639,14 +646,14 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ */}
-      <section className="max-w-3xl mx-auto px-6 pb-24">
+      <section className="max-w-3xl mx-auto px-6 pb-24" id="faq">
         <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
           Common questions
         </h2>
         <p className="text-sm text-gray-400 text-center mb-10">
-          Everything clinicians ask before switching to EEGBase.
+          Search 18 questions across setup, security, migration, and clinical use.
         </p>
-        <FaqAccordion />
+        <SearchableFAQ />
       </section>
 
       {/* Pricing teaser — transparent pricing converts +15-25% per CRO research */}
@@ -755,8 +762,9 @@ export default function LandingPage() {
             <p className="mt-1 text-gray-400">
               MIT licensed — fork it, self-host it, contribute to it. No lock-in.
             </p>
-            {/* Last security audit pill — trust signal */}
+            {/* Last security audit pills + live status — trust signals */}
             <p className="mt-2 inline-flex items-center gap-2 flex-wrap text-xs">
+              <LiveStatusPill />
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 font-medium">
                 <span aria-hidden="true">🔒</span> Bishop Fox pen-test · Q1 2026
               </span>
@@ -786,6 +794,10 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Sticky demo CTA + exit-intent waitlist modal */}
+      <StickyDemoCTA />
+      <ExitIntentModal />
     </div>
   );
 }

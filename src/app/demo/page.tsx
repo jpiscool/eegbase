@@ -139,7 +139,17 @@ export default function DemoPage() {
   const adapterRef = useRef<SimulatorAdapter | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const [tab, setTab] = useState<MainTab>("session");
+  const [tab, setTab] = useState<MainTab>(() => {
+    // Deep-link support: ?tab=ai opens AI Insights on first load
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const requested = params.get("tab");
+      const valid: MainTab[] = ["session","game","brain","hrv","outcomes","progress","ai","protocols","schedule","reports","compare","billing","team","compliance","marketing","devices"];
+      if (requested && (valid as string[]).includes(requested)) return requested as MainTab;
+    }
+    return "session";
+  });
+  const [shareCopied, setShareCopied] = useState(false);
   const [running, setRunning] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [sample, setSample] = useState<DeviceSample | null>(null);
@@ -408,7 +418,29 @@ export default function DemoPage() {
     border: "1px solid #2563EB",
   };
 
-  const switchTab = (id: MainTab) => { setTab(id); setVisitedTabs((prev) => new Set([...prev, id])); };
+  const switchTab = (id: MainTab) => {
+    setTab(id);
+    setVisitedTabs((prev) => new Set([...prev, id]));
+    // Sync URL for deep-linking — bare-bones replaceState keeps history clean
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("tab", id);
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
+  const shareCurrentView = async () => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.origin + "/demo");
+    url.searchParams.set("tab", tab);
+    try {
+      await navigator.clipboard.writeText(url.toString());
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 1800);
+      showToast(`Link copied · opens this exact view (${tab})`);
+    } catch {
+      showToast("Couldn't copy — link is " + url.toString());
+    }
+  };
 
   const navBtn: (active: boolean) => React.CSSProperties = (active) => ({
     padding: "10px 16px", fontSize: 13, fontWeight: 600, background: "none", border: "none",
@@ -927,6 +959,16 @@ export default function DemoPage() {
             <span>60-sec tour</span>
           </button>
           <button
+            onClick={shareCurrentView}
+            aria-label="Share this view"
+            className="demo-topbar-hide-mobile"
+            title="Copy a deep link that opens this exact tab"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6, color: shareCopied ? "#34D399" : "#CBD5E1", fontSize: 12, cursor: "pointer", fontWeight: 600 }}
+          >
+            <span aria-hidden="true">{shareCopied ? "✓" : "🔗"}</span>
+            <span>{shareCopied ? "Copied" : "Share view"}</span>
+          </button>
+          <button
             onClick={() => showToast("3 new alerts: Sarah's PHQ-9 down 3 pts · James co-sign needed · Aetna ERA posted")}
             aria-label="Notifications"
             className="demo-topbar-hide-mobile"
@@ -1000,14 +1042,25 @@ export default function DemoPage() {
                   </div>
                 ))}
               </div>
-              <button
-                aria-label="Close welcome modal and start exploring"
-                onClick={() => { sessionStorage.setItem("demo-onboarding-dismissed", "1"); setShowOnboarding(false); }}
-                style={{ width: "100%", padding: "13px 20px", background: "#2563EB", color: "white", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer", letterSpacing: "0.01em" }}
-              >
-                Start Exploring →
-              </button>
-              <p style={{ fontSize: 12, color: "#CBD5E1", textAlign: "center", marginTop: 12 }}>No sign-up required · Synthetic data only</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <button
+                  aria-label="Start the 60-second guided tour"
+                  onClick={() => { sessionStorage.setItem("demo-onboarding-dismissed", "1"); setShowOnboarding(false); setTourStep(0); }}
+                  style={{ padding: "13px 16px", background: "linear-gradient(135deg, #7C3AED, #4F46E5)", color: "white", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", letterSpacing: "0.01em" }}
+                >
+                  ▶ 60-sec tour
+                </button>
+                <button
+                  aria-label="Close welcome modal and explore freely"
+                  onClick={() => { sessionStorage.setItem("demo-onboarding-dismissed", "1"); setShowOnboarding(false); }}
+                  style={{ padding: "13px 16px", background: "#2563EB", color: "white", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", letterSpacing: "0.01em" }}
+                >
+                  Explore freely →
+                </button>
+              </div>
+              <p style={{ fontSize: 11, color: "#94A3B8", textAlign: "center", marginTop: 12 }}>
+                Press <kbd style={{ fontFamily: "ui-monospace, monospace", padding: "1px 5px", background: "#F1F5F9", borderRadius: 3, color: "#475569" }}>⌘K</kbd> anywhere · No sign-up required · Synthetic data only
+              </p>
             </div>
           </div>
         </div>

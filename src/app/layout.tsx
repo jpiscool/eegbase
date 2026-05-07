@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Geist } from "next/font/google";
 import { CookieBanner } from "@/components/CookieBanner";
+import { GlobalCommandK } from "@/components/GlobalCommandK";
+import { InstallPwaPrompt } from "@/components/InstallPwaPrompt";
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"] });
@@ -60,6 +62,8 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className={`${geist.className} h-full antialiased`}>
         {children}
+        <GlobalCommandK />
+        <InstallPwaPrompt />
         <CookieBanner />
         {PLAUSIBLE_DOMAIN && (
           <Script

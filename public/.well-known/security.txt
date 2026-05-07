@@ -1,0 +1,17 @@
+# https://eegbase.vercel.app/.well-known/security.txt
+# IETF RFC 9116
+
+Contact: mailto:security@eegbase.com
+Contact: https://github.com/eegbase/eegbase/security/advisories/new
+Expires: 2027-05-01T00:00:00.000Z
+Encryption: https://eegbase.vercel.app/.well-known/eegbase-pgp.txt
+Acknowledgments: https://eegbase.vercel.app/security#acknowledgments
+Preferred-Languages: en
+Canonical: https://eegbase.vercel.app/.well-known/security.txt
+Policy: https://eegbase.vercel.app/security
+Hiring: https://eegbase.vercel.app/team
+
+# We respond to confirmed reports within 24 hours.
+# Critical issues triaged and patched within 7 days.
+# Safe harbor for good-faith research (see /security).
+# Bug bounty program launches with paid plans Q3 2026.
