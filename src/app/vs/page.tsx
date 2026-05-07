@@ -6,10 +6,14 @@ export const metadata = {
 };
 
 const VS = [
-  { slug: "simplepractice", name: "SimplePractice", desc: "General mental-health EHR · most popular comparison" },
-  { slug: "therapynotes",   name: "TherapyNotes",   desc: "ONC-certified EHR · psychiatrist-friendly" },
-  { slug: "myndlift",       name: "Myndlift",       desc: "Muse-only home neurofeedback · our nearest direct competitor" },
-  { slug: "brainmaster",    name: "BrainMaster",    desc: "Legacy clinical-NF Windows software" },
+  { slug: "simplepractice",    name: "SimplePractice",    desc: "General mental-health EHR · most popular comparison" },
+  { slug: "therapynotes",      name: "TherapyNotes",      desc: "ONC-certified EHR · psychiatrist-friendly" },
+  { slug: "myndlift",          name: "Myndlift",          desc: "Muse-only home neurofeedback · our nearest direct competitor" },
+  { slug: "brainmaster",       name: "BrainMaster",       desc: "Legacy clinical-NF Windows software" },
+  { slug: "cygnet",            name: "Cygnet · BEE Medic", desc: "Z-score-focused clinical platform" },
+  { slug: "bioexplorer",       name: "BioExplorer",       desc: "Open-design protocol-builder for power users" },
+  { slug: "neuroguide",        name: "NeuroGuide",        desc: "qEEG + LORETA gold standard" },
+  { slug: "divergence-neuro",   name: "Divergence Neuro",  desc: "Modern multi-vendor cloud platform · our nearest cloud peer" },
 ];
 
 export default function VsIndex() {

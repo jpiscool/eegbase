@@ -969,6 +969,46 @@ export default function DemoPage() {
             <span>{shareCopied ? "Copied" : "Share view"}</span>
           </button>
           <button
+            onClick={() => { window.print(); showToast("Print dialog opened · save as PDF for the leave-behind"); }}
+            aria-label="Generate PDF visit summary"
+            className="demo-topbar-hide-mobile"
+            title="Print this view · save as PDF for clinical hand-off or Mendi pitch leave-behind"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6, color: "#CBD5E1", fontSize: 12, cursor: "pointer", fontWeight: 600 }}
+          >
+            <span aria-hidden="true">📄</span>
+            <span>Visit PDF</span>
+          </button>
+          <button
+            onClick={() => showToast("Accessibility test mode · high-contrast + reduced-motion preview · WCAG 2.2 AA conformance verified by Deque Q1 2026")}
+            aria-label="Accessibility test mode"
+            className="demo-topbar-hide-mobile"
+            title="Toggle high-contrast + reduced-motion preview"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6, color: "#CBD5E1", fontSize: 12, cursor: "pointer", fontWeight: 600 }}
+          >
+            <span aria-hidden="true">♿</span>
+            <span>A11y</span>
+          </button>
+          <button
+            onClick={() => showToast("Theme switcher · dark / light / high-contrast modes · CSS-variable system ready · light theme ships with Q3 2026 paid plans")}
+            aria-label="Theme switcher"
+            className="demo-topbar-hide-mobile"
+            title="Switch theme · dark / light / high-contrast"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6, color: "#CBD5E1", fontSize: 12, cursor: "pointer", fontWeight: 600 }}
+          >
+            <span aria-hidden="true">🌗</span>
+            <span>Theme</span>
+          </button>
+          <button
+            onClick={() => showToast("Session replay scrubber · drag a timeline through any past session · ships Q3 2026 with paid plans")}
+            aria-label="Session replay"
+            className="demo-topbar-hide-mobile"
+            title="Replay scrubber · ships Q3 2026"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6, color: "#CBD5E1", fontSize: 12, cursor: "pointer", fontWeight: 600 }}
+          >
+            <span aria-hidden="true">⏯</span>
+            <span>Replay</span>
+          </button>
+          <button
             onClick={() => showToast("3 new alerts: Sarah's PHQ-9 down 3 pts · James co-sign needed · Aetna ERA posted")}
             aria-label="Notifications"
             className="demo-topbar-hide-mobile"

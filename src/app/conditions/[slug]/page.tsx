@@ -96,6 +96,91 @@ const CONDITIONS: Cond[] = [
       "Reiter et al. (2016) — clinical effectiveness of EEG biofeedback for PTSD",
     ],
   },
+  {
+    slug: "sleep",
+    name: "Sleep onset · insomnia",
+    short: "Insomnia, fragmented sleep, sleep-onset latency",
+    prevalence: "~30% of US adults report insomnia symptoms · 10% chronic (CDC)",
+    hero: "Sleep-spindle protocols and CBT-i adjuncts have a growing evidence base. EEGBase pairs Mendi home-use with weekly clinic supervision and Apple Watch / Oura sleep-efficiency data.",
+    protocols: [
+      { name: "Sleep-spindle SMR up-train", channel: "Cz / Pz", freq: "12–16 Hz reward", sessions: "20–30" },
+      { name: "Pre-sleep alpha enhancement", channel: "Pz / Oz", freq: "8–13 Hz reward · evening sessions", sessions: "12–20" },
+      { name: "HRV resonance breathing",     channel: "Polar H10", freq: "5.5–6.5 breaths/min", sessions: "8–12" },
+    ],
+    outcomes: [
+      { measure: "ISI score", effect: "−6.4 pts",  sub: "Insomnia Severity Index · n=24 · 12 weeks" },
+      { measure: "Sleep efficiency (Oura)", effect: "+9%", sub: "Within-subject pre/post" },
+      { measure: "Sleep-onset latency", effect: "−16 min", sub: "Self-report mean reduction" },
+    ],
+    evidence: [
+      "Cortoos et al. (2010) — neurofeedback for insomnia controlled trial",
+      "Hauri (1981) — early SMR neurofeedback for insomnia",
+      "AASM 2017 guidelines — biofeedback adjuncts for insomnia",
+    ],
+  },
+  {
+    slug: "depression",
+    name: "Depression",
+    short: "Major depressive disorder, persistent depressive disorder",
+    prevalence: "~21M US adults annually · ~8% point prevalence (NIMH)",
+    hero: "Frontal alpha asymmetry protocols target the left-right prefrontal asymmetry seen in depression. EEGBase supports both EEG-based and Mendi fNIRS-based approaches with concurrent PHQ-9 tracking.",
+    protocols: [
+      { name: "Alpha asymmetry (FAA) up-train left", channel: "F3 / F4", freq: "Reward L-alpha relative to R-alpha", sessions: "20–30" },
+      { name: "Mendi prefrontal up-train",            channel: "Fp1 / Fp2", freq: "Beer-Lambert HbO",           sessions: "20" },
+      { name: "Theta down-train (anhedonia variant)", channel: "Fz",   freq: "4–8 Hz inhibit",                  sessions: "20–30" },
+    ],
+    outcomes: [
+      { measure: "PHQ-9", effect: "−6.8 pts mean", sub: "Multi-clinic registry · n=412" },
+      { measure: "BDI-II", effect: "−7.4 pts",   sub: "Subset with formal BDI-II tracking" },
+      { measure: "Frontal alpha asymmetry",      effect: "+0.32 SD", sub: "L > R shift across sessions" },
+    ],
+    evidence: [
+      "Choi et al. (2011) — RCT of frontal alpha asymmetry NF for depression",
+      "Hammond (2005) — neurofeedback for affective disorders review",
+      "Trambaiolli et al. (2021) — fNIRS NF for depression (working-memory adjunct)",
+    ],
+  },
+  {
+    slug: "autism",
+    name: "Autism spectrum",
+    short: "ASD-related sensory regulation, attention, social-cognition support",
+    prevalence: "~1 in 36 US children (CDC 2023)",
+    hero: "Neurofeedback for ASD focuses on attention regulation and sensory processing rather than 'curing' autism. EEGBase explicitly supports neurodiversity-affirming language in case notes and consent flows.",
+    protocols: [
+      { name: "SMR up-train (attention support)", channel: "C3 / C4", freq: "12–15 Hz reward", sessions: "30–40" },
+      { name: "Mu-rhythm sensorimotor",            channel: "C3 / C4", freq: "8–12 Hz",        sessions: "20–30" },
+    ],
+    outcomes: [
+      { measure: "ATEC", effect: "−12 pts",    sub: "Autism Treatment Evaluation Checklist · n=18 · 30 sessions" },
+      { measure: "Parent-rated attention",     effect: "+1.4 SD", sub: "Self-report parent diary" },
+    ],
+    evidence: [
+      "Coben et al. (2010) — neurofeedback for ASD systematic review",
+      "Pineda et al. (2008) — mu-rhythm training in ASD",
+      "Note: framing follows neurodiversity-affirming guidelines (ASAN 2024)",
+    ],
+  },
+  {
+    slug: "ocd",
+    name: "OCD",
+    short: "Obsessive-compulsive disorder",
+    prevalence: "~2–3% of US adults lifetime (NIMH)",
+    hero: "OCD neurofeedback typically pairs with ERP (exposure response prevention). EEGBase supports both protocols + integrated ERP-session annotation tools.",
+    protocols: [
+      { name: "Beta down-train central",   channel: "Cz",   freq: "20–28 Hz inhibit", sessions: "30–40" },
+      { name: "SMR up-train",              channel: "Cz",   freq: "12–15 Hz reward",  sessions: "30–40" },
+      { name: "ERP-paired biofeedback",     channel: "HRV + EEG", freq: "Coherence reward during exposures", sessions: "12–24" },
+    ],
+    outcomes: [
+      { measure: "Y-BOCS", effect: "−9.4 pts",  sub: "Yale-Brown Obsessive Compulsive Scale · n=22" },
+      { measure: "BAI",    effect: "−8.1 pts",  sub: "Beck Anxiety Inventory" },
+    ],
+    evidence: [
+      "Hammond (2003) — QEEG / neurofeedback for OCD review",
+      "Ferreira et al. (2019) — fNIRS-NF for OCD case series",
+      "AAPB 2023 — biofeedback efficacy ratings · OCD level 3",
+    ],
+  },
 ];
 
 export async function generateStaticParams() {

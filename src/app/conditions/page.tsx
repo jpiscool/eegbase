@@ -6,10 +6,14 @@ export const metadata = {
 };
 
 const CONDITIONS = [
-  { slug: "adhd",     name: "ADHD",     desc: "Inattentive + hyperactive subtypes · prefrontal up-train · 30-year evidence base", color: "#2563EB" },
-  { slug: "anxiety",  name: "Anxiety",  desc: "GAD, panic, social · right-DLPFC down-train + HRV resonance",                      color: "#10B981" },
-  { slug: "burnout",  name: "Burnout",  desc: "Workplace exhaustion · DLPFC reactivation · KU Leuven replication",                color: "#7C3AED" },
-  { slug: "ptsd",     name: "PTSD",     desc: "Veterans + civilian · alpha-theta + right-temporal down-train",                    color: "#E11D48" },
+  { slug: "adhd",       name: "ADHD",             desc: "Inattentive + hyperactive subtypes · prefrontal up-train · 30-year evidence base", color: "#2563EB" },
+  { slug: "anxiety",    name: "Anxiety",          desc: "GAD, panic, social · right-DLPFC down-train + HRV resonance",                      color: "#10B981" },
+  { slug: "burnout",    name: "Burnout",          desc: "Workplace exhaustion · DLPFC reactivation · KU Leuven replication",                color: "#7C3AED" },
+  { slug: "ptsd",       name: "PTSD",             desc: "Veterans + civilian · alpha-theta + right-temporal down-train",                    color: "#E11D48" },
+  { slug: "sleep",      name: "Sleep · insomnia", desc: "Sleep-spindle SMR + pre-sleep alpha + HRV resonance",                              color: "#06B6D4" },
+  { slug: "depression", name: "Depression",       desc: "Frontal alpha asymmetry + Mendi prefrontal HbO up-train",                          color: "#A855F7" },
+  { slug: "autism",     name: "Autism spectrum",  desc: "SMR + mu-rhythm · neurodiversity-affirming framing",                              color: "#F59E0B" },
+  { slug: "ocd",        name: "OCD",              desc: "Beta down-train + ERP-paired biofeedback · Y-BOCS tracking",                       color: "#84CC16" },
 ];
 
 export default function ConditionsIndex() {

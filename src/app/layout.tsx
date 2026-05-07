@@ -70,6 +70,43 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className={`${geist.className} h-full antialiased`}>
+        {/* Schema.org JSON-LD · Organization + SoftwareApplication for SEO rich-results */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "Organization",
+                  "@id": `${SITE_URL}#org`,
+                  name: "EEGBase",
+                  url: SITE_URL,
+                  logo: `${SITE_URL}/og-image.svg`,
+                  description: SITE_DESC,
+                  sameAs: ["https://github.com/eegbase/eegbase"],
+                  contactPoint: [
+                    { "@type": "ContactPoint", email: "hello@eegbase.com",    contactType: "customer support" },
+                    { "@type": "ContactPoint", email: "security@eegbase.com",  contactType: "security disclosure" },
+                    { "@type": "ContactPoint", email: "research@eegbase.com",  contactType: "research collaboration" },
+                  ],
+                },
+                {
+                  "@type": "SoftwareApplication",
+                  "@id": `${SITE_URL}#app`,
+                  name: "EEGBase",
+                  url: SITE_URL,
+                  applicationCategory: "MedicalApplication",
+                  operatingSystem: "Web",
+                  softwareVersion: "4.6.2",
+                  license: "https://opensource.org/licenses/MIT",
+                  offers: { "@type": "AggregateOffer", lowPrice: "19", highPrice: "899", priceCurrency: "USD", offerCount: 4 },
+                  publisher: { "@id": `${SITE_URL}#org` },
+                },
+              ],
+            }),
+          }}
+        />
         {children}
         <GlobalCommandK />
         <InstallPwaPrompt />
