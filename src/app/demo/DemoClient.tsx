@@ -157,6 +157,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
   const [tab, setTab] = useTabState<MainTab>({
     urlKey: "tab",
     storageKey: "demo:tab",
+    cookieName: "demo_tab",
     defaultValue: "session",
     serverInitialValue: initialTab,
     validate: isMainTab,

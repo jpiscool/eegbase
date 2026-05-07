@@ -25,12 +25,21 @@ import { useCallback, useSyncExternalStore, useEffect, useRef } from "react";
 type Options<T extends string> = {
   urlKey: string;
   storageKey?: string;
+  /**
+   * Optional cookie name. When provided, the value is mirrored to a same-site
+   * cookie alongside the URL/localStorage update. The server can then read this
+   * cookie when ?<urlKey>= is missing (e.g. when DuckDuckGo or another browser
+   * strips the query parameter on refresh) and SSR the correct tab.
+   */
+  cookieName?: string;
+  /** Cookie max-age in seconds. Default: 30 days. */
+  cookieMaxAge?: number;
   defaultValue: T;
   /**
    * Optional server-provided initial value. When the page is rendered as a
-   * server component that reads searchParams, pass the resolved value here so
-   * `getServerSnapshot` returns it — making the SSR HTML match the URL on
-   * first paint (zero flash on refresh).
+   * server component that reads searchParams + cookies, pass the resolved value
+   * here so `getServerSnapshot` returns it — making the SSR HTML match the URL
+   * on first paint (zero flash on refresh).
    */
   serverInitialValue?: T;
   validate?: (value: string) => boolean;
@@ -38,9 +47,31 @@ type Options<T extends string> = {
 
 const TAB_STATE_EVENT = "tabstatechange";
 
+function writeCookie(name: string, value: string, maxAgeSeconds: number) {
+  if (typeof document === "undefined") return;
+  // Path=/ makes it readable by every route on the site.
+  // SameSite=Lax keeps it sent on same-origin navigations + top-level GETs.
+  // No Secure flag — we want this on http://localhost too.
+  const v = encodeURIComponent(value);
+  document.cookie = `${name}=${v}; Path=/; Max-Age=${maxAgeSeconds}; SameSite=Lax`;
+}
+
+function readCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const prefix = name + "=";
+  for (const part of document.cookie.split("; ")) {
+    if (part.startsWith(prefix)) {
+      try { return decodeURIComponent(part.slice(prefix.length)); } catch { return null; }
+    }
+  }
+  return null;
+}
+
 export function useTabState<T extends string>({
   urlKey,
   storageKey,
+  cookieName,
+  cookieMaxAge = 60 * 60 * 24 * 30, // 30 days
   defaultValue,
   serverInitialValue,
   validate,
@@ -51,13 +82,17 @@ export function useTabState<T extends string>({
     [validate],
   );
 
-  // Read current value from URL → storage → default. Client-only.
+  // Read current value from URL → cookie → storage → default. Client-only.
   const read = useCallback((): T => {
     if (typeof window === "undefined") return defaultValue;
     try {
       const url = new URL(window.location.href);
       const fromUrl = url.searchParams.get(urlKey);
       if (isValid(fromUrl)) return fromUrl as T;
+      if (cookieName) {
+        const fromCookie = readCookie(cookieName);
+        if (isValid(fromCookie)) return fromCookie as T;
+      }
       if (storageKey) {
         const fromStorage = window.localStorage.getItem(storageKey);
         if (isValid(fromStorage)) return fromStorage as T;
@@ -66,7 +101,7 @@ export function useTabState<T extends string>({
       /* localStorage may throw in private mode / partitioned storage */
     }
     return defaultValue;
-  }, [urlKey, storageKey, defaultValue, isValid]);
+  }, [urlKey, cookieName, storageKey, defaultValue, isValid]);
 
   // Subscribe to URL / storage / bfcache / in-tab updates.
   const subscribe = useCallback((onChange: () => void) => {
@@ -133,13 +168,19 @@ export function useTabState<T extends string>({
         if (storageKey) {
           window.localStorage.setItem(storageKey, next);
         }
+        if (cookieName) {
+          // Cookie is the SSR-readable fallback. If the URL gets stripped by a
+          // privacy browser (DuckDuckGo, Brave Strict, etc.), the server still
+          // sees this on the next request and renders the right tab.
+          writeCookie(cookieName, next, cookieMaxAge);
+        }
       } catch {
         /* ignore quota / private mode */
       }
       // The native "storage" event only fires cross-tab. Notify in-tab listeners.
       window.dispatchEvent(new Event(TAB_STATE_EVENT));
     },
-    [urlKey, storageKey, defaultValue],
+    [urlKey, storageKey, cookieName, cookieMaxAge, defaultValue],
   );
 
   return [value, setValue];
