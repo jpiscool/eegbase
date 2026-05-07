@@ -26,7 +26,10 @@
 import type { DeviceAdapter, DeviceSample } from "./adapter";
 
 // ── Configuration ──────────────────────────────────────────────────────────────
-// TODO: replace after May 11 SDK call with Mustafa
+// ⚠️  SDK PENDING — these UUIDs are placeholders. Real values arrive after the
+//     Mendi SDK call (Mustafa, May 11). Once received, replace the two values
+//     below and flip MENDI_SDK_PENDING to false. No other code changes required.
+export const MENDI_SDK_PENDING = true;
 const MENDI_SERVICE_UUID = "00001234-0000-1000-8000-00805f9b34fb";
 const MENDI_FNIRS_CHAR_UUID = "00001235-0000-1000-8000-00805f9b34fb";
 
@@ -50,6 +53,12 @@ export class MendiAdapter implements DeviceAdapter {
   // ── Public API ──────────────────────────────────────────────────────────────
 
   async connect(): Promise<void> {
+    if (MENDI_SDK_PENDING) {
+      throw new Error(
+        "Mendi SDK integration pending — GATT UUIDs ship after the May 11 SDK handoff. " +
+          "Until then, use the simulator device for live demos. Contact hello@eegbase.com to coordinate."
+      );
+    }
     if (typeof navigator === "undefined" || !navigator.bluetooth) {
       throw new Error(
         "Web Bluetooth is not supported in this browser. " +
