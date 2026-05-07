@@ -275,10 +275,17 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
     if (rewardVal != null && rewardVal < 50) peakReachedRef.current = false;
   }, [rewardVal]);
 
-  // Cmd-K / Ctrl-K command palette keyboard shortcut
+  // Cmd-K / Ctrl-K command palette keyboard shortcut.
+  // Use e.code so the match is layout-independent (Dvorak/AZERTY) and
+  // case-insensitive. Also accept "/" as an alternative, GitHub-style.
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      const isCmdK = (e.metaKey || e.ctrlKey) && e.code === "KeyK";
+      const isSlash = e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey &&
+        !(e.target instanceof HTMLInputElement) &&
+        !(e.target instanceof HTMLTextAreaElement) &&
+        !(e.target as HTMLElement | null)?.isContentEditable;
+      if (isCmdK || isSlash) {
         e.preventDefault();
         setShowCmdK((v) => !v);
       }

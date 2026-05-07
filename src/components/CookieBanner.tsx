@@ -4,13 +4,34 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 const STORAGE_KEY = "eegbase-cookie-consent";
+const DEMO_ONBOARDING_KEY = "demo-onboarding-dismissed";
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const existing = localStorage.getItem(STORAGE_KEY);
-    if (!existing) setVisible(true);
+    if (localStorage.getItem(STORAGE_KEY)) return;
+    // On the /demo page the onboarding modal also wants the user's attention.
+    // Defer the cookie banner until that modal is dismissed (or skipped) so
+    // the two don't fight for visual focus on first visit.
+    const onDemo = window.location.pathname.startsWith("/demo");
+    if (!onDemo) {
+      setVisible(true);
+      return;
+    }
+    if (sessionStorage.getItem(DEMO_ONBOARDING_KEY) === "1") {
+      setVisible(true);
+      return;
+    }
+    // Poll for the onboarding flag — set when the user clicks "60-sec tour"
+    // or "Explore freely" in the demo's welcome modal.
+    const id = window.setInterval(() => {
+      if (sessionStorage.getItem(DEMO_ONBOARDING_KEY) === "1") {
+        setVisible(true);
+        window.clearInterval(id);
+      }
+    }, 400);
+    return () => window.clearInterval(id);
   }, []);
 
   function decide(choice: "accept" | "essential" | "reject") {

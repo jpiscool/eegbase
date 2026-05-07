@@ -101,13 +101,16 @@ export function FocusGame({ onScore, active, height = 320, bpm = 5.5 }: Props) {
       onScore(0);
       return;
     }
-    // Reset run state
+    // Reset run state — inputModeRef is cleared so each new run requires the
+    // user to actively engage before any score accrues.
     startedAtRef.current = performance.now();
     phaseScoreRef.current = 0;
     stillnessRef.current = 0;
-    inhibitionRef.current = 0.5;
+    inhibitionRef.current = 0;
     smoothedRef.current = 0;
     distractorRef.current = null;
+    inputModeRef.current = null;
+    driftPxPerSecRef.current = 0;
     nextDistractorAtRef.current = performance.now() + DISTRACTOR_MIN_GAP_MS + Math.random() * (DISTRACTOR_MAX_GAP_MS - DISTRACTOR_MIN_GAP_MS);
 
     let raf = 0;
@@ -124,18 +127,28 @@ export function FocusGame({ onScore, active, height = 320, bpm = 5.5 }: Props) {
       const expectedHold = ph < 0.5;          // inhale half = hold
       const actualHold = heldRef.current;
 
-      // Phase coherence: 1 if matched, 0 if not, with a small bonus for being
-      // very close to phase boundary (prevents harsh edges)
-      const phaseInst = expectedHold === actualHold ? 1 : 0;
+      // ── Engagement gate ────────────────────────────────────────────────
+      // The user is "engaged" only after they've started interacting at least
+      // once (touched the orb, clicked, or pressed SPACE). Without engagement
+      // every stream returns 0 — sitting still no longer scores 87.
+      const engaged = inputModeRef.current !== null;
+
+      // Phase coherence: 1 if held-state matches expected breath phase. Both
+      // "always held" and "never held" average 0.5 by symmetry; only matching
+      // the rhythm gets you to 1.
+      const phaseInst = engaged && expectedHold === actualHold ? 1 : 0;
       phaseScoreRef.current = phaseScoreRef.current * 0.9 + phaseInst * 0.1;
 
-      // ── Stillness (pointer mode only) ──────────────────────────────────
+      // ── Stillness ──────────────────────────────────────────────────────
       // driftPxPerSec is updated by pointermove handler. Decay it gently here
       // so the score recovers when the user stops moving.
       driftPxPerSecRef.current *= Math.exp(-dtMs / 600);
-      const stillnessInst = inputModeRef.current === "keyboard"
-        ? 1 // keyboard players get full stillness credit
-        : Math.exp(-driftPxPerSecRef.current / STILLNESS_SIGMA_PX);
+      let stillnessInst = 0;
+      if (engaged) {
+        stillnessInst = inputModeRef.current === "keyboard"
+          ? 1 // keyboard players have no displacement proxy → full credit
+          : Math.exp(-driftPxPerSecRef.current / STILLNESS_SIGMA_PX);
+      }
       stillnessRef.current = stillnessRef.current * 0.85 + stillnessInst * 0.15;
 
       // ── Distractors / inhibitory control ───────────────────────────────
@@ -166,7 +179,9 @@ export function FocusGame({ onScore, active, height = 320, bpm = 5.5 }: Props) {
           const progress = visibleFor / DISTRACTOR_VISIBLE_MS;
           distractorViewNow = { fromEdge: distractorRef.current.fromEdge, progress, pulse: Math.sin(progress * Math.PI) };
         } else {
-          if (distractorRef.current.reactedAt == null) {
+          // Clean-ignore reward only counts when the user is actually
+          // engaged. Otherwise sitting still reads as a "win".
+          if (distractorRef.current.reactedAt == null && inputModeRef.current !== null) {
             inhibitionRef.current = Math.min(1, inhibitionRef.current + 0.15);
           }
           distractorRef.current = null;
@@ -268,7 +283,10 @@ export function FocusGame({ onScore, active, height = 320, bpm = 5.5 }: Props) {
   // ── Visual derivation ───────────────────────────────────────────────────
   const breathCurve = 0.5 - 0.5 * Math.cos(phase * Math.PI * 2); // 0..1
   const minR = 70;
-  const maxR = Math.min(140, height * 0.42);
+  // Reserve ~36px below the orb for the breath phase label, ~36px above for
+  // the score/pacer chips. Without this cap the phase label clipped at
+  // height=320 (the default).
+  const maxR = Math.min(120, height * 0.35);
   const orbRadius = minR + (maxR - minR) * breathCurve;
   const expectedHold = phase < 0.5;
   const inSync = expectedHold === held;
@@ -409,7 +427,7 @@ export function FocusGame({ onScore, active, height = 320, bpm = 5.5 }: Props) {
         style={{
           position: "absolute",
           left: "50%",
-          top: `calc(50% + ${maxR + 18}px)`,
+          top: `calc(50% + ${maxR + 14}px)`,
           transform: "translateX(-50%)",
           fontSize: 12,
           fontWeight: 700,
@@ -491,13 +509,14 @@ export function FocusGame({ onScore, active, height = 320, bpm = 5.5 }: Props) {
         </div>
       )}
 
-      {/* Onboarding hint */}
+      {/* Onboarding hint — anchored at the top of the surface so it never
+          fights with the phase label / sub-meters at the bottom. */}
       {!hasInteracted && active && (
         <div
           aria-live="polite"
           style={{
             position: "absolute",
-            bottom: 36,
+            top: 46,
             left: "50%",
             transform: "translateX(-50%)",
             background: "rgba(15,23,42,0.78)",
@@ -509,6 +528,9 @@ export function FocusGame({ onScore, active, height = 320, bpm = 5.5 }: Props) {
             color: "#E2E8F0",
             whiteSpace: "nowrap",
             pointerEvents: "none",
+            maxWidth: "calc(100% - 32px)",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
           Hold the orb, breathe with it, ignore the drift
