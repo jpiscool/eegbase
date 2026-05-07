@@ -945,6 +945,13 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           .demo-topbar { padding: 0 12px !important; gap: 8px !important; }
           .demo-paper-preview { padding: 16px !important; }
         }
+        /* Top-bar overflow protection on common laptop widths.
+           At ≤1366px we drop secondary utility buttons (A11y, Theme, Replay,
+           Visit PDF, Notifications) and the compliance pill so the bar fits
+           without horizontal scroll. The features stay reachable via ⌘K. */
+        @media (max-width: 1366px) {
+          .demo-topbar-hide-narrow { display: none !important; }
+        }
         @media (max-width: 480px) {
           .demo-topbar-logo-text { display: none !important; }
           .demo-topbar-client-label { display: none !important; }
@@ -1006,7 +1013,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           <button
             onClick={() => { window.print(); showToast("Print dialog opened · save as PDF for the leave-behind"); }}
             aria-label="Generate PDF visit summary"
-            className="demo-topbar-hide-mobile"
+            className="demo-topbar-hide-mobile demo-topbar-hide-narrow"
             title="Print this view · save as PDF for clinical hand-off or Mendi pitch leave-behind"
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6, color: "#CBD5E1", fontSize: 12, cursor: "pointer", fontWeight: 600 }}
           >
@@ -1016,7 +1023,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           <button
             onClick={() => showToast("Accessibility test mode · high-contrast + reduced-motion preview · WCAG 2.2 AA conformance verified by Deque Q1 2026")}
             aria-label="Accessibility test mode"
-            className="demo-topbar-hide-mobile"
+            className="demo-topbar-hide-mobile demo-topbar-hide-narrow"
             title="Toggle high-contrast + reduced-motion preview"
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6, color: "#CBD5E1", fontSize: 12, cursor: "pointer", fontWeight: 600 }}
           >
@@ -1026,7 +1033,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           <button
             onClick={() => showToast("Theme switcher · dark / light / high-contrast modes · CSS-variable system ready · light theme ships with Q3 2026 paid plans")}
             aria-label="Theme switcher"
-            className="demo-topbar-hide-mobile"
+            className="demo-topbar-hide-mobile demo-topbar-hide-narrow"
             title="Switch theme · dark / light / high-contrast"
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6, color: "#CBD5E1", fontSize: 12, cursor: "pointer", fontWeight: 600 }}
           >
@@ -1036,7 +1043,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           <button
             onClick={() => showToast("Session replay scrubber · drag a timeline through any past session · ships Q3 2026 with paid plans")}
             aria-label="Session replay"
-            className="demo-topbar-hide-mobile"
+            className="demo-topbar-hide-mobile demo-topbar-hide-narrow"
             title="Replay scrubber · ships Q3 2026"
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6, color: "#CBD5E1", fontSize: 12, cursor: "pointer", fontWeight: 600 }}
           >
@@ -1046,7 +1053,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           <button
             onClick={() => showToast("3 new alerts: Sarah's PHQ-9 down 3 pts · James co-sign needed · Aetna ERA posted")}
             aria-label="Notifications"
-            className="demo-topbar-hide-mobile"
+            className="demo-topbar-hide-mobile demo-topbar-hide-narrow"
             style={{ position: "relative", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#CBD5E1" }}
           >
             <Bell size={14} strokeWidth={1.75} />
@@ -1072,7 +1079,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             </span>
           )}
           {/* Compliance strip — persistent trust signal */}
-          <span className="demo-topbar-hide-mobile" title="HIPAA · Schrems II · AES-256 · SOC 2 · WCAG 2.2 AA" style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "0.66rem", color: "#94A3B8", fontWeight: 700, padding: "3px 8px", background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 99, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+          <span className="demo-topbar-hide-mobile demo-topbar-hide-narrow" title="HIPAA · Schrems II · AES-256 · SOC 2 · WCAG 2.2 AA" style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "0.66rem", color: "#94A3B8", fontWeight: 700, padding: "3px 8px", background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 99, letterSpacing: "0.04em", textTransform: "uppercase" }}>
             <span aria-hidden="true">🛡</span>
             <span>HIPAA</span>
             <span style={{ color: "#475569" }}>·</span>
