@@ -11,6 +11,7 @@ import { AchievementsRow } from "../_components/AchievementsRow";
 import { ClinicianShareCard } from "../_components/ClinicianShareCard";
 import { ClinicianWatchPanel } from "../_components/LiveCoFeedback";
 import { AskWeekSheet } from "../_components/AskWeekSheet";
+import { DiagnosticCard } from "../_components/DiagnosticCard";
 
 interface PatientsViewProps {
   role: Role;
@@ -28,6 +29,7 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [watchOpen, setWatchOpen] = useState(false);
   const [askOpen, setAskOpen] = useState(false);
+  const [diagnosticOpen, setDiagnosticOpen] = useState(false);
   const [sessionLive, setSessionLive] = useState(false);
 
   // Detect whether the patient is currently in a session by polling the
@@ -129,13 +131,27 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
       {/* Ask AI about the week — both roles, real Claude Haiku call */}
       <button
         onClick={() => setAskOpen(true)}
-        className="w-full text-left bg-white border border-gray-200 rounded-2xl px-5 py-4 hover:border-blue-300 transition-colors flex items-center justify-between mb-6"
+        className="w-full text-left bg-white border border-gray-200 rounded-2xl px-5 py-4 hover:border-blue-300 transition-colors flex items-center justify-between mb-3"
       >
         <span>
           <span className="block text-sm font-semibold text-gray-900">
             {isHome ? "Ask about your week" : `Ask about ${client.name.split(" ")[0]}\u2019s week`}
           </span>
           <span className="block text-xs text-gray-500 mt-0.5">Claude Haiku · grounded in last 4 sessions + patterns</span>
+        </span>
+        <span className="text-blue-600 text-sm font-semibold" aria-hidden>→</span>
+      </button>
+
+      {/* "Why isn't this working?" diagnostic — both roles */}
+      <button
+        onClick={() => setDiagnosticOpen(true)}
+        className="w-full text-left bg-white border border-gray-200 rounded-2xl px-5 py-4 hover:border-blue-300 transition-colors flex items-center justify-between mb-6"
+      >
+        <span>
+          <span className="block text-sm font-semibold text-gray-900">
+            {isHome ? "Why isn\u2019t this working yet?" : `Why isn\u2019t ${client.name.split(" ")[0]} responding yet?`}
+          </span>
+          <span className="block text-xs text-gray-500 mt-0.5">Honest read on dose · signal · consistency · sleep</span>
         </span>
         <span className="text-blue-600 text-sm font-semibold" aria-hidden>→</span>
       </button>
@@ -226,6 +242,7 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
         audience={isHome ? "home" : "clinician"}
         patientFirstName={client.name.split(" ")[0]}
       />
+      <DiagnosticCard open={diagnosticOpen} setOpen={setDiagnosticOpen} />
     </main>
   );
 }
