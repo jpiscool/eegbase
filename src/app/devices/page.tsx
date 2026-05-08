@@ -40,7 +40,7 @@ const devices = [
     tagline: "Consumer-grade EEG headband",
     status: "integrated" as const,
     statusLabel: "Integrated",
-    statusNote: "Uses the muse-js library (Web Bluetooth). Streams 4-channel EEG, computed band powers (delta, theta, alpha, beta, gamma), and accelerometer.",
+    statusNote: "Streams brainwaves and motion data over Bluetooth. The system computes the 5 standard frequency bands automatically.",
     signals: ["Delta", "Theta", "Alpha", "Beta", "Gamma", "Accelerometer"],
     connection: "Web Bluetooth via muse-js",
     sampleRate: "256 Hz EEG",
@@ -347,7 +347,7 @@ export default function DevicesPage() {
           )}
         </div>
         <p className="text-xs mt-3" style={{ color: "var(--text-tertiary)" }}>
-          Each 100ms sample flows from the device through the adapter, into the live view, and is batch-uploaded to the server every second. Data points are associated with the session for later analysis.
+          Each sample from the device flows straight to the live view, then saves to your database every second. Clinicians see the data in real time; the full session is searchable later.
         </p>
       </div>
 
@@ -392,7 +392,7 @@ export default function DevicesPage() {
               <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "#3730A3" }}>DeoxyHb — Deoxyhemoglobin</span>
             </div>
             <p className="text-xs leading-relaxed mb-3" style={{ color: "var(--text-secondary)" }}>
-              Measures deoxygenated blood. DeoxyHb typically decreases during cognitive activation (the haemodynamic response) but can rise during intense sustained effort or poor neural efficiency.
+              Measures blood without oxygen. Usually drops when someone is thinking hard. Can rise if the brain is working too hard or inefficiently.
             </p>
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-xs">

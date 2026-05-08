@@ -513,14 +513,14 @@ export default function LandingPage() {
             </div>
             <ul className="space-y-3">
               {[
-                "All clients in one dashboard",
-                "Live HIPAA-video co-feedback during the session",
-                "AI cross-session pattern detector — Mendi data ↔ sleep · mood · HRV",
-                "SOAP / DAP / BIRP / GIRP / PIE / SIRP scribe (6 formats)",
-                "Pre/post questionnaire deltas (PHQ-9, GAD-7, custom)",
-                "Branded one-click PDF reports for clients + referrers",
-                "CMS-1500 + ERA + ICD-10 · insurance bundled in",
-                "BIDS-fNIRS / SNIRF / EDF+ · zero lock-in",
+                "Every client in one dashboard",
+                "See live brain data during a HIPAA video call",
+                "AI ties brain data to sleep, mood, and HRV across sessions",
+                "AI drafts session notes — pick the format you use (6 options)",
+                "Track PHQ-9, GAD-7, or your own questionnaire scores over time",
+                "One-click branded PDF reports for clients and referring doctors",
+                "Insurance billing built in (CMS-1500, ERA, ICD-10)",
+                "Export your data in any standard format — never trapped",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-sm text-violet-900">
                   <CheckCircle size={15} className="text-violet-500 shrink-0 mt-0.5" />

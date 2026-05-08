@@ -178,7 +178,7 @@ export default function MendiPartnershipPage() {
                 badge: "Low lift",
                 badgeColor: "#059669",
                 badgeBg: "#D1FAE5",
-                description: "Mendi recommends EEGBase to clinicians who reach out via your \"For Professionals\" inquiry flow. EEGBase affiliates Mendi hardware purchases from our clinician onboarding. Revenue share on both sides — no engineering required.",
+                description: "Mendi recommends EEGBase to clinicians who ask. EEGBase recommends Mendi to ours. Both sides get a referral cut. No code changes needed.",
                 bullets: [
                   "Affiliate link in Mendi Pro onboarding",
                   "EEGBase referral link to Mendi hardware",
@@ -195,7 +195,7 @@ export default function MendiPartnershipPage() {
                 badge: "Recommended",
                 badgeColor: violet,
                 badgeBg: violetLight,
-                description: "Mendi cloud pushes session data to EEGBase via a lightweight REST API. Clinicians see all client sessions in one dashboard without needing to be present at the BLE connection — or even own the headband themselves.",
+                description: "Mendi sends session data to EEGBase automatically. Clinicians see every client's sessions in one dashboard — even when the client trains alone at home.",
                 bullets: [
                   "Mendi API pushes to EEGBase webhook",
                   "Clinician dashboard pulls live session data",
