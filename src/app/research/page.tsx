@@ -24,7 +24,7 @@ export default function ResearchPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#7C3AED", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Research at EEGBase</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Open science, real outcomes</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
-          Every EEGBase session can opt into a multi-clinic naturalistic registry under signed DUA. We publish pre-prints openly, share BIDS-fNIRS exports under DUA, and co-author with hardware partners (Mendi) and contributing clinics.
+          Clinics can opt sessions into our shared research database after signing a data-use agreement. We publish findings openly, share raw data with researchers (under the same agreement), and co-author papers with partner clinics and hardware makers like Mendi.
         </p>
 
         {/* Pre-print card */}
@@ -90,7 +90,7 @@ export default function ResearchPage() {
         <section style={{ background: "white", border: "1px solid #E5E7EB", borderRadius: 16, padding: 24, marginBottom: 18 }}>
           <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>Open data · BIDS-fNIRS export</h2>
           <p style={{ fontSize: 13, color: "#64748B", lineHeight: 1.7, marginBottom: 12 }}>
-            Every session in the registry exports as BIDS-fNIRS-compliant SNIRF + JSON sidecar (BEP-030 draft). Researchers with signed DUA can request access to the de-identified cohort. Aggregate findings are published openly on OSF.
+            Every session exports in open research formats (BIDS standard + SNIRF). Researchers with a signed data-use agreement can request access to the anonymized data. Summary findings are published openly on OSF.
           </p>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <Link href="/downloads" style={{ padding: "8px 14px", background: "#2563EB", color: "white", borderRadius: 8, fontSize: 12, fontWeight: 700, textDecoration: "none" }}>Sample sidecar JSON →</Link>

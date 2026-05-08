@@ -1211,7 +1211,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               const score = (detailModal.data as { score: number }).score;
               return (
                 <div>
-                  <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>Your reward score is a weighted blend of three brainwave bands. Each band's contribution depends on the protocol — for SMR, reduced theta and increased SMR/beta both raise the score.</p>
+                  <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>Your reward score blends three brainwave bands. The protocol decides which ones count — calmer slow waves and more focused fast waves both push the score up.</p>
                   <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                     {[
                       { band: "Theta (4–8 Hz)", contribution: 35, color: "#F59E0B", note: "Lower is better — drowsiness reduces score" },
@@ -1540,7 +1540,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   <button onClick={() => showToast("Family · multiple participants · IFS / family-systems mode")} style={{ fontSize: 11, padding: "4px 12px", background: "transparent", color: "#94A3B8", border: "none", borderRadius: 5, cursor: "pointer", fontWeight: 600 }}>Family</button>
                 </div>
               </div>
-              <span style={{ fontSize: 10, color: "#64748B" }}>Group sessions are CPT 90849 reimbursable · scales clinic capacity 4–8× · supports corporate wellness deployment</span>
+              <span style={{ fontSize: 10, color: "#64748B" }}>Run 4–8 clients in one slot. Group sessions are insurance-reimbursable.</span>
             </div>
 
             {/* Telehealth co-feedback panel — unique combo: HIPAA video + live signals */}
@@ -2050,7 +2050,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   <div style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderLeft: "3px solid #10B981", borderRadius: 12, padding: 14, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                       <div style={{ fontSize: 11, fontWeight: 700, color: "#10B981", textTransform: "uppercase", letterSpacing: "0.08em" }}>TOI</div>
-                      <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>HbO / (HbO + HbR)</span>
+                      <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>Oxygen-rich blood ÷ total blood</span>
                     </div>
                     <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
                       <span style={{ fontSize: 28, fontWeight: 800, color: "#F1F5F9", fontVariantNumeric: "tabular-nums", letterSpacing: "-0.02em" }}>{toi.toFixed(1)}</span>
@@ -2228,7 +2228,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap", marginBottom: 10 }}>
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Anchor · prefrontal-focus trainer</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Anchor — Breath & Focus Trainer</div>
                     <span style={{ fontSize: 9, fontWeight: 700, color: "#34D399", padding: "2px 7px", background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Hardware-free</span>
                   </div>
                   <div style={{ fontSize: 12, color: "#94A3B8" }}>

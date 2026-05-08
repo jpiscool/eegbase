@@ -25,7 +25,7 @@ const PILLARS = [
     desc: "How we handle PHI + personal data",
     items: [
       "HIPAA Business Associate Agreement available",
-      "GDPR-compliant · Schrems II SCCs (2021/914)",
+      "GDPR-compliant · uses EU-approved cross-border data contracts",
       "PHIPA-compliant · ca-central-1 region",
       "30-day data deletion · 72h breach notification",
       "Plausible (cookie-less) analytics only",

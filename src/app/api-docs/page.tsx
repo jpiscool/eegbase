@@ -48,8 +48,8 @@ export default function ApiDocsPage() {
           {[
             { val: "50k/min", lbl: "Rate limit · flagship" },
             { val: "250k",    lbl: "Concurrent WS streams" },
-            { val: "<80 ms",  lbl: "p95 stream latency" },
-            { val: "TLS 1.3", lbl: "Forward secrecy" },
+            { val: "<80 ms",  lbl: "Stream lag (95% of the time)" },
+            { val: "TLS 1.3", lbl: "Encrypted in transit" },
           ].map((s) => (
             <div key={s.lbl} style={{ background: "white", border: "1px solid #E5E7EB", borderRadius: 12, padding: 14 }}>
               <div style={{ fontSize: 22, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em" }}>{s.val}</div>

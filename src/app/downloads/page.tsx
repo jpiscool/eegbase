@@ -9,7 +9,7 @@ const FILES = [
   {
     name: "BIDS-fNIRS sidecar (sample)",
     file: "sub-021_ses-08_task-focus_nirs.json",
-    desc: "Real-shape JSON sidecar conformant to BIDS-fNIRS Extension Proposal 30 (BEP-030). Includes Mendi v3 hardware metadata, motion-artifact rejection statistics, preprocessing pipeline, subject demographics, and outcome measures.",
+    desc: "Sample data file showing how each session's raw brain data is saved in an open research format. Includes hardware info, data quality flags, processing details, subject info, and outcome scores.",
     audience: "fNIRS researchers · BIDS validators · regulatory reviewers",
     size: "1.8 KB",
     icon: "🧠",
@@ -19,7 +19,7 @@ const FILES = [
   {
     name: "IRB application packet (sample)",
     file: "EEGBase-Mendi-IRB-Packet-Sample.docx",
-    desc: "Sample IRB submission packet for the proposed multi-clinic naturalistic registry of home-use Mendi fNIRS in adolescent ADHD. 12 sections including aims, procedures, data management, DSMP, and conflict-of-interest disclosure.",
+    desc: "Sample ethics-approval packet for the multi-clinic Mendi research database. Includes study aims, procedures, data security, safety monitoring, and conflict-of-interest forms.",
     audience: "Mendi science team · clinic IRBs · co-investigators",
     size: "16 KB · 12 pages",
     icon: "📋",

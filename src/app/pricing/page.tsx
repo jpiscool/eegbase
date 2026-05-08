@@ -22,19 +22,19 @@ const FEATURE_MATRIX = [
   { feat: "Multi-location support",                 solo: false, practice: true,  ent: true  },
   { feat: "Outcomes-registry export",               solo: "Self-only", practice: "Clinic", ent: "Multi-clinic" },
   { feat: "White-label / custom branding",          solo: false, practice: false, ent: true  },
-  { feat: "SSO + SAML + IP allowlist",              solo: false, practice: false, ent: true  },
-  { feat: "Custom DPA + 42 CFR Part 2",             solo: false, practice: false, ent: true  },
-  { feat: "99.97% uptime SLA + dedicated CSM",      solo: false, practice: false, ent: true  },
-  { feat: "Multi-region · RTO 15 min",              solo: false, practice: false, ent: true  },
+  { feat: "Single sign-on + IP restrictions",       solo: false, practice: false, ent: true  },
+  { feat: "Custom data agreements + addiction-care confidentiality", solo: false, practice: false, ent: true  },
+  { feat: "99.97% uptime + dedicated account manager", solo: false, practice: false, ent: true  },
+  { feat: "Multi-region · 15-minute disaster recovery", solo: false, practice: false, ent: true  },
 ];
 
 const FAQ = [
   { q: "What's the difference between Solo per-session and Solo monthly?", a: "Pay-per-session at $19 has no monthly commitment — perfect for trial periods or pilot programs. Solo monthly at $149/mo includes 25 client slots and unlimited sessions for one clinician." },
-  { q: "Are there discounts for Mendi-attached clinics?", a: "Yes — 20% off Practice and Enterprise tiers when at least 30% of your active sessions use Mendi hardware. Auto-applied based on session telemetry." },
+  { q: "Are there discounts for Mendi-attached clinics?", a: "Yes — 20% off Practice and Enterprise tiers if 30%+ of your sessions use Mendi (auto-detected)." },
   { q: "What payment methods do you accept?", a: "Stripe handles all billing — credit/debit, ACH, wire, and Truemed HSA/FSA for cash-pay patients. Annual invoicing available on Practice and above." },
   { q: "Can I downgrade or cancel?", a: "Anytime. Cancel and your account stays active through the end of the paid period. Full refund within 30 days of first paid invoice. Your data remains exportable for 90 days after cancellation." },
   { q: "What's not included?", a: "Hardware (Mendi/Muse/Polar). Insurance reimbursement is between you and your payer (we just generate the claim). EPCS/PDMP for psychiatrists ships Q4 2026 (not yet available)." },
-  { q: "Do you have an enterprise SLA?", a: "Yes. Enterprise plans include 99.97% uptime SLA, dedicated CSM, custom DPA, signed BAA, and 4-hour P0 incident response. Contact sales for the full SLA matrix." },
+  { q: "Do you have an enterprise SLA?", a: "Yes. Enterprise plans include 99.97% uptime, a dedicated account manager, custom data agreements, a signed HIPAA agreement, and a 4-hour response promise for critical issues. Contact sales for full details." },
 ];
 
 export default function PricingPage() {
