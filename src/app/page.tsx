@@ -301,15 +301,13 @@ export default function LandingPage() {
           Free for licensed clinicians
         </div>
         <h1 className="font-extrabold text-gray-900 mb-5" style={{ fontSize: "clamp(2.6rem, 5.2vw, 4rem)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
-          The clinical layer
+          Control all your neurofeedback devices
           <br />
-          for{" "}
-          <span style={{ background: "linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #06B6D4 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>any neurofeedback hardware</span>
+          with{" "}
+          <span style={{ background: "linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #06B6D4 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>one tool</span>
         </h1>
         <p className="text-gray-500 max-w-2xl mx-auto mb-7" style={{ fontSize: "1.075rem", lineHeight: 1.65, letterSpacing: "-0.005em" }}>
-          Mendi at home, Muse in clinic, Polar HRV, and Apple Health become one
-          client record, one SOAP note, one billable session. AI session notes,
-          progress tracking, claims, and HIPAA video — all in one open-source app.
+          Mendi fNIRS, Muse EEG, Polar HRV, Apple Health, Oura, OpenBCI and 32+ more boards — every device feeds <strong className="text-gray-900">one client record, one SOAP note, one billable session.</strong> Stop juggling vendor apps. Free, open-source, MIT.
         </p>
 
         {/* Above-the-fold trust strip — micro-proof per Nielsen 83% trust research */}
