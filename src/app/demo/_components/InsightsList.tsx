@@ -27,7 +27,7 @@ export function InsightsList({ audience, patientFirstName = "your client" }: Ins
     <section className="bg-white border border-gray-200 rounded-2xl p-5 mb-6">
       <div className="flex items-baseline justify-between mb-3">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{heading}</p>
-        <span className="text-[10px] text-gray-400">AI-detected \u00b7 click to see why</span>
+        <span className="text-[10px] text-gray-400">AI-detected · click to see why</span>
       </div>
       <ul className="divide-y divide-gray-100 -mx-5">
         {insights.map((ins, i) => {
