@@ -8,6 +8,7 @@ import { HistoryChart } from "../_components/HistoryChart";
 import { CheckIn } from "../_components/CheckIn";
 import { InsightsList } from "../_components/InsightsList";
 import { AchievementsRow } from "../_components/AchievementsRow";
+import { ClinicianShareCard } from "../_components/ClinicianShareCard";
 
 interface PatientsViewProps {
   role: Role;
@@ -98,6 +99,9 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
 
       {/* Achievements — home-user only; gamification is patronizing in clinical UI */}
       {isHome && <AchievementsRow />}
+
+      {/* Share-with-clinician toggle — home-user only; the bridge to Mendi-attached clinics */}
+      {isHome && <ClinicianShareCard />}
 
       {/* AI-detected pattern insights with citations — both roles */}
       <InsightsList
