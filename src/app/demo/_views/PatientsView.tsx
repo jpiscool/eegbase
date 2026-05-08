@@ -10,6 +10,7 @@ import { InsightsList } from "../_components/InsightsList";
 import { AchievementsRow } from "../_components/AchievementsRow";
 import { ClinicianShareCard } from "../_components/ClinicianShareCard";
 import { ClinicianWatchPanel } from "../_components/LiveCoFeedback";
+import { AskWeekSheet } from "../_components/AskWeekSheet";
 
 interface PatientsViewProps {
   role: Role;
@@ -26,6 +27,7 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
   const [openSessionId, setOpenSessionId] = useState<number | null>(null);
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [watchOpen, setWatchOpen] = useState(false);
+  const [askOpen, setAskOpen] = useState(false);
   const [sessionLive, setSessionLive] = useState(false);
 
   // Detect whether the patient is currently in a session by polling the
@@ -124,6 +126,20 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
         patientFirstName={client.name.split(" ")[0]}
       />
 
+      {/* Ask AI about the week — both roles, real Claude Haiku call */}
+      <button
+        onClick={() => setAskOpen(true)}
+        className="w-full text-left bg-white border border-gray-200 rounded-2xl px-5 py-4 hover:border-blue-300 transition-colors flex items-center justify-between mb-6"
+      >
+        <span>
+          <span className="block text-sm font-semibold text-gray-900">
+            {isHome ? "Ask about your week" : `Ask about ${client.name.split(" ")[0]}\u2019s week`}
+          </span>
+          <span className="block text-xs text-gray-500 mt-0.5">Claude Haiku · grounded in last 4 sessions + patterns</span>
+        </span>
+        <span className="text-blue-600 text-sm font-semibold" aria-hidden>→</span>
+      </button>
+
       {/* Send check-in — clinician only; the home-user version lives on Today */}
       {!isHome && (
         <button
@@ -204,6 +220,12 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
 
       <CheckIn open={checkInOpen} setOpen={setCheckInOpen} mode="send" />
       <ClinicianWatchPanel open={watchOpen} setOpen={setWatchOpen} />
+      <AskWeekSheet
+        open={askOpen}
+        setOpen={setAskOpen}
+        audience={isHome ? "home" : "clinician"}
+        patientFirstName={client.name.split(" ")[0]}
+      />
     </main>
   );
 }
