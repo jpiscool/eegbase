@@ -369,6 +369,36 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* The Problem — storybrand: name the pain so the customer feels understood */}
+      <section className="max-w-5xl mx-auto px-6 pb-20">
+        <div className="bg-gradient-to-br from-rose-50 to-amber-50 border border-rose-100 rounded-3xl p-10">
+          <p className="text-xs font-bold text-rose-600 uppercase tracking-wider mb-3">The problem you&apos;re here to solve</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4 leading-tight">
+            You&apos;re running your practice across <span className="text-rose-600">5 separate tools</span> that don&apos;t talk to each other.
+          </h2>
+          <p className="text-gray-600 mb-8 max-w-3xl leading-relaxed">
+            The Mendi app shows brain data. The Muse app shows EEG. Polar shows heart rate. Your EHR holds the notes. A separate tool handles billing. Another does scheduling. Nothing connects.
+          </p>
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="bg-white rounded-xl p-5 border border-gray-100">
+              <p className="text-sm font-bold text-gray-900 mb-1">Audit nightmare</p>
+              <p className="text-sm text-gray-600 leading-relaxed">Insurance asks for session data. You spend 20 minutes pulling it from 4 vendor exports.</p>
+            </div>
+            <div className="bg-white rounded-xl p-5 border border-gray-100">
+              <p className="text-sm font-bold text-gray-900 mb-1">Half the picture</p>
+              <p className="text-sm text-gray-600 leading-relaxed">A client&apos;s sleep tanked their session and you can&apos;t see it — that data lives in a different app.</p>
+            </div>
+            <div className="bg-white rounded-xl p-5 border border-gray-100">
+              <p className="text-sm font-bold text-gray-900 mb-1">Vendor lock-in</p>
+              <p className="text-sm text-gray-600 leading-relaxed">Switch headsets next year and you lose six months of client history. Again.</p>
+            </div>
+          </div>
+          <p className="text-base font-semibold text-gray-900 mt-8 leading-relaxed">
+            Clients deserve coherent care. Their data shouldn&apos;t be scattered across vendor silos.
+          </p>
+        </div>
+      </section>
+
       {/* Partner logos · ecosystem signal */}
       <PartnerLogos />
 
