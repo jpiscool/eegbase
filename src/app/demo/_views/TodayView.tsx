@@ -6,6 +6,7 @@ import { CLIENTS } from "../_data/clients";
 import { Sparkline } from "../_components/Sparkline";
 import { CheckIn } from "../_components/CheckIn";
 import { DevicesCard } from "../_components/DevicesCard";
+import { WearableSyncCard } from "../_components/WearableSyncCard";
 import { SessionTypePicker } from "../_components/SessionTypePicker";
 import type { Role } from "../_components/RoleToggle";
 import type { SessionType } from "../_data/session-types";
@@ -118,6 +119,7 @@ function ClinicianToday({
       </section>
 
       <DevicesCard />
+      <WearableSyncCard />
 
       <section>
         <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">This week</h2>
@@ -192,6 +194,7 @@ function HomeUserToday({ onStartSession }: { onStartSession: (clientId: string, 
       </section>
 
       <DevicesCard />
+      <WearableSyncCard />
 
       {/* Quick check-in — 30s, three sliders */}
       <section className="mb-12">
