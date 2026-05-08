@@ -452,11 +452,11 @@ export default function DevicesPage() {
               { label: "→", arrow: true },
               { label: "Near-infrared light (700–900 nm)", color: "#DC2626", bg: "color-mix(in srgb, #DC2626 10%, transparent)", border: "color-mix(in srgb, #DC2626 25%, transparent)" },
               { label: "→", arrow: true },
-              { label: "Cortical tissue scatter", color: "var(--text-secondary)", bg: "var(--surface-raised)", border: "var(--border-default)" },
+              { label: "Light bounces off brain tissue", color: "var(--text-secondary)", bg: "var(--surface-raised)", border: "var(--border-default)" },
               { label: "→", arrow: true },
-              { label: "Modified Beer-Lambert Law", color: "#4338CA", bg: "color-mix(in srgb, #4338CA 10%, transparent)", border: "color-mix(in srgb, #4338CA 25%, transparent)" },
+              { label: "Light absorption math", color: "#4338CA", bg: "color-mix(in srgb, #4338CA 10%, transparent)", border: "color-mix(in srgb, #4338CA 25%, transparent)" },
               { label: "→", arrow: true },
-              { label: "OxyHb / DeoxyHb (μM)", color: "var(--success)", bg: "var(--success-subtle)", border: "color-mix(in srgb, var(--success) 25%, transparent)" },
+              { label: "Brain blood flow values", color: "var(--success)", bg: "var(--success-subtle)", border: "color-mix(in srgb, var(--success) 25%, transparent)" },
             ].map((item, i) =>
               (item as { arrow?: boolean }).arrow ? (
                 <span key={i} className="font-medium" style={{ color: "var(--text-tertiary)" }}>→</span>
@@ -468,7 +468,7 @@ export default function DevicesPage() {
             )}
           </div>
           <p className="text-xs mt-2" style={{ color: "var(--text-tertiary)" }}>
-            Mendi places optodes bilaterally over the dorsolateral and ventromedial PFC — key regions for working memory, emotional regulation, and inhibitory control.
+            Mendi sensors sit on both sides of the forehead — the brain region tied to focus and emotional control.
           </p>
         </div>
       </div>

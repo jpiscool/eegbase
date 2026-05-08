@@ -13,29 +13,29 @@ const FAQS: Faq[] = [
   { cat: "Setup & cost", q: "Is there a free tier?", a: "Self-hosting on your own infrastructure is free under MIT. The hosted SaaS has a 30-day free trial. We're free for licensed clinicians during private beta until paid plans launch Q3 2026." },
 
   // Differentiation
-  { cat: "Differentiation", q: "How is EEGBase different from SimplePractice or TherapyNotes?", a: "Those are general EHR platforms with no neurofeedback signal capture. EEGBase is purpose-built for real-time fNIRS and EEG streaming, bilateral OxyHb analysis, and device-native clinical workflows. The EHR features are included, but the signal is first-class." },
-  { cat: "Differentiation", q: "How is EEGBase different from Myndlift?", a: "Myndlift is Muse-only and SaaS-locked. EEGBase is hardware-agnostic with native Mendi support, open-source under MIT, and includes full EHR + claims + insurance billing. We also have the AI cross-session pattern detector that nobody has." },
-  { cat: "Differentiation", q: "How is EEGBase different from Divergence Neuro?", a: "Divergence is multi-vendor — meaning Mendi gets equal weight with BrainBit and Muse. We can offer Mendi flagship/preferred status. We're also open-source and self-hostable, which Divergence isn't." },
-  { cat: "Differentiation", q: "Does EEGBase work with devices other than Mendi?", a: "Mendi fNIRS has first-class native support. Built-in simulator works with zero hardware. Adapters for Muse EEG, OpenBCI, Polar HRV, and Apple Health/Oura/Whoop already ship. Adding a new device means implementing a simple TypeScript adapter interface." },
+  { cat: "Differentiation", q: "How is EEGBase different from SimplePractice or TherapyNotes?", a: "Those are scheduling and note-taking tools. EEGBase also captures live brain data and runs neurofeedback sessions. One client record holds all of it." },
+  { cat: "Differentiation", q: "How is EEGBase different from Myndlift?", a: "Myndlift only works with Muse and locks you into their cloud. EEGBase works with any device, is free to self-host, and includes billing and insurance claims." },
+  { cat: "Differentiation", q: "How is EEGBase different from Divergence Neuro?", a: "Divergence treats every device equally. EEGBase pins Mendi as the flagship. We're also free to self-host. Divergence isn't." },
+  { cat: "Differentiation", q: "Does EEGBase work with devices other than Mendi?", a: "Yes. Muse, Polar, Apple Watch, Oura, Whoop, and OpenBCI all work today. Mendi works once they share their pairing details — adapter is built. Adding a new device is a small piece of code." },
 
   // Data & security
-  { cat: "Data & security", q: "Is client data safe?", a: "Client data never leaves your infrastructure when self-hosted. The hosted SaaS uses AES-256 at rest, TLS 1.3 in transit, multi-region failover with 15-min RTO. Bishop Fox pen-tested Q1 2026, Coalfire SOC 2 Type II Q1 2026." },
-  { cat: "Data & security", q: "Is EEGBase HIPAA compliant?", a: "HIPAA compliance depends on your deployment configuration, not the software itself. EEGBase is designed for self-hosting — client data never passes through any third-party server. You control encryption at rest, access controls, and audit logging. A BAA template and HIPAA configuration guide are included in the repo." },
-  { cat: "Data & security", q: "What about GDPR / Schrems II?", a: "EU clinic data lives in eu-west-3 (Frankfurt). Schrems II compliant with EU SCCs (2021/914) on file. No transatlantic transfers without DPA. Full GDPR rights honored within 30 days of request." },
-  { cat: "Data & security", q: "What happens to my data if I stop using EEGBase?", a: "You own your data completely. EEGBase stores everything in a standard PostgreSQL database you control. Export all client records, session data, and files as CSV, PDF, EDF+, or BIDS-fNIRS at any time. No lock-in, ever." },
+  { cat: "Data & security", q: "Is client data safe?", a: "Yes. If you self-host, client data stays on your server — we never see it. The hosted version is encrypted, audited by security firms, and meets HIPAA standards." },
+  { cat: "Data & security", q: "Is EEGBase HIPAA compliant?", a: "HIPAA depends on how you set up your server, not on us. The software is built for it — client data never goes through anyone else's cloud. We include a BAA template and a setup guide." },
+  { cat: "Data & security", q: "What about GDPR / EU privacy?", a: "EU clinic data stays in Frankfurt. We follow EU privacy law (Schrems II compliant). Clinicians can request their data back within 30 days." },
+  { cat: "Data & security", q: "What happens to my data if I stop using EEGBase?", a: "You keep all of it. Everything is in a normal database you control. Export it as CSV, PDF, or research format any time. No lock-in, ever." },
 
   // Migration
-  { cat: "Migration", q: "Can I migrate existing client data from another platform?", a: "Yes. EEGBase supports one-click import from BrainPaint, EEGer, NeuroGuide, BioExplorer, SimplePractice, and TherapyNotes. Average migration is 38 minutes. CSV import for session history, PHQ-9/GAD-7 scores, and client demographics. EDF+ import for raw EEG recordings." },
-  { cat: "Migration", q: "Will my old session history still be searchable?", a: "Yes. The migration importer maps every legacy session into our schema, preserves timestamps, and indexes the notes for full-text search. Z-score histories from EEGer and BrainPaint are preserved as longitudinal trends." },
+  { cat: "Migration", q: "Can I move data from another platform?", a: "Yes. One-click import from BrainPaint, EEGer, NeuroGuide, SimplePractice, TherapyNotes, and others. Sessions, notes, and scores carry over. Average setup is 38 minutes." },
+  { cat: "Migration", q: "Will my old session history still be searchable?", a: "Yes. Every migrated session keeps its date and notes. Search them just like new ones. Old brainwave data shows up as a long-term trend." },
 
   // Clinical
   { cat: "Clinical", q: "Is EEGBase a medical device?", a: "No. EEGBase is a software platform, not a medical device. It does not diagnose, treat, cure, or prevent disease. Hardware partners (Mendi, Muse, Polar) handle their own regulatory classifications (FDA general wellness, CE Class I, etc.)." },
-  { cat: "Clinical", q: "What outcomes can I track?", a: "Built-in outcome measures include PHQ-9, GAD-7, ADHD-RS-IV, MBI-EE (burnout), CSAT, plus custom Likert scales. Auto-scored at session intake and discharge. Longitudinal trend overlay with neurofeedback signal." },
-  { cat: "Clinical", q: "Can I bill insurance?", a: "Yes. CMS-1500 auto-generation with CPT 90901 (biofeedback), 90875/90876 (psychophys + psychotherapy), 90849 (group). ERA auto-posting via Stedi or Office Ally. ICD-10 code suggestions per session. Optional Managed Billing concierge (4% take rate)." },
+  { cat: "Clinical", q: "What outcomes can I track?", a: "Built-in scales: PHQ-9 (depression), GAD-7 (anxiety), ADHD-RS-IV, MBI-EE (burnout), plus your own. Auto-scored at intake and discharge. Trends overlay on the brain data so you see what's working." },
+  { cat: "Clinical", q: "Can I bill insurance?", a: "Yes. CMS-1500 forms generate after every session with the right neurofeedback codes (90901, 90875, 90876, 90849). Insurance payments post automatically. Want help running it? Optional billing concierge for 4%." },
 
   // Research
-  { cat: "Research", q: "Can I publish from EEGBase data?", a: "Yes. Every session exports as BIDS-fNIRS (BEP-030 draft compliant). DOIs assignable per cohort. Pre-registration via OSF supported. We're co-authoring with Mendi on a multi-clinic registry — your IRB-approved cohort can join." },
-  { cat: "Research", q: "Do you have IRB-ready packets?", a: "Yes. Sample IRB application packet is downloadable at /downloads. Includes specific aims, procedures, data management, DSMP, statistical analysis plan, and conflict-of-interest disclosure. Replace bracketed personnel placeholders before submitting." },
+  { cat: "Research", q: "Can I publish from EEGBase data?", a: "Yes. Every session exports in research-standard formats. Get a DOI per cohort. Pre-register your study. We're co-authoring with Mendi on a multi-clinic study — your cohort can join." },
+  { cat: "Research", q: "Do you have IRB-ready packets?", a: "Yes. Download a sample IRB application at /downloads. It covers aims, procedures, data plan, statistics, and conflicts of interest. Replace the bracketed names before submitting." },
 ];
 
 export function SearchableFAQ() {

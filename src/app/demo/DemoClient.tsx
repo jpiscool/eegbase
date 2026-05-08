@@ -3829,7 +3829,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 </div>
               </div>
               <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6, marginBottom: 16 }}>
-                Aggregate, de-identified, BIDS-compatible. Generates the peer-reviewed clinical evidence Mendi has been waiting for. Direct export pipeline to Mendi's science team.
+                Anonymous session data from clinics that opt in. Standard research format. Sends Mendi the peer-reviewed proof their consumer claims need.
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }} className="demo-grid-4">
                 {[
@@ -3870,7 +3870,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                       12-week multi-clinic registry · IRB-pack ready
                     </div>
                     <div style={{ fontSize: 10, color: "#94A3B8", lineHeight: 1.5, marginBottom: 8 }}>
-                      Pre-registered protocol · DSMB template · IRB packet · BIDS export pipeline. Mendi listed as instrument provider; first author rotates per cohort.
+                      Pre-built study protocol, IRB packet, and data pipeline. Mendi is listed as the device. You rotate as lead author across cohorts.
                     </div>
                   </div>
                   <button onClick={() => showToast("Mendi science team intro · IRB pack & DPA email queued")} style={{ fontSize: 11, padding: "6px 12px", background: "#7C3AED", color: "white", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700 }}>Open IRB packet →</button>
@@ -3879,7 +3879,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
 
               {/* Registry IP / governance note */}
               <div style={{ marginBottom: 8, padding: "8px 12px", background: "rgba(15,23,42,0.55)", border: "1px solid #1E293B", borderRadius: 8, fontSize: 10, color: "#94A3B8", lineHeight: 1.55 }}>
-                <strong style={{ color: "#A5B4FC", fontWeight: 700 }}>Registry IP &amp; data governance:</strong> de-identified per HIPAA Safe Harbor + Expert Determination · clinic-level opt-in with revocable consent · joint stewardship between EEGBase, contributing clinics, and Mendi · embargo &amp; pre-publication review per signed DUA · raw waveforms remain at site-of-origin.
+                <strong style={{ color: "#A5B4FC", fontWeight: 700 }}>Who owns the data:</strong> Anonymized to HIPAA standards · Each clinic opts in (and can opt out any time) · Co-stewarded by EEGBase, the clinic, and Mendi · Mendi reviews any paper before publication · Your raw recordings stay on your server.
               </div>
               <div style={{ marginBottom: 14, padding: "8px 12px", background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 8, fontSize: 10, color: "#86EFAC", lineHeight: 1.55, display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontSize: 10, fontWeight: 700, color: "#34D399", padding: "2px 7px", background: "rgba(34,197,94,0.15)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.08em" }}>Q3 2026</span>

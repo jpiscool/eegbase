@@ -134,10 +134,10 @@ export default function MendiPartnershipPage() {
           <div>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
               {[
-                { icon: "🗂️", text: "A single dashboard showing all clients and their session histories" },
-                { icon: "📊", text: "Bilateral OxyHb/DeoxyHb analysis — not just a single reward score" },
-                { icon: "📋", text: "Pre/post questionnaire deltas (GAD-7, focus, mood, anxiety, energy)" },
-                { icon: "📝", text: "SOAP clinical notes and session-level annotations" },
+                { icon: "🗂️", text: "One dashboard showing every client and every session" },
+                { icon: "📊", text: "See the full brain data — not just a single score" },
+                { icon: "📋", text: "Track changes in mood, focus, anxiety, and energy over time" },
+                { icon: "📝", text: "Write clinical notes tied to each session" },
                 { icon: "🤖", text: "AI-generated clinical summaries for documentation efficiency" },
                 { icon: "📤", text: "Shareable progress reports for clients, families, and referrers" },
                 { icon: "🏥", text: "Billing codes, scheduling, and outcome measure tracking" },
@@ -268,7 +268,7 @@ export default function MendiPartnershipPage() {
             {
               label: "OxyHb Left",
               code: "PFC-L",
-              description: "Oxygenated hemoglobin in the left prefrontal cortex. Rises with focused attention and working memory load. Key indicator for ADHD protocols.",
+              description: "Blood flow on the left side of the forehead. Goes up when someone is focused. ADHD clinicians track this during sessions.",
               color: "#DC2626",
               bg: "#FEF2F2",
               border: "#FECACA",
@@ -276,7 +276,7 @@ export default function MendiPartnershipPage() {
             {
               label: "OxyHb Right",
               code: "PFC-R",
-              description: "Right hemisphere prefrontal oxygenation. Tracks emotional regulation and sustained vigilance. Lateralization asymmetry is clinically significant.",
+              description: "Blood flow on the right side of the forehead. Tells you about emotional control and how alert someone is. Left-right differences matter clinically.",
               color: "#EA580C",
               bg: "#FFF7ED",
               border: "#FED7AA",
@@ -284,7 +284,7 @@ export default function MendiPartnershipPage() {
             {
               label: "DeoxyHb Left",
               code: "dHb-L",
-              description: "Inverse oxygenation signal. Rises when oxygen is consumed — an independent marker of neural activation. Complements OxyHb for fuller hemodynamic picture.",
+              description: "Tracks when oxygen is being used up by neurons. Helps confirm whether the brain is actually working harder, not just getting more blood.",
               color: "#7C3AED",
               bg: "#F5F3FF",
               border: "#DDD6FE",
@@ -292,7 +292,7 @@ export default function MendiPartnershipPage() {
             {
               label: "DeoxyHb Right",
               code: "dHb-R",
-              description: "Right hemisphere deoxygenated hemoglobin. Used in bilateral asymmetry calculations. Useful for anxiety, stress regulation, and trauma protocols.",
+              description: "Same signal on the right side. Used to compare left and right brain activity — useful for anxiety, stress, and trauma work.",
               color: "#6D28D9",
               bg: "#EDE9FE",
               border: "#C4B5FD",

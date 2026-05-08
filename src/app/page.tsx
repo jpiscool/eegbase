@@ -98,8 +98,8 @@ const faqs = [
 const CAROUSEL_SLIDES = [
   {
     label: "📡 Live Session",
-    title: "Real-time fNIRS + EEG streaming",
-    desc: "Reward score, Z-scores, and 7 live signal charts update every 100ms. No proprietary hardware needed.",
+    title: "Live brain data from any device",
+    desc: "One screen for the focus score, brain charts, and signal quality. Updates 10 times a second. Works with the device you already have.",
     color: "#2563EB",
     bg: "#EFF6FF",
     metrics: [
