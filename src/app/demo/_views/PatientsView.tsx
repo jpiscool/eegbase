@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CLIENTS } from "../_data/clients";
 import { SARAH_SESSIONS } from "../_data/sessions";
 import type { Role } from "../_components/RoleToggle";
+import { HistoryChart } from "../_components/HistoryChart";
 
 interface PatientsViewProps {
   role: Role;
@@ -81,9 +82,15 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
           <p className="text-sm text-gray-500">{isHome ? `${client.protocol} · ${client.device}` : `${client.archetype} · ${client.device}`}</p>
         </div>
       </header>
-      <p className="text-sm text-gray-700 leading-relaxed bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-8">
+      <p className="text-sm text-gray-700 leading-relaxed bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-6">
         <span className="font-semibold text-gray-900">{client.protocol}.</span> {client.protocolDescription}
       </p>
+
+      {/* Cross-session trend — same primitive for clinician + home user */}
+      <HistoryChart
+        title={isHome ? "Your progress" : "Focus over the last 12 sessions"}
+        scores={sessions.slice(0, 12).map((s) => s.focusScore).reverse()}
+      />
 
       {/* Sessions list */}
       <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Sessions</h2>
