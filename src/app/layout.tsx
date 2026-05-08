@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Geist } from "next/font/google";
-import { CookieBanner } from "@/components/CookieBanner";
 import { GlobalCommandK } from "@/components/GlobalCommandK";
 import { InstallPwaPrompt } from "@/components/InstallPwaPrompt";
 import { LiveChatWidget } from "@/components/LiveChatWidget";
@@ -114,7 +113,6 @@ export default function RootLayout({
         <GlobalCommandK />
         <InstallPwaPrompt />
         <LiveChatWidget />
-        <CookieBanner />
         {PLAUSIBLE_DOMAIN && (
           <Script
             defer
