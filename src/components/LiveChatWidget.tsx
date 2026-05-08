@@ -10,7 +10,7 @@ const QUICK = [
   { label: "What does EEGBase do?",    answer: "EEGBase is the clinical layer for any neurofeedback hardware. Mendi at home, Muse in clinic, Polar HRV, and Apple Health become one client record, one SOAP note, one billable session. Open-source, MIT-licensed, with native Mendi support and an AI cross-session pattern detector." },
   { label: "Pricing?",                 answer: "Solo at $19/session, Practice at $349/clinic/mo, Enterprise custom. All plans get a 30-day free trial, no card required. Mendi-attached clinics get 20% off Practice/Enterprise. Full pricing at /#pricing — currency toggle for USD/EUR/GBP/CAD/AUD." },
   { label: "Is it HIPAA compliant?",   answer: "Yes — we operate under signed BAA. AES-256 at rest, TLS 1.3 in transit, SOC 2 Type II audited Q1 2026 by Coalfire, Bishop Fox pen-tested. EU clinics get Schrems II SCCs. See /security for the full posture." },
-  { label: "Does it work with Mendi?", answer: "Yes — Mendi is our flagship integration. 10 Hz prefrontal fNIRS (Fp1/Fp2), sub-80ms latency, 96.4% MAR accuracy, BLE auto-reconnect under 1.4s. See the Devices & API tab in the demo (/demo?tab=devices)." },
+  { label: "Does it work with Mendi?", answer: "Yes — Mendi is our flagship integration. 10 Hz prefrontal fNIRS (Fp1/Fp2), sub-80ms latency, 96.4% MAR accuracy, BLE auto-reconnect under 1.4s. See /devices for the full hardware breakdown." },
   { label: "Talk to a human",          answer: "Email hello@eegbase.com or fill out /contact. We answer within 24 hours. Or book a 30-min call directly at /mendi#book-meeting." },
 ];
 

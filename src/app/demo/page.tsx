@@ -14,13 +14,13 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Live Demo · EEGBase",
   description:
-    "Interactive demo with 16 tabs, 10 demo clients, and 88 simulated Mendi fNIRS sessions. No sign-up. No credit card. Synthetic data only.",
+    "Interactive demo with 10 tabs, 10 demo clients, and 88 simulated Mendi fNIRS sessions. No sign-up. No credit card. Synthetic data only.",
   robots: { index: true, follow: true },
 };
 
 const VALID_TABS = [
-  "session", "game", "brain", "hrv", "outcomes", "progress", "ai", "protocols",
-  "schedule", "reports", "compare", "billing", "team", "compliance", "marketing", "devices",
+  "session", "game", "brain", "hrv", "progress", "ai", "protocols",
+  "schedule", "reports", "compare",
 ] as const;
 type MainTab = (typeof VALID_TABS)[number];
 
