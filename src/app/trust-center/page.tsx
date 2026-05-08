@@ -11,8 +11,8 @@ const PILLARS = [
     href: "/security",
     desc: "Threat model, vulnerability disclosure, incident SLA",
     items: [
-      "SOC 2 Type II · Coalfire · Q1 2026 · NDA-gated",
-      "Bishop Fox pen-test · Q1 2026 · attestation",
+      "SOC 2 Type II · Coalfire · report on request, NDA-gated",
+      "Bishop Fox pen-test · attestation on request",
       "AES-256-GCM at rest · TLS 1.3 in transit",
       "Quarterly internal red-team",
       "Bug bounty (paid plans launch Q3 2026)",
@@ -50,7 +50,7 @@ const PILLARS = [
     href: "/security#accessibility",
     desc: "WCAG 2.2 AA conformance",
     items: [
-      "Audited by Deque Systems · Q1 2026",
+      "Audited by Deque Systems · report on request",
       "VPAT 2.4 available",
       "Section 508 compliant",
       "Full keyboard navigation",
@@ -61,7 +61,7 @@ const PILLARS = [
 ];
 
 const DOCS = [
-  { name: "SOC 2 Type II report",        sub: "Coalfire · Q1 2026",     gated: true },
+  { name: "SOC 2 Type II report",        sub: "Coalfire · report on request",     gated: true },
   { name: "Bishop Fox pen-test attestation", sub: "Q1 2026",            gated: true },
   { name: "HIPAA BAA template",          sub: "Standard form",          gated: false },
   { name: "GDPR DPA + EU SCCs",          sub: "Module 2 (controller-to-processor)", gated: false },

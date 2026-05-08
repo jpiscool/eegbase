@@ -31,8 +31,8 @@ export default function SecurityPage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 28 }}>
           {[
             { tag: "🛡 HIPAA",       desc: "BAA available · 7-year audit log retention" },
-            { tag: "🔒 SOC 2 Type II", desc: "Coalfire · Q1 2026 · NDA-gated download" },
-            { tag: "🎯 Pen-test",    desc: "Bishop Fox · Q1 2026 · attestation available" },
+            { tag: "🔒 SOC 2 Type II", desc: "Coalfire · report on request, NDA-gated download" },
+            { tag: "🎯 Pen-test",    desc: "Bishop Fox · attestation on request available" },
             { tag: "🇪🇺 Schrems II", desc: "EU SCCs (2021/914) · Frankfurt eu-west-3" },
             { tag: "♿ WCAG 2.2 AA", desc: "Deque-audited · Section 508 · VPAT 2.4" },
             { tag: "🔑 SSO",         desc: "SAML · Okta · Google · Microsoft Entra" },
@@ -86,7 +86,7 @@ export default function SecurityPage() {
         <Section title="Compliance documents">
           <p>The following are NDA-gated. Sign a mutual NDA via <a href="mailto:legal@eegbase.com" style={{ color: "#2563EB" }}>legal@eegbase.com</a> to receive:</p>
           <ul style={{ listStyle: "disc", paddingLeft: 20, marginTop: 6, lineHeight: 1.8 }}>
-            <li>SOC 2 Type II report (Coalfire, Q1 2026)</li>
+            <li>SOC 2 Type II report (Coalfire, report on request)</li>
             <li>Bishop Fox pen-test attestation + remediation log</li>
             <li>HIPAA risk assessment + Security Rule audit</li>
             <li>GDPR Data Processing Addendum + EU SCCs (2021/914)</li>
