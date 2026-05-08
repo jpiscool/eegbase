@@ -34,7 +34,7 @@ For a Loom backup recording in case Wi-Fi or BLE fails on the day. Record at 1.0
 > The big one for Mendi. White-label "Mendi Clinical" mode — one toggle, the entire platform rebrands as your B2B SaaS arm. Sixty-forty rev share. Two-week time to launch. Coaching marketplace below — Mendi consumer users can buy clinician oversight, you take thirty percent.
 
 > **[0:55 — Devices & API]**
-> Mendi flagship card. Twenty-five hertz, sub-eighty-millisecond latency, MAR accuracy ninety-six point four. Calibration drift sparkline, pinned firmware, BIDS-fNIRS sidecar JSON ready for the registry. Six one-click migration importers from BrainPaint, EEGer, NeuroGuide — clinic adoption velocity.
+> Mendi flagship card. Ten hertz prefrontal fNIRS, sub-eighty-millisecond latency, MAR accuracy ninety-six point four. Calibration drift sparkline, pinned firmware, BIDS-fNIRS sidecar JSON ready for the registry. Six one-click migration importers from BrainPaint, EEGer, NeuroGuide — clinic adoption velocity.
 
 > **[1:05 — close, tour ends]**
 > That's the sixty-second version. The full demo has sixteen tabs. Let me know which to dig into first.

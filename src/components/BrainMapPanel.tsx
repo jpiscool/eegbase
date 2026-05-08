@@ -72,6 +72,7 @@ interface Region {
   rawValue: number | null;
   normValue: number;
   band: string;
+  signal: "fnirs" | "eeg"; // physical modality — fnirs comes from Mendi, eeg from Muse / multi-channel
 }
 
 export function BrainMapPanel({
@@ -84,21 +85,25 @@ export function BrainMapPanel({
 }: Props) {
   const [hoveredRegion, setHoveredRegion] = useState<Region | null>(null);
 
-  // Build the regions array — top-down brain view
+  // Build the regions array — top-down brain view.
+  // Fp1/Fp2 are fNIRS hemoglobin channels (Mendi: 2 forehead optodes).
+  // All other regions are EEG band-power channels (require a multi-channel
+  // EEG headset such as Muse). The two signals are different physical
+  // modalities and must not be conflated in copy or visuals.
   const regions: Region[] = [
-    { id: "fp1", cx: 78, cy: 60,  r: 13, label: "Prefrontal L", electrode: "Fp1", metric: "oxyL",  rawValue: oxyHbLeft,  normValue: normalizeOxy(oxyHbLeft),  band: "OxyHb" },
-    { id: "fp2", cx: 142, cy: 60, r: 13, label: "Prefrontal R", electrode: "Fp2", metric: "oxyR",  rawValue: oxyHbRight, normValue: normalizeOxy(oxyHbRight), band: "OxyHb" },
-    { id: "f3",  cx: 65,  cy: 100,r: 11, label: "Frontal L",    electrode: "F3",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta" },
-    { id: "fz",  cx: 110, cy: 95, r: 11, label: "Frontal Mid",  electrode: "Fz",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta" },
-    { id: "f4",  cx: 155, cy: 100,r: 11, label: "Frontal R",    electrode: "F4",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta" },
-    { id: "t3",  cx: 38,  cy: 145,r: 11, label: "Temporal L",   electrode: "T3",  metric: "theta", rawValue: theta,      normValue: normalizeBand(theta),      band: "Theta" },
-    { id: "cz",  cx: 110, cy: 145,r: 12, label: "Central",      electrode: "Cz",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha" },
-    { id: "t4",  cx: 182, cy: 145,r: 11, label: "Temporal R",   electrode: "T4",  metric: "theta", rawValue: theta,      normValue: normalizeBand(theta),      band: "Theta" },
-    { id: "p3",  cx: 70,  cy: 195,r: 11, label: "Parietal L",   electrode: "P3",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha" },
-    { id: "pz",  cx: 110, cy: 200,r: 11, label: "Parietal Mid", electrode: "Pz",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha" },
-    { id: "p4",  cx: 150, cy: 195,r: 11, label: "Parietal R",   electrode: "P4",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha" },
-    { id: "o1",  cx: 90,  cy: 245,r: 10, label: "Occipital L",  electrode: "O1",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha" },
-    { id: "o2",  cx: 130, cy: 245,r: 10, label: "Occipital R",  electrode: "O2",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha" },
+    { id: "fp1", cx: 78, cy: 60,  r: 13, label: "Prefrontal L", electrode: "Fp1", metric: "oxyL",  rawValue: oxyHbLeft,  normValue: normalizeOxy(oxyHbLeft),  band: "OxyHb", signal: "fnirs" },
+    { id: "fp2", cx: 142, cy: 60, r: 13, label: "Prefrontal R", electrode: "Fp2", metric: "oxyR",  rawValue: oxyHbRight, normValue: normalizeOxy(oxyHbRight), band: "OxyHb", signal: "fnirs" },
+    { id: "f3",  cx: 65,  cy: 100,r: 11, label: "Frontal L",    electrode: "F3",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta",  signal: "eeg" },
+    { id: "fz",  cx: 110, cy: 95, r: 11, label: "Frontal Mid",  electrode: "Fz",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta",  signal: "eeg" },
+    { id: "f4",  cx: 155, cy: 100,r: 11, label: "Frontal R",    electrode: "F4",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta",  signal: "eeg" },
+    { id: "t3",  cx: 38,  cy: 145,r: 11, label: "Temporal L",   electrode: "T3",  metric: "theta", rawValue: theta,      normValue: normalizeBand(theta),      band: "Theta", signal: "eeg" },
+    { id: "cz",  cx: 110, cy: 145,r: 12, label: "Central",      electrode: "Cz",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha", signal: "eeg" },
+    { id: "t4",  cx: 182, cy: 145,r: 11, label: "Temporal R",   electrode: "T4",  metric: "theta", rawValue: theta,      normValue: normalizeBand(theta),      band: "Theta", signal: "eeg" },
+    { id: "p3",  cx: 70,  cy: 195,r: 11, label: "Parietal L",   electrode: "P3",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha", signal: "eeg" },
+    { id: "pz",  cx: 110, cy: 200,r: 11, label: "Parietal Mid", electrode: "Pz",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha", signal: "eeg" },
+    { id: "p4",  cx: 150, cy: 195,r: 11, label: "Parietal R",   electrode: "P4",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha", signal: "eeg" },
+    { id: "o1",  cx: 90,  cy: 245,r: 10, label: "Occipital L",  electrode: "O1",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha", signal: "eeg" },
+    { id: "o2",  cx: 130, cy: 245,r: 10, label: "Occipital R",  electrode: "O2",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha", signal: "eeg" },
   ];
 
   return (
@@ -109,7 +114,7 @@ export function BrainMapPanel({
             {title}
           </div>
           <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>
-            Top-down view · 13 channels · live
+            2 fNIRS (Mendi forehead) + 11 EEG bands (Muse / multi-channel)
           </div>
         </div>
         <div style={{ fontSize: 10, color: "#64748B", display: "flex", alignItems: "center", gap: 8 }}>
@@ -194,17 +199,29 @@ export function BrainMapPanel({
                   filter="url(#electrodeGlow)"
                 />
               )}
-              {/* Electrode circle */}
+              {/* Electrode circle — fNIRS gets a thicker double-ring border to mark it as a different physical modality */}
               <circle
                 cx={region.cx}
                 cy={region.cy}
                 r={region.r}
                 fill={color}
                 opacity={hasValue ? 0.85 : 0.4}
-                stroke={isHovered ? "white" : "rgba(255,255,255,0.25)"}
-                strokeWidth={isHovered ? 2 : 1}
+                stroke={isHovered ? "white" : region.signal === "fnirs" ? "rgba(165,243,252,0.85)" : "rgba(255,255,255,0.25)"}
+                strokeWidth={isHovered ? 2 : region.signal === "fnirs" ? 2 : 1}
                 filter="url(#electrodeSoft)"
               />
+              {/* fNIRS outer ring — visual cue this is hemoglobin (Mendi) not EEG band */}
+              {region.signal === "fnirs" && (
+                <circle
+                  cx={region.cx}
+                  cy={region.cy}
+                  r={region.r + 3}
+                  fill="none"
+                  stroke="rgba(165,243,252,0.45)"
+                  strokeWidth="0.8"
+                  strokeDasharray="2 2"
+                />
+              )}
               {/* Inner highlight */}
               {hasValue && (
                 <circle
@@ -237,8 +254,11 @@ export function BrainMapPanel({
         {hoveredRegion ? (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
             <div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>
-                {hoveredRegion.electrode} · {hoveredRegion.label}
+              <div style={{ fontSize: 10, fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2, display: "flex", alignItems: "center", gap: 6 }}>
+                <span>{hoveredRegion.electrode} · {hoveredRegion.label}</span>
+                <span style={{ fontSize: 9, padding: "1px 6px", borderRadius: 99, background: hoveredRegion.signal === "fnirs" ? "rgba(165,243,252,0.18)" : "rgba(148,163,184,0.18)", color: hoveredRegion.signal === "fnirs" ? "#A5F3FC" : "#94A3B8", letterSpacing: "0.04em" }}>
+                  {hoveredRegion.signal === "fnirs" ? "fNIRS · Mendi" : "EEG band · Muse"}
+                </span>
               </div>
               <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>
                 {hoveredRegion.band}: {hoveredRegion.metric.startsWith("oxy") ? fmtOxy(hoveredRegion.rawValue) : fmtBand(hoveredRegion.rawValue)}
@@ -251,6 +271,20 @@ export function BrainMapPanel({
             Hover any electrode to see its live value
           </div>
         )}
+      </div>
+
+      {/* Signal modality legend — keeps fNIRS (hemoglobin) visually distinct from EEG band power */}
+      <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 14, fontSize: 10, color: "#94A3B8" }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <span style={{ display: "inline-block", width: 14, height: 14, borderRadius: 99, border: "2px solid rgba(165,243,252,0.85)", boxSizing: "border-box" }} />
+          <strong style={{ color: "#A5F3FC", fontWeight: 700 }}>fNIRS · Mendi</strong>
+          <span>Fp1/Fp2 (forehead)</span>
+        </span>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <span style={{ display: "inline-block", width: 14, height: 14, borderRadius: 99, border: "1px solid rgba(255,255,255,0.25)", boxSizing: "border-box" }} />
+          <strong style={{ color: "#CBD5E1", fontWeight: 700 }}>EEG bands</strong>
+          <span>11 sites · requires Muse / multi-channel</span>
+        </span>
       </div>
 
       {/* Heat scale legend */}

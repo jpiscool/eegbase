@@ -164,7 +164,7 @@ const doc = new Document({
           ]}),
           new TableRow({ children: [
             tableCell("Intervention", { w: 3024, bold: true, bg: "F1F5F9" }),
-            tableCell("Home-use Mendi fNIRS prefrontal alpha up-train, 20-session protocol, 25 Hz sampling.", { w: 7056 }),
+            tableCell("Home-use Mendi fNIRS bilateral prefrontal OxyHb up-train, 20-session protocol, 10 Hz sampling.", { w: 7056 }),
           ]}),
           new TableRow({ children: [
             tableCell("Primary outcome", { w: 3024, bold: true, bg: "F1F5F9" }),
@@ -222,7 +222,7 @@ const doc = new Document({
       bullet("PHQ-9, GAD-7 at baseline, session 10, session 20"),
       bullet("In-app daily mood + sleep self-report (Likert 1–10)"),
       bullet("Apple Health / Oura passive sleep efficiency, HRV (consented subset)"),
-      bullet("All session-level neurofeedback signals (Fp1, Fp2 OxyHb/DeoxyHb at 25 Hz)"),
+      bullet("All session-level neurofeedback signals (Fp1, Fp2 OxyHb/DeoxyHb at 10 Hz)"),
 
       h1("4 · Data Management"),
       h2("4.1 Storage architecture"),
@@ -255,7 +255,7 @@ const doc = new Document({
 
       h1("5 · Risks & Benefits"),
       h2("5.1 Risks"),
-      bullet("Minimal physical risk: Mendi headband is FDA general-wellness, CE Class I, non-invasive"),
+      bullet("Minimal physical risk: Mendi headband is non-invasive consumer-grade fNIRS — CE-marked in EU; sold as general wellness in US (no FDA clearance, low-risk per FDA-CDRH general wellness guidance)"),
       bullet("Privacy risk mitigated by Safe Harbor + Expert Determination + DUA"),
       bullet("Psychological risk: standard for adolescent ADHD treatment; no greater than usual care"),
 

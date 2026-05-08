@@ -52,7 +52,7 @@ Three options on slide 8 of the deck. Referral: ~10-15% rev share. Deep integrat
 Site-of-care owns raw waveforms — they never leave the clinic. EEGBase + Mendi co-steward de-identified registry data per signed DUA. Patient consent revocable at any time. For EU clinics specifically: managed EU residency + Standard Contractual Clauses + GDPR Art. 28 DPA ship Q3 2026 per the trust page roadmap; self-hosted clinics can deploy in any region today.
 
 ### 6. "What's your regulatory status?"
-Software platform, not a device — no 510(k) needed. Mendi headset is FDA general wellness 21 CFR 1140, CE Class I — that classification still works in our partnership. Our "What we don't do yet" page on the landing site lists ONC HIT and EPCS targets honestly. Q1 2027 for ONC.
+Software platform, not a device — no 510(k) needed. Mendi headset is sold as a consumer wellness product (no FDA clearance; covered by FDA-CDRH "General Wellness: Policy for Low Risk Devices" guidance, 2019) and CE-marked in the EU — that classification still works in our partnership. Our "What we don't do yet" page on the landing site lists ONC HIT and EPCS targets honestly. Q1 2027 for ONC. ⚠️ Verify Mendi's specific regulatory posture with Mustafa before quoting on calls — they have not publicly published an FDA classification.
 
 ### 7. "What if Mendi disagrees with a clinical claim you publish?"
 Pre-publication review per signed DUA — Mendi sees and approves anything that names the device before submission. The pre-print already submitted to Frontiers in Human Neuroscience went through this process.
