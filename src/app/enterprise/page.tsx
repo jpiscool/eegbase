@@ -28,7 +28,7 @@ const C: AudienceContent = {
   cta: { label: "Talk to sales →", href: "/contact?role=partner" },
   secondaryCta: { label: "Trust center", href: "/trust-center" },
   proofPoints: [
-    { val: "99.97%", lbl: "Rolling 90-day uptime" },
+    { val: "99.95%", lbl: "Rolling 90-day uptime" },
     { val: "15 min", lbl: "P0 incident ack SLA" },
     { val: "3",      lbl: "Regions · multi-cloud failover" },
   ],

@@ -51,7 +51,7 @@ export default function StatusPage() {
           <span style={{ width: 14, height: 14, borderRadius: "50%", background: "#10B981", boxShadow: "0 0 0 4px rgba(16,185,129,0.18)" }} />
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: "#065F46", letterSpacing: "-0.01em" }}>All systems operational</div>
-            <div style={{ fontSize: 12, color: "#047857", marginTop: 2 }}>99.97% rolling 90-day uptime · last incident 28 days ago</div>
+            <div style={{ fontSize: 12, color: "#047857", marginTop: 2 }}>99.95% rolling 90-day uptime · last incident 28 days ago</div>
           </div>
           <div style={{ fontSize: 11, color: "#047857", fontWeight: 700, padding: "4px 10px", background: "rgba(16,185,129,0.15)", border: "1px solid #6EE7B7", borderRadius: 99 }}>UPDATED LIVE · 30s</div>
         </div>

@@ -37,7 +37,7 @@ const PILLARS = [
     href: "/status",
     desc: "Real-time platform health + incident history",
     items: [
-      "99.97% rolling 90-day uptime",
+      "99.95% rolling 90-day uptime",
       "3 regions · us-east-1 · eu-west-3 · ca-central-1",
       "RTO 15 min · RPO 5 min",
       "P0 incident SLA · 15-min ack / 4h mitigation / 5-day RCA",

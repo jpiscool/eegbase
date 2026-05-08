@@ -4729,7 +4729,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                     <div><div style={{ color: "#94A3B8" }}>Public RCA</div><div style={{ color: "#F1F5F9", fontWeight: 700, fontSize: 13 }}>≤ 5 days</div></div>
                   </div>
                   <div style={{ marginTop: 8, fontSize: 10, color: "#64748B" }}>
-                    status.eegbase.com · 99.97% rolling 90-day uptime · breach notification within 72 h per GDPR Art. 33
+                    status.eegbase.com · 99.95% rolling 90-day uptime · breach notification within 72 h per GDPR Art. 33
                   </div>
                 </div>
                 <div className="ios-section-header" style={{ marginTop: 18, padding: "0 0 8px" }}>Security Settings</div>
