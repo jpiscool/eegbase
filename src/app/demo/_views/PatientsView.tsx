@@ -1,0 +1,129 @@
+"use client";
+
+import { useState } from "react";
+import { CLIENTS } from "../_data/clients";
+import { SARAH_SESSIONS } from "../_data/sessions";
+
+interface PatientsViewProps {
+  initialClientId?: string;
+  onStartSession: (clientId: string) => void;
+}
+
+export function PatientsView({ initialClientId, onStartSession }: PatientsViewProps) {
+  // Default to Sarah if a deep link asked for her, otherwise show the list.
+  const initial = CLIENTS.find((c) => c.id === initialClientId) ?? null;
+  const [openClient, setOpenClient] = useState<typeof CLIENTS[number] | null>(initial);
+  const [openSessionId, setOpenSessionId] = useState<number | null>(null);
+
+  if (!openClient) {
+    return (
+      <main id="main-content" className="max-w-2xl mx-auto px-6 py-12">
+        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Patients</h2>
+        <ul className="bg-white border border-gray-200 rounded-2xl divide-y divide-gray-100 overflow-hidden">
+          {CLIENTS.map((c) => (
+            <li key={c.id}>
+              <button
+                onClick={() => setOpenClient(c)}
+                className="w-full flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors text-left"
+              >
+                <span className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm flex items-center justify-center flex-shrink-0">
+                  {c.initials}
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="block text-sm font-semibold text-gray-900">{c.name}</span>
+                  <span className="block text-xs text-gray-500 truncate">{c.archetype} · {c.protocol}</span>
+                </span>
+                <span className="text-xs text-gray-400 tabular-nums">{c.sessionsCompleted} sessions</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </main>
+    );
+  }
+
+  // Patient detail: header + reverse-chrono session list + sticky CTA.
+  // Sessions data is Sarah's curve (illustrative) — same shape works for any patient in the demo.
+  const sessions = SARAH_SESSIONS;
+
+  return (
+    <main id="main-content" className="max-w-2xl mx-auto px-6 py-12">
+      {/* Back to list */}
+      <button
+        onClick={() => { setOpenClient(null); setOpenSessionId(null); }}
+        className="text-xs text-gray-500 hover:text-gray-900 mb-6 inline-flex items-center gap-1"
+      >
+        <span aria-hidden>←</span> All patients
+      </button>
+
+      {/* Patient header */}
+      <header className="flex items-center gap-4 mb-2">
+        <span className="w-14 h-14 rounded-full bg-blue-100 text-blue-700 font-semibold text-lg flex items-center justify-center flex-shrink-0">
+          {openClient.initials}
+        </span>
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">{openClient.name}</h1>
+          <p className="text-sm text-gray-500">{openClient.archetype} · {openClient.device}</p>
+        </div>
+      </header>
+      <p className="text-sm text-gray-700 leading-relaxed bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-8">
+        <span className="font-semibold text-gray-900">{openClient.protocol}.</span> {openClient.protocolDescription}
+      </p>
+
+      {/* Sessions list */}
+      <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Sessions</h2>
+      <ul className="bg-white border border-gray-200 rounded-2xl divide-y divide-gray-100 overflow-hidden mb-10">
+        {sessions.map((s) => {
+          const expanded = openSessionId === s.id;
+          return (
+            <li key={s.id}>
+              <button
+                onClick={() => setOpenSessionId(expanded ? null : s.id)}
+                className="w-full flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50 transition-colors text-left"
+              >
+                <span className="text-sm text-gray-500 tabular-nums w-20">{s.date}</span>
+                <span className="text-sm text-gray-700 flex-1">Focus score <span className="font-semibold text-gray-900 tabular-nums">{s.focusScore}</span></span>
+                <span className="text-xs text-gray-400 tabular-nums">{s.durationMin} min</span>
+                <span className="text-gray-400 text-sm" aria-hidden>{expanded ? "—" : "+"}</span>
+              </button>
+              {expanded && (
+                <div className="px-5 pb-5 pt-1 bg-gray-50/50 border-t border-gray-100">
+                  <div className="grid grid-cols-3 gap-3 mb-3">
+                    <Stat label="Focus"   value={s.focusScore} />
+                    <Stat label="Mood"    value={s.moodScore}    sub="lower is better" />
+                    <Stat label="Anxiety" value={s.anxietyScore} sub="lower is better" />
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed mb-3 italic">&ldquo;{s.noteSummary}&rdquo;</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:border-gray-300">Send PDF</button>
+                    <button className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:border-gray-300">Edit note</button>
+                  </div>
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* Sticky CTA */}
+      <div className="sticky bottom-6">
+        <button
+          onClick={() => onStartSession(openClient.id)}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl px-6 py-4 text-base font-semibold shadow-lg transition-colors"
+        >
+          Start new session for {openClient.name.split(" ")[0]} →
+        </button>
+      </div>
+    </main>
+  );
+}
+
+function Stat({ label, value, sub }: { label: string; value: number; sub?: string }) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg px-3 py-2">
+      <p className="text-[11px] text-gray-500 mb-0.5">{label}</p>
+      <p className="text-lg font-bold text-gray-900 tabular-nums">{value}</p>
+      {sub && <p className="text-[10px] text-gray-400">{sub}</p>}
+    </div>
+  );
+}

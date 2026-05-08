@@ -1,36 +1,18 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
-import DemoClient from "./DemoClient";
+import DemoShell from "./DemoShell";
 
-// Server component: reads ?tab= from the URL, falls back to a "demo_tab"
-// cookie, and forwards the validated value to the client demo. SSR HTML
-// already renders the correct tab — no hydration flash, and if a privacy
-// browser (DuckDuckGo, Brave Strict, etc.) strips the query parameter on
-// refresh, the cookie keeps the user on their last tab anyway.
-//
-// Marked dynamic so Next.js never serves a stale prerendered "session" HTML.
+// Server component — passes through the optional ?surface= URL param so a deep
+// link can land on Patients or Session directly. Validation lives in the shell.
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Live Demo · EEGBase",
   description:
-    "Interactive demo with 10 tabs, 10 demo clients, and 88 simulated Mendi fNIRS sessions. No sign-up. No credit card. Synthetic data only.",
+    "The simplest neurofeedback clinic platform. Today, Patients, Session — three screens, no setup. Sample data only.",
   robots: { index: true, follow: true },
 };
 
-const VALID_TABS = [
-  "session", "game", "brain", "hrv", "progress", "ai", "protocols",
-  "schedule", "reports", "compare",
-] as const;
-type MainTab = (typeof VALID_TABS)[number];
-
 type SearchParamsRaw = { [key: string]: string | string[] | undefined };
-
-function pickTab(candidate: string | undefined | null): MainTab | null {
-  return candidate && (VALID_TABS as readonly string[]).includes(candidate)
-    ? (candidate as MainTab)
-    : null;
-}
 
 export default async function DemoPage({
   searchParams,
@@ -38,17 +20,13 @@ export default async function DemoPage({
   searchParams: Promise<SearchParamsRaw>;
 }) {
   const params = await searchParams;
-  const raw = params.tab;
-  const fromUrl = pickTab(Array.isArray(raw) ? raw[0] : raw);
+  const raw = params.surface;
+  const surface = Array.isArray(raw) ? raw[0] : raw;
+  const initialSurface =
+    surface === "patients" || surface === "session" ? surface : "today";
 
-  // If URL has no ?tab=, check the cookie. Some privacy browsers strip query
-  // parameters they classify as tracking; the cookie survives that.
-  let fromCookie: MainTab | null = null;
-  if (!fromUrl) {
-    const store = await cookies();
-    fromCookie = pickTab(store.get("demo_tab")?.value);
-  }
+  const rawClient = params.client;
+  const initialClientId = Array.isArray(rawClient) ? rawClient[0] : rawClient;
 
-  const initialTab: MainTab = fromUrl ?? fromCookie ?? "session";
-  return <DemoClient initialTab={initialTab} />;
+  return <DemoShell initialSurface={initialSurface} initialClientId={initialClientId} />;
 }
