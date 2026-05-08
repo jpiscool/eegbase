@@ -195,17 +195,11 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
   const [showCmdK, setShowCmdK] = useState(false);
   const [cmdKQuery, setCmdKQuery] = useState("");
-  const [tourStep, setTourStep] = useState<number | null>(null);
   const [gameMode, setGameMode] = useState<"orb" | "art" | "audio">("orb");
   const [reminderToggles, setReminderToggles] = useState({ sms: true, email: true, noshow: true, lapsed: false });
   const [peakFlash, setPeakFlash] = useState(false);
   const peakReachedRef = useRef(false);
   const [visitedTabs, setVisitedTabs] = useState<Set<MainTab>>(new Set(["session"]));
-  const [tourDismissed, setTourDismissed] = useState(false);
-  const [tourCollapsed, setTourCollapsed] = useState(false);
-  // Auto-collapse the onboarding popover after the first tab switch so it
-  // stops obscuring the Live Session controls / stat row.
-  useEffect(() => { if (visitedTabs.size > 1) setTourCollapsed(true); }, [visitedTabs]);
   const [breathPhase, setBreathPhase] = useState<"Inhale" | "Exhale">("Inhale");
   useEffect(() => {
     const iv = setInterval(() => setBreathPhase((p) => (p === "Inhale" ? "Exhale" : "Inhale")), 5000);
@@ -295,26 +289,12 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
       }
       if (e.key === "Escape") {
         setShowCmdK(false);
-        setTourStep(null);
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  // 60-second guided tour orchestrator
-  useEffect(() => {
-    if (tourStep === null) return;
-    const TOUR_TABS: MainTab[] = ["session", "ai", "brain", "reports", "marketing", "devices"];
-    if (tourStep >= TOUR_TABS.length) {
-      setTourStep(null);
-      return;
-    }
-    const t = TOUR_TABS[tourStep];
-    setTab(t);
-    const timer = setTimeout(() => setTourStep((s) => (s === null ? null : s + 1)), 10000);
-    return () => clearTimeout(timer);
-  }, [tourStep]);
 
   // Live Z-score simulation from current EEG data
   const thetaZ = sample?.theta != null ? ((sample.theta - 0.28) / 0.08).toFixed(2) : null;
@@ -964,8 +944,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
         }
         /* Between 641 and 960px (small tablets / split-screen windows) the
            sidebar still takes 216px, leaving the topbar very tight. Drop
-           60-sec tour + Share view too in this range. Search & Get Access
-           stay visible. */
+           Share view in this range. Search & Get Access stay visible. */
         @media (min-width: 641px) and (max-width: 960px) {
           .demo-topbar-hide-tablet { display: none !important; }
         }
@@ -1006,16 +985,6 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             <Search size={13} strokeWidth={2} />
             <span>Search...</span>
             <kbd style={{ fontSize: 10, fontFamily: "ui-monospace, monospace", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 4, padding: "1px 6px", color: "#CBD5E1", fontWeight: 600 }}>⌘K</kbd>
-          </button>
-          <button
-            onClick={() => setTourStep(0)}
-            aria-label="Start 60-second tour"
-            className="demo-topbar-hide-mobile demo-topbar-hide-tablet"
-            title="60-second highlight reel — auto-walks through the 6 most important tabs for a Mendi pitch"
-            style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.18), rgba(79,70,229,0.18))", border: "1px solid rgba(167,139,250,0.4)", borderRadius: 8, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6, color: "#C4B5FD", fontSize: 12, cursor: "pointer", fontWeight: 700 }}
-          >
-            <span aria-hidden="true">▶</span>
-            <span>60-sec tour</span>
           </button>
           <button
             onClick={shareCurrentView}
@@ -1141,18 +1110,11 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   </div>
                 ))}
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                <button
-                  aria-label="Start the 60-second guided tour"
-                  onClick={() => { sessionStorage.setItem("demo-onboarding-dismissed", "1"); setShowOnboarding(false); setTourStep(0); }}
-                  style={{ padding: "13px 16px", background: "linear-gradient(135deg, #7C3AED, #4F46E5)", color: "white", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", letterSpacing: "0.01em" }}
-                >
-                  ▶ 60-sec tour
-                </button>
+              <div>
                 <button
                   aria-label="Close welcome modal and explore freely"
                   onClick={() => { sessionStorage.setItem("demo-onboarding-dismissed", "1"); setShowOnboarding(false); }}
-                  style={{ padding: "13px 16px", background: "#2563EB", color: "white", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", letterSpacing: "0.01em" }}
+                  style={{ width: "100%", padding: "13px 16px", background: "#2563EB", color: "white", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", letterSpacing: "0.01em" }}
                 >
                   Explore freely →
                 </button>
@@ -1385,7 +1347,6 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
       {showCmdK && (() => {
         const cmds = [
           ...TABS.map((t) => ({ kind: "Tab" as const, label: t.label, action: () => { setTab(t.id); setShowCmdK(false); } })),
-          { kind: "Action" as const, label: "Start 60-second tour", action: () => { setTourStep(0); setShowCmdK(false); } },
           { kind: "Action" as const, label: "Pair Mendi headset",   action: () => { showToast("Mendi headset paired ✓"); setShowCmdK(false); } },
           { kind: "Action" as const, label: "Generate SOAP note",   action: () => { showToast("SOAP note generated"); setShowCmdK(false); } },
           { kind: "Action" as const, label: "Export BIDS-fNIRS",    action: () => { showToast("BIDS-fNIRS export queued"); setShowCmdK(false); } },
@@ -1429,23 +1390,6 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
         );
       })()}
 
-      {/* Tour HUD — shown during 60-second auto-tour */}
-      {tourStep !== null && (
-        <div style={{ position: "fixed", bottom: 24, left: 24, zIndex: 998, background: "linear-gradient(135deg, #1E1B4B, #0F172A)", border: "1px solid rgba(167,139,250,0.4)", borderRadius: 12, padding: "12px 16px", boxShadow: "0 16px 48px rgba(0,0,0,0.5)", maxWidth: 320 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#A78BFA", animation: "pulse 1.5s infinite" }} />
-            <span style={{ fontSize: 10, fontWeight: 700, color: "#C4B5FD", textTransform: "uppercase", letterSpacing: "0.08em" }}>60-second tour · step {tourStep + 1} of 6</span>
-            <button onClick={() => setTourStep(null)} aria-label="Stop tour" style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94A3B8", fontSize: 14, cursor: "pointer", padding: 0 }}>×</button>
-          </div>
-          <div style={{ fontSize: 11, color: "#CBD5E1", lineHeight: 1.5 }}>
-            Auto-advancing every 10 seconds through the 6 most important tabs for a Mendi pitch. Press <kbd style={{ fontFamily: "ui-monospace, monospace", background: "#1E293B", padding: "1px 5px", borderRadius: 3, color: "#CBD5E1", fontSize: 10 }}>esc</kbd> to stop.
-          </div>
-          <div style={{ marginTop: 8, height: 3, background: "#1E293B", borderRadius: 99, overflow: "hidden" }}>
-            <div style={{ width: `${((tourStep + 1) / 6) * 100}%`, height: "100%", background: "linear-gradient(90deg, #A78BFA, #60A5FA)", transition: "width 0.5s ease" }} />
-          </div>
-        </div>
-      )}
-
       {/* Clinician control toast — ARIA live region for screen readers (WCAG 4.1.3) */}
       <div role="status" aria-live="polite" aria-atomic="true" style={{ position: "fixed", bottom: 80, right: 20, zIndex: 999, pointerEvents: toast ? "auto" : "none" }}>
         {toast && (
@@ -1466,54 +1410,6 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               <div style={{ fontSize: 12, opacity: 0.85, marginTop: 1 }}>Score crossed 70 — excellent brain state</div>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Guided tour checklist */}
-      {!tourDismissed && tourCollapsed && (
-        <button
-          onClick={() => setTourCollapsed(false)}
-          aria-label="Expand demo tour checklist"
-          className="demo-topbar-hide-mobile"
-          style={{ position: "fixed", bottom: 20, right: 20, zIndex: 90, background: "white", border: "1px solid #E2E8F0", borderRadius: 99, padding: "8px 14px", boxShadow: "0 4px 16px rgba(0,0,0,0.10)", display: "flex", alignItems: "center", gap: 8, cursor: "pointer", animation: "fadeIn 0.3s ease" }}
-        >
-          <div style={{ width: 18, height: 18, borderRadius: 99, background: "#F1F5F9", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, color: "#475569" }}>{visitedTabs.size}</div>
-          <span style={{ fontSize: 12, fontWeight: 600, color: "#0F172A" }}>Tour {visitedTabs.size}/{TABS.length}</span>
-        </button>
-      )}
-      {!tourDismissed && !tourCollapsed && (
-        <div className="demo-topbar-hide-mobile" style={{ position: "fixed", bottom: 20, right: 20, zIndex: 90, background: "white", border: "1px solid #E2E8F0", borderRadius: 14, padding: "14px 16px", boxShadow: "0 8px 32px rgba(0,0,0,0.12)", minWidth: 200, animation: "fadeIn 0.3s ease" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, gap: 6 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "#0F172A" }}>Explore the demo</span>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <button onClick={() => setTourCollapsed(true)} aria-label="Collapse" title="Collapse" style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, color: "#94A3B8", padding: 0, lineHeight: 1 }}>—</button>
-              <button onClick={() => setTourDismissed(true)} aria-label="Dismiss" title="Dismiss" style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, color: "#94A3B8", padding: 0, lineHeight: 1 }}>✕</button>
-            </div>
-          </div>
-          <div style={{ fontSize: 11, color: "#64748B", marginBottom: 8 }}>
-            {visitedTabs.size} of {TABS.length} sections visited
-          </div>
-          <div style={{ height: 3, background: "#F1F5F9", borderRadius: 99, marginBottom: 10, overflow: "hidden" }}>
-            <div style={{ height: "100%", background: "linear-gradient(90deg, #2563EB, #7C3AED)", width: `${(visitedTabs.size / TABS.length) * 100}%`, transition: "width 0.4s ease", borderRadius: 99 }} />
-          </div>
-          {TABS.slice(0, 6).map((t) => (
-            <div key={t.id} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
-              <span style={{ fontSize: 11, color: visitedTabs.has(t.id) ? "#10B981" : "#CBD5E1", fontWeight: 700 }}>
-                {visitedTabs.has(t.id) ? "✓" : "○"}
-              </span>
-              <button
-                onClick={() => switchTab(t.id)}
-                style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: visitedTabs.has(t.id) ? "#64748B" : "#2563EB", fontWeight: visitedTabs.has(t.id) ? 400 : 600, padding: 0, textDecoration: visitedTabs.has(t.id) ? "line-through" : "none" }}
-              >
-                {t.label}
-              </button>
-            </div>
-          ))}
-          {visitedTabs.size >= TABS.length && (
-            <div style={{ marginTop: 8, padding: "6px 10px", background: "#F0FDF4", borderRadius: 8, fontSize: 11, color: "#065F46", fontWeight: 700 }}>
-              🎉 Tour complete! Ready to get access?
-            </div>
-          )}
         </div>
       )}
 
