@@ -32,7 +32,7 @@ const features = [
     icon: Wifi,
     title: "Mendi integration",
     description:
-      "First-class support for Mendi's fNIRS headband — no middleware required. Plug in and start a session.",
+      "Dual-channel OxyHb/DeoxyHb adapter for Mendi's bilateral prefrontal fNIRS — Web Bluetooth, no middleware. Built to spec, awaiting BLE handoff for production.",
   },
   {
     icon: Users,
@@ -79,7 +79,7 @@ const faqs = [
   },
   {
     q: "Does EEGBase work with devices other than Mendi?",
-    a: "Mendi fNIRS has first-class native support. The built-in simulator works with zero hardware. Community adapters exist for Muse EEG and OpenBCI — adding support for a new device means implementing a simple TypeScript adapter interface. Pull requests welcome.",
+    a: "Mendi fNIRS adapter is built to spec (Web Bluetooth, dual-channel OxyHb/DeoxyHb @ Fp1/Fp2) — production deployment is awaiting the BLE characteristic UUID handoff from Mendi's firmware team. Until then the demo runs on a 10 Hz Mendi-rate simulator. Muse EEG via muse-js (256 Hz, full delta/theta/alpha/beta/gamma bands), Polar HRV, and Apple Health / Oura via Spike API are live today. Adapter layer is open — community PRs welcome on GitHub.",
   },
   {
     q: "Can I migrate existing client data from another platform?",
@@ -548,17 +548,17 @@ export default function LandingPage() {
                 First-class device integration
               </div>
               <h2 className="text-2xl font-bold mb-3 leading-tight">
-                Built specifically<br />for Mendi fNIRS
+                The clinical layer<br />for Mendi fNIRS
               </h2>
               <p className="text-violet-100 text-sm leading-relaxed mb-5">
-                EEGBase is the first open-source platform with a dedicated Mendi adapter. Stream OxyHb and DeoxyHb data directly to a full clinical dashboard — reward scoring, session history, longitudinal analytics, and shareable reports.
+                Mendi is a CE-marked consumer fNIRS headband — bilateral prefrontal OxyHb/DeoxyHb at Fp1/Fp2, validated for cognitive load (Lobier et al., NeuroImage 2023). EEGBase is the open-source platform that adds the clinical layer Mendi alone can't ship: clinician oversight, longitudinal records, reimbursable workflow, and the multi-clinic outcomes registry that turns consumer training into peer-reviewed evidence.
               </p>
               <div className="space-y-2">
                 {[
-                  "Web Bluetooth — no app install required",
-                  "Real-time reward scoring from fNIRS signals",
-                  "Automatic session recording to PostgreSQL",
-                  "AI clinical insight via Claude Haiku",
+                  "Web Bluetooth dual-channel adapter (built; awaiting Mendi BLE handoff)",
+                  "Real-time reward scoring + bilateral OxyHb/DeoxyHb traces",
+                  "Automatic session recording to PostgreSQL · BIDS-fNIRS export",
+                  "AI clinical insight via Claude Haiku · clinician approves every output",
                 ].map((point) => (
                   <div key={point} className="flex items-center gap-2 text-sm text-violet-100">
                     <CheckCircle size={13} className="text-violet-300 shrink-0" />
