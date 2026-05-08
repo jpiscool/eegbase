@@ -13,40 +13,40 @@ import { ChangelogWidget } from "@/components/ChangelogWidget";
 
 const features = [
   {
-    icon: Brain,
-    title: "One live signal stream",
+    icon: Zap,
+    title: "Set up in 6 minutes",
     description:
-      "Brain, heart, breathing — every device's data lands on one screen the moment the client puts the headset on.",
+      "Open the app. Pair the headset. Start the session. No installers, no Windows-only quirks, no IT ticket.",
   },
   {
-    icon: BarChart3,
-    title: "One client record",
+    icon: Brain,
+    title: "One screen for everything",
     description:
-      "Brain data + heart rate + sleep + symptom scores, all on one timeline. No more flipping between vendor apps.",
+      "Brain data, heart rate, score, notes, video call — all on one screen. Nothing to flip between, nothing to lose.",
   },
   {
     icon: Wifi,
-    title: "Any device, same workflow",
+    title: "Click to pair any device",
     description:
-      "Mendi, Muse, Polar, Apple Watch, OpenBCI, and 30+ more. Switch headsets — keep your client history.",
+      "Mendi, Muse, Polar, Apple Watch, Oura. One button to pair. The next click starts the session.",
+  },
+  {
+    icon: FileText,
+    title: "Notes write themselves",
+    description:
+      "AI drafts the session note in your format. You read it, fix anything, hit save. 60 seconds, not 15 minutes.",
   },
   {
     icon: Users,
-    title: "One inbox for every client",
+    title: "Every client in one list",
     description:
-      "Schedule, message, push protocols, review home sessions — for every client, regardless of which device they use.",
+      "Search a name, see every session, every score, every note. No folders, no exports, no other apps.",
   },
   {
     icon: ShieldCheck,
-    title: "Your data, your server",
+    title: "Nothing to learn",
     description:
-      "Your unified record stays on your infrastructure. No third party sees the data — not us, not the device makers.",
-  },
-  {
-    icon: Zap,
-    title: "One AI, every session",
-    description:
-      "AI watches every client's data across every device. Suggests protocol changes when progress stalls. Drafts SOAP notes.",
+      "If you can use Gmail, you can run a session. Buttons say what they do. The screen tells you what&rsquo;s next.",
   },
 ];
 
@@ -94,50 +94,50 @@ const faqs = [
 const CAROUSEL_SLIDES = [
   {
     label: "📡 Live Session",
-    title: "Live brain data from any device",
-    desc: "One screen for the focus score, brain charts, and signal quality. Updates 10 times a second. Works with the device you already have.",
+    title: "One screen, the whole session",
+    desc: "Score, brain chart, signal bars, and notes — all in front of you. Nothing to flip between, nothing to lose.",
     color: "#2563EB",
     bg: "#EFF6FF",
     metrics: [
-      { label: "Reward score", val: "64.2", unit: "/ 100", color: "#F59E0B" },
-      { label: "OxyHb Left", val: "+0.083", unit: "μM", color: "#10B981" },
-      { label: "Theta Z-score", val: "+2.1", unit: "SD", color: "#EF4444" },
+      { label: "Focus score", val: "64.2", unit: "/ 100", color: "#F59E0B" },
+      { label: "Brain (left)", val: "Strong", unit: "good signal", color: "#10B981" },
+      { label: "Signal quality", val: "Clean", unit: "no artifacts", color: "#2563EB" },
     ],
   },
   {
     label: "🤖 AI Insights",
-    title: "AI protocol recommendations + SOAP notes",
-    desc: "EEGBase analyzes session data, flags stalled progress, and drafts SOAP notes. Powered by Claude Haiku — clinician approves before anything is saved.",
+    title: "The note writes itself",
+    desc: "AI drafts the session note in your format. You read it, fix anything, hit save. 60 seconds, not 15 minutes.",
     color: "#7C3AED",
     bg: "#F5F3FF",
     metrics: [
-      { label: "Trend detection", val: "Live", unit: "every session", color: "#7C3AED" },
-      { label: "SOAP draft", val: "Auto", unit: "clinician approves", color: "#10B981" },
-      { label: "AI provider", val: "Claude", unit: "Haiku 4.5", color: "#2563EB" },
+      { label: "Draft time", val: "10s", unit: "after session", color: "#7C3AED" },
+      { label: "Your edits", val: "Always", unit: "you approve", color: "#10B981" },
+      { label: "Formats", val: "6", unit: "SOAP, DAP, BIRP…", color: "#2563EB" },
     ],
   },
   {
     label: "📈 Progress",
-    title: "20-session longitudinal analytics",
-    desc: "PHQ-9, GAD-7, reward score trajectory, and Z-score trends — all in one dashboard. Export as branded PDF in one click. Demo data shown is illustrative.",
+    title: "See progress in one glance",
+    desc: "Every session, every score, on one chart. No exports, no spreadsheets, no other tools. Just open the client and look.",
     color: "#059669",
     bg: "#F0FDF4",
     metrics: [
-      { label: "Outcome measures", val: "PHQ-9", unit: "GAD-7 · custom", color: "#10B981" },
-      { label: "Trend window", val: "20", unit: "sessions tracked", color: "#6366F1" },
-      { label: "Export format", val: "PDF", unit: "one click", color: "#2563EB" },
+      { label: "Scores tracked", val: "All", unit: "PHQ-9, GAD-7, more", color: "#10B981" },
+      { label: "Sessions shown", val: "20+", unit: "on one chart", color: "#6366F1" },
+      { label: "PDF report", val: "1 click", unit: "send to client", color: "#2563EB" },
     ],
   },
   {
     label: "💓 HRV / Biofeedback",
-    title: "EEG + HRV in one session view",
-    desc: "Combine HRV biofeedback with neurofeedback in a single platform. Pair a Polar H10 alongside any EEG headband and train mind-body coherence simultaneously.",
+    title: "Brain + heart on one screen",
+    desc: "Pair a Polar strap with any EEG headband. Train both at once. One screen, one timeline, one click to start.",
     color: "#8B5CF6",
     bg: "#F5F3FF",
     metrics: [
-      { label: "Devices supported", val: "Polar", unit: "H10 / OH1", color: "#8B5CF6" },
-      { label: "Live metrics", val: "RMSSD", unit: "+ coherence", color: "#10B981" },
-      { label: "Synced view", val: "EEG", unit: "+ HRV one screen", color: "#2563EB" },
+      { label: "Pair both", val: "1 click", unit: "no setup", color: "#8B5CF6" },
+      { label: "Live view", val: "Synced", unit: "brain + heart", color: "#10B981" },
+      { label: "Recording", val: "Auto", unit: "you don't think about it", color: "#2563EB" },
     ],
   },
 ];
@@ -365,32 +365,32 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* The Problem — storybrand: name the pain so the customer feels understood */}
+      {/* The Problem — neurofeedback software is too hard to use */}
       <section className="max-w-5xl mx-auto px-6 pb-20">
         <div className="bg-gradient-to-br from-rose-50 to-amber-50 border border-rose-100 rounded-3xl p-10">
-          <p className="text-xs font-bold text-rose-600 uppercase tracking-wider mb-3">The problem you&apos;re here to solve</p>
+          <p className="text-xs font-bold text-rose-600 uppercase tracking-wider mb-3">Why neurofeedback never went mainstream</p>
           <h2 className="text-3xl font-bold text-gray-900 mb-4 leading-tight">
-            You&apos;re running your practice across <span className="text-rose-600">5 separate tools</span> that don&apos;t talk to each other.
+            The software is <span className="text-rose-600">too hard to use</span>.
           </h2>
           <p className="text-gray-600 mb-8 max-w-3xl leading-relaxed">
-            The Mendi app shows brain data. The Muse app shows EEG. Polar shows heart rate. Your EHR holds the notes. A separate tool handles billing. Another does scheduling. Nothing connects.
+            Every other neurofeedback tool was built by engineers, for engineers. Windows-only desktops. Six menus deep. Acronyms everywhere. New clinicians need a week of training before they can run a session. Most quit before then.
           </p>
           <div className="grid md:grid-cols-3 gap-4">
             <div className="bg-white rounded-xl p-5 border border-gray-100">
-              <p className="text-sm font-bold text-gray-900 mb-1">Audit nightmare</p>
-              <p className="text-sm text-gray-600 leading-relaxed">Insurance asks for session data. You spend 20 minutes pulling it from 4 vendor exports.</p>
+              <p className="text-sm font-bold text-gray-900 mb-1">A week of training</p>
+              <p className="text-sm text-gray-600 leading-relaxed">Most platforms ship with a 200-page PDF and a paid certification. EEGBase ships with one button: Start.</p>
             </div>
             <div className="bg-white rounded-xl p-5 border border-gray-100">
-              <p className="text-sm font-bold text-gray-900 mb-1">Half the picture</p>
-              <p className="text-sm text-gray-600 leading-relaxed">A client&apos;s sleep tanked their session and you can&apos;t see it — that data lives in a different app.</p>
+              <p className="text-sm font-bold text-gray-900 mb-1">Five apps to flip between</p>
+              <p className="text-sm text-gray-600 leading-relaxed">Brain data here, notes there, billing somewhere else. EEGBase puts the whole session on one screen.</p>
             </div>
             <div className="bg-white rounded-xl p-5 border border-gray-100">
-              <p className="text-sm font-bold text-gray-900 mb-1">Vendor lock-in</p>
-              <p className="text-sm text-gray-600 leading-relaxed">Switch headsets next year and you lose six months of client history. Again.</p>
+              <p className="text-sm font-bold text-gray-900 mb-1">Looks like 2003</p>
+              <p className="text-sm text-gray-600 leading-relaxed">Beige toolbars. Tiny fonts. Modal-on-modal. EEGBase is a clean web app. If you can use Gmail, you&rsquo;re ready.</p>
             </div>
           </div>
           <p className="text-base font-semibold text-gray-900 mt-8 leading-relaxed">
-            Clients deserve coherent care. Their data shouldn&apos;t be scattered across vendor silos.
+            The science works. The software shouldn&rsquo;t be the bottleneck.
           </p>
         </div>
       </section>
@@ -407,7 +407,7 @@ export default function LandingPage() {
           </div>
           <h3 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">From &quot;I can&apos;t finish anything&quot; to focused — in 8 sessions</h3>
           <p className="text-sm text-gray-500 max-w-2xl mb-7 leading-relaxed">
-            Here&apos;s what a clinician sees when a client trains at home and comes in weekly.
+            One screen. No exports. No spreadsheets. The clinician just opens EEGBase and sees this.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
@@ -441,10 +441,10 @@ export default function LandingPage() {
       {/* Features grid */}
       <section className="max-w-5xl mx-auto px-6 pb-24">
         <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
-          What &ldquo;all your devices in one tool&rdquo; lets you do
+          The simplest neurofeedback tool you&rsquo;ve ever used
         </h2>
         <p className="text-sm text-gray-400 text-center mb-12">
-          Once every device feeds the same client record, the rest gets a lot easier.
+          No training. No installers. No manual. Just open it and run a session.
         </p>
         <div className="grid grid-cols-3 gap-6">
           {features.map(({ icon: Icon, title, description }) => (
@@ -468,7 +468,7 @@ export default function LandingPage() {
           What Mendi clinicians get
         </h2>
         <p className="text-sm text-gray-500 text-center mb-12 max-w-2xl mx-auto">
-          The Mendi app shows clients their progress. EEGBase gives clinicians clinical oversight.
+          The Mendi app is for the client. EEGBase is the simple clinical view on top — built so any clinician can use it on day one.
         </p>
         <div className="grid grid-cols-2 gap-6">
           {/* Left — Mendi App */}
@@ -509,14 +509,14 @@ export default function LandingPage() {
             </div>
             <ul className="space-y-3">
               {[
-                "Every client in one dashboard",
-                "See live brain data during a HIPAA video call",
-                "AI ties brain data to sleep, mood, and HRV across sessions",
-                "AI drafts session notes — pick the format you use (6 options)",
-                "Track PHQ-9, GAD-7, or your own questionnaire scores over time",
-                "One-click branded PDF reports for clients and referring doctors",
-                "Insurance billing built in (CMS-1500, ERA, ICD-10)",
-                "Export your data in any standard format — never trapped",
+                "Search a client, see everything — no folders, no exports",
+                "Live brain data on the call, no extra app to share screen from",
+                "AI shows what helps each client (sleep? mood?) — no spreadsheet",
+                "Notes write themselves — you read, fix, save",
+                "Type a score, see the trend — no chart-builder",
+                "One click sends a clean PDF to the client",
+                "Bill insurance from the same screen — no separate billing tool",
+                "Everything you put in, you can take out — no lock-in",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-sm text-violet-900">
                   <CheckCircle size={15} className="text-violet-500 shrink-0 mt-0.5" />
@@ -531,17 +531,17 @@ export default function LandingPage() {
       {/* Clinical workflow steps */}
       <section className="max-w-5xl mx-auto px-6 pb-24">
         <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
-          The complete clinical workflow
+          A whole session in 4 clicks
         </h2>
         <p className="text-sm text-gray-400 text-center mb-12">
-          From pairing a device to sharing results — all in one platform.
+          That&rsquo;s the entire clinical workflow. There is no fifth click.
         </p>
         <div className="grid grid-cols-4 gap-4">
           {[
-            { step: 1, icon: Bluetooth, title: "Pair the device", desc: "Pair Mendi or Muse over Bluetooth. No drivers. No middleman.", color: "bg-purple-100 text-purple-700" },
-            { step: 2, icon: Brain, title: "Run the session", desc: "Watch the live score and brain data update 10 times a second. Hear it too.", color: "bg-blue-100 text-blue-700" },
-            { step: 3, icon: FileText, title: "Review and write notes", desc: "AI drafts a clinical summary. Replay the session. Compare before/after scores. Add your notes.", color: "bg-indigo-100 text-indigo-700" },
-            { step: 4, icon: Share2, title: "Share progress", desc: "One-click report link for clients and families. No login needed to read it.", color: "bg-emerald-100 text-emerald-700" },
+            { step: 1, icon: Bluetooth, title: "Click pair", desc: "One button. The headset shows up. No drivers, no installer, no IT.", color: "bg-purple-100 text-purple-700" },
+            { step: 2, icon: Brain, title: "Click start", desc: "Watch the live score. Talk to the client. The session records itself.", color: "bg-blue-100 text-blue-700" },
+            { step: 3, icon: FileText, title: "Click save", desc: "AI has already written the note. Skim it, fix anything, hit save.", color: "bg-indigo-100 text-indigo-700" },
+            { step: 4, icon: Share2, title: "Click share", desc: "Send the client a link. They open it on their phone. No account needed.", color: "bg-emerald-100 text-emerald-700" },
           ].map(({ step, icon: Icon, title, desc, color }) => (
             <div key={step} className="relative">
               <div className="bg-white border border-gray-100 rounded-2xl p-5 h-full">
@@ -575,7 +575,7 @@ export default function LandingPage() {
                 Example:<br />Mendi at home + EEGBase clinic
               </h2>
               <p className="text-violet-100 text-sm leading-relaxed mb-5">
-                Mendi is one of 30+ devices we plug into. Here's what the unified workflow looks like with it: client trains at home with their Mendi, sessions sync to your dashboard, you supervise on a video call, you bill insurance, and the data feeds your research record — same workflow as every other device.
+                The client opens the Mendi app and trains. You open EEGBase and see everything they did — live or after the fact. No exports. No middleware. The simplest way to run home + clinic neurofeedback in 2026.
               </p>
               <div className="space-y-2">
                 {[
@@ -673,7 +673,7 @@ export default function LandingPage() {
           Common questions
         </h2>
         <p className="text-sm text-gray-400 text-center mb-10">
-          Search 18 questions across setup, security, migration, and clinical use.
+          Plain answers, no jargon. Search if you don&rsquo;t see what you need.
         </p>
         <SearchableFAQ />
       </section>
@@ -726,10 +726,10 @@ export default function LandingPage() {
       <section className="bg-blue-600 py-16">
         <div className="max-w-2xl mx-auto px-6 text-center">
           <h2 className="text-2xl font-bold text-white mb-3">
-            Ready to run your first session?
+            See for yourself how simple it is
           </h2>
           <p className="text-blue-100 text-sm mb-8">
-            The demo clinic is pre-loaded with 10 clients and 88 Mendi fNIRS sessions.
+            The demo opens straight into a real session — no signup, no walkthrough. You&rsquo;ll know in 30 seconds.
           </p>
           <div className="flex items-center justify-center gap-4 flex-wrap mb-4">
             <Link

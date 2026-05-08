@@ -317,16 +317,16 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
   })();
 
   const TABS: { id: MainTab; label: string; icon: React.ComponentType<{ size?: number; strokeWidth?: number }>; groupStart?: string; badge?: string }[] = [
-    { id: "session",   label: "Live Session",       icon: Activity,       groupStart: "During a Session", badge: "FOR MENDI" },
-    { id: "game",      label: "Game Mode",          icon: Gamepad2 },
-    { id: "brain",     label: "Brain Map",          icon: Brain },
-    { id: "hrv",       label: "Heart & Breathing",  icon: HeartPulse },
-    { id: "progress",  label: "Progress",           icon: TrendingUp,     groupStart: "Client Records" },
-    { id: "ai",        label: "AI Insights",        icon: Sparkles,       badge: "FOR MENDI" },
-    { id: "protocols", label: "Protocols",          icon: Target,         groupStart: "Practice Tools" },
-    { id: "schedule",  label: "Schedule",           icon: Calendar },
-    { id: "reports",   label: "Reports",            icon: FileText,       badge: "FOR MENDI" },
-    { id: "compare",   label: "Compare",            icon: BarChart3 },
+    { id: "session",   label: "Session",     icon: Activity,       groupStart: "In session" },
+    { id: "game",      label: "Game",        icon: Gamepad2 },
+    { id: "brain",     label: "Brain",       icon: Brain },
+    { id: "hrv",       label: "Heart",       icon: HeartPulse },
+    { id: "progress",  label: "Progress",    icon: TrendingUp,     groupStart: "After session" },
+    { id: "ai",        label: "AI",          icon: Sparkles },
+    { id: "protocols", label: "Plans",       icon: Target,         groupStart: "Your clinic" },
+    { id: "schedule",  label: "Schedule",    icon: Calendar },
+    { id: "reports",   label: "Reports",     icon: FileText },
+    { id: "compare",   label: "Compare",     icon: BarChart3 },
   ];
 
   const DEMO_CLIENTS = [
@@ -954,7 +954,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
       <div role="status" style={{ background: "#FEF3C7", borderBottom: "1px solid #FCD34D", color: "#78350F", padding: "8px 24px", fontSize: 12, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap", textAlign: "center" }}>
         <span style={{ fontSize: 14 }}>⚠️</span>
         <span>
-          <strong style={{ fontWeight: 700 }}>Live demo</strong> · all client data is illustrative · email/SMS/calendar actions are simulated · Mendi BLE pairing pending May 11 SDK handoff · click <strong style={{ fontWeight: 700 }}>“Run with live Claude Haiku”</strong> in AI Insights for a real model call
+          <strong style={{ fontWeight: 700 }}>Demo mode</strong> · all clients and sessions are sample data · open <strong style={{ fontWeight: 700 }}>AI</strong> for a real Claude call
         </span>
       </div>
 
@@ -1084,16 +1084,16 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           <div style={{ background: "white", borderRadius: 20, maxWidth: 520, width: "100%", boxShadow: "0 32px 80px rgba(0,0,0,0.5)", animation: "fadeIn 0.25s ease", overflow: "hidden" }}>
             <div style={{ height: 4, background: "linear-gradient(90deg, #2563EB, #7C3AED, #EC4899)" }} />
             <div style={{ padding: "28px 32px 32px" }}>
-              <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>The clinical layer for any neurofeedback hardware</div>
+              <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>The simplest neurofeedback tool you&rsquo;ll ever use</div>
               <p style={{ fontSize: 14, color: "#64748B", marginBottom: 24, lineHeight: 1.7 }}>
-                Mendi · Muse · Polar HRV · Apple Health → one client record, one SOAP note, one billable session. This demo runs synthetic data — no hardware needed.
+                10 tabs. 10 sample clients. No setup. Click around and you&rsquo;ll see how the whole platform works in 2 minutes.
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
                 {[
-                  { icon: "🧠", title: "Live Session + co-feedback video", desc: "Mendi fNIRS streaming with HIPAA video — clinician sees client's live signals during the call. Rare among neurofeedback platforms." },
-                  { icon: "🤖", title: "AI cross-session pattern detector", desc: "Correlates Mendi data with Apple Health · Oura · mood · HRV · adherence. Surfaces drivers most platforms can't see in one place." },
-                  { icon: "📋", title: "Ambient SOAP scribe (6 formats)", desc: "Records audio with consent → drafts SOAP / DAP / BIRP / GIRP / PIE / SIRP notes tied to the live signal data." },
-                  { icon: "🏥", title: "EHR + claims + research registry", desc: "CMS-1500 + ERA + BIDS-fNIRS export + IRB packet auto-gen — bundled, not bolted on. Open-source · self-hostable." },
+                  { icon: "🟢", title: "Click a tab — that&rsquo;s the whole tour", desc: "No multi-step walkthrough. Each tab is a screen a clinician actually uses. Open it, look, move on." },
+                  { icon: "🧠", title: "Run a live session in one click", desc: "The session is already going. Watch the score, see the brain data, talk to the (sample) client. That&rsquo;s the whole job." },
+                  { icon: "🤖", title: "Let the AI write the note", desc: "Open AI. Hit one button. The note is drafted in your format. You read, fix, save. 60 seconds." },
+                  { icon: "📤", title: "Send a clean PDF report", desc: "Open Reports. One click. The client gets a branded summary. No formatting, no exports, no other tool." },
                 ].map(({ icon, title, desc }) => (
                   <div key={title} style={{ display: "flex", gap: 14, alignItems: "flex-start", padding: "10px 14px", background: "#F8FAFC", borderRadius: 12 }}>
                     <div style={{ fontSize: 20, lineHeight: 1.3 }}>{icon}</div>
@@ -1110,7 +1110,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   onClick={() => { sessionStorage.setItem("demo-onboarding-dismissed", "1"); setShowOnboarding(false); }}
                   style={{ width: "100%", padding: "13px 16px", background: "#2563EB", color: "white", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", letterSpacing: "0.01em" }}
                 >
-                  Explore freely →
+                  Got it — let me look around →
                 </button>
               </div>
               <p style={{ fontSize: 11, color: "#94A3B8", textAlign: "center", marginTop: 12 }}>
@@ -1489,16 +1489,16 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
         {/* Sticky "what you're seeing" caption per tab — progressive onboarding */}
         {(() => {
           const captions: Record<string, { what: string; lookFor: string }> = {
-            session:    { what: "Live Session",       lookFor: "the HIPAA video panel at the top — see your client's live brain data during a session. Switch between 1-on-1, group, couples, or family modes." },
-            game:       { what: "Game Mode",          lookFor: "what your client sees during a session — pick from 3 visual styles: Aurora, Generative Art, or Audio Interrupt." },
-            brain:      { what: "Brain Map",          lookFor: "Sarah's brain activity compared against 847 healthy adults of the same age. Her elevated theta + low alpha is a classic ADHD pattern." },
-            hrv:        { what: "Heart & Breathing",  lookFor: "wearables at top — Apple Watch, Oura, and Whoop sync HRV automatically into the AI insights." },
-            progress:   { what: "Progress",           lookFor: "20 sessions of progress — depression score down from 18 to 5, anxiety 14 to 4, training score up 131%. One-click PDF for the client." },
-            ai:         { what: "AI Insights",        lookFor: "the AI finds what's driving each client's progress — sleep, mood, HRV, medication. Plus drafts SOAP notes from the session audio." },
-            protocols:  { what: "Protocols",          lookFor: "9 Mendi-ready + 6 EEG protocols, searchable by condition. Open library — clinicians can add their own." },
-            schedule:   { what: "Schedule",           lookFor: "calendar, automated SMS/email reminders, and home-practice tracking for clients training between visits." },
-            reports:    { what: "Reports",            lookFor: "47,000 anonymous sessions across 412 clinics — and a one-click branded PDF report for each of your clients." },
-            compare:    { what: "Compare",            lookFor: "EEGBase compared with every other neurofeedback platform. Filter by what matters to you." },
+            session:    { what: "Session",     lookFor: "everything you need on one screen — video call, live brain data, score. Just talk to the client." },
+            game:       { what: "Game",        lookFor: "what the client sees on their screen — pick a visual or sound. Three options, that's it." },
+            brain:      { what: "Brain",       lookFor: "where the brain is busy. Brighter = more active. Compared to people the same age." },
+            hrv:        { what: "Heart",       lookFor: "the client's heart and breathing. Auto-syncs from Apple Watch, Oura, Polar, Whoop — no setup." },
+            progress:   { what: "Progress",    lookFor: "every session on one chart. Scores up, symptoms down. One click sends a PDF to the client." },
+            ai:         { what: "AI",          lookFor: "what's helping each client. The AI shows the pattern. Then it writes the session note for you." },
+            protocols:  { what: "Plans",       lookFor: "ready-made training plans. Search by what the client has. Open library — add your own." },
+            schedule:   { what: "Schedule",    lookFor: "your calendar. Reminders go out by text and email automatically. You don't think about it." },
+            reports:    { what: "Reports",     lookFor: "every client's progress in one place. Send a clean PDF in one click." },
+            compare:    { what: "Compare",     lookFor: "EEGBase vs every other neurofeedback tool. Filter by what matters to you." },
           };
           const cap = captions[tab];
           if (!cap) return null;
@@ -1525,7 +1525,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #2563EB", borderRadius: 12, padding: "12px 18px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
               <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(37,99,235,0.15)", color: "#60A5FA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 14, fontWeight: 700 }}>i</div>
               <span style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.5, flex: 1, minWidth: 0 }}>
-                <strong style={{ color: "#F1F5F9" }}>Clinician view</strong> — you're watching {demoClient.name}'s brain signals in real time (simulated). The <strong style={{ color: "#F1F5F9" }}>Reward Score</strong> rises when the client's brain is producing the target pattern. Switch to <button onClick={() => switchTab("game")} style={{ background: "none", border: "none", color: "#60A5FA", fontWeight: 700, cursor: "pointer", padding: 0, fontSize: 13, textDecoration: "underline" }}>Game Mode</button> to see what the client sees.
+                Watching <strong style={{ color: "#F1F5F9" }}>{demoClient.name}</strong> live. The <strong style={{ color: "#F1F5F9" }}>score</strong> goes up when their brain is on target. Tap <button onClick={() => switchTab("game")} style={{ background: "none", border: "none", color: "#60A5FA", fontWeight: 700, cursor: "pointer", padding: 0, fontSize: 13, textDecoration: "underline" }}>Game</button> to see what they see.
               </span>
             </div>
 
