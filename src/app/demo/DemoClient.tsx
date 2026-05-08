@@ -1489,22 +1489,16 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
         {/* Sticky "what you're seeing" caption per tab — progressive onboarding */}
         {(() => {
           const captions: Record<string, { what: string; lookFor: string }> = {
-            session:    { what: "Live Session",       lookFor: "the HIPAA video co-feedback panel at the top — clinician sees the client's live signals during the call. Mode toggle above (1-on-1 / Group / Couples / Family)." },
-            game:       { what: "Game Mode",          lookFor: "what the client sees on their screen — the reward feedback that drives engagement. 3 modes: Aurora, Generative Art, Audio Interrupt." },
-            brain:      { what: "Brain Map",          lookFor: "the new normative database comparison — Sarah's z-scores vs n=847 healthy controls. Theta + low alpha = classic ADHD signature." },
-            hrv:        { what: "Heart & Breathing",  lookFor: "the connected wearables strip at top — Apple Health · Oura · Whoop feed into the cross-session pattern detector." },
-            outcomes:   { what: "Questionnaires",     lookFor: "PHQ-9, GAD-7, custom scales · auto-scored · longitudinal trend overlaid with neurofeedback signal." },
-            progress:   { what: "Progress",           lookFor: "20-session arc with PHQ-9 18→5, GAD-7 14→4, reward score +131%. Branded PDF in one click." },
-            ai:         { what: "AI Insights",        lookFor: "the cross-session pattern detector — uniquely correlates Mendi data with sleep/mood/HRV. Plus 6-format note selector and tone analytics with fNIRS overlay." },
-            protocols:  { what: "Protocols",          lookFor: "9 Mendi-Native + 6 generic EEG protocols, searchable by condition. Open library — clinicians can fork and contribute." },
-            schedule:   { what: "Schedule",           lookFor: "calendar with smart slot suggestions, automated reminders, Mendi pre-call hardware checks." },
-            reports:    { what: "Reports",            lookFor: "the live outcomes registry (47k sessions, 412 clinics) + pre-print citation + Co-author CTA + IRB packet for Mendi science team." },
-            compare:    { what: "Compare",            lookFor: "8-column matrix of EEGBase vs every legacy + modern competitor. Filter by capability." },
-            billing:    { what: "Billing & Claims",   lookFor: "the 3-tier pricing strip (Solo / Practice / Enterprise) with annual toggle (save 17%). CMS-1500 auto-gen below." },
-            team:       { what: "Team & Roles",       lookFor: "RBAC matrix, supervisor co-sign workflow, audit trail of every clinician action." },
-            compliance: { what: "Compliance",         lookFor: "Schrems II + EU SCCs, SOC 2 Type II + Bishop Fox pen-test downloads, P0 Incident SLA, FDA general wellness posture." },
-            marketing:  { what: "Marketing",          lookFor: "white-label Mendi Clinical mode (B2B story), coaching marketplace, corporate wellness, 4-quarter roadmap, RCT enrollment portal." },
-            devices:    { what: "Devices & API",      lookFor: "Mendi flagship card with calibration drift sparkline + BIDS-fNIRS sidecar JSON + 6 migration importers (BrainPaint/EEGer/NeuroGuide/etc)." },
+            session:    { what: "Live Session",       lookFor: "the HIPAA video panel at the top — see your client's live brain data during a session. Switch between 1-on-1, group, couples, or family modes." },
+            game:       { what: "Game Mode",          lookFor: "what your client sees during a session — pick from 3 visual styles: Aurora, Generative Art, or Audio Interrupt." },
+            brain:      { what: "Brain Map",          lookFor: "Sarah's brain activity compared against 847 healthy adults of the same age. Her elevated theta + low alpha is a classic ADHD pattern." },
+            hrv:        { what: "Heart & Breathing",  lookFor: "wearables at top — Apple Watch, Oura, and Whoop sync HRV automatically into the AI insights." },
+            progress:   { what: "Progress",           lookFor: "20 sessions of progress — depression score down from 18 to 5, anxiety 14 to 4, training score up 131%. One-click PDF for the client." },
+            ai:         { what: "AI Insights",        lookFor: "the AI finds what's driving each client's progress — sleep, mood, HRV, medication. Plus drafts SOAP notes from the session audio." },
+            protocols:  { what: "Protocols",          lookFor: "9 Mendi-ready + 6 EEG protocols, searchable by condition. Open library — clinicians can add their own." },
+            schedule:   { what: "Schedule",           lookFor: "calendar, automated SMS/email reminders, and home-practice tracking for clients training between visits." },
+            reports:    { what: "Reports",            lookFor: "47,000 anonymous sessions across 412 clinics — and a one-click branded PDF report for each of your clients." },
+            compare:    { what: "Compare",            lookFor: "EEGBase compared with every other neurofeedback platform. Filter by what matters to you." },
           };
           const cap = captions[tab];
           if (!cap) return null;

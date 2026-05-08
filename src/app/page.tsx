@@ -307,7 +307,7 @@ export default function LandingPage() {
           <span style={{ background: "linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #06B6D4 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>one tool</span>
         </h1>
         <p className="text-gray-500 max-w-2xl mx-auto mb-7" style={{ fontSize: "1.075rem", lineHeight: 1.65, letterSpacing: "-0.005em" }}>
-          Mendi fNIRS, Muse EEG, Polar HRV, Apple Health, Oura, OpenBCI and 32+ more boards — every device feeds <strong className="text-gray-900">one client record, one SOAP note, one billable session.</strong> Stop juggling vendor apps. Free, open-source, MIT.
+          Plug in Mendi, Muse, Polar, Apple Watch, Oura, OpenBCI — any neurofeedback or wearable. Every session lands in <strong className="text-gray-900">one client record</strong>. Document, bill, and supervise from one place. Free and open-source.
         </p>
 
         {/* Above-the-fold trust strip — micro-proof per Nielsen 83% trust research */}
