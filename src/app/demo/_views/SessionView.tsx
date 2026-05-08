@@ -7,6 +7,7 @@ import type { DeviceSample } from "@/lib/device/adapter";
 import { CLIENTS, type Client } from "../_data/clients";
 import type { SessionType } from "../_data/session-types";
 import { TrainingVisuals, VISUAL_MODES, type VisualMode } from "../_components/TrainingVisuals";
+import { TutorOverlay } from "../_components/TutorOverlay";
 
 interface SessionViewProps {
   clientId: string;
@@ -123,6 +124,9 @@ export function SessionView({ clientId, sessionType, sessionMinutes = 20, onExit
 
   return (
     <main id="main-content" className="max-w-3xl mx-auto px-6 py-10">
+      {/* First-session tutor — defaults on; user dismisses forever */}
+      <TutorOverlay />
+
       {/* Patient + protocol — one line, no chrome */}
       <header className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3 min-w-0">
