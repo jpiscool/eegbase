@@ -2457,7 +2457,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             <div style={{ marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Heart & Breathing (HRV)</h2>
-              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>Monitor heart rate variability and breathing coherence alongside EEG — all in one view. Helps clients learn to combine calm breathing with focused brain states.</p>
+              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>Track heart rate variability and breathing alongside brain data. Helps clients pair calm breathing with focused brain states.</p>
             </div>
 
             {/* Live HRV metrics */}
@@ -2938,7 +2938,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             <div style={{ marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>AI Insights</h2>
               <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
-                EEGBase AI watches session data and flags when a client is stalled — then suggests the next protocol to try, compared against the EEGBase community registry. It also drafts clinical notes you can copy straight to your EHR.
+                AI watches your client's data. When progress stalls, it flags it and suggests what to try next. It also drafts session notes you can paste into your EHR.
               </p>
             </div>
 
@@ -3521,9 +3521,9 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
         {tab === "protocols" && (
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             <div style={{ marginBottom: 16 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Condition-Specific Protocol Library</h2>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Protocol Library</h2>
               <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
-                Curated library of evidence-based protocols organized by condition (15 in this preview, expanding). Search, preview, and apply in one click — no more looking up papers or guessing electrode placement. Open library — clinicians can fork, customize, and contribute back.
+                Evidence-based protocols sorted by condition. Search, preview, apply in one click. Open library — clinicians can add their own. (15 shown here, more coming.)
               </p>
             </div>
 
@@ -3894,9 +3894,9 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             </div>
 
             <div style={{ marginBottom: 16 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>One-Click Shareable Progress Reports</h2>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>One-Click Progress Reports</h2>
               <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
-                Generate plain-English progress reports for clients, parents, or referring physicians. No data export or Word document needed — branded PDF in one click. Among modern cloud-based neurofeedback platforms, this branded one-click format is uncommon.
+                Plain-English progress reports for clients, parents, or referring doctors. Branded PDF in one click. No exporting, no Word docs.
               </p>
             </div>
 
@@ -4037,9 +4037,9 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
         {tab === "compare" && (
           <div>
             <div style={{ marginBottom: 20 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>EEGBase vs All Competitors</h2>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>EEGBase vs every competitor</h2>
               <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
-                Compiled May 2026 from platform docs, clinician reviews, and NeuroBB forums. EEGBase is the only platform that covers every layer — live signal, QEEG, AI, clinical workflow, practice management — in one open-source web app.
+                We're the only one that covers everything in one open-source app — live signal, AI, notes, billing, scheduling. Updated May 2026 from platform docs and clinician reviews.
               </p>
             </div>
 
