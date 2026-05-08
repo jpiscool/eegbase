@@ -6,11 +6,13 @@ import { CLIENTS } from "../_data/clients";
 import { Sparkline } from "../_components/Sparkline";
 import { CheckIn } from "../_components/CheckIn";
 import { DevicesCard } from "../_components/DevicesCard";
+import { SessionTypePicker } from "../_components/SessionTypePicker";
 import type { Role } from "../_components/RoleToggle";
+import type { SessionType } from "../_data/session-types";
 
 interface TodayViewProps {
   role: Role;
-  onStartSession: (clientId: string) => void;
+  onStartSession: (clientId: string, type?: SessionType, minutes?: number) => void;
   onOpenPatient: (clientId: string) => void;
 }
 
@@ -137,21 +139,22 @@ function ClinicianToday({
 }
 
 // ── Home-user view ─────────────────────────────────────────────────────────
-function HomeUserToday({ onStartSession }: { onStartSession: (clientId: string) => void }) {
+function HomeUserToday({ onStartSession }: { onStartSession: (clientId: string, type?: SessionType, minutes?: number) => void }) {
   // Pick a stable daily prompt based on day-of-year so a user sees the same
   // line all day but a different one each day.
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
   const prompt = DAILY_PROMPTS[dayOfYear % DAILY_PROMPTS.length];
   const trainedDays = HOME_USER_STREAK.filter((d) => d.trained).length;
   const [checkInOpen, setCheckInOpen] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   return (
     <main id="main-content" className="max-w-2xl mx-auto px-6 py-12">
-      {/* Primary action — your next training */}
+      {/* Primary action — your next training (opens the type picker) */}
       <section className="mb-12">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Your next training</p>
         <button
-          onClick={() => onStartSession("sarah")}
+          onClick={() => setPickerOpen(true)}
           className="w-full text-left bg-blue-600 hover:bg-blue-700 text-white rounded-2xl p-7 transition-colors shadow-sm"
         >
           <p className="text-blue-100 text-sm font-medium mb-1">{HOME_USER_NEXT.time} · {HOME_USER_NEXT.protocol} · {HOME_USER_NEXT.durationMin} min</p>
@@ -214,6 +217,11 @@ function HomeUserToday({ onStartSession }: { onStartSession: (clientId: string) 
       </section>
 
       <CheckIn open={checkInOpen} setOpen={setCheckInOpen} mode="self" />
+      <SessionTypePicker
+        open={pickerOpen}
+        setOpen={setPickerOpen}
+        onPick={(t, mins) => onStartSession("sarah", t, mins)}
+      />
     </main>
   );
 }

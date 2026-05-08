@@ -5,20 +5,27 @@ import { LiveChart } from "@/components/LiveChart";
 import { SimulatorAdapter } from "@/lib/device/simulator";
 import type { DeviceSample } from "@/lib/device/adapter";
 import { CLIENTS, type Client } from "../_data/clients";
+import type { SessionType } from "../_data/session-types";
 
 interface SessionViewProps {
   clientId: string;
+  sessionType?: SessionType;
+  sessionMinutes?: number;
   onExit: () => void;
 }
 
-const SESSION_TARGET_SECONDS = 1200; // 20 minutes — short demo session
-const STEP_BREAKDOWN = [
-  { label: "Eyes open · settle in",     untilSec:  120 },
-  { label: "Baseline · resting state",  untilSec:  300 },
-  { label: "Focus training · phase 1",  untilSec:  720 },
-  { label: "Focus training · phase 2",  untilSec: 1080 },
-  { label: "Wind down · save session",  untilSec: 1200 },
-];
+// Step phases scale with the chosen length so a 5-min session has short
+// phases and a 20-min session has long ones. Same proportions throughout.
+function buildSteps(totalSec: number) {
+  const pct = (p: number) => Math.round(totalSec * p);
+  return [
+    { label: "Eyes open · settle in",   untilSec: pct(0.10) },
+    { label: "Baseline · resting state", untilSec: pct(0.25) },
+    { label: "Training · phase 1",       untilSec: pct(0.60) },
+    { label: "Training · phase 2",       untilSec: pct(0.90) },
+    { label: "Wind down · save session", untilSec: totalSec },
+  ];
+}
 
 function fmt(sec: number) {
   const m = Math.floor(sec / 60);
@@ -28,8 +35,10 @@ function fmt(sec: number) {
 
 const fmtMmSs = fmt;
 
-export function SessionView({ clientId, onExit }: SessionViewProps) {
+export function SessionView({ clientId, sessionType, sessionMinutes = 20, onExit }: SessionViewProps) {
   const client: Client = CLIENTS.find((c) => c.id === clientId) ?? CLIENTS[0];
+  const SESSION_TARGET_SECONDS = sessionMinutes * 60;
+  const STEP_BREAKDOWN = buildSteps(SESSION_TARGET_SECONDS);
 
   const [phase, setPhase] = useState<"live" | "report">("live");
   const [paused, setPaused] = useState(false);
@@ -120,7 +129,9 @@ export function SessionView({ clientId, onExit }: SessionViewProps) {
           </span>
           <div className="min-w-0">
             <p className="text-sm font-semibold text-gray-900 truncate">{client.name}</p>
-            <p className="text-xs text-gray-500 truncate">{client.protocol} · session {client.sessionsCompleted + 1}</p>
+            <p className="text-xs text-gray-500 truncate">
+              {sessionType ? `${sessionType.emoji} ${sessionType.name} \u00b7 ${sessionMinutes} min` : `${client.protocol} \u00b7 session ${client.sessionsCompleted + 1}`}
+            </p>
           </div>
         </div>
         <button

@@ -8,6 +8,7 @@ import { SessionView } from "./_views/SessionView";
 import { CmdK } from "./_views/CmdK";
 import { ChecklistDock } from "./_components/ChecklistDock";
 import { RoleToggle, type Role } from "./_components/RoleToggle";
+import type { SessionType } from "./_data/session-types";
 
 type Surface = "today" | "patients" | "session";
 
@@ -25,6 +26,8 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
   const [cmdOpen, setCmdOpen] = useState(false);
   const [dark, setDark] = useState(false);
   const [role, setRoleState] = useState<Role>("clinician");
+  const [sessionType, setSessionType] = useState<SessionType | null>(null);
+  const [sessionMinutes, setSessionMinutes] = useState(12);
 
   // Hydrate role from localStorage so a returning visitor stays in their last view.
   useEffect(() => {
@@ -54,8 +57,10 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
     window.history.replaceState(null, "", url);
   }, [surface, activeClientId]);
 
-  function startSession(clientId: string) {
+  function startSession(clientId: string, type?: SessionType, minutes?: number) {
     setActiveClientId(clientId);
+    if (type) setSessionType(type);
+    if (minutes != null) setSessionMinutes(minutes);
     setSurface("session");
   }
   function openPatient(clientId: string) {
@@ -113,7 +118,12 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
           <PatientsView role={role} initialClientId={activeClientId} onStartSession={startSession} />
         )}
         {surface === "session" && (
-          <SessionView clientId={activeClientId ?? "sarah"} onExit={() => goSurface("today")} />
+          <SessionView
+            clientId={activeClientId ?? "sarah"}
+            sessionType={sessionType ?? undefined}
+            sessionMinutes={sessionMinutes}
+            onExit={() => goSurface("today")}
+          />
         )}
       </div>
 
