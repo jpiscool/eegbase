@@ -3,19 +3,31 @@
 import { useState } from "react";
 import { CLIENTS } from "../_data/clients";
 import { SARAH_SESSIONS } from "../_data/sessions";
+import type { Role } from "../_components/RoleToggle";
 
 interface PatientsViewProps {
+  role: Role;
   initialClientId?: string;
   onStartSession: (clientId: string) => void;
 }
 
-export function PatientsView({ initialClientId, onStartSession }: PatientsViewProps) {
-  // Default to Sarah if a deep link asked for her, otherwise show the list.
-  const initial = CLIENTS.find((c) => c.id === initialClientId) ?? null;
-  const [openClient, setOpenClient] = useState<typeof CLIENTS[number] | null>(initial);
+export function PatientsView({ role, initialClientId, onStartSession }: PatientsViewProps) {
+  // Home-user mode: skip the list — there's only one person (you), so render
+  // the same detail layout but pinned to Sarah (illustrative profile).
+  const isHome = role === "home";
+
+  const [openClientId, setOpenClientId] = useState<string | null>(initialClientId ?? null);
   const [openSessionId, setOpenSessionId] = useState<number | null>(null);
 
-  if (!openClient) {
+  // Compute the displayed client at render time so role changes (which arrive
+  // post-mount via localStorage hydration) immediately surface the right view.
+  const openClient = isHome
+    ? CLIENTS[0]
+    : openClientId
+      ? CLIENTS.find((c) => c.id === openClientId) ?? null
+      : null;
+
+  if (!isHome && !openClient) {
     return (
       <main id="main-content" className="max-w-2xl mx-auto px-6 py-12">
         <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Patients</h2>
@@ -23,7 +35,7 @@ export function PatientsView({ initialClientId, onStartSession }: PatientsViewPr
           {CLIENTS.map((c) => (
             <li key={c.id}>
               <button
-                onClick={() => setOpenClient(c)}
+                onClick={() => setOpenClientId(c.id)}
                 className="w-full flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors text-left"
               >
                 <span className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm flex items-center justify-center flex-shrink-0">
@@ -45,29 +57,32 @@ export function PatientsView({ initialClientId, onStartSession }: PatientsViewPr
   // Patient detail: header + reverse-chrono session list + sticky CTA.
   // Sessions data is Sarah's curve (illustrative) — same shape works for any patient in the demo.
   const sessions = SARAH_SESSIONS;
+  const client = openClient!; // non-null in detail render path (list-mode early-return above guards this for clinician role; home mode initializes with a default)
 
   return (
     <main id="main-content" className="max-w-2xl mx-auto px-6 py-12">
-      {/* Back to list */}
-      <button
-        onClick={() => { setOpenClient(null); setOpenSessionId(null); }}
-        className="text-xs text-gray-500 hover:text-gray-900 mb-6 inline-flex items-center gap-1"
-      >
-        <span aria-hidden>←</span> All patients
-      </button>
+      {/* Back to list — clinician only; home user has no list to return to */}
+      {!isHome && (
+        <button
+          onClick={() => { setOpenClientId(null); setOpenSessionId(null); }}
+          className="text-xs text-gray-500 hover:text-gray-900 mb-6 inline-flex items-center gap-1"
+        >
+          <span aria-hidden>←</span> All patients
+        </button>
+      )}
 
-      {/* Patient header */}
+      {/* Header */}
       <header className="flex items-center gap-4 mb-2">
         <span className="w-14 h-14 rounded-full bg-blue-100 text-blue-700 font-semibold text-lg flex items-center justify-center flex-shrink-0">
-          {openClient.initials}
+          {client.initials}
         </span>
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">{openClient.name}</h1>
-          <p className="text-sm text-gray-500">{openClient.archetype} · {openClient.device}</p>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">{isHome ? "Your training" : client.name}</h1>
+          <p className="text-sm text-gray-500">{isHome ? `${client.protocol} · ${client.device}` : `${client.archetype} · ${client.device}`}</p>
         </div>
       </header>
       <p className="text-sm text-gray-700 leading-relaxed bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-8">
-        <span className="font-semibold text-gray-900">{openClient.protocol}.</span> {openClient.protocolDescription}
+        <span className="font-semibold text-gray-900">{client.protocol}.</span> {client.protocolDescription}
       </p>
 
       {/* Sessions list */}
@@ -108,10 +123,10 @@ export function PatientsView({ initialClientId, onStartSession }: PatientsViewPr
       {/* Sticky CTA */}
       <div className="sticky bottom-6">
         <button
-          onClick={() => onStartSession(openClient.id)}
+          onClick={() => onStartSession(client.id)}
           className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl px-6 py-4 text-base font-semibold shadow-lg transition-colors"
         >
-          Start new session for {openClient.name.split(" ")[0]} →
+          {isHome ? "Start training session →" : `Start new session for ${client.name.split(" ")[0]} →`}
         </button>
       </div>
     </main>

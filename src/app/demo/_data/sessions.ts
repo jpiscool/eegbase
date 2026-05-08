@@ -57,3 +57,42 @@ export const SPARKLINES = {
   avgSessionMin:    [26, 28, 27, 28, 29, 28, 28], // headline = 28
   reportsPending:   [3, 2, 2, 1, 1, 1, 1],       // headline = 1
 };
+
+// ── Home-user (any-person) view data ──────────────────────────────────────
+// Used when the demo is viewed in "Home user" mode. Same shell, different copy.
+
+export const HOME_USER_NEXT = {
+  time: "8:00 PM tonight",
+  protocol: "Focus training",
+  durationMin: 12,
+};
+
+// Last 7 days of practice — Sun..Sat. true = trained that day.
+export const HOME_USER_STREAK: { day: string; date: number; trained: boolean }[] = [
+  { day: "S", date: 2,  trained: true  },
+  { day: "M", date: 3,  trained: true  },
+  { day: "T", date: 4,  trained: true  },
+  { day: "W", date: 5,  trained: false },
+  { day: "T", date: 6,  trained: true  },
+  { day: "F", date: 7,  trained: true  },
+  { day: "S", date: 8,  trained: false }, // today, not yet trained
+];
+
+// Light, non-pushy rotating prompts. Picks one based on day-of-year so the
+// same person sees a stable prompt all day but different ones across days.
+export const DAILY_PROMPTS: string[] = [
+  "3 minutes of breath training counts more than 0 — even today.",
+  "Sleep is the foundation of every training session. Aim for 7 hours.",
+  "Notice when your focus drifts — that noticing is half the work.",
+  "Train when you\u2019re calm, not when you\u2019re desperate. Your brain learns better.",
+  "Small, daily reps beat weekend marathons. Always.",
+  "If today feels hard, do a 2-minute session. Then call it.",
+  "Hydration first, training second. Your brain is 75% water.",
+  "After your session, write one sentence about how you feel. That\u2019s the magic.",
+  "Skip the screens for the first 10 minutes after a session.",
+  "Curiosity beats criticism. Be curious about your numbers, not graded by them.",
+  "The score isn\u2019t you. It\u2019s the conditions you trained in today.",
+  "Train at the same time tomorrow. Your brain loves a rhythm.",
+  "If you missed yesterday, today still counts. The streak is just a guide.",
+  "Quality \u003e quantity. A focused 5 minutes beats a distracted 20.",
+];

@@ -2,10 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CLIENTS } from "../_data/clients";
+import type { Role } from "../_components/RoleToggle";
 
 type Surface = "today" | "patients" | "session";
 
 interface CmdKProps {
+  role: Role;
   open: boolean;
   setOpen: (v: boolean) => void;
   goSurface: (s: Surface) => void;
@@ -15,7 +17,7 @@ interface CmdKProps {
 
 type Cmd = { id: string; label: string; hint?: string; run: () => void; group: string };
 
-export function CmdK({ open, setOpen, goSurface, startSession, openPatient }: CmdKProps) {
+export function CmdK({ role, open, setOpen, goSurface, startSession, openPatient }: CmdKProps) {
   const [query, setQuery] = useState("");
   const [activeIdx, setActiveIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -55,8 +57,16 @@ export function CmdK({ open, setOpen, goSurface, startSession, openPatient }: Cm
     }
   }, [open]);
 
-  const allCmds: Cmd[] = useMemo(
-    () => [
+  const allCmds: Cmd[] = useMemo(() => {
+    if (role === "home") {
+      return [
+        { id: "go-today",    group: "Go to", label: "Today",         hint: "home",         run: () => { goSurface("today"); setOpen(false); } },
+        { id: "go-me",       group: "Go to", label: "Your training", hint: "your profile", run: () => { goSurface("patients"); setOpen(false); } },
+        { id: "start-now",   group: "Train", label: "Start a session now", hint: "Focus training", run: () => { startSession("sarah"); setOpen(false); } },
+        { id: "help",        group: "Help",  label: "Help & shortcuts",    hint: "⌘K to open this", run: () => setOpen(false) },
+      ];
+    }
+    return [
       { id: "go-today",    group: "Go to", label: "Today",    hint: "home",          run: () => { goSurface("today"); setOpen(false); } },
       { id: "go-patients", group: "Go to", label: "Patients", hint: "all clients",   run: () => { goSurface("patients"); setOpen(false); } },
       ...CLIENTS.map<Cmd>((c) => ({
@@ -74,9 +84,8 @@ export function CmdK({ open, setOpen, goSurface, startSession, openPatient }: Cm
         run: () => { openPatient(c.id); setOpen(false); },
       })),
       { id: "help", group: "Help", label: "Help & shortcuts", hint: "⌘K to open this", run: () => setOpen(false) },
-    ],
-    [goSurface, startSession, openPatient, setOpen]
-  );
+    ];
+  }, [role, goSurface, startSession, openPatient, setOpen]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

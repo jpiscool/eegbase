@@ -7,6 +7,7 @@ import { PatientsView } from "./_views/PatientsView";
 import { SessionView } from "./_views/SessionView";
 import { CmdK } from "./_views/CmdK";
 import { ChecklistDock } from "./_components/ChecklistDock";
+import { RoleToggle, type Role } from "./_components/RoleToggle";
 
 type Surface = "today" | "patients" | "session";
 
@@ -16,12 +17,30 @@ interface DemoShellProps {
 }
 
 const TODAY_DATE = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+const ROLE_KEY = "eegbase-demo-role";
 
 export default function DemoShell({ initialSurface, initialClientId }: DemoShellProps) {
   const [surface, setSurface] = useState<Surface>(initialSurface);
   const [activeClientId, setActiveClientId] = useState<string | undefined>(initialClientId);
   const [cmdOpen, setCmdOpen] = useState(false);
   const [dark, setDark] = useState(false);
+  const [role, setRoleState] = useState<Role>("clinician");
+
+  // Hydrate role from localStorage so a returning visitor stays in their last view.
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem(ROLE_KEY);
+      if (v === "clinician" || v === "home" || v === "researcher") setRoleState(v);
+    } catch {}
+  }, []);
+
+  function setRole(r: Role) {
+    setRoleState(r);
+    try { localStorage.setItem(ROLE_KEY, r); } catch {}
+    // Switching roles resets the surface to Today so the change is visible immediately.
+    setSurface("today");
+    setActiveClientId(undefined);
+  }
 
   // Sync URL ?surface= without a full reload — useful for browser back-button.
   useEffect(() => {
@@ -55,7 +74,7 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
         Demo mode · sample data · press <kbd className="bg-white border border-amber-200 rounded px-1 py-0.5 font-mono text-[10px]">⌘K</kbd> to navigate
       </div>
 
-      {/* Slim header — logo · date · search · dark toggle */}
+      {/* Slim header — logo · date · search · role · dark toggle */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-3xl mx-auto px-6 py-3 flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2">
@@ -73,6 +92,7 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
               <span className="hidden sm:inline">Search</span>
               <kbd className="font-mono text-[10px] bg-white border border-gray-200 rounded px-1 py-0.5 hidden md:inline">⌘K</kbd>
             </button>
+            <RoleToggle role={role} setRole={setRole} />
             <button
               onClick={() => setDark(d => !d)}
               aria-label="Toggle dark mode"
@@ -84,13 +104,13 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
         </div>
       </header>
 
-      {/* Surface area — wrapper keeps a stable max-width and white card under content */}
+      {/* Surface area */}
       <div className="bg-gray-50">
         {surface === "today" && (
-          <TodayView onStartSession={startSession} onOpenPatient={openPatient} />
+          <TodayView role={role} onStartSession={startSession} onOpenPatient={openPatient} />
         )}
         {surface === "patients" && (
-          <PatientsView initialClientId={activeClientId} onStartSession={startSession} />
+          <PatientsView role={role} initialClientId={activeClientId} onStartSession={startSession} />
         )}
         {surface === "session" && (
           <SessionView clientId={activeClientId ?? "sarah"} onExit={() => goSurface("today")} />
@@ -99,6 +119,7 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
 
       {/* Cmd-K command palette */}
       <CmdK
+        role={role}
         open={cmdOpen}
         setOpen={setCmdOpen}
         goSurface={goSurface}
