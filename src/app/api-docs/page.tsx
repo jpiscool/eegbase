@@ -140,7 +140,7 @@ await session.start();`}</pre>
         <div style={{ background: "linear-gradient(135deg, #ECFEFF, #F0F9FF)", border: "1px solid #67E8F9", borderRadius: 14, padding: 20, textAlign: "center" }}>
           <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>Need beta access?</h2>
           <p style={{ fontSize: 13, color: "#0E7490", lineHeight: 1.6, marginBottom: 12 }}>
-            Enterprise customers + Mendi partners get v1 beta keys today. Public beta opens with paid plans Q3 2026.
+            Enterprise customers + Mendi partners get v1 beta keys today. Public beta opens in a future update.
           </p>
           <a href="mailto:api@eegbase.com?subject=API%20beta%20access" style={{ display: "inline-block", padding: "10px 18px", background: "#06B6D4", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
             Request beta key →

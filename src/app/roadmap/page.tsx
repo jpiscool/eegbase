@@ -85,7 +85,7 @@ export default function RoadmapPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Public roadmap · updated weekly</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>What ships next</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
-          Vote-counts are illustrative for the demo. Real votes will come from clinicians once paid plans launch in Q3 2026. Also see what we're explicitly NOT doing on <Link href="/" style={{ color: "#2563EB" }}>the honest-gaps section</Link>.
+          Vote-counts are illustrative for the demo. Real votes will come from clinicians once the public account flow is live. Also see what we're explicitly NOT doing on <Link href="/" style={{ color: "#2563EB" }}>the honest-gaps section</Link>.
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>

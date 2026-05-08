@@ -4,16 +4,12 @@ import Link from "next/link";
 import { useState } from "react";
 import { Brain, BarChart3, Wifi, ShieldCheck, Users, Zap, Bluetooth, FileText, Share2, CheckCircle, ChevronDown } from "lucide-react";
 import { LandingLivePreview } from "@/components/LandingLivePreview";
-import { RoiCalculator } from "@/components/RoiCalculator";
-import { WaitlistForm } from "@/components/WaitlistForm";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { StickyDemoCTA } from "@/components/StickyDemoCTA";
 import { LiveStatusPill } from "@/components/LiveStatusPill";
 import { SearchableFAQ } from "@/components/SearchableFAQ";
-import { ExitIntentModal } from "@/components/ExitIntentModal";
 import { PartnerLogos } from "@/components/PartnerLogos";
 import { ChangelogWidget } from "@/components/ChangelogWidget";
-import { CurrencyTogglePricing } from "@/components/CurrencyTogglePricing";
 
 const features = [
   {
@@ -622,17 +618,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Live ROI Calculator — interactive savings estimate */}
-      <section className="max-w-5xl mx-auto px-6 pb-24">
-        <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
-          Calculate your practice ROI
-        </h2>
-        <p className="text-sm text-gray-500 text-center mb-10 max-w-2xl mx-auto">
-          Move the sliders. The savings estimate updates live based on EEGBase Practice tier ($349/mo) plus admin time reclaimed by the AI scribe and auto-claims.
-        </p>
-        <RoiCalculator />
-      </section>
-
       {/* Switching-from section — switching cost killer */}
       <section className="max-w-5xl mx-auto px-6 pb-24">
         <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">Switching from another platform?</h2>
@@ -693,24 +678,17 @@ export default function LandingPage() {
         <SearchableFAQ />
       </section>
 
-      {/* Pricing teaser — transparent pricing converts +15-25% per CRO research */}
-      <section className="max-w-5xl mx-auto px-6 pb-24" id="pricing">
-        <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">Simple, transparent pricing</h2>
-        <p className="text-sm text-gray-500 text-center mb-8">Free for licensed clinicians during private beta · paid plans launch Q3 2026.</p>
-
-        {/* 3-tier pricing with currency toggle (USD/EUR/GBP/CAD/AUD) */}
-        <CurrencyTogglePricing />
-        <div className="mb-8" />
-
-
-        {/* Waitlist email capture — paid plans launch Q3 2026 */}
-        <div className="bg-gradient-to-br from-blue-50 to-violet-50/40 border border-blue-100 rounded-2xl p-7 max-w-3xl mx-auto text-center">
-          <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-2">Get notified at launch</p>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">Be one of the first 200 clinicians</h3>
-          <p className="text-sm text-gray-500 leading-relaxed mb-5 max-w-xl mx-auto">
-            Paid plans open Q3 2026. Join the waitlist for private-beta seats, early-access pricing, and direct line to the team.
+      {/* Pricing — it's free */}
+      <section className="max-w-3xl mx-auto px-6 pb-24" id="pricing">
+        <div className="bg-gradient-to-br from-blue-50 to-violet-50/40 border border-blue-100 rounded-2xl p-10 text-center">
+          <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3">Pricing</p>
+          <h2 className="text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">It&rsquo;s free.</h2>
+          <p className="text-base text-gray-600 leading-relaxed max-w-lg mx-auto mb-6">
+            Every feature. Every device. Every clinician on your team. No card, no trial limit, no &ldquo;contact sales&rdquo;.
           </p>
-          <WaitlistForm />
+          <Link href="/demo" className="inline-block px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition">
+            Open the demo →
+          </Link>
         </div>
       </section>
 
@@ -814,9 +792,8 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* Sticky demo CTA + exit-intent waitlist modal */}
+      {/* Sticky demo CTA */}
       <StickyDemoCTA />
-      <ExitIntentModal />
     </div>
   );
 }

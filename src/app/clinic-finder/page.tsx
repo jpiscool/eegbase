@@ -33,7 +33,7 @@ export default function ClinicFinderPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#10B981", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Clinic finder · waitlist</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Find a Mendi-attached clinic near you</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 30, maxWidth: 720 }}>
-          Live finder launches Q3 2026 with paid plans. Today: {total}+ clinics on the waitlist across {REGIONS.length} regions. Email <a href="mailto:hello@eegbase.com?subject=Clinic%20near%20me" style={{ color: "#2563EB" }}>hello@eegbase.com</a> with your zip code and we'll connect you when one is available.
+          Live finder ships in a future update. Today: {total}+ clinics on the waitlist across {REGIONS.length} regions. Email <a href="mailto:hello@eegbase.com?subject=Clinic%20near%20me" style={{ color: "#2563EB" }}>hello@eegbase.com</a> with your zip code and we'll connect you when one is available.
         </p>
 
         {/* Map placeholder */}
@@ -64,7 +64,7 @@ export default function ClinicFinderPage() {
             ))}
           </svg>
           <p style={{ fontSize: 11, color: "#94A3B8", textAlign: "center", marginTop: 12, fontStyle: "italic" }}>
-            Illustrative placeholder. Real geo-clustered map ships with paid plans Q3 2026.
+            Illustrative placeholder. Real geo-clustered map ships in a future update.
           </p>
         </section>
 
@@ -89,7 +89,7 @@ export default function ClinicFinderPage() {
         <section style={{ background: "linear-gradient(135deg, #ECFDF5, #F0FDF4)", border: "1px solid #A7F3D0", borderRadius: 16, padding: 24, textAlign: "center" }}>
           <h2 style={{ fontSize: 20, fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>Are you a clinician?</h2>
           <p style={{ fontSize: 14, color: "#047857", lineHeight: 1.6, marginBottom: 14 }}>
-            List your clinic when paid plans launch. No verification fee, but BCN/LPC/MD credentials required.
+            List your clinic when the public directory launches. No verification fee, but BCN/LPC/MD credentials required.
           </p>
           <Link href="/contact?role=clinician" style={{ display: "inline-block", padding: "10px 18px", background: "#10B981", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>Reserve your listing →</Link>
         </section>

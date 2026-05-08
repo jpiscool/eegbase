@@ -89,7 +89,7 @@ export function AudienceLanding({ c }: { c: AudienceContent }) {
         <section style={{ maxWidth: 1100, margin: "0 auto", padding: "48px 24px 64px" }}>
           <div style={{ background: c.eyebrowColor, borderRadius: 16, padding: 32, textAlign: "center" }}>
             <h2 style={{ fontSize: 24, fontWeight: 800, color: "white", marginBottom: 10, letterSpacing: "-0.02em" }}>Ready to try it?</h2>
-            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.85)", marginBottom: 20, maxWidth: 540, margin: "0 auto 20px" }}>30-day free trial · no card · synthetic data only · cancel anytime.</p>
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.85)", marginBottom: 20, maxWidth: 540, margin: "0 auto 20px" }}>It&rsquo;s free · no card · synthetic data in the demo · MIT-licensed.</p>
             <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
               <Link href={c.cta.href} style={{ padding: "12px 22px", background: "white", color: c.eyebrowColor, borderRadius: 10, fontSize: 14, fontWeight: 700, textDecoration: "none" }}>{c.cta.label}</Link>
               <Link href="/contact" style={{ padding: "12px 22px", background: "transparent", border: "1px solid rgba(255,255,255,0.4)", color: "white", borderRadius: 10, fontSize: 14, fontWeight: 600, textDecoration: "none" }}>Talk to us</Link>

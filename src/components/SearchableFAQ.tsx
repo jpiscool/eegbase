@@ -9,8 +9,8 @@ const FAQS: Faq[] = [
   // Setup & cost
   { cat: "Setup & cost", q: "Do I need a server to run EEGBase?", a: "No. Deploy for free on Vercel + Neon (PostgreSQL) in under 10 minutes. Or self-host on any Linux server. A Docker Compose setup is included in the repo. Managed hosting is on the roadmap — not yet available." },
   { cat: "Setup & cost", q: "How long does setup take?", a: "Most clinicians are fully running in under 30 minutes. Clone the repo, add your database URL and a single API key, deploy to Vercel with one click. The setup guide walks through each step with screenshots." },
-  { cat: "Setup & cost", q: "How much does it cost?", a: "Solo $19 per session, Practice $349 per clinic per month, Enterprise custom. All plans include a 30-day free trial with no card required. Mendi-attached clinics get 20% off Practice/Enterprise." },
-  { cat: "Setup & cost", q: "Is there a free tier?", a: "Self-hosting on your own infrastructure is free under MIT. The hosted SaaS has a 30-day free trial. We're free for licensed clinicians during private beta until paid plans launch Q3 2026." },
+  { cat: "Setup & cost", q: "How much does it cost?", a: "It's free. Every feature, every device, every clinician on your team. No card, no trial limit, no \u201ccontact sales\u201d." },
+  { cat: "Setup & cost", q: "Is there a catch?", a: "No. EEGBase is MIT-licensed. Self-host it on Vercel + Neon for free, or run it on your own Linux server. The full source is on GitHub." },
 
   // Differentiation
   { cat: "Differentiation", q: "How is EEGBase different from SimplePractice or TherapyNotes?", a: "Those are scheduling and note-taking tools. EEGBase also captures live brain data and runs neurofeedback sessions. One client record holds all of it." },

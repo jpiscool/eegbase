@@ -27,10 +27,9 @@ export default function TermsPage() {
         <S title="Plain-English summary">
           <ul style={{ listStyle: "disc", paddingLeft: 20, color: "#374151", lineHeight: 1.7, fontSize: 15 }}>
             <li>EEGBase is a software platform — not a medical device. Clinical judgment always rests with the licensed clinician.</li>
-            <li>The hosted service requires an account. Self-hosting is free under MIT.</li>
+            <li>The software is free for now. Self-hosting is free under MIT. The hosted service requires an account but no payment.</li>
             <li>You own your clinic's data. We're a custodian, not the owner.</li>
-            <li>30-day free trial · no card · cancel anytime.</li>
-            <li>If something goes seriously wrong, our liability is capped at fees paid in the last 12 months.</li>
+            <li>If something goes seriously wrong, our liability is capped at zero — the software is free.</li>
           </ul>
         </S>
 

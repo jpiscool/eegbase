@@ -52,7 +52,7 @@ export default function MendiClinicalPreviewPage() {
           </h1>
           <p style={{ fontSize: 17, color: "#C4B5FD", lineHeight: 1.7, maxWidth: 720, marginBottom: 12 }}>
             Same EEGBase platform · Mendi's brand · Mendi's domain · Mendi keeps the customer relationship.
-            One toggle, two-week launch, sixty-forty rev share.
+            One toggle, two-week launch, free for clinics.
           </p>
           <p style={{ fontSize: 12, color: "#94A3B8", fontStyle: "italic" }}>
             This page is a visual mockup. Mendi has not yet approved, signed, or commissioned this design.
@@ -119,15 +119,14 @@ export default function MendiClinicalPreviewPage() {
         </div>
       </section>
 
-      {/* COMMERCIAL TERMS */}
+      {/* PARTNERSHIP TERMS */}
       <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px 48px" }}>
         <div style={{ background: `linear-gradient(135deg, ${NAVY} 0%, ${MENDI_VIOLET_BG} 100%)`, borderRadius: 20, padding: "36px 32px", color: "#fff" }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: MENDI_VIOLET_LIGHT, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>Commercials · proposal</div>
-          <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 20, letterSpacing: "-0.02em" }}>How the rev share works</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: MENDI_VIOLET_LIGHT, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>Partnership · proposal</div>
+          <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 20, letterSpacing: "-0.02em" }}>How the partnership works</h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
             {[
-              { val: "60 / 40", label: "Mendi / EEGBase rev split", sub: "On every clinic SaaS subscription" },
-              { val: "$349", label: "Practice tier list price", sub: "Per clinic / month · Mendi sees 60% = $209" },
+              { val: "Free", label: "For Mendi clinics", sub: "EEGBase is free during the early launch — no per-seat fees, no SaaS bill" },
               { val: "0 hrs", label: "Mendi engineering required", sub: "Theme switcher only · no fork" },
               { val: "2 wk", label: "Time to launch", sub: "DPA signed · co-mark approved · DNS live" },
             ].map((c) => (
@@ -139,7 +138,7 @@ export default function MendiClinicalPreviewPage() {
             ))}
           </div>
           <div style={{ marginTop: 20, padding: "12px 16px", background: "rgba(0,0,0,0.25)", borderRadius: 8, fontSize: 12, color: "#C4B5FD", lineHeight: 1.7 }}>
-            <strong style={{ color: "#fff" }}>Audited via Stripe Connect</strong> — quarterly settlement, no spreadsheets, no trust-me. Mendi gets a real-time revenue dashboard the day the partnership goes live.
+            <strong style={{ color: "#fff" }}>No commercial strings.</strong> EEGBase is MIT-licensed. Mendi-attached clinics get the white-label brand at no cost — the partnership is about distribution and clinical credibility, not revenue.
           </div>
         </div>
       </section>

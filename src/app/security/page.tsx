@@ -68,7 +68,7 @@ export default function SecurityPage() {
             <li>We credit researchers in advisories unless you prefer anonymity.</li>
           </ul>
           <p style={{ marginTop: 12 }}><strong>Safe harbor:</strong> We will not pursue legal action against researchers acting in good faith. Don't access more data than necessary, don't exfiltrate or share data, don't test in ways that disrupt service.</p>
-          <p style={{ marginTop: 12, fontSize: 12, color: "#94A3B8" }}>Bug bounty program launching with paid plans Q3 2026. Out of scope today: third-party services (Stripe, AWS, Daily.co), self-hosted deployments outside our control.</p>
+          <p style={{ marginTop: 12, fontSize: 12, color: "#94A3B8" }}>Bug bounty program launching in a future update. Out of scope today: third-party services (Stripe, AWS, Daily.co), self-hosted deployments outside our control.</p>
         </Section>
 
         <Section title="Incident response">

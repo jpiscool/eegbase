@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { RoiCalculator } from "@/components/RoiCalculator";
 
 const CPT_CODES = [
   { code: "90901", name: "Biofeedback training",                          medicare: "$45 (excluded · 2024)", commercial: "$60–95", note: "Most common · biofeedback alone, no psychotherapy" },
@@ -14,7 +13,7 @@ const CPT_CODES = [
 ];
 
 export default function CalculatorsPage() {
-  const [tab, setTab] = useState<"roi" | "cpt" | "insurance">("roi");
+  const [tab, setTab] = useState<"cpt" | "insurance">("cpt");
 
   return (
     <div style={{ minHeight: "100vh", background: "#FAFAFA", fontFamily: "system-ui, -apple-system, sans-serif" }}>
@@ -33,13 +32,12 @@ export default function CalculatorsPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#0EA5E9", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Calculators</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Practical math for neurofeedback practices</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 28, maxWidth: 720 }}>
-          ROI, insurance reimbursement estimates, CPT code lookup. Numbers are illustrative — always confirm with your billing team.
+          Insurance reimbursement estimates and CPT code lookup. Numbers are illustrative — always confirm with your billing team.
         </p>
 
         {/* Tab nav */}
         <div role="tablist" aria-label="Calculator tabs" style={{ display: "flex", gap: 6, marginBottom: 20, background: "white", border: "1px solid #E5E7EB", borderRadius: 12, padding: 4, width: "fit-content" }}>
           {[
-            { id: "roi", label: "Practice ROI" },
             { id: "cpt", label: "CPT code lookup" },
             { id: "insurance", label: "Insurance estimator" },
           ].map((t) => (
@@ -54,10 +52,6 @@ export default function CalculatorsPage() {
             </button>
           ))}
         </div>
-
-        {tab === "roi" && (
-          <section role="tabpanel"><RoiCalculator /></section>
-        )}
 
         {tab === "cpt" && (
           <section role="tabpanel" style={{ background: "white", border: "1px solid #E5E7EB", borderRadius: 14, overflow: "hidden" }}>

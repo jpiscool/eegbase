@@ -39,7 +39,7 @@ const SUMMARY_ITEMS = [
   { label: "Data Encryption", detail: "AES-256 at rest · TLS 1.3 in transit" },
   { label: "Access Controls", detail: "Role-based · clinic-isolated" },
   { label: "Audit Logging", detail: "Every PHI access recorded" },
-  { label: "BAA Available", detail: "For clinics on paid plans" },
+  { label: "BAA Available", detail: "Signed on request for hosted clinics" },
 ];
 
 interface ChecklistItem {

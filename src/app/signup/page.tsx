@@ -41,9 +41,9 @@ export default function SignupPage() {
       <main style={{ maxWidth: 600, margin: "0 auto", padding: "48px 24px" }}>
         {!submitted && (
           <>
-            <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Free 30-day trial</p>
-            <h1 style={{ fontSize: 36, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 6 }}>Start your free trial</h1>
-            <p style={{ fontSize: 14, color: "#64748B", lineHeight: 1.7, marginBottom: 24 }}>No card required · 4 quick steps · about 90 seconds.</p>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Free · no card</p>
+            <h1 style={{ fontSize: 36, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 6 }}>Create your account</h1>
+            <p style={{ fontSize: 14, color: "#64748B", lineHeight: 1.7, marginBottom: 24 }}>It&rsquo;s free. No card required · 4 quick steps · about 90 seconds.</p>
 
             {/* Progress */}
             <div style={{ display: "flex", gap: 6, marginBottom: 28 }}>

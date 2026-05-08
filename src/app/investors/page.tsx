@@ -75,7 +75,7 @@ export default function InvestorsPage() {
           <p style={{ fontSize: 11, fontWeight: 700, color: "#A5B4FC", letterSpacing: "0.15em", marginBottom: 8, textTransform: "uppercase" }}>The round</p>
           <h2 style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 12 }}>Pre-seed open · target $1.5M</h2>
           <p style={{ fontSize: 14, color: "#CBD5E1", lineHeight: 1.7, marginBottom: 18 }}>
-            We'll spend the $1.5M on: 18 months of runway, 4 hires (clinical PM, 2 engineers, 1 research engineer), launching paid plans in Q3 2026, and standing up the Mendi partnership and multi-clinic research database.
+            We'll spend the $1.5M on: 18 months of runway, 4 hires (clinical PM, 2 engineers, 1 research engineer), keeping the platform free for early clinics, and standing up the Mendi partnership and multi-clinic research database.
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
             <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(165,180,252,0.3)", borderRadius: 10, padding: 12 }}>

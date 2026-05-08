@@ -15,7 +15,7 @@ const COMPARISONS: Comp[] = [
     slug: "simplepractice",
     name: "SimplePractice",
     cat: "General mental-health EHR",
-    pricing: "SimplePractice ~$99/clinician/mo · EEGBase $349/clinic/mo (5 clinicians) or $19/session",
+    pricing: "SimplePractice is paid SaaS · EEGBase is free (MIT-licensed, self-hostable)",
     rows: [
       { feature: "Real-time fNIRS / EEG signal capture", us: true,  them: false },
       { feature: "AI cross-session pattern detector",     us: true,  them: false },
@@ -34,7 +34,7 @@ const COMPARISONS: Comp[] = [
     slug: "therapynotes",
     name: "TherapyNotes",
     cat: "General mental-health EHR · ONC-certified",
-    pricing: "TherapyNotes $69+/clinician/mo · EEGBase $349/clinic/mo flat",
+    pricing: "TherapyNotes is paid SaaS · EEGBase is free (MIT-licensed, self-hostable)",
     rows: [
       { feature: "Real-time fNIRS / EEG signal capture", us: true,  them: false },
       { feature: "ONC HIT 2025 Edition certification",   us: false, them: true,  sub: "Their advantage; we're targeting Q1 2027" },
@@ -52,7 +52,7 @@ const COMPARISONS: Comp[] = [
     slug: "myndlift",
     name: "Myndlift",
     cat: "Muse-only home neurofeedback platform",
-    pricing: "Myndlift $199 kit + $29-150/mo coaching · EEGBase $349/clinic/mo flat (or $19/session)",
+    pricing: "Myndlift is paid coaching SaaS + hardware kit · EEGBase software is free",
     rows: [
       { feature: "Hardware-agnostic (any BLE)",           us: true,  them: false, sub: "Theirs is Muse-only" },
       { feature: "Native Mendi fNIRS support",             us: true,  them: false },
@@ -71,7 +71,7 @@ const COMPARISONS: Comp[] = [
     slug: "brainmaster",
     name: "BrainMaster · Discovery / Atlantis",
     cat: "Legacy clinical neurofeedback hardware + Windows software",
-    pricing: "Discovery $2.5k+ hardware + $1.5k+ software · EEGBase $349/clinic/mo OR free MIT self-host",
+    pricing: "Discovery is hardware + paid software · EEGBase is free (MIT-licensed)",
     rows: [
       { feature: "Cloud-native · web-based",              us: true,  them: false, sub: "Theirs is Windows installed" },
       { feature: "Hardware-agnostic",                      us: true,  them: false, sub: "Theirs is BrainMaster-only" },
@@ -88,7 +88,7 @@ const COMPARISONS: Comp[] = [
     slug: "cygnet",
     name: "Cygnet · BEE Medic",
     cat: "Z-score-focused clinical neurofeedback platform · Windows",
-    pricing: "Cygnet subscription · undisclosed (typically $200+/mo) · EEGBase $349/clinic/mo flat",
+    pricing: "Cygnet is paid subscription · EEGBase is free (MIT-licensed)",
     rows: [
       { feature: "Cloud-native",                          us: true,  them: false, sub: "Cygnet is Windows-only" },
       { feature: "Z-score training",                      us: true,  them: true,  sub: "Both support · their depth is greater today" },
@@ -105,7 +105,7 @@ const COMPARISONS: Comp[] = [
     slug: "bioexplorer",
     name: "BioExplorer",
     cat: "Open-design legacy biofeedback designer · Windows",
-    pricing: "BioExplorer ~$500–700 perpetual + protocol design effort · EEGBase $349/clinic/mo OR free MIT",
+    pricing: "BioExplorer is a paid perpetual licence · EEGBase is free (MIT-licensed)",
     rows: [
       { feature: "Cloud-native · web-based",              us: true,  them: false },
       { feature: "Visual protocol designer",              us: true,  them: true,  sub: "Their advantage — the designer is excellent" },
@@ -122,7 +122,7 @@ const COMPARISONS: Comp[] = [
     slug: "neuroguide",
     name: "NeuroGuide",
     cat: "qEEG + LORETA gold standard · Windows desktop",
-    pricing: "NeuroGuide $3,500–6,000 perpetual · EEGBase $349/clinic/mo OR free MIT",
+    pricing: "NeuroGuide is a paid perpetual licence · EEGBase is free (MIT-licensed)",
     rows: [
       { feature: "Cloud-native",                          us: true,  them: false },
       { feature: "qEEG with normative database",          us: true,  them: true,  sub: "NeuroGuide's normative database is the field standard" },
@@ -139,7 +139,7 @@ const COMPARISONS: Comp[] = [
     slug: "divergence-neuro",
     name: "Divergence Neuro",
     cat: "Modern cloud-based multi-vendor neurofeedback platform",
-    pricing: "Divergence ~$315/mo (quote) · EEGBase $349/clinic/mo flat",
+    pricing: "Divergence is paid SaaS · EEGBase is free (MIT-licensed, self-hostable)",
     rows: [
       { feature: "Cloud-native",                          us: true,  them: true,  sub: "Both" },
       { feature: "Hardware-agnostic",                      us: true,  them: true,  sub: "Both — but they treat all vendors equally" },

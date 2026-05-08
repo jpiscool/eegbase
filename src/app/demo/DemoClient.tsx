@@ -109,13 +109,13 @@ const FEATURES: { feature: string; category: string; eeg: boolean; myndlift: boo
 ];
 
 const COMPETITORS: { key: string; label: string; sub: string; highlight?: boolean }[] = [
-  { key: "eeg",         label: "EEGBase",     sub: "$0/mo · Open Source", highlight: true },
-  { key: "myndlift",    label: "Myndlift",    sub: "~$315/mo" },
-  { key: "divergence",  label: "Divergence",  sub: "~$315/mo" },
-  { key: "eeger",       label: "EEGer",       sub: "~$95/mo" },
-  { key: "brainpaint",  label: "BrainPaint",  sub: "$15–25/session" },
-  { key: "neuroptimal", label: "NeurOptimal", sub: "~$650/mo rental" },
-  { key: "neuroguide",  label: "NeuroGuide",  sub: "$3,500–6,000" },
+  { key: "eeg",         label: "EEGBase",     sub: "Free · Open Source", highlight: true },
+  { key: "myndlift",    label: "Myndlift",    sub: "Cloud-locked" },
+  { key: "divergence",  label: "Divergence",  sub: "Web desktop" },
+  { key: "eeger",       label: "EEGer",       sub: "Windows-only" },
+  { key: "brainpaint",  label: "BrainPaint",  sub: "Per-session licence" },
+  { key: "neuroptimal", label: "NeurOptimal", sub: "Hardware rental" },
+  { key: "neuroguide",  label: "NeuroGuide",  sub: "Perpetual licence" },
   { key: "brainavatar", label: "BrainAvatar", sub: "Hardware bundle" },
 ];
 
@@ -1011,7 +1011,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             <span>A11y</span>
           </button>
           <button
-            onClick={() => showToast("Theme switcher · dark / light / high-contrast modes · CSS-variable system ready · light theme ships with Q3 2026 paid plans")}
+            onClick={() => showToast("Theme switcher · dark / light / high-contrast modes · CSS-variable system ready · light theme ships in a future update")}
             aria-label="Theme switcher"
             className="demo-topbar-hide-mobile demo-topbar-hide-narrow"
             title="Switch theme · dark / light / high-contrast"
@@ -1021,7 +1021,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             <span>Theme</span>
           </button>
           <button
-            onClick={() => showToast("Session replay scrubber · drag a timeline through any past session · ships Q3 2026 with paid plans")}
+            onClick={() => showToast("Session replay scrubber · drag a timeline through any past session · ships in a future update")}
             aria-label="Session replay"
             className="demo-topbar-hide-mobile demo-topbar-hide-narrow"
             title="Replay scrubber · ships Q3 2026"
@@ -1177,12 +1177,12 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             {detailModal.type === "competitor" && (() => {
               const c = detailModal.data as { key: string; label: string; sub: string };
               const profiles: Record<string, { strengths: string[]; weaknesses: string[]; verdict: string }> = {
-                myndlift:    { strengths: ["Polished consumer app", "Active community", "700+ studies cited"], weaknesses: ["Locked to Muse hardware", "$1,990 onboarding fee", "Reviews say 'not real neurofeedback'"], verdict: "Best for cash-pay coaching practices, weak on clinical EEG" },
-                divergence:  { strengths: ["AI brain assessments", "Multivariate coherence", "HIPAA + GDPR"], weaknesses: ["No native mobile app", "$255–490/mo subscription", "Web-only desktop"], verdict: "Strongest competitor — clinical workflow, but expensive and dated UX" },
+                myndlift:    { strengths: ["Polished consumer app", "Active community", "700+ studies cited"], weaknesses: ["Locked to Muse hardware", "Cloud-only data", "Reviews say 'not real neurofeedback'"], verdict: "Best for cash-pay coaching practices, weak on clinical EEG" },
+                divergence:  { strengths: ["AI brain assessments", "Multivariate coherence", "HIPAA + GDPR"], weaknesses: ["No native mobile app", "Web-only desktop", "Dated UX"], verdict: "Strongest competitor — clinical workflow, but dated UX" },
                 eeger:       { strengths: ["Long clinical history", "Solid signal processing"], weaknesses: ["Windows-only desktop", "Steep learning curve", "Looks like 2003"], verdict: "Trusted by veterans but feels like time-travel software" },
-                brainpaint:  { strengths: ["Per-session pricing", "Trauma/addiction focus"], weaknesses: ["Hardware lock-in", "Limited modalities", "Art-only feedback"], verdict: "Niche clinical tool, not a full practice platform" },
-                neuroptimal: { strengths: ["No subscription, own outright", "Passive training model"], weaknesses: ["$7,495–10,995 upfront", "Proprietary closed system", "Limited customization"], verdict: "Pricey investment for a one-protocol approach" },
-                neuroguide:  { strengths: ["Gold-standard QEEG", "Thatcher database", "Source localization"], weaknesses: ["$3,500–6,000+ price", "Requires certification", "QEEG only — no live streaming"], verdict: "Best-in-class assessment, no live training workflow" },
+                brainpaint:  { strengths: ["Per-session licensing model", "Trauma/addiction focus"], weaknesses: ["Hardware lock-in", "Limited modalities", "Art-only feedback"], verdict: "Niche clinical tool, not a full practice platform" },
+                neuroptimal: { strengths: ["Own the system outright", "Passive training model"], weaknesses: ["Hardware-only delivery", "Proprietary closed system", "Limited customization"], verdict: "Single-protocol hardware, limited flexibility" },
+                neuroguide:  { strengths: ["Gold-standard QEEG", "Thatcher database", "Source localization"], weaknesses: ["Perpetual licence model", "Requires certification", "QEEG only — no live streaming"], verdict: "Best-in-class assessment, no live training workflow" },
                 brainavatar: { strengths: ["Hardware-agnostic-ish", "Brain Trainer integration"], weaknesses: ["Hardware bundle required", "Windows desktop UX", "Limited mobile/web"], verdict: "Mid-market hardware bundle, feels behind on UX" },
               };
               const p = profiles[c.key] ?? { strengths: [], weaknesses: [], verdict: "" };
@@ -4048,7 +4048,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               {[
                 { label: "fNIRS + EEG + HRV in one app", sub: "Most platforms cover one modality; we unify all three with native Mendi support", color: "#06B6D4" },
                 { label: "AI cross-session pattern detector", sub: "Correlates Mendi data with sleep · mood · HRV · adherence — flags drivers", color: "#A855F7" },
-                { label: "Free OSS · or $19/session up", sub: "Legacy platforms: $95–650/mo + $2–6k upfront. We're open-source.", color: "#10B981" },
+                { label: "Free & open-source", sub: "MIT licence · self-host on Vercel + Neon in 10 minutes · no per-seat fees", color: "#10B981" },
                 { label: "Browser-based · No install", sub: "Cloud-native — no Windows-only requirement, no per-machine licenses", color: "#F59E0B" },
               ].map(({ label, sub, color }) => (
                 <div key={label} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 14, padding: "16px 18px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 24px -16px rgba(0,0,0,0.5)" }}>
@@ -4130,25 +4130,6 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               </div>
             </div>
 
-            {/* Pricing callout */}
-            <div style={{ marginTop: 20, display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }} className="demo-grid-2">
-              {[
-                { name: "EEGer",      price: "$95/mo",     note: "Desktop-only, Windows, no AI", highlight: false },
-                { name: "Myndlift",   price: "$315/mo",    note: "15 clients + $499+ hardware", highlight: false },
-                { name: "NeuroGuide", price: "$3,500–6k",  note: "Analysis-only, steep learning curve", highlight: false },
-                { name: "EEGBase",    price: "$0",         note: "Self-hosted, MIT open source, all features", highlight: true },
-              ].map(({ name, price, note, highlight }) => (
-                <div key={name} style={{
-                  background: highlight ? "rgba(30,58,138,0.25)" : "#0F172A",
-                  border: highlight ? "2px solid #2563EB" : "1px solid #334155",
-                  borderRadius: 14, padding: "18px 20px", textAlign: "center",
-                }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>{name}</div>
-                  <div style={{ fontSize: 26, fontWeight: 800, color: highlight ? "#60A5FA" : "#CBD5E1", marginBottom: 4 }}>{price}</div>
-                  <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>{note}</div>
-                </div>
-              ))}
-            </div>
           </div>
         )}
       </div>

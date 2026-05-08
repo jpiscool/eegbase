@@ -15,7 +15,7 @@ const PILLARS = [
       "Bishop Fox pen-test · attestation on request",
       "AES-256-GCM at rest · TLS 1.3 in transit",
       "Quarterly internal red-team",
-      "Bug bounty (paid plans launch Q3 2026)",
+      "Bug bounty (planned future update)",
     ],
     color: "#10B981",
   },

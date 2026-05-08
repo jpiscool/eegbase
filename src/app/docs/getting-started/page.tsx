@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 const STEPS = [
-  { num: "01", title: "Sign up", body: "Visit /signup. 4 steps · ~90 seconds. No card required, 30-day free trial." },
+  { num: "01", title: "Sign up", body: "Visit /signup. 4 steps · ~90 seconds. No card required, free for now." },
   { num: "02", title: "Pair your hardware", body: "Mendi · Muse · Polar · OpenBCI. Open the demo, click 'Pair Mendi headset'. Real BLE pairing flow ships with the trial — uses Web Bluetooth, no native installer needed." },
   { num: "03", title: "Add your first client", body: "Settings → Clients → New. Capture intake (PHQ-9, GAD-7, custom scales). Optional: send the pre-session check-in form via SMS or email — uses the same workflow as Mendi consumer onboarding." },
   { num: "04", title: "Start a session", body: "Live Session tab → 'Pair Mendi headset' or 'Start with simulator'. The reward score updates every 100ms. Ambient SOAP scribe runs in the background if you grant audio permission." },
@@ -59,7 +59,7 @@ export default function GettingStartedPage() {
         <section style={{ background: "linear-gradient(135deg, #ECFEFF, #EFF6FF)", border: "1px solid #BFDBFE", borderRadius: 14, padding: 24, marginTop: 32, textAlign: "center" }}>
           <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>Ready to do it for real?</h2>
           <p style={{ fontSize: 13, color: "#1D4ED8", lineHeight: 1.6, marginBottom: 14 }}>
-            Try the live demo first · 30-day free trial when you're ready.
+            Try the live demo first · free to sign up when you&rsquo;re ready.
           </p>
           <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/demo" style={{ padding: "10px 18px", background: "#2563EB", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>Open demo →</Link>
