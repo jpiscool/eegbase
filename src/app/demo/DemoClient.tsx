@@ -1706,10 +1706,10 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             <div style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 12, padding: "12px 16px", marginBottom: 12, display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
               <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em", marginRight: 4 }}>Signal Quality</span>
               {[
-                { label: "Fp1 OxyHb", quality: 96, color: "#10B981", impedance: "8 kΩ" },
-                { label: "Fp2 OxyHb", quality: 94, color: "#10B981", impedance: "9 kΩ" },
-                { label: "Cz EEG", quality: 88, color: "#10B981", impedance: "12 kΩ" },
-                { label: "HRV (Polar)", quality: 99, color: "#10B981", impedance: "—" },
+                { label: "Fp1 OxyHb · Mendi", quality: 96, color: "#10B981", impedance: "8 kΩ" },
+                { label: "Fp2 OxyHb · Mendi", quality: 94, color: "#10B981", impedance: "9 kΩ" },
+                { label: "Cz EEG · Muse", quality: 88, color: "#10B981", impedance: "12 kΩ" },
+                { label: "HRV · Polar", quality: 99, color: "#10B981", impedance: "—" },
                 { label: "EMG Artifact", quality: emgRejection ? 92 : 0, color: emgRejection ? "#10B981" : "#64748B", impedance: emgRejection ? "Rejected" : "Off" },
               ].map((s) => (
                 <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 10px", background: "#0A1320", border: "1px solid #1E293B", borderRadius: 8 }}>
@@ -2756,8 +2756,11 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             <div style={{ ...card, marginBottom: 16, padding: 16 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 8 }}>
                 <div>
-                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Normative database comparison</h3>
-                  <p style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>Sarah's Z-scores vs age- and sex-matched cohort · n=847 healthy controls · LORETA source localization on roadmap</p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                    <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Normative database comparison</h3>
+                    <span title="EEG band-power comparison — Mendi alone cannot produce these values" style={{ fontSize: 9, fontWeight: 700, padding: "2px 7px", borderRadius: 99, background: "rgba(165,243,252,0.10)", color: "#A5F3FC", border: "1px solid rgba(165,243,252,0.25)", textTransform: "uppercase", letterSpacing: "0.04em" }}>⚡ EEG (Muse)</span>
+                  </div>
+                  <p style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>Sarah's Z-scores vs age- and sex-matched cohort · n=847 healthy controls · LORETA source localization on roadmap. Mendi clients see prefrontal HbO only on the head-map below.</p>
                 </div>
                 <div style={{ display: "flex", gap: 4, padding: 3, background: "#0A1320", border: "1px solid #1E293B", borderRadius: 8 }}>
                   {["Eyes-closed", "Eyes-open", "Task"].map((m, i) => (
@@ -2832,9 +2835,10 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
 
             {/* Z-score training panel */}
             <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 24 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4, flexWrap: "wrap" }}>
                 <span style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Real-Time Z-Score Training</span>
                 <span style={{ fontSize: 10, background: "#2563EB", color: "white", borderRadius: 99, padding: "2px 8px", fontWeight: 700 }}>LIVE</span>
+                <span title="EEG-only feature — Mendi can't produce band-power z-scores" style={{ fontSize: 9, fontWeight: 700, padding: "2px 7px", borderRadius: 99, background: "rgba(165,243,252,0.10)", color: "#A5F3FC", border: "1px solid rgba(165,243,252,0.25)", textTransform: "uppercase", letterSpacing: "0.04em" }}>⚡ EEG (Muse)</span>
               </div>
               <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 20, lineHeight: 1.5 }}>
                 We compare your client's brainwaves in real time to <strong style={{ color: "#A5B4FC" }}>847 healthy adults of the same age</strong>. The colored bars show how far they differ — the goal is to bring each band closer to 0 (the healthy average). A bar that shrinks toward the center means the training is working.
@@ -2984,7 +2988,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               {[
                 { label: "PHQ-9 (Depression)", key: "phq9" as const, color: "#6366F1", max: 27, unit: "", improving: "lower" },
                 { label: "GAD-7 (Anxiety)", key: "gad7" as const, color: "#F59E0B", max: 21, unit: "", improving: "lower" },
-                { label: "θ/β Z-Score", key: "thetaBeta" as const, color: "#EF4444", max: 3, unit: " SD", improving: "lower" },
+                { label: "θ/β Z-Score · EEG", key: "thetaBeta" as const, color: "#EF4444", max: 3, unit: " SD", improving: "lower" },
               ].map(({ label, key, color, max, unit }) => {
                 const first = SESSION_HISTORY[0][key] as number;
                 const last = SESSION_HISTORY[19][key] as number;
@@ -4260,6 +4264,9 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               </div>
               <div style={{ padding: "12px 16px", borderTop: "1px solid #334155", fontSize: 11, color: "#94A3B8" }}>
                 Sources: platform documentation, Capterra/G2 reviews, NeuroBB clinician forums, Neurosity comparison guide (May 2026).
+                <div style={{ marginTop: 6, color: "#A5B4FC" }}>
+                  ⚡ <strong>Device note:</strong> EEG-band features (Z-score training, LORETA, normative DB, multi-channel band charts) require a multi-channel EEG headset such as Muse — not Mendi alone. fNIRS-only features (prefrontal HbO map, OxyHb sessions) work with Mendi. Multi-modal features blend both when paired.
+                </div>
               </div>
             </div>
 

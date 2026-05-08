@@ -86,6 +86,106 @@ After the initial grep-based pass, walked every page individually. Findings:
 ### Out-of-scope flag (not Mendi-specific but found during audit)
 - **/case-studies internal contradiction**: page header says "Six **composite** case studies … illustrative figures. We never fabricate clinician quotes or patient identifiers." But each case study attributes a quote to a named clinician (Dr. Maya Chen BCN, Dr. Marcus Reyes MD, Dr. Sarah Kim BCN-LMFT, etc.). If the case studies are composites, the named-clinician quotes are also composites by extension — contradicting the "never fabricate" line. Recommend either (a) drop the named clinicians and use anonymised "BCN-certified clinician" attribution, or (b) drop "composite" framing if the quotes are actually from real clinicians who consented. **Not a Mendi-compatibility issue, flagging for separate cleanup.**
 
+## Feature-by-feature Mendi compatibility (May 8 — every demo tab + key static pages)
+
+User asked: "make sure every feature in our software is doable and compatible with the Mendi device." The answer is **most features work with Mendi alone, but some are physically EEG-only and now carry explicit device-required labels**. Full inventory below — `🟢` = Mendi alone; `🟡` = Mendi + something else; `🔴` = EEG-required (Muse / multi-channel); `⚪` = device-agnostic software feature.
+
+### Live Session
+| Feature | Compatibility | Status |
+|---|---|---|
+| Bilateral OxyHb / DeoxyHb stream (Fp1, Fp2) | 🟢 Mendi-native | Always honest |
+| Reward score (gamified composite) | 🟢 Mendi-native | Always honest |
+| Signal Quality strip — Fp1/Fp2 OxyHb · Mendi | 🟢 | **Now explicitly labeled `· Mendi`** |
+| Signal Quality strip — Cz EEG · Muse | 🔴 | **Now explicitly labeled `· Muse`** |
+| Signal Quality strip — HRV · Polar | 🟡 | **Now explicitly labeled `· Polar`** |
+| HIPAA video co-feedback (Daily.co) | ⚪ | Telehealth — device-agnostic |
+
+### Game Mode
+| Feature | Compatibility | Status |
+|---|---|---|
+| "Hardware-free" mode (breath/motor) | ⚪ | Behavioral inputs only — works without any device |
+| Mendi-driven gameplay (orb pulses with HbO) | 🟢 | Mendi-native |
+
+### Brain Map
+| Feature | Compatibility | Status |
+|---|---|---|
+| Prefrontal Activity Map (Fp1 + Fp2 HbO) | 🟢 | Cyan dashed ring marks fNIRS sites |
+| 11 EEG band-power electrodes (F3, Fz, F4, T3, Cz, T4, P3, Pz, P4, O1, O2) | 🔴 | **Subtitle "2 fNIRS (Mendi) + 11 EEG bands (Muse / multi-channel)"; modality legend** |
+| Normative database comparison (z-scores) | 🔴 | **Now carries `⚡ EEG (Muse)` pill + caveat "Mendi clients see prefrontal HbO only on the head-map below"** |
+| Real-Time Z-Score Training panel | 🔴 | **Now carries `⚡ EEG (Muse)` pill** |
+| LORETA / sLORETA source localization | 🔴 | "On roadmap — Q4 2026" — honest framing |
+
+### Heart & Breathing
+| Feature | Compatibility | Status |
+|---|---|---|
+| HRV monitoring (RMSSD) | 🟡 | Requires Polar / Apple Watch — copy already attributes |
+| Breath coherence (5.5 BPM) | ⚪ | Camera/mic-based |
+| Breathing pacer | ⚪ | UI-only |
+
+### Questionnaires
+| Feature | Compatibility |
+|---|---|
+| PHQ-9, GAD-7, MBI-EE, PCL-5, etc. | ⚪ Self-report — device-agnostic |
+
+### Progress
+| Feature | Compatibility | Status |
+|---|---|---|
+| PHQ-9 / GAD-7 trend cards | ⚪ | Questionnaire-driven |
+| **θ/β Z-Score · EEG** trend card | 🔴 | **Now explicitly labeled `· EEG`** |
+| Reward score session history | 🟢 | Mendi-native |
+
+### AI Insights
+| Feature | Compatibility |
+|---|---|
+| Cross-session pattern detector (Mendi data + sleep + mood + HRV + adherence) | 🟡 Multi-source — Mendi data correlated with external sources |
+| Ambient SOAP scribe (audio-based) | ⚪ Device-agnostic |
+| 6-format note generator (SOAP/DAP/BIRP/GIRP/PIE/SIRP) | ⚪ |
+
+### Protocols
+| Feature | Compatibility | Status |
+|---|---|---|
+| Mendi-Native: 10 prefrontal-training protocols (Focus Boost, Anxiety Reduction, Depression Asymmetry, ADHD Inhibitory Control, Burnout Recovery, PTSD Hyperarousal, Athletic Pre-Performance, Pediatric Focus, Executive Recovery, Meditation Deepening) | 🟢 | "PINNED · MENDI NATIVE" badge already present |
+| 6 generic EEG protocols (Theta/Beta + SMR, Alpha-Theta, ILF, Sleep Spindle, Alpha Asymmetry, APF) | 🔴 | **All 6 now carry `⚡ EEG required (Muse / multi-channel)` pill** |
+
+### Schedule
+| Feature | Compatibility |
+|---|---|
+| Calendar / booking | ⚪ |
+| Push protocol to Mendi at home | 🟢 |
+| Adherence stats (now sourced to EEGBase clinic cohort, not "Mendi norm") | 🟢 + EEGBase data |
+
+### Reports
+| Feature | Compatibility |
+|---|---|
+| PDF report generation | ⚪ Device-agnostic |
+| BIDS-fNIRS export | 🟢 Mendi-native data format |
+| Live outcomes registry | 🟢 |
+
+### Compare
+| Feature | Compatibility | Status |
+|---|---|---|
+| Two-session side-by-side | 🟢 | Works with Mendi data |
+| Competitor feature table (Z-score, LORETA, normative DB) | 🔴 platform-level | **Footer note added:** "EEG-band features require multi-channel EEG headset such as Muse — not Mendi alone. fNIRS-only features work with Mendi. Multi-modal features blend both." |
+
+### Billing & Claims, Team & Roles, Compliance, Devices & API, Marketing
+All ⚪ device-agnostic (CMS-1500 codes, RBAC, HIPAA/SOC 2, multi-device adapter list, white-label "Mendi Clinical" theme). No changes needed.
+
+### Marketing site (eegbase-website/public_html)
+| Feature card | Compatibility | Status |
+|---|---|---|
+| "Live fNIRS + EEG Streaming" | Multi-device | Already correctly attributes signal types to Mendi/Muse/Polar |
+| "Z-Score Training" | 🔴 EEG | Already explicit ("Compare each client's EEG in real time") |
+| "Native support for Mendi fNIRS and Muse EEG" | Multi-device | Honest |
+| Hero badge "Mendi fNIRS support — beta" | 🟢 | Beta framing acknowledges SDK pending |
+
+## Bottom line
+
+**Every feature in the platform either (a) works with Mendi alone, (b) works with Mendi + one explicit augment, or (c) is now visibly tagged as requiring EEG/multi-channel hardware.** No feature implies it can do something with Mendi that Mendi physically cannot.
+
+Mendi-only clinics can run: Live Session (OxyHb), Prefrontal Activity Map, Game Mode, all 10 Mendi-Native protocols, AI Insights cross-session detector (Mendi data + external), SOAP/PDF reports, BIDS-fNIRS exports, Schedule + push-to-home, billing/team/compliance.
+
+Mendi-only clinics cannot run: Theta/Beta/Alpha/Gamma band power features, the 11 non-prefrontal Brain Map sites, z-score normative training, LORETA, the 6 generic EEG protocols. All now visibly labeled.
+
 ## Open items for May 11 call with Mustafa
 
 These are claims where we either have the wrong number, an unverified
