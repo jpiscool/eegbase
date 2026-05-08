@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CLIENTS } from "../_data/clients";
 import { SARAH_SESSIONS } from "../_data/sessions";
 import type { Role } from "../_components/RoleToggle";
@@ -9,6 +9,7 @@ import { CheckIn } from "../_components/CheckIn";
 import { InsightsList } from "../_components/InsightsList";
 import { AchievementsRow } from "../_components/AchievementsRow";
 import { ClinicianShareCard } from "../_components/ClinicianShareCard";
+import { ClinicianWatchPanel } from "../_components/LiveCoFeedback";
 
 interface PatientsViewProps {
   role: Role;
@@ -24,6 +25,20 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
   const [openClientId, setOpenClientId] = useState<string | null>(initialClientId ?? null);
   const [openSessionId, setOpenSessionId] = useState<number | null>(null);
   const [checkInOpen, setCheckInOpen] = useState(false);
+  const [watchOpen, setWatchOpen] = useState(false);
+  const [sessionLive, setSessionLive] = useState(false);
+
+  // Detect whether the patient is currently in a session by polling the
+  // live-score key written by SessionView. Cheap; only the clinician panel
+  // uses this signal.
+  useEffect(() => {
+    function check() {
+      try { setSessionLive(localStorage.getItem("eegbase-demo-live-score") != null); } catch {}
+    }
+    check();
+    const tick = setInterval(check, 1500);
+    return () => clearInterval(tick);
+  }, []);
 
   // Compute the displayed client at render time so role changes (which arrive
   // post-mount via localStorage hydration) immediately surface the right view.
@@ -123,6 +138,25 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
         </button>
       )}
 
+      {/* Watch live — clinician only; appears when the patient is currently in a session */}
+      {!isHome && sessionLive && (
+        <button
+          onClick={() => setWatchOpen(true)}
+          className="w-full text-left bg-emerald-50 border border-emerald-200 rounded-2xl px-5 py-4 hover:bg-emerald-100/60 transition-colors flex items-center justify-between mb-6"
+        >
+          <span>
+            <span className="block text-sm font-semibold text-emerald-900 inline-flex items-center gap-2">
+              <span className="relative w-2 h-2 rounded-full bg-emerald-500">
+                <span className="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-75" aria-hidden />
+              </span>
+              {client.name.split(" ")[0]} is in session
+            </span>
+            <span className="block text-xs text-emerald-700/70 mt-0.5">Watch live and send notes</span>
+          </span>
+          <span className="text-emerald-700 text-sm font-semibold" aria-hidden>→</span>
+        </button>
+      )}
+
       {/* Sessions list */}
       <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Sessions</h2>
       <ul className="bg-white border border-gray-200 rounded-2xl divide-y divide-gray-100 overflow-hidden mb-10">
@@ -169,6 +203,7 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
       </div>
 
       <CheckIn open={checkInOpen} setOpen={setCheckInOpen} mode="send" />
+      <ClinicianWatchPanel open={watchOpen} setOpen={setWatchOpen} />
     </main>
   );
 }

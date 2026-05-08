@@ -8,6 +8,7 @@ import { CLIENTS, type Client } from "../_data/clients";
 import type { SessionType } from "../_data/session-types";
 import { TrainingVisuals, VISUAL_MODES, type VisualMode } from "../_components/TrainingVisuals";
 import { TutorOverlay } from "../_components/TutorOverlay";
+import { LiveCoFeedbackPill, broadcastLiveScore, clearLiveScore } from "../_components/LiveCoFeedback";
 
 interface SessionViewProps {
   clientId: string;
@@ -63,7 +64,9 @@ export function SessionView({ clientId, sessionType, sessionMinutes = 20, onExit
     const unsub = adapter.onSample((s: DeviceSample) => {
       // rewardScore is 0–100 from the simulator; LiveChart wants normalized 0–1.
       const raw = s.rewardScore ?? 0;
-      setScore(Math.round(raw));
+      const rounded = Math.round(raw);
+      setScore(rounded);
+      broadcastLiveScore(rounded); // Phase 18: share live score with the watching clinician
       setReward((prev) => {
         const next = [...prev, Math.max(0, Math.min(1, raw / 100))];
         return next.length > 80 ? next.slice(-80) : next;
@@ -88,6 +91,7 @@ export function SessionView({ clientId, sessionType, sessionMinutes = 20, onExit
       if (tickRef.current) clearInterval(tickRef.current);
       unsub();
       adapter.disconnect();
+      clearLiveScore(); // Stop broadcasting on unmount/end
     };
   }, [phase, paused]);
 
@@ -126,6 +130,9 @@ export function SessionView({ clientId, sessionType, sessionMinutes = 20, onExit
     <main id="main-content" className="max-w-3xl mx-auto px-6 py-10">
       {/* First-session tutor — defaults on; user dismisses forever */}
       <TutorOverlay />
+
+      {/* Watching-with-clinician pill — appears when share toggle is on */}
+      <LiveCoFeedbackPill />
 
       {/* Patient + protocol — one line, no chrome */}
       <header className="flex items-center justify-between mb-8">
