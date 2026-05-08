@@ -40,6 +40,7 @@ function ClinicianToday({
 
   return (
     <main id="main-content" className="max-w-2xl mx-auto px-6 py-12">
+      <h1 className="sr-only">Today</h1>
       {next && (
         <section className="mb-12">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Next up</p>
@@ -153,6 +154,7 @@ function HomeUserToday({ onStartSession }: { onStartSession: (clientId: string, 
 
   return (
     <main id="main-content" className="max-w-2xl mx-auto px-6 py-12">
+      <h1 className="sr-only">Today</h1>
       {/* Primary action — your next training (opens the type picker) */}
       <section className="mb-12">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Your next training</p>

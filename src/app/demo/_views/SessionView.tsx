@@ -130,6 +130,7 @@ export function SessionView({ clientId, sessionType, sessionMinutes = 20, role =
 
   return (
     <main id="main-content" className="max-w-3xl mx-auto px-6 py-10">
+      <h1 className="sr-only">Session with {client.name}</h1>
       {/* First-session tutor — home-user only; clinicians know what they're doing */}
       {role === "home" && <TutorOverlay />}
 

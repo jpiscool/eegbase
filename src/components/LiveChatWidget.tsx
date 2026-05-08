@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 type Msg = { role: "bot" | "user"; text: string };
 
@@ -14,7 +15,10 @@ const QUICK = [
   { label: "Talk to a human",          answer: "Email hello@eegbase.com or fill out /contact. We answer within 24 hours. Or book a 30-min call directly at /mendi#book-meeting." },
 ];
 
+const HIDDEN_PREFIXES = ["/demo", "/clients", "/sessions", "/protocols", "/dashboard", "/schedule", "/billing", "/messages", "/settings", "/notifications", "/analytics", "/supervise"];
+
 export function LiveChatWidget() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [msgs, setMsgs] = useState<Msg[]>([
     { role: "bot", text: "Hi! I'm the EEGBase mini-bot. I can answer the most common questions or route you to a real human. What's on your mind?" },
@@ -53,6 +57,13 @@ export function LiveChatWidget() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(log.slice(-50)));
       } catch {}
     }, 380);
+  }
+
+  // Hide on signed-in app surfaces — this is a marketing widget, it doesn't
+  // belong inside the workspace demo or the real app routes. Hooks above
+  // run unconditionally to satisfy React's rules.
+  if (pathname && HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+    return null;
   }
 
   return (

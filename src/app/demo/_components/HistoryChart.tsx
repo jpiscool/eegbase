@@ -24,9 +24,9 @@ export function HistoryChart({ scores, title, unit = "focus score" }: HistoryCha
 
   return (
     <section className="bg-white border border-gray-200 rounded-2xl p-5 mb-6">
-      <div className="rounded-xl overflow-hidden">
-        <LiveChart data={normalized} color={accent} label={title} height={120} />
-      </div>
+      {/* No overflow-hidden wrapper — it was clipping the chart label's first letter
+          where the rounded corner cut into the text bounding box. */}
+      <LiveChart data={normalized} color={accent} label={title} height={120} />
       <p className="text-sm text-gray-700 mt-3 leading-relaxed">
         <span className="font-semibold tabular-nums" style={{ color: accent }}>
           {arrow === "up" && "↑ "}

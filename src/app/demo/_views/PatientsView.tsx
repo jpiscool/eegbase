@@ -228,8 +228,11 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
         })}
       </ul>
 
-      {/* Sticky CTA */}
-      <div className="sticky bottom-6">
+      {/* Sticky CTA — sits at the bottom of the viewport while scrolling. Wrapped
+          in a subtle gradient backdrop so content underneath is clearly distinguished
+          (instead of just being half-obscured). Scroll-padding-bottom on the main
+          ensures the user can scroll all content into view above the sticky pill. */}
+      <div className="sticky bottom-0 -mx-6 px-6 pt-6 pb-6 bg-gradient-to-t from-gray-50 from-55% to-transparent">
         <button
           onClick={() => onStartSession(client.id)}
           className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl px-6 py-4 text-base font-semibold shadow-lg transition-colors"
