@@ -61,7 +61,7 @@ Pre-publication review per signed DUA — Mendi sees and approves anything that 
 They will. That's the point. The clinic is the *acquisition channel*, the home is the *retention channel*. Our cannibalization analysis: +38% consumer attach in first 90 days, 1.6× family-member referrals, $8,200 net new consumer LTV per clinic, less than 2% replacement risk.
 
 ### 9. "Can you scale to 5,000 clinics?"
-50,000 API requests per minute on flagship tier. 250,000 concurrent WebSocket streams tested. P95 latency under 80ms. 99.95% rolling 90-day uptime. K8s auto-scaled. Multi-region with 15-min RTO. Yes.
+Yes. Published numbers from our trust page (eegbase.com/trust): 99.95% rolling 90-day uptime, BLE→UI render under 80ms (Mendi GATT notification to chart frame), API latency P50 142ms / P95 320ms / P99 720ms, RTO under 15 min, RPO ≤5 min via Postgres PITR. Load-tested at 50k API req/min on the flagship tier and 250k concurrent WebSocket streams in a synthetic stress run. Multi-region with K8s auto-scaling. Public status page ships once SOC 2 Type I closes.
 
 ### 10. "What if you go away?"
 MIT license + BIDS-compatible export = zero lock-in. We list this on the landing page explicitly under "Honest gaps." Clinics can fork the codebase the day we shut down. Their data stays on their PostgreSQL instance.
