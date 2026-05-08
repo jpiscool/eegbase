@@ -8,6 +8,7 @@ import { SessionView } from "./_views/SessionView";
 import { CmdK } from "./_views/CmdK";
 import { ChecklistDock } from "./_components/ChecklistDock";
 import { RoleToggle, type Role } from "./_components/RoleToggle";
+import { SettingsSheet } from "./_components/SettingsSheet";
 import type { SessionType } from "./_data/session-types";
 
 type Surface = "today" | "patients" | "session";
@@ -28,6 +29,7 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
   const [role, setRoleState] = useState<Role>("clinician");
   const [sessionType, setSessionType] = useState<SessionType | null>(null);
   const [sessionMinutes, setSessionMinutes] = useState(12);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   // Hydrate role from localStorage so a returning visitor stays in their last view.
   useEffect(() => {
@@ -99,6 +101,13 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
             </button>
             <RoleToggle role={role} setRole={setRole} />
             <button
+              onClick={() => setSettingsOpen(true)}
+              aria-label="Open settings"
+              className="text-xs text-gray-500 hover:text-gray-900 border border-gray-200 rounded-lg px-2.5 py-1.5 bg-white hover:bg-gray-50"
+            >
+              ⚙
+            </button>
+            <button
               onClick={() => setDark(d => !d)}
               aria-label="Toggle dark mode"
               className="text-xs text-gray-500 hover:text-gray-900 border border-gray-200 rounded-lg px-2.5 py-1.5 bg-white hover:bg-gray-50"
@@ -136,6 +145,9 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
         startSession={startSession}
         openPatient={openPatient}
       />
+
+      {/* Settings sheet */}
+      <SettingsSheet open={settingsOpen} setOpen={setSettingsOpen} />
 
       {/* Bottom-right onboarding checklist */}
       <div className="no-print">
