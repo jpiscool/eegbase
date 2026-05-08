@@ -5,6 +5,7 @@ import { CLIENTS } from "../_data/clients";
 import { SARAH_SESSIONS } from "../_data/sessions";
 import type { Role } from "../_components/RoleToggle";
 import { HistoryChart } from "../_components/HistoryChart";
+import { CheckIn } from "../_components/CheckIn";
 
 interface PatientsViewProps {
   role: Role;
@@ -19,6 +20,7 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
 
   const [openClientId, setOpenClientId] = useState<string | null>(initialClientId ?? null);
   const [openSessionId, setOpenSessionId] = useState<number | null>(null);
+  const [checkInOpen, setCheckInOpen] = useState(false);
 
   // Compute the displayed client at render time so role changes (which arrive
   // post-mount via localStorage hydration) immediately surface the right view.
@@ -92,6 +94,20 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
         scores={sessions.slice(0, 12).map((s) => s.focusScore).reverse()}
       />
 
+      {/* Send check-in — clinician only; the home-user version lives on Today */}
+      {!isHome && (
+        <button
+          onClick={() => setCheckInOpen(true)}
+          className="w-full text-left bg-white border border-gray-200 rounded-2xl px-5 py-4 hover:border-blue-300 transition-colors flex items-center justify-between mb-6"
+        >
+          <span>
+            <span className="block text-sm font-semibold text-gray-900">Send today&rsquo;s check-in</span>
+            <span className="block text-xs text-gray-500 mt-0.5">Mood · focus · sleep — 3 questions, 30 seconds</span>
+          </span>
+          <span className="text-blue-600 text-sm font-semibold" aria-hidden>→</span>
+        </button>
+      )}
+
       {/* Sessions list */}
       <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Sessions</h2>
       <ul className="bg-white border border-gray-200 rounded-2xl divide-y divide-gray-100 overflow-hidden mb-10">
@@ -136,6 +152,8 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
           {isHome ? "Start training session →" : `Start new session for ${client.name.split(" ")[0]} →`}
         </button>
       </div>
+
+      <CheckIn open={checkInOpen} setOpen={setCheckInOpen} mode="send" />
     </main>
   );
 }

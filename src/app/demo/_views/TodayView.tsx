@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { TODAY_SCHEDULE, SPARKLINES, HOME_USER_NEXT, HOME_USER_STREAK, DAILY_PROMPTS } from "../_data/sessions";
 import { Sparkline } from "../_components/Sparkline";
+import { CheckIn } from "../_components/CheckIn";
 import type { Role } from "../_components/RoleToggle";
 
 interface TodayViewProps {
@@ -99,6 +101,7 @@ function HomeUserToday({ onStartSession }: { onStartSession: (clientId: string) 
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
   const prompt = DAILY_PROMPTS[dayOfYear % DAILY_PROMPTS.length];
   const trainedDays = HOME_USER_STREAK.filter((d) => d.trained).length;
+  const [checkInOpen, setCheckInOpen] = useState(false);
 
   return (
     <main id="main-content" className="max-w-2xl mx-auto px-6 py-12">
@@ -143,6 +146,21 @@ function HomeUserToday({ onStartSession }: { onStartSession: (clientId: string) 
         </div>
       </section>
 
+      {/* Quick check-in — 30s, three sliders */}
+      <section className="mb-12">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">How are you today?</p>
+        <button
+          onClick={() => setCheckInOpen(true)}
+          className="w-full text-left bg-white border border-gray-200 rounded-2xl px-6 py-5 hover:border-blue-300 transition-colors flex items-center justify-between"
+        >
+          <span>
+            <span className="block text-base font-semibold text-gray-900">Quick check-in</span>
+            <span className="block text-xs text-gray-500 mt-0.5">Mood · focus · sleep · 30 seconds</span>
+          </span>
+          <span className="text-blue-600 text-sm font-semibold" aria-hidden>+</span>
+        </button>
+      </section>
+
       {/* One short daily prompt — never pushy */}
       <section>
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">A thought for today</p>
@@ -150,6 +168,8 @@ function HomeUserToday({ onStartSession }: { onStartSession: (clientId: string) 
           {prompt}
         </p>
       </section>
+
+      <CheckIn open={checkInOpen} setOpen={setCheckInOpen} mode="self" />
     </main>
   );
 }
