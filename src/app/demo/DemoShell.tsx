@@ -106,13 +106,10 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
             >
               ⚙
             </button>
-            <button
-              onClick={() => setDark(d => !d)}
-              aria-label="Toggle dark mode"
-              className="text-xs text-gray-500 hover:text-gray-900 border border-gray-200 rounded-lg px-2.5 py-1.5 bg-white hover:bg-gray-50"
-            >
-              {dark ? "☀" : "☾"}
-            </button>
+            {/* Dark-mode toggle hidden until v3 — current implementation only flips the
+                outer wrapper, not card surfaces. Shipping a half-broken control is worse
+                than not shipping it. The state + handler stay so re-enabling is one
+                JSX edit away once cards adopt dark variants. */}
           </div>
         </div>
       </header>
@@ -130,6 +127,7 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
             clientId={activeClientId ?? "sarah"}
             sessionType={sessionType ?? undefined}
             sessionMinutes={sessionMinutes}
+            role={role}
             onExit={() => goSurface("today")}
           />
         )}

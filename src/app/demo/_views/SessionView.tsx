@@ -6,6 +6,7 @@ import { SimulatorAdapter } from "@/lib/device/simulator";
 import type { DeviceSample } from "@/lib/device/adapter";
 import { CLIENTS, type Client } from "../_data/clients";
 import type { SessionType } from "../_data/session-types";
+import type { Role } from "../_components/RoleToggle";
 import { TrainingVisuals, VISUAL_MODES, type VisualMode } from "../_components/TrainingVisuals";
 import { TutorOverlay } from "../_components/TutorOverlay";
 import { LiveCoFeedbackPill, broadcastLiveScore, clearLiveScore } from "../_components/LiveCoFeedback";
@@ -14,6 +15,7 @@ interface SessionViewProps {
   clientId: string;
   sessionType?: SessionType;
   sessionMinutes?: number;
+  role?: Role;
   onExit: () => void;
 }
 
@@ -38,7 +40,7 @@ function fmt(sec: number) {
 
 const fmtMmSs = fmt;
 
-export function SessionView({ clientId, sessionType, sessionMinutes = 20, onExit }: SessionViewProps) {
+export function SessionView({ clientId, sessionType, sessionMinutes = 20, role = "clinician", onExit }: SessionViewProps) {
   const client: Client = CLIENTS.find((c) => c.id === clientId) ?? CLIENTS[0];
   const SESSION_TARGET_SECONDS = sessionMinutes * 60;
   const STEP_BREAKDOWN = buildSteps(SESSION_TARGET_SECONDS);
@@ -128,8 +130,8 @@ export function SessionView({ clientId, sessionType, sessionMinutes = 20, onExit
 
   return (
     <main id="main-content" className="max-w-3xl mx-auto px-6 py-10">
-      {/* First-session tutor — defaults on; user dismisses forever */}
-      <TutorOverlay />
+      {/* First-session tutor — home-user only; clinicians know what they're doing */}
+      {role === "home" && <TutorOverlay />}
 
       {/* Watching-with-clinician pill — appears when share toggle is on */}
       <LiveCoFeedbackPill />
