@@ -1090,8 +1090,8 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
                 {[
-                  { icon: "🟢", title: "Click a tab — that&rsquo;s the whole tour", desc: "No multi-step walkthrough. Each tab is a screen a clinician actually uses. Open it, look, move on." },
-                  { icon: "🧠", title: "Run a live session in one click", desc: "The session is already going. Watch the score, see the brain data, talk to the (sample) client. That&rsquo;s the whole job." },
+                  { icon: "🟢", title: "Click a tab — that\u2019s the whole tour", desc: "No multi-step walkthrough. Each tab is a screen a clinician actually uses. Open it, look, move on." },
+                  { icon: "🧠", title: "Run a live session in one click", desc: "The session is already going. Watch the score, see the brain data, talk to the (sample) client. That\u2019s the whole job." },
                   { icon: "🤖", title: "Let the AI write the note", desc: "Open AI. Hit one button. The note is drafted in your format. You read, fix, save. 60 seconds." },
                   { icon: "📤", title: "Send a clean PDF report", desc: "Open Reports. One click. The client gets a branded summary. No formatting, no exports, no other tool." },
                 ].map(({ icon, title, desc }) => (
