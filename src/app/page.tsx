@@ -46,7 +46,7 @@ const features = [
     icon: ShieldCheck,
     title: "Nothing to learn",
     description:
-      "If you can use Gmail, you can run a session. Buttons say what they do. The screen tells you what&rsquo;s next.",
+      "If you can use Gmail, you can run a session. Buttons say what they do. The screen tells you what\u2019s next.",
   },
 ];
 
