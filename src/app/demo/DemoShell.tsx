@@ -6,7 +6,6 @@ import { TodayView } from "./_views/TodayView";
 import { PatientsView } from "./_views/PatientsView";
 import { SessionView } from "./_views/SessionView";
 import { CmdK } from "./_views/CmdK";
-import { ChecklistDock } from "./_components/ChecklistDock";
 import { RoleToggle, type Role } from "./_components/RoleToggle";
 import { SettingsSheet } from "./_components/SettingsSheet";
 import type { SessionType } from "./_data/session-types";
@@ -148,11 +147,6 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
 
       {/* Settings sheet */}
       <SettingsSheet open={settingsOpen} setOpen={setSettingsOpen} />
-
-      {/* Bottom-right onboarding checklist */}
-      <div className="no-print">
-        <ChecklistDock />
-      </div>
     </div>
   );
 }
