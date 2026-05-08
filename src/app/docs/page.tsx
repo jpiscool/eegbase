@@ -1,8 +1,22 @@
+import type { Metadata } from "next";
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { clinics } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { Key, Zap, Database, Wifi, BookOpen } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Developer Docs · EEGBase",
+  description:
+    "REST + WebSocket APIs for clinical neurofeedback. Endpoints, auth, rate limits, and SDK examples for Mendi fNIRS, Muse EEG, and the synthetic simulator.",
+  alternates: { canonical: "/docs" },
+  openGraph: {
+    title: "Developer Docs · EEGBase",
+    description: "REST + WebSocket APIs for clinical neurofeedback. Self-hosted, open-source, MIT.",
+    url: "/docs",
+    type: "website",
+  },
+};
 
 function Code({ children }: { children: string }) {
   return (

@@ -1,5 +1,19 @@
+import type { Metadata } from "next";
 import { Bluetooth, Wifi, Cpu, CheckCircle2, Clock, Zap, Brain, Activity, TrendingUp, TrendingDown, FlaskConical, ListChecks } from "lucide-react";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Supported Devices · EEGBase",
+  description:
+    "Hardware-agnostic neurofeedback. Native support for Mendi fNIRS, Muse EEG, Polar HRV, OpenBCI, Apple Health/Oura/Whoop. Adding a new device is a small TypeScript adapter.",
+  alternates: { canonical: "/devices" },
+  openGraph: {
+    title: "Supported Devices · EEGBase",
+    description: "One clinical layer for any neurofeedback hardware.",
+    url: "/devices",
+    type: "website",
+  },
+};
 
 const devices = [
   {
