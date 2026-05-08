@@ -6,6 +6,7 @@ import { SARAH_SESSIONS } from "../_data/sessions";
 import type { Role } from "../_components/RoleToggle";
 import { HistoryChart } from "../_components/HistoryChart";
 import { CheckIn } from "../_components/CheckIn";
+import { InsightsList } from "../_components/InsightsList";
 
 interface PatientsViewProps {
   role: Role;
@@ -92,6 +93,12 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
       <HistoryChart
         title={isHome ? "Your progress" : "Focus over the last 12 sessions"}
         scores={sessions.slice(0, 12).map((s) => s.focusScore).reverse()}
+      />
+
+      {/* AI-detected pattern insights with citations — both roles */}
+      <InsightsList
+        audience={isHome ? "home" : "clinician"}
+        patientFirstName={client.name.split(" ")[0]}
       />
 
       {/* Send check-in — clinician only; the home-user version lives on Today */}
