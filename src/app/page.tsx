@@ -376,19 +376,19 @@ export default function LandingPage() {
       <section className="max-w-5xl mx-auto px-6 pb-16">
         <div className="bg-gradient-to-br from-gray-50 to-blue-50/40 border border-gray-100 rounded-3xl p-8">
           <div className="flex items-center gap-3 mb-5">
-            <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">A 20-session arc</span>
-            <span className="text-xs text-gray-400">· composite of a typical adolescent ADHD case · Mendi + EEGBase</span>
+            <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">One client, 20 sessions</span>
+            <span className="text-xs text-gray-400">· illustrative ADHD teen · Mendi at home + EEGBase clinic visits</span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">From &quot;I can't finish anything&quot; to a steady prefrontal pattern — visible in 8 sessions</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">From &quot;I can&apos;t finish anything&quot; to focused — in 8 sessions</h3>
           <p className="text-sm text-gray-500 max-w-2xl mb-7 leading-relaxed">
-            What a clinician sees when they pair Mendi at home with weekly EEGBase clinic check-ins.
+            Here&apos;s what a clinician sees when a client trains at home and comes in weekly.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { phase: "Session 1", val: "PHQ-9: 18", sub: "Reward 38 · Theta-Z +2.4", color: "text-rose-600", dot: "bg-rose-400" },
-              { phase: "Session 4", val: "PHQ-9: 14", sub: "Reward 52 · drift detected", color: "text-amber-600", dot: "bg-amber-400" },
-              { phase: "Session 8", val: "PHQ-9: 10", sub: "Reward 71 · protocol switched", color: "text-blue-600", dot: "bg-blue-400" },
-              { phase: "Session 20", val: "PHQ-9: 5", sub: "Reward 88 · discharge ready", color: "text-emerald-600", dot: "bg-emerald-500" },
+              { phase: "Session 1", val: "Depression: severe", sub: "Just starting · 18/27 on PHQ-9", color: "text-rose-600", dot: "bg-rose-400" },
+              { phase: "Session 4", val: "Slight improvement", sub: "Stuck — clinician switches plan", color: "text-amber-600", dot: "bg-amber-400" },
+              { phase: "Session 8", val: "Real progress", sub: "New plan is working · 10/27", color: "text-blue-600", dot: "bg-blue-400" },
+              { phase: "Session 20", val: "Almost normal", sub: "Ready to finish · 5/27", color: "text-emerald-600", dot: "bg-emerald-500" },
             ].map((s) => (
               <div key={s.phase} className="bg-white border border-gray-100 rounded-2xl p-4 relative">
                 <span className={`absolute top-3 right-3 w-2 h-2 rounded-full ${s.dot}`} />
