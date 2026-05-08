@@ -53,9 +53,9 @@ Mendi sells exceptional consumer hardware. Clinicians can't currently prescribe 
 - 7,500 Mendi units · $312k MDF · 4 co-published case studies · DSMB-reviewed registry
 
 ### Compliance posture
-- Schrems II + EU SCCs · HIPAA BAA · MIT licensed · BIDS / SNIRF / EDF+ open export
-- Bishop Fox pen-test Q1 2026 · Coalfire SOC 2 Q1 2026 · Deque WCAG 2.2 AA Q1 2026
-- 99.95% rolling 90-day uptime · multi-region · 15-min RTO
+- **Live today:** MIT-licensed open source · self-hosted HIPAA-deployable · BIDS / SNIRF / EDF+ open export · HSTS / X-Frame-Options / Permissions-Policy · 99.95% rolling 90-day uptime · multi-region · <15-min RTO
+- **In progress (per trust page roadmap):** Bishop Fox pen-test · Coalfire SOC 2 Type II · Deque WCAG 2.2 AA · Content Security Policy
+- **Planned Q3 2026:** managed EU residency + Standard Contractual Clauses · managed HIPAA hosting + BAA
 
 ---
 

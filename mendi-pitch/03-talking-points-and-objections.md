@@ -49,7 +49,7 @@ They don't have to. MIT-licensed, self-hostable, BIDS export from day 1. 30-day 
 Three options on slide 8 of the deck. Referral: ~10-15% rev share. Deep integration: API push to EEGBase, no white-label. White-label: 60% to Mendi, 40% to us, two-week time to launch. Plus the coaching marketplace where Mendi takes 30% of clinician oversight fees from at-home users.
 
 ### 5. "Who owns the clinical data?"
-Site-of-care owns raw waveforms — they never leave the clinic. EEGBase + Mendi co-steward de-identified registry data per signed DUA. Schrems II + EU SCCs on file. Patient consent revocable at any time.
+Site-of-care owns raw waveforms — they never leave the clinic. EEGBase + Mendi co-steward de-identified registry data per signed DUA. Patient consent revocable at any time. For EU clinics specifically: managed EU residency + Standard Contractual Clauses + GDPR Art. 28 DPA ship Q3 2026 per the trust page roadmap; self-hosted clinics can deploy in any region today.
 
 ### 6. "What's your regulatory status?"
 Software platform, not a device — no 510(k) needed. Mendi headset is FDA general wellness 21 CFR 1140, CE Class I — that classification still works in our partnership. Our "What we don't do yet" page on the landing site lists ONC HIT and EPCS targets honestly. Q1 2027 for ONC.
