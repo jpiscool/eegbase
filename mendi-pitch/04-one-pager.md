@@ -55,7 +55,7 @@ Mendi sells exceptional consumer hardware. Clinicians can't currently prescribe 
 ### Compliance posture
 - Schrems II + EU SCCs · HIPAA BAA · MIT licensed · BIDS / SNIRF / EDF+ open export
 - Bishop Fox pen-test Q1 2026 · Coalfire SOC 2 Q1 2026 · Deque WCAG 2.2 AA Q1 2026
-- 99.97% rolling 90-day uptime · multi-region · 15-min RTO
+- 99.95% rolling 90-day uptime · multi-region · 15-min RTO
 
 ---
 

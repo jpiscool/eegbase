@@ -61,7 +61,7 @@ Pre-publication review per signed DUA — Mendi sees and approves anything that 
 They will. That's the point. The clinic is the *acquisition channel*, the home is the *retention channel*. Our cannibalization analysis: +38% consumer attach in first 90 days, 1.6× family-member referrals, $8,200 net new consumer LTV per clinic, less than 2% replacement risk.
 
 ### 9. "Can you scale to 5,000 clinics?"
-50,000 API requests per minute on flagship tier. 250,000 concurrent WebSocket streams tested. P95 latency under 80ms. 99.97% rolling 90-day uptime. K8s auto-scaled. Multi-region with 15-min RTO. Yes.
+50,000 API requests per minute on flagship tier. 250,000 concurrent WebSocket streams tested. P95 latency under 80ms. 99.95% rolling 90-day uptime. K8s auto-scaled. Multi-region with 15-min RTO. Yes.
 
 ### 10. "What if you go away?"
 MIT license + BIDS-compatible export = zero lock-in. We list this on the landing page explicitly under "Honest gaps." Clinics can fork the codebase the day we shut down. Their data stays on their PostgreSQL instance.

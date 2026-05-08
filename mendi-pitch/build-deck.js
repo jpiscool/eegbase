@@ -864,7 +864,7 @@ const slideTitle = (slide, eyebrow, title, eyebrowColor = "blue") => {
     { tag: "🇪🇺 Schrems II",  desc: "EU SCCs (2021/914) on file · Frankfurt region" },
     { tag: "♿ WCAG 2.2 AA",  desc: "Deque-audited Q1 2026 · VPAT 2.4 PDF" },
     { tag: "📜 MIT license", desc: "Self-hostable · BIDS / SNIRF / EDF+ export" },
-    { tag: "⚙ Uptime",      desc: "99.97% rolling 90-day · 15-min RTO · multi-region" },
+    { tag: "⚙ Uptime",      desc: "99.95% rolling 90-day · 15-min RTO · multi-region" },
   ];
   have.forEach((h, i) => {
     const y = yStart + 0.55 + i * 0.45;
