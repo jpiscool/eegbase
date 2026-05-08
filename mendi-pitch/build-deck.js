@@ -237,7 +237,7 @@ const slideTitle = (slide, eyebrow, title, eyebrowColor = "blue") => {
     { text: "ADHD systematic review supports modality", options: { bold: true, color: C.ink, fontSize: 14, breakLine: true } },
     { text: "22-study review · improvements in inhibitory control, ADHD symptoms in children + adults", options: { color: C.muted, fontSize: 11, breakLine: true } },
     { text: " ", options: { fontSize: 6, breakLine: true } },
-    { text: "Strong consumer brand · $349 MSRP", options: { bold: true, color: C.ink, fontSize: 14, breakLine: true } },
+    { text: "Strong consumer brand · $299 MSRP (US store)", options: { bold: true, color: C.ink, fontSize: 14, breakLine: true } },
     { text: "Lightweight · gamified · accessible to first-time users", options: { color: C.muted, fontSize: 11, breakLine: true } },
     { text: " ", options: { fontSize: 6, breakLine: true } },
     { text: "EU H2020 funded · CE-marked", options: { bold: true, color: C.ink, fontSize: 14, breakLine: true } },

@@ -16,7 +16,7 @@ reviewed sources. Goal: zero false claims when Mustafa walks the demo.
 | 6 | Signals output | **OxyHb + DeoxyHb + derived gamified score.** "increased oxyhemoglobin concentrations in the prefrontal cortex" (PubMed). Device "measures oxyhemoglobin (HbO) and deoxyhemoglobin (HbR) values" (neurofounders). | HIGH |
 | 7 | Wavelengths | **660 nm (red) + 805 nm (IR).** Note: 805 nm is near the HbO/HbR isosbestic point — atypical vs. research-grade fNIRS (730/850 nm). [neurofounders.co](https://www.neurofounders.co/articles/how-mendi-created-a-headband-to-train-your-brain) | HIGH |
 | 8 | SDK/API public? | **No.** "not yet publicly available" per Mendi help center. Our adapter `mendi.ts:32 MENDI_SDK_PENDING = true` already acknowledges this. | HIGH |
-| 9 | Price (consumer MSRP) | **$349 USD** direct from mendi.io. Historical promo: $279.20; older retail: $499. [Mendi product page](https://www.mendi.io/products/mendi) | HIGH |
+| 9 | Price (consumer MSRP) | **$299 USD list on US store** (verified directly: `"price" : "299.00"` on us.mendi.io product data). Some review sites quote $349; that may be an alternate-region/promo figure. [Mendi US store](https://us.mendi.io/products/mendi) | HIGH |
 | 10 | Regulatory | **CE Mark (EU): yes. FDA: NO clearance, marketed as consumer wellness.** "the hardware holds a CE Mark"; "Mendi is neither FDA-approved nor FDA-cleared." [cybernews](https://cybernews.com/health-tech/mendi-review/) | HIGH |
 
 ## Corrections applied (this commit)
@@ -37,8 +37,9 @@ Earlier pass corrected 5 `25 Hz → 10 Hz` instances in `DemoClient.tsx`. Catalo
 - `mendi-pitch/build-deck.js:244` claimed `FDA general-wellness positioning · 21 CFR § 1140`. **21 CFR 1140 is the FDA regulation for cigarettes and smokeless tobacco** — completely unrelated. Replaced with: "Consumer wellness — covered by FDA general wellness guidance (not 510(k))". The correct reference is the FDA-CDRH 2019 guidance "General Wellness: Policy for Low Risk Devices," which is non-binding guidance, not a CFR section.
 - Same correction propagated to: `mendi-pitch/03-talking-points-and-objections.md:55`, `mendi-pitch/build-irb-packet.js:258`, `src/app/demo/DemoClient.tsx:4701`. Removed "CE Class I" specificity (Mendi has not publicly published a CE class — they have a CE Mark).
 
-### Fixed — outdated price
-- `mendi-pitch/build-deck.js:240`: `$299 price point` → `$349 MSRP` (current Mendi.io product page).
+### Price (no net change — earlier pass over-corrected)
+- `mendi-pitch/build-deck.js:240` was originally `$299 price point`. Earlier in this audit I changed it to `$349 MSRP` based on a Cybernews review citation. Direct verification against `us.mendi.io/products/mendi` returned `"price" : "299.00"`, so I reverted to `$299 MSRP (US store)`. Net change: clarified the region, kept the original $299 figure.
+- `build-deck.js:518` already said `$299` and was correct all along.
 
 ### Fixed — Brain Map physical-modality conflation
 `src/components/BrainMapPanel.tsx` rendered 13 electrode positions as if all were live, but **only Fp1/Fp2 are actual Mendi data**. The other 11 (F3, Fz, F4, T3, Cz, T4, P3, Pz, P4, O1, O2) are EEG band-power readings that physically require a multi-channel EEG headset (e.g., Muse). Changes:
@@ -50,6 +51,15 @@ Earlier pass corrected 5 `25 Hz → 10 Hz` instances in `DemoClient.tsx`. Catalo
 
 ### Fixed — latency overclaim
 `eegbase-website/public_html/index.html:611` claimed `Sub-50ms latency` on the "Live fNIRS + EEG Streaming" feature card, conflicting with `<80 ms` everywhere else (demo, api-docs, chat widget, trust page). Reset to `Sub-80ms p95 latency`. Also clarified the multi-device origin of each signal type ("OxyHb/DeoxyHb prefrontal channels (Mendi), EEG band power (theta, alpha, beta) from Muse, heart rate and HRV (Polar)") so the platform-level statement no longer reads as a Mendi-only capability claim. Mirrored to `eegbase-website/index.html`.
+
+## Additional facts surfaced (no code change needed but useful to know)
+
+- **Hardware generation**: currently shipping device is **Gen 1**. Per CORDIS / EU H2020 reporting, a **Gen 2** is in development with a planned "open data API" — this likely explains the SDK timing. Worth asking Mustafa: is the May 11 BLE handoff for Gen 1 or scoped to Gen 2?
+- **Physical specs**: 55 g, ~5 hr battery (~60 sessions/charge), USB-C, accelerometer + gyroscope (motion-artifact rejection), iOS + Android, age 5+, 1-yr warranty, 60-day money-back.
+- **Validation literature**: exactly **one peer-reviewed paper** validates the Mendi specifically — Lobier et al. 2023 (NeuroImage / [PubMed 38049074](https://pubmed.ncbi.nlm.nih.gov/38049074/)), validating cognitive-load detection during n-back. **Not validated for ADHD treatment, anxiety reduction, or any clinical outcome.** Our pitch positioning ("EEGBase gives Mendi the published clinical evidence its consumer claims need") is honest about this gap.
+- **B2B partners**: Mac Training Solutions, Nike, Glossier (corporate wellness) — useful reference points for "Mendi already partners with B2B" framing.
+- **HSA/FSA eligibility**: enabled via Truemed in US (tax-treatment route via "letter of medical necessity"), not regulatory clearance.
+- **Mendi's own regulatory disclaimer** (verbatim, from their site): "is not FDA-cleared and is not a medical device and should not be used by individuals with medical conditions before consulting with a healthcare professional." Use this exact wording when quoting.
 
 ## Open items for May 11 call with Mustafa
 
