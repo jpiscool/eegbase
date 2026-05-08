@@ -3537,7 +3537,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(167,139,250,0.2)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, border: "1px solid rgba(167,139,250,0.3)" }}>M</div>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Mendi-Optimized Protocols</div>
-                    <div style={{ fontSize: 11, color: "#A5B4FC" }}>10 prefrontal-training protocols designed specifically for Mendi's dual-channel fNIRS</div>
+                    <div style={{ fontSize: 11, color: "#A5B4FC" }}>9 prefrontal-training protocols designed specifically for Mendi's dual-channel fNIRS</div>
                   </div>
                 </div>
                 <span style={{ fontSize: 9, fontWeight: 700, color: "#A5B4FC", padding: "3px 10px", background: "rgba(79,70,229,0.2)", borderRadius: 99, border: "1px solid rgba(79,70,229,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Pinned · Mendi Native</span>
@@ -3552,7 +3552,6 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   { name: "PTSD Hyperarousal",      target: "PFC down-regulation",        cite: "Kohl 2020", color: "#EC4899" },
                   { name: "Athletic Pre-Performance", target: "Approach motivation +",    cite: "Bishop 2022", color: "#06B6D4" },
                   { name: "Pediatric Focus (8–12)", target: "L-DLPFC sustained ↑",        cite: "Marx 2015", color: "#FBBF24" },
-                  { name: "Executive Recovery (post-COVID)", target: "DLPFC + DMN balance", cite: "Pirkola 2024", color: "#A855F7" },
                   { name: "Meditation Deepening",   target: "Bilateral PFC quietening",   cite: "Tang 2015", color: "#8B5CF6" },
                 ].map((p) => (
                   <button

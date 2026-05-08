@@ -144,7 +144,7 @@ User asked: "make sure every feature in our software is doable and compatible wi
 ### Protocols
 | Feature | Compatibility | Status |
 |---|---|---|
-| Mendi-Native: 10 prefrontal-training protocols (Focus Boost, Anxiety Reduction, Depression Asymmetry, ADHD Inhibitory Control, Burnout Recovery, PTSD Hyperarousal, Athletic Pre-Performance, Pediatric Focus, Executive Recovery, Meditation Deepening) | 🟢 | "PINNED · MENDI NATIVE" badge already present |
+| Mendi-Native: 9 prefrontal-training protocols (Focus Boost, Anxiety Reduction, Depression Asymmetry, ADHD Inhibitory Control, Burnout Recovery, PTSD Hyperarousal, Athletic Pre-Performance, Pediatric Focus, Meditation Deepening) | 🟢 | "PINNED · MENDI NATIVE" badge already present. Executive Recovery (post-COVID) removed — fringe target, unverifiable Pirkola 2024 citation. |
 | 6 generic EEG protocols (Theta/Beta + SMR, Alpha-Theta, ILF, Sleep Spindle, Alpha Asymmetry, APF) | 🔴 | **All 6 now carry `⚡ EEG required (Muse / multi-channel)` pill** |
 
 ### Schedule
