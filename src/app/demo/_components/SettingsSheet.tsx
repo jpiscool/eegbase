@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { PrivacySheet } from "./PrivacySheet";
 
 const STORAGE_PREFIX = "eegbase-demo-pref-";
 const NOTIF_KEY = "eegbase-demo-notif";
@@ -47,6 +48,7 @@ export function SettingsSheet({ open, setOpen }: SettingsSheetProps) {
     return initial;
   });
   const [notif, setNotif] = useState<NotifPrefs>(DEFAULT_NOTIF);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -228,6 +230,20 @@ export function SettingsSheet({ open, setOpen }: SettingsSheetProps) {
               })}
             </ul>
           </section>
+
+          {/* Privacy & data — opens a separate sheet */}
+          <section className="border-t border-gray-100 pt-3 mt-1">
+            <button
+              onClick={() => setPrivacyOpen(true)}
+              className="w-full text-left flex items-center justify-between gap-3 px-3 py-3 -mx-3 rounded-xl hover:bg-gray-50 transition-colors"
+            >
+              <span>
+                <span className="block text-sm font-semibold text-gray-900">Privacy & data</span>
+                <span className="block text-xs text-gray-500 mt-0.5 leading-relaxed">Per-purpose consent · access log · export · delete</span>
+              </span>
+              <span className="text-blue-600 text-sm font-semibold flex-shrink-0" aria-hidden>→</span>
+            </button>
+          </section>
         </div>
 
         <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-end flex-shrink-0">
@@ -239,6 +255,8 @@ export function SettingsSheet({ open, setOpen }: SettingsSheetProps) {
           </button>
         </div>
       </div>
+
+      <PrivacySheet open={privacyOpen} setOpen={setPrivacyOpen} audience="home" />
     </div>
   );
 }
