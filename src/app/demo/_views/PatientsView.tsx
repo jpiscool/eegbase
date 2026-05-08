@@ -7,6 +7,7 @@ import type { Role } from "../_components/RoleToggle";
 import { HistoryChart } from "../_components/HistoryChart";
 import { CheckIn } from "../_components/CheckIn";
 import { InsightsList } from "../_components/InsightsList";
+import { AchievementsRow } from "../_components/AchievementsRow";
 
 interface PatientsViewProps {
   role: Role;
@@ -94,6 +95,9 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
         title={isHome ? "Your progress" : "Focus over the last 12 sessions"}
         scores={sessions.slice(0, 12).map((s) => s.focusScore).reverse()}
       />
+
+      {/* Achievements — home-user only; gamification is patronizing in clinical UI */}
+      {isHome && <AchievementsRow />}
 
       {/* AI-detected pattern insights with citations — both roles */}
       <InsightsList
