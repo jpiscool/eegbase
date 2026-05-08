@@ -5,6 +5,7 @@ import { TODAY_SCHEDULE, SPARKLINES, HOME_USER_NEXT, HOME_USER_STREAK, HOME_PRAC
 import { CLIENTS } from "../_data/clients";
 import { Sparkline } from "../_components/Sparkline";
 import { CheckIn } from "../_components/CheckIn";
+import { DevicesCard } from "../_components/DevicesCard";
 import type { Role } from "../_components/RoleToggle";
 
 interface TodayViewProps {
@@ -114,6 +115,8 @@ function ClinicianToday({
         </ul>
       </section>
 
+      <DevicesCard />
+
       <section>
         <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">This week</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -184,6 +187,8 @@ function HomeUserToday({ onStartSession }: { onStartSession: (clientId: string) 
           </div>
         </div>
       </section>
+
+      <DevicesCard />
 
       {/* Quick check-in — 30s, three sliders */}
       <section className="mb-12">
