@@ -1496,7 +1496,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             outcomes:   { what: "Questionnaires",     lookFor: "PHQ-9, GAD-7, custom scales · auto-scored · longitudinal trend overlaid with neurofeedback signal." },
             progress:   { what: "Progress",           lookFor: "20-session arc with PHQ-9 18→5, GAD-7 14→4, reward score +131%. Branded PDF in one click." },
             ai:         { what: "AI Insights",        lookFor: "the cross-session pattern detector — uniquely correlates Mendi data with sleep/mood/HRV. Plus 6-format note selector and tone analytics with fNIRS overlay." },
-            protocols:  { what: "Protocols",          lookFor: "50+ evidence-based protocols, searchable by condition. Open library — clinicians can fork and contribute." },
+            protocols:  { what: "Protocols",          lookFor: "9 Mendi-Native + 6 generic EEG protocols, searchable by condition. Open library — clinicians can fork and contribute." },
             schedule:   { what: "Schedule",           lookFor: "calendar with smart slot suggestions, automated reminders, Mendi pre-call hardware checks." },
             reports:    { what: "Reports",            lookFor: "the live outcomes registry (47k sessions, 412 clinics) + pre-print citation + Co-author CTA + IRB packet for Mendi science team." },
             compare:    { what: "Compare",            lookFor: "8-column matrix of EEGBase vs every legacy + modern competitor. Filter by capability." },
@@ -2224,7 +2224,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>How clinicians use Game Mode</div>
                 <p style={{ fontSize: 13, color: "#94A3B8", lineHeight: 1.6, margin: 0 }}>
-                  In clinic, the Mendi headband&rsquo;s prefrontal reward drives the visualizations. <strong style={{ color: "#E2E8F0" }}>Try it now without hardware:</strong> the Paced Breath Trainer below runs at the resonance frequency (6 bpm). Sustained rhythm coherence climbs the reward signal — same regulation pattern as a real session — and feeds Aurora, Generative Art, and Audio Interrupt.
+                  In clinic, the Mendi headband&rsquo;s prefrontal reward drives the visualizations. <strong style={{ color: "#E2E8F0" }}>Try it now without hardware:</strong> the Paced Breath Trainer below runs at the resonance frequency (5.5 bpm — Lehrer/Vaschillo canonical). Sustained rhythm coherence climbs the reward signal — same regulation pattern as a real session — and feeds Aurora, Generative Art, and Audio Interrupt.
                 </p>
               </div>
             </div>
@@ -2238,7 +2238,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                     <span style={{ fontSize: 9, fontWeight: 700, color: "#34D399", padding: "2px 7px", background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Hardware-free</span>
                   </div>
                   <div style={{ fontSize: 12, color: "#94A3B8" }}>
-                    Hold the orb. Breathe with it (5.5 bpm resonance). Don't react to drift.
+                    Hold the orb. Breathe with it (5.5 bpm resonance · Lehrer/Vaschillo). Don't react to drift.
                     Three streams — <strong style={{ color: "#CBD5E1" }}>breath coherence</strong>, <strong style={{ color: "#CBD5E1" }}>motor stillness</strong>, <strong style={{ color: "#CBD5E1" }}>response inhibition</strong> — combine into the reward signal. Same three behavioural correlates that drive prefrontal HbO2 in the Mendi paradigm.
                   </div>
                 </div>
@@ -2472,7 +2472,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 { label: "Heart Rate", val: sample?.heartRate, color: "#EF4444", unit: "bpm", norm: "60–80 bpm", icon: "❤️" },
                 { label: "HRV (RMSSD)", val: sample?.hrvRmssd, color: "#8B5CF6", unit: "ms", norm: "Target: >50 ms", icon: "📊" },
                 { label: "Coherence", val: sample?.hrvRmssd != null ? Math.min(9.9, (sample.hrvRmssd / 10)).toFixed(1) : null, color: "#10B981", unit: "/ 10", norm: "High: >8.0", icon: "🌊" },
-                { label: "Resonance Freq", val: "6.0", color: "#F59E0B", unit: "breaths/min", norm: "Personalized target", icon: "🫁" },
+                { label: "Resonance Freq", val: "5.5", color: "#F59E0B", unit: "breaths/min", norm: "Lehrer/Vaschillo canonical", icon: "🫁" },
               ].map(({ label, val, color, unit, norm }) => (
                 <div key={label} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 14, padding: "18px 20px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 24px -16px rgba(0,0,0,0.5)" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
@@ -2553,8 +2553,11 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             {/* Combined EEG + HRV feedback */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }} className="demo-grid-2">
               <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 20 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Combined EEG + HRV Score</div>
-                <p style={{ fontSize: 11, color: "#94A3B8", marginBottom: 16 }}>Both channels must exceed threshold for maximum reward — trains mind-body coherence simultaneously.</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Combined EEG + HRV Score</div>
+                  <span title="Requires Muse for EEG + Polar/Apple Watch for HRV — Mendi alone can't drive this" style={{ fontSize: 9, fontWeight: 700, padding: "2px 7px", borderRadius: 99, background: "rgba(165,243,252,0.10)", color: "#A5F3FC", border: "1px solid rgba(165,243,252,0.25)", textTransform: "uppercase", letterSpacing: "0.04em" }}>⚡ Muse + Polar</span>
+                </div>
+                <p style={{ fontSize: 11, color: "#94A3B8", marginBottom: 16 }}>Both channels must exceed threshold for maximum reward — trains mind-body coherence simultaneously. Requires multi-channel EEG (Muse) plus an HRV source (Polar / Apple Watch).</p>
                 <div style={{ display: "flex", gap: 20, alignItems: "center", flexWrap: "wrap" }}>
                   <div style={{ textAlign: "center", padding: "10px 14px", background: "#1E293B", borderRadius: 10 }}>
                     <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 4 }}>EEG Alpha</div>
@@ -2585,7 +2588,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   }}>
                     <span style={{ fontSize: 12, fontWeight: 700, color: "#93C5FD", transition: "opacity 0.3s" }}>{breathPhase}</span>
                   </div>
-                  <div style={{ fontSize: 11, color: "#94A3B8" }}>6.0 breaths/min · 5s inhale / 5s exhale</div>
+                  <div style={{ fontSize: 11, color: "#94A3B8" }}>5.5 breaths/min · ~5.5s inhale / ~5.5s exhale (Lehrer/Vaschillo canonical)</div>
                 </div>
               </div>
             </div>
@@ -3526,7 +3529,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             <div style={{ marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Condition-Specific Protocol Library</h2>
               <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
-                50+ evidence-based protocols organized by condition. Search, preview, and apply in one click — no more looking up papers or guessing electrode placement. Open library — clinicians can fork, customize, and contribute back.
+                Curated library of evidence-based protocols organized by condition (15 in this preview, expanding). Search, preview, and apply in one click — no more looking up papers or guessing electrode placement. Open library — clinicians can fork, customize, and contribute back.
               </p>
             </div>
 
@@ -3805,8 +3808,8 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                     p.name.toLowerCase().includes(protocolSearch.toLowerCase()) ||
                     p.tags.some((t) => t.toLowerCase().includes(protocolSearch.toLowerCase()))
                   ).length;
-                  return `Showing ${count} of 47 protocols`;
-                })()} — full library includes ILF variants, LORETA-guided, gamma training, neuromuscular (TBI), and pediatric protocols.
+                  return `Showing ${count} of 15 protocols in demo`;
+                })()} — full library on roadmap will add ILF variants, LORETA-guided, gamma training, neuromuscular (TBI), and additional pediatric protocols.
               </span>
               <button
                 onClick={() => setProtocolSearch("")}
@@ -3853,7 +3856,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 <div style={{ background: "rgba(15,23,42,0.7)", border: "1px solid rgba(167,139,250,0.35)", borderRadius: 10, padding: 12 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
                     <span style={{ fontSize: 9, fontWeight: 700, color: "#FCD34D", textTransform: "uppercase", letterSpacing: "0.08em", padding: "2px 6px", background: "rgba(251,191,36,0.15)", borderRadius: 99 }}>Pre-print</span>
-                    <span style={{ fontSize: 9, color: "#94A3B8", fontWeight: 600 }}>doi.org/10.31234/osf.io/8h2k4</span>
+                    <span style={{ fontSize: 9, color: "#94A3B8", fontWeight: 600 }}>DOI pending · OSF Preprints submission</span>
                   </div>
                   <div style={{ fontSize: 12, color: "#F1F5F9", fontWeight: 700, lineHeight: 1.4, marginBottom: 4 }}>
                     Home-use fNIRS neurofeedback in adolescent ADHD: a 412-clinic naturalistic registry (n=2,840)
@@ -3886,7 +3889,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               </div>
               <div style={{ marginBottom: 14, padding: "8px 12px", background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 8, fontSize: 10, color: "#86EFAC", lineHeight: 1.55, display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontSize: 10, fontWeight: 700, color: "#34D399", padding: "2px 7px", background: "rgba(34,197,94,0.15)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.08em" }}>Q3 2026</span>
-                <span><strong style={{ color: "#34D399", fontWeight: 700 }}>Sham-controlled RCT in flight:</strong> n=180 ADHD adolescents · 3-arm (active / sham / waitlist) · pre-registered on ClinicalTrials.gov NCT06912xxx · IRB approved Apr 2026.</span>
+                <span><strong style={{ color: "#34D399", fontWeight: 700 }}>Sham-controlled RCT planned:</strong> n=180 ADHD adolescents · 3-arm (active / sham / waitlist) · ClinicalTrials.gov NCT registration pending · IRB approval target Q3 2026.</span>
               </div>
 
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
