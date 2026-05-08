@@ -61,7 +61,7 @@ Mendi sells exceptional consumer hardware. Clinicians can't currently prescribe 
 
 ## Footer strip (full width, bottom)
 
-**hello@eegbase.com · github.com/eegbase/eegbase · eegbase.vercel.app/mendi**
+**hello@eegbase.com · github.com/jpiscool/eegbase · eegbase.vercel.app/mendi**
 
 *Free for licensed clinicians during private beta · paid plans launch Q3 2026*
 

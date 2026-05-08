@@ -90,7 +90,7 @@ export function LandingLivePreview() {
         <div className="w-3 h-3 rounded-full bg-amber-400 opacity-70" />
         <div className="w-3 h-3 rounded-full bg-green-500 opacity-70" />
         <div className="flex-1 mx-4 bg-gray-700 rounded px-3 py-1 text-xs text-gray-400">
-          app.eegbase.io/sessions/live
+          app.eegbase.com/sessions/live
         </div>
         <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-400">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />

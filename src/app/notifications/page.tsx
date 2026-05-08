@@ -130,7 +130,7 @@ export default async function NotificationsPage() {
             <div className="empty-state-icon">
               <CheckCircle2 size={22} style={{ color: "var(--success)" }} />
             </div>
-            <p className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>You&apos;re all caught up!</p>
+            <p className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>You're all caught up!</p>
             <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
               No unread messages, upcoming appointments, or alerts right now.
             </p>

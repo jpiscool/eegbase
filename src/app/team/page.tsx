@@ -61,7 +61,7 @@ export default function TeamPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>The team</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Operators, not just builders</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
-          Job titles less than operating experience. EEGBase is built by people who&apos;ve sat through Mendi sessions, written SOAP notes, fought with insurance billers, and shipped clinical software for real clinics. We&apos;re a small team — we&apos;ll publish photos and full bios as we hit hiring milestones.
+          Job titles less than operating experience. EEGBase is built by people who've sat through Mendi sessions, written SOAP notes, fought with insurance billers, and shipped clinical software for real clinics. We're a small team — we'll publish photos and full bios as we hit hiring milestones.
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, marginBottom: 40 }}>
@@ -81,7 +81,7 @@ export default function TeamPage() {
 
         {/* Hiring */}
         <section style={{ background: "linear-gradient(135deg, #ECFDF5, #F0FDF4)", border: "1px solid #A7F3D0", borderRadius: 16, padding: 24, marginBottom: 28 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: "#10B981", letterSpacing: "0.1em", marginBottom: 8, textTransform: "uppercase" }}>We&apos;re hiring</p>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#10B981", letterSpacing: "0.1em", marginBottom: 8, textTransform: "uppercase" }}>We're hiring</p>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.01em", marginBottom: 14 }}>Open roles</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {HIRING.map((r) => (
@@ -96,7 +96,7 @@ export default function TeamPage() {
             ))}
           </div>
           <p style={{ fontSize: 12, color: "#047857", marginTop: 12, lineHeight: 1.6 }}>
-            Don&apos;t see a fit? <a href="mailto:hiring@eegbase.com" style={{ color: "#047857", textDecoration: "underline" }}>Send us a great cold email</a>. We pay attention.
+            Don't see a fit? <a href="mailto:hiring@eegbase.com" style={{ color: "#047857", textDecoration: "underline" }}>Send us a great cold email</a>. We pay attention.
           </p>
         </section>
 

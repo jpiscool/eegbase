@@ -69,7 +69,7 @@ export default function ResearchPage() {
   journal = {Frontiers in Human Neuroscience (under review)},
   year    = {2026},
   doi     = {10.31234/osf.io/8h2k4},
-  url     = {https://eegbase.vercel.app/research}
+  url     = {https://eegbase.com/research}
 }`}</pre>
         </section>
 

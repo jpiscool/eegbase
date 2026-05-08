@@ -59,7 +59,7 @@ export default function GettingStartedPage() {
         <section style={{ background: "linear-gradient(135deg, #ECFEFF, #EFF6FF)", border: "1px solid #BFDBFE", borderRadius: 14, padding: 24, marginTop: 32, textAlign: "center" }}>
           <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>Ready to do it for real?</h2>
           <p style={{ fontSize: 13, color: "#1D4ED8", lineHeight: 1.6, marginBottom: 14 }}>
-            Try the live demo first · 30-day free trial when you&apos;re ready.
+            Try the live demo first · 30-day free trial when you're ready.
           </p>
           <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/demo" style={{ padding: "10px 18px", background: "#2563EB", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>Open demo →</Link>

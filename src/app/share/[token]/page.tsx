@@ -264,7 +264,7 @@ export default async function SharedReportPage({
               <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>Clinician Neurofeedback Platform</div>
             </div>
             <div style={{ textAlign: "right", fontSize: 11, color: "#64748B", lineHeight: 1.8 }}>
-              <div style={{ fontWeight: 600, color: "#0F172A" }}>{clientFirstName}&apos;s Progress Report</div>
+              <div style={{ fontWeight: 600, color: "#0F172A" }}>{clientFirstName}'s Progress Report</div>
               <div>Generated {reportDate} · Confidential</div>
               {clinician && <div>Clinician: {clinician.name}</div>}
               {firstSession && lastSession && (

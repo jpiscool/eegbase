@@ -121,7 +121,7 @@ export default function BrandAssetsPage() {
         {/* Usage rules */}
         <section style={{ background: "linear-gradient(135deg, #FEF3C7, #FFFBEB)", border: "1px solid #FCD34D", borderRadius: 14, padding: 24 }}>
           <p style={{ fontSize: 11, fontWeight: 700, color: "#92400E", letterSpacing: "0.1em", marginBottom: 8, textTransform: "uppercase" }}>Usage rules</p>
-          <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 10 }}>Please don&apos;t</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 10 }}>Please don't</h2>
           <ul style={{ paddingLeft: 20, listStyle: "disc", color: "#78350F", lineHeight: 1.7, fontSize: 13 }}>
             <li>Distort, recolor, or restyle the logo. Keep the EB mark on its blue square.</li>
             <li>Place the logo on busy photos without a high-contrast underlay.</li>

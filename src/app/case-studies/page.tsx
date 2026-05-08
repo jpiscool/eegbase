@@ -149,7 +149,7 @@ export default function CaseStudiesPage() {
         <div style={{ marginTop: 36, padding: 20, background: "white", border: "1px solid #E5E7EB", borderRadius: 14, textAlign: "center" }}>
           <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 8 }}>Want yours featured?</h2>
           <p style={{ fontSize: 14, color: "#64748B", lineHeight: 1.6, marginBottom: 16, maxWidth: 480, margin: "0 auto 16px" }}>
-            We&apos;ll co-author a case study from your data with you as lead author. Mendi is listed as instrument provider.
+            We'll co-author a case study from your data with you as lead author. Mendi is listed as instrument provider.
           </p>
           <a href="mailto:research@eegbase.com?subject=Case%20study%20interest" style={{ display: "inline-block", padding: "10px 18px", background: "#2563EB", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
             Co-author a case study →

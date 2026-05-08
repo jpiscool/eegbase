@@ -51,7 +51,7 @@ export function CookieBanner() {
     >
       <div style={{ background: "#0F172A", borderRadius: 14, padding: "16px 20px", boxShadow: "0 16px 48px rgba(0,0,0,0.3)", display: "flex", flexDirection: "column", gap: 12 }}>
         <div>
-          <p style={{ color: "white", fontSize: 13, fontWeight: 700, margin: 0, marginBottom: 4 }}>We use one cookie-less analytics tool. That&apos;s it.</p>
+          <p style={{ color: "white", fontSize: 13, fontWeight: 700, margin: 0, marginBottom: 4 }}>We use one cookie-less analytics tool. That's it.</p>
           <p style={{ color: "#94A3B8", fontSize: 12, lineHeight: 1.6, margin: 0 }}>
             EEGBase does not use Google Analytics, Facebook tracking, or third-party advertising cookies. We use Plausible (privacy-first, EU-hosted, no cookies, no fingerprinting). You can opt out below — your choice persists across visits.
             {" "}<Link href="/privacy" style={{ color: "#60A5FA", textDecoration: "underline" }}>Privacy notice</Link>

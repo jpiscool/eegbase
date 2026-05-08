@@ -62,7 +62,7 @@ export default function SignupPage() {
               </div>
               <h2 style={{ fontSize: 22, fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>Trial reserved.</h2>
               <p style={{ fontSize: 14, color: "#64748B", lineHeight: 1.7, marginBottom: 14 }}>
-                We&apos;ll email <strong>{data.email}</strong> your private demo URL within 4 hours. Until then, the public demo lives at <Link href="/demo" style={{ color: "#2563EB" }}>eegbase.vercel.app/demo</Link>.
+                We'll email <strong>{data.email}</strong> your private demo URL within 4 hours. Until then, the public demo lives at <Link href="/demo" style={{ color: "#2563EB" }}>eegbase.com/demo</Link>.
               </p>
               <Link href="/demo" style={{ display: "inline-block", padding: "10px 18px", background: "#2563EB", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>Open the public demo →</Link>
             </div>

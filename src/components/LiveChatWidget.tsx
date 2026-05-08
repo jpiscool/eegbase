@@ -39,7 +39,7 @@ export function LiveChatWidget() {
     setDraft("");
     // Mock-response heuristic — real impl would route to Claude or escalate to human
     setTimeout(() => {
-      let answer = "Thanks — let me get a human on this. Email hello@eegbase.com with this thread or fill out /contact and we&apos;ll respond within 24 hours.";
+      let answer = "Thanks — let me get a human on this. Email hello@eegbase.com with this thread or fill out /contact and we'll respond within 24 hours.";
       const lc = q.toLowerCase();
       if (lc.match(/price|cost|how much|paid plan/)) answer = QUICK[1].answer;
       else if (lc.match(/hipaa|secur|priv|compliance|gdpr/)) answer = QUICK[2].answer;

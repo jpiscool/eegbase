@@ -140,7 +140,7 @@ const slideTitle = (slide, eyebrow, title, eyebrowColor = "blue") => {
   });
 
   // Footer
-  s.addText("eegbase.vercel.app/demo  ·  github.com/eegbase/eegbase  ·  hello@eegbase.com", {
+  s.addText("eegbase.vercel.app/demo  ·  github.com/jpiscool/eegbase  ·  hello@eegbase.com", {
     x: 0.65, y: H - 0.7, w: 10, h: 0.35,
     fontSize: 11, color: C.subtle, fontFace: FONT_BODY,
     align: "left", margin: 0,

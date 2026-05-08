@@ -66,7 +66,7 @@ export default function ForgotPasswordPage() {
                     className="block mt-1 px-2 py-1.5 rounded text-xs font-mono"
                     style={{ background: "var(--surface-base)", color: "var(--text-primary)" }}
                   >
-                    UPDATE clinicians SET password_hash = crypt(&apos;newpassword&apos;, gen_salt(&apos;bf&apos;)) WHERE email = &apos;{email}&apos;;
+                    UPDATE clinicians SET password_hash = crypt('newpassword', gen_salt('bf')) WHERE email = '{email}';
                   </code>
                 </div>
                 <Link

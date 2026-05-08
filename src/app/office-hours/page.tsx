@@ -30,7 +30,7 @@ export default function OfficeHoursPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#10B981", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Public office hours</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Drop in. Ask anything. Free.</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 28, maxWidth: 720 }}>
-          We hold three weekly public office hours. Free, 30 minutes, no agenda. Whether you&apos;re a clinician evaluating us, a researcher considering the registry, or a developer poking at the API — show up, ask anything.
+          We hold three weekly public office hours. Free, 30 minutes, no agenda. Whether you're a clinician evaluating us, a researcher considering the registry, or a developer poking at the API — show up, ask anything.
         </p>
 
         {/* Slots */}
@@ -56,10 +56,10 @@ export default function OfficeHoursPage() {
           <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 12 }}>What to expect</h2>
           <ul style={{ paddingLeft: 20, listStyle: "disc", color: "#475569", fontSize: 14, lineHeight: 1.8 }}>
             <li>30-minute Zoom (HIPAA-compliant variant for clinical-data demos)</li>
-            <li>You don&apos;t prep anything · just show up with questions</li>
+            <li>You don't prep anything · just show up with questions</li>
             <li>Recordings stay private unless you say otherwise</li>
             <li>If you bring a problem, we try to solve it on the call</li>
-            <li>If we can&apos;t solve it on the call, we follow up by email within 48 hours</li>
+            <li>If we can't solve it on the call, we follow up by email within 48 hours</li>
             <li>No sales pitch unless you specifically ask · this is for genuine help</li>
           </ul>
         </section>

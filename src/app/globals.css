@@ -456,3 +456,17 @@ a, button, [role="button"] {
   @page { margin: 0.6in; }
 }
 
+/* ── Reduced-motion preference ───────────────────────────────────────────────
+   Respect user's prefers-reduced-motion setting. Vestibular disorders and
+   motion sensitivity make pulse/shimmer/slide animations actively painful.
+   We keep functional transitions (e.g. focus rings) at 0.01ms so they fire
+   instantly without animating. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

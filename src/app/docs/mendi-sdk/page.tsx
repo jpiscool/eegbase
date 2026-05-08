@@ -343,7 +343,7 @@ Content-Type: application/json
         {" · "}
         <Link href="/demo" style={{ color: "#2563EB", textDecoration: "none" }}>Live Demo</Link>
         {" · "}
-        <a href="https://github.com/eegbase/eegbase" style={{ color: "#2563EB", textDecoration: "none" }}>GitHub</a>
+        <a href="https://github.com/jpiscool/eegbase" style={{ color: "#2563EB", textDecoration: "none" }}>GitHub</a>
       </div>
     </div>
   );

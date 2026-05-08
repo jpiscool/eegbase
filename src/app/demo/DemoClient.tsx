@@ -450,10 +450,15 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
   };
 
   // setTab from useTabState already syncs URL + localStorage synchronously.
-  // switchTab adds the visited-tabs side effect for the demo's progress widget.
+  // switchTab adds the visited-tabs side effect for the demo's progress widget
+  // and scrolls the viewport back to the top so the new tab's header is in
+  // view (deep tabs left users half-way down the page after a switch).
   const switchTab = (id: MainTab) => {
     setTab(id);
     setVisitedTabs((prev) => new Set([...prev, id]));
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+    }
   };
   const shareCurrentView = async () => {
     if (typeof window === "undefined") return;
@@ -945,12 +950,20 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           .demo-topbar { padding: 0 12px !important; gap: 8px !important; }
           .demo-paper-preview { padding: 16px !important; }
         }
-        /* Top-bar overflow protection on common laptop widths.
-           At ≤1366px we drop secondary utility buttons (A11y, Theme, Replay,
-           Visit PDF, Notifications) and the compliance pill so the bar fits
-           without horizontal scroll. The features stay reachable via ⌘K. */
-        @media (max-width: 1366px) {
+        /* Top-bar overflow protection — the full bar (Search + Tour + Share
+           + Visit PDF + A11y + Theme + Replay + Notifications + Client
+           switcher + HIPAA pill + Get Access) measures ~1403px. Bumped to
+           1500px so 1440px laptops also get the trim. All hidden features
+           remain reachable via the ⌘K palette. */
+        @media (max-width: 1500px) {
           .demo-topbar-hide-narrow { display: none !important; }
+        }
+        /* Between 641 and 960px (small tablets / split-screen windows) the
+           sidebar still takes 216px, leaving the topbar very tight. Drop
+           60-sec tour + Share view too in this range. Search & Get Access
+           stay visible. */
+        @media (min-width: 641px) and (max-width: 960px) {
+          .demo-topbar-hide-tablet { display: none !important; }
         }
         @media (max-width: 480px) {
           .demo-topbar-logo-text { display: none !important; }
@@ -993,7 +1006,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           <button
             onClick={() => setTourStep(0)}
             aria-label="Start 60-second tour"
-            className="demo-topbar-hide-mobile"
+            className="demo-topbar-hide-mobile demo-topbar-hide-tablet"
             title="60-second highlight reel — auto-walks through the 6 most important tabs for a Mendi pitch"
             style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.18), rgba(79,70,229,0.18))", border: "1px solid rgba(167,139,250,0.4)", borderRadius: 8, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6, color: "#C4B5FD", fontSize: 12, cursor: "pointer", fontWeight: 700 }}
           >
@@ -1003,7 +1016,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           <button
             onClick={shareCurrentView}
             aria-label="Share this view"
-            className="demo-topbar-hide-mobile"
+            className="demo-topbar-hide-mobile demo-topbar-hide-tablet"
             title="Copy a deep link that opens this exact tab"
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6, color: shareCopied ? "#34D399" : "#CBD5E1", fontSize: 12, cursor: "pointer", fontWeight: 600 }}
           >
@@ -1110,8 +1123,8 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
                 {[
-                  { icon: "🧠", title: "Live Session + co-feedback video", desc: "Mendi fNIRS streaming with HIPAA video — clinician sees client&apos;s live signals during the call. Rare among neurofeedback platforms." },
-                  { icon: "🤖", title: "AI cross-session pattern detector", desc: "Correlates Mendi data with Apple Health · Oura · mood · HRV · adherence. Surfaces drivers most platforms can&apos;t see in one place." },
+                  { icon: "🧠", title: "Live Session + co-feedback video", desc: "Mendi fNIRS streaming with HIPAA video — clinician sees client's live signals during the call. Rare among neurofeedback platforms." },
+                  { icon: "🤖", title: "AI cross-session pattern detector", desc: "Correlates Mendi data with Apple Health · Oura · mood · HRV · adherence. Surfaces drivers most platforms can't see in one place." },
                   { icon: "📋", title: "Ambient SOAP scribe (6 formats)", desc: "Records audio with consent → drafts SOAP / DAP / BIRP / GIRP / PIE / SIRP notes tied to the live signal data." },
                   { icon: "🏥", title: "EHR + claims + research registry", desc: "CMS-1500 + ERA + BIDS-fNIRS export + IRB packet auto-gen — bundled, not bolted on. Open-source · self-hostable." },
                 ].map(({ icon, title, desc }) => (
@@ -1238,7 +1251,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               const score = (detailModal.data as { score: number }).score;
               return (
                 <div>
-                  <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>Your reward score is a weighted blend of three brainwave bands. Each band&apos;s contribution depends on the protocol — for SMR, reduced theta and increased SMR/beta both raise the score.</p>
+                  <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>Your reward score is a weighted blend of three brainwave bands. Each band's contribution depends on the protocol — for SMR, reduced theta and increased SMR/beta both raise the score.</p>
                   <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                     {[
                       { band: "Theta (4–8 Hz)", contribution: 35, color: "#F59E0B", note: "Lower is better — drowsiness reduces score" },
@@ -1268,7 +1281,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               const d = detailModal.data as { band: string; value: number };
               return (
                 <div>
-                  <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>Your client&apos;s {d.band} power compared to the EEGBase normative database (n=847 healthy adults aged 25–35).</p>
+                  <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>Your client's {d.band} power compared to the EEGBase normative database (n=847 healthy adults aged 25–35).</p>
                   <svg viewBox="0 0 400 140" style={{ width: "100%", height: 160, background: "#1E293B", borderRadius: 10, padding: 8 }}>
                     {Array.from({ length: 50 }).map((_, i) => {
                       const x = (i / 49) * 380 + 10;
@@ -1299,8 +1312,8 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 <span>9:41</span>
                 <span>📶 🔋</span>
               </div>
-              <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 4, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>Today&apos;s Session</div>
-              <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 16 }}>{demoClient.name.split(" ")[0]}&apos;s brain training</div>
+              <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 4, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>Today's Session</div>
+              <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 16 }}>{demoClient.name.split(" ")[0]}'s brain training</div>
               <div style={{ background: "linear-gradient(180deg, #1E1B4B 0%, #0F172A 100%)", borderRadius: 16, padding: 24, textAlign: "center", marginBottom: 14 }}>
                 <div style={{ fontSize: 56, marginBottom: 8 }}>🧠</div>
                 <div style={{ fontSize: 36, fontWeight: 800, color: "#34D399" }}>{Math.round(rewardVal ?? 64)}</div>
@@ -1331,7 +1344,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               <h2 style={{ color: "#F1F5F9", fontSize: 18, fontWeight: 700 }}>847 Similar Client Profiles</h2>
               <button onClick={() => setShowSimilarCasesModal(false)} aria-label="Close" style={{ background: "none", border: "none", color: "#94A3B8", fontSize: 20, cursor: "pointer", width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
             </div>
-            <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 20 }}>Anonymized profiles from the EEGBase normative database matching Sarah Mitchell&apos;s theta elevation pattern, age range (25–35), and SMR non-response history.</p>
+            <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 20 }}>Anonymized profiles from the EEGBase normative database matching Sarah Mitchell's theta elevation pattern, age range (25–35), and SMR non-response history.</p>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #334155" }}>
@@ -1589,7 +1602,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           if (!cap) return null;
           return (
             <div style={{ position: "sticky", top: 0, zIndex: 10, background: "#0A1320", borderBottom: "1px solid #1E293B", padding: "8px 20px", display: "flex", alignItems: "center", gap: 10, fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>
-              <span style={{ fontSize: 9, fontWeight: 700, color: "#A5B4FC", padding: "2px 7px", background: "rgba(167,139,250,0.12)", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em", flexShrink: 0 }}>👀 You&apos;re seeing</span>
+              <span style={{ fontSize: 9, fontWeight: 700, color: "#A5B4FC", padding: "2px 7px", background: "rgba(167,139,250,0.12)", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em", flexShrink: 0 }}>👀 You're seeing</span>
               <span><strong style={{ color: "#F1F5F9" }}>{cap.what}</strong> — look for {cap.lookFor}</span>
             </div>
           );
@@ -1610,7 +1623,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #2563EB", borderRadius: 12, padding: "12px 18px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
               <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(37,99,235,0.15)", color: "#60A5FA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 14, fontWeight: 700 }}>i</div>
               <span style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.5, flex: 1, minWidth: 0 }}>
-                <strong style={{ color: "#F1F5F9" }}>Clinician view</strong> — you&apos;re watching {demoClient.name}&apos;s brain signals in real time (simulated). The <strong style={{ color: "#F1F5F9" }}>Reward Score</strong> rises when the client&apos;s brain is producing the target pattern. Switch to <button onClick={() => switchTab("game")} style={{ background: "none", border: "none", color: "#60A5FA", fontWeight: 700, cursor: "pointer", padding: 0, fontSize: 13, textDecoration: "underline" }}>Game Mode</button> to see what the client sees.
+                <strong style={{ color: "#F1F5F9" }}>Clinician view</strong> — you're watching {demoClient.name}'s brain signals in real time (simulated). The <strong style={{ color: "#F1F5F9" }}>Reward Score</strong> rises when the client's brain is producing the target pattern. Switch to <button onClick={() => switchTab("game")} style={{ background: "none", border: "none", color: "#60A5FA", fontWeight: 700, cursor: "pointer", padding: 0, fontSize: 13, textDecoration: "underline" }}>Game Mode</button> to see what the client sees.
               </span>
             </div>
 
@@ -1644,7 +1657,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                     <span style={{ fontSize: 9, fontWeight: 700, color: "#60A5FA", padding: "2px 7px", background: "rgba(37,99,235,0.15)", border: "1px solid rgba(37,99,235,0.35)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.08em" }}>HIPAA Video · Co-Feedback</span>
-                    <span style={{ fontSize: 10, color: "#94A3B8" }}>Telehealth + live Mendi signals — clinician sees in real time what the at-home client&apos;s brain is doing</span>
+                    <span style={{ fontSize: 10, color: "#94A3B8" }}>Telehealth + live Mendi signals — clinician sees in real time what the at-home client's brain is doing</span>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginBottom: 8 }}>
                     {[
@@ -2317,7 +2330,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                     <span style={{ fontSize: 9, fontWeight: 700, color: "#34D399", padding: "2px 7px", background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Hardware-free</span>
                   </div>
                   <div style={{ fontSize: 12, color: "#94A3B8" }}>
-                    Hold the orb. Breathe with it (5.5 bpm resonance). Don&apos;t react to drift.
+                    Hold the orb. Breathe with it (5.5 bpm resonance). Don't react to drift.
                     Three streams — <strong style={{ color: "#CBD5E1" }}>breath coherence</strong>, <strong style={{ color: "#CBD5E1" }}>motor stillness</strong>, <strong style={{ color: "#CBD5E1" }}>response inhibition</strong> — combine into the reward signal. Same three behavioural correlates that drive prefrontal HbO2 in the Mendi paradigm.
                   </div>
                 </div>
@@ -2467,7 +2480,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             {gameMode === "audio" && (
               <div style={{ ...card, marginBottom: 16 }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>Audio Interrupt — Client View</div>
-                <div style={{ fontSize: 12, color: "#94A3B8", marginBottom: 16 }}>Music plays when you&apos;re on target. When focus drops, audio pauses — a gentle nudge to refocus.</div>
+                <div style={{ fontSize: 12, color: "#94A3B8", marginBottom: 16 }}>Music plays when you're on target. When focus drops, audio pauses — a gentle nudge to refocus.</div>
                 <div style={{
                   background: "#0F172A", borderRadius: 16, padding: "24px 28px",
                   opacity: gameRewardVal != null && gameRewardVal >= 60 ? 1 : 0.5,
@@ -2595,7 +2608,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 ))}
               </div>
               <div style={{ marginTop: 10, padding: "6px 10px", background: "rgba(15,23,42,0.5)", borderRadius: 6, fontSize: 9, color: "#64748B", display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ color: "#A5B4FC", fontWeight: 700 }}>↗</span> Sleep efficiency from Oura is the strongest predictor of Sarah&apos;s next-session ΔHbO gain (r=+0.74) — see AI Insights.
+                <span style={{ color: "#A5B4FC", fontWeight: 700 }}>↗</span> Sleep efficiency from Oura is the strongest predictor of Sarah's next-session ΔHbO gain (r=+0.74) — see AI Insights.
               </div>
             </div>
 
@@ -2651,7 +2664,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               </div>
               <div style={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 16, padding: 20 }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Resonance Frequency Trainer</div>
-                <p style={{ fontSize: 11, color: "#94A3B8", marginBottom: 16 }}>Paced breathing guide at client&apos;s personal resonance frequency (typically 4.5–7 breaths/min) to maximize HRV amplitude.</p>
+                <p style={{ fontSize: 11, color: "#94A3B8", marginBottom: 16 }}>Paced breathing guide at client's personal resonance frequency (typically 4.5–7 breaths/min) to maximize HRV amplitude.</p>
                 <div style={{ textAlign: "center" }}>
                   <div style={{
                     width: 80, height: 80, borderRadius: "50%",
@@ -2726,7 +2739,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 8 }}>
                 <div>
                   <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Normative database comparison</h3>
-                  <p style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>Sarah&apos;s Z-scores vs age- and sex-matched cohort · n=847 healthy controls · LORETA source localization on roadmap</p>
+                  <p style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>Sarah's Z-scores vs age- and sex-matched cohort · n=847 healthy controls · LORETA source localization on roadmap</p>
                 </div>
                 <div style={{ display: "flex", gap: 4, padding: 3, background: "#0A1320", border: "1px solid #1E293B", borderRadius: 8 }}>
                   {["Eyes-closed", "Eyes-open", "Task"].map((m, i) => (
@@ -2806,7 +2819,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 <span style={{ fontSize: 10, background: "#2563EB", color: "white", borderRadius: 99, padding: "2px 8px", fontWeight: 700 }}>LIVE</span>
               </div>
               <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 20, lineHeight: 1.5 }}>
-                We compare your client&apos;s brainwaves in real time to <strong style={{ color: "#A5B4FC" }}>847 healthy adults of the same age</strong>. The colored bars show how far they differ — the goal is to bring each band closer to 0 (the healthy average). A bar that shrinks toward the center means the training is working.
+                We compare your client's brainwaves in real time to <strong style={{ color: "#A5B4FC" }}>847 healthy adults of the same age</strong>. The colored bars show how far they differ — the goal is to bring each band closer to 0 (the healthy average). A bar that shrinks toward the center means the training is working.
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }} className="demo-grid-3">
                 {[
@@ -3059,7 +3072,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, gap: 12, flexWrap: "wrap" }}>
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em" }}>Cross-Session Pattern Detector</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginTop: 2 }}>What moved Sarah&apos;s prefrontal OxyHb up over the last 8 sessions?</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginTop: 2 }}>What moved Sarah's prefrontal OxyHb up over the last 8 sessions?</div>
                   <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>Auto-correlates Mendi fNIRS · check-in mood · sleep · HRV · medication adherence — surfaces the strongest drivers</div>
                 </div>
                 <span style={{ fontSize: 9, fontWeight: 700, color: "#34D399", padding: "3px 8px", background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>3 strong signals · p&lt;0.01</span>
@@ -3184,14 +3197,14 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   </div>
                   <div style={{ fontSize: 11, lineHeight: 1.8, maxHeight: 180, overflowY: "auto", paddingRight: 8 }}>
                     <div style={{ color: "#94A3B8", marginBottom: 6 }}><strong style={{ color: "#60A5FA" }}>Clinician (10:34):</strong> How has your sleep been since last week?</div>
-                    <div style={{ color: "#CBD5E1", marginBottom: 6 }}><strong style={{ color: "#A78BFA" }}>Sarah (10:34):</strong> Better most nights. I&apos;ve been waking up around 4am still — maybe twice last week.</div>
+                    <div style={{ color: "#CBD5E1", marginBottom: 6 }}><strong style={{ color: "#A78BFA" }}>Sarah (10:34):</strong> Better most nights. I've been waking up around 4am still — maybe twice last week.</div>
                     <div style={{ color: "#94A3B8", marginBottom: 6 }}><strong style={{ color: "#60A5FA" }}>Clinician (10:35):</strong> Any change in your overall mood?</div>
                     <div style={{ color: "#CBD5E1", marginBottom: 6 }}><strong style={{ color: "#A78BFA" }}>Sarah (10:35):</strong> I think so. Less foggy in the mornings. Work feels less heavy.</div>
                     <div style={{ color: "#94A3B8", marginBottom: 6 }}><strong style={{ color: "#60A5FA" }}>Clinician (10:36):</strong> Are you still tracking your check-ins in the client app daily?</div>
                     <div style={{ color: "#CBD5E1", marginBottom: 6 }}><strong style={{ color: "#A78BFA" }}>Sarah (10:36):</strong> Most days. Missed two days last weekend when traveling.</div>
                     <div style={{ background: "rgba(239,68,68,0.12)", borderLeft: "2px solid #EF4444", padding: "4px 8px", marginBottom: 6, borderRadius: 4 }}>
                       <span style={{ fontSize: 9, fontWeight: 700, color: "#FCA5A5", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 2 }}>⚠ Risk language detected</span>
-                      <span style={{ color: "#CBD5E1" }}>...sometimes I feel like nothing matters but I&apos;d never...</span>
+                      <span style={{ color: "#CBD5E1" }}>...sometimes I feel like nothing matters but I'd never...</span>
                     </div>
                     <div style={{ color: "#64748B", fontStyle: "italic" }}>— continuing transcription —</div>
                   </div>
@@ -3277,7 +3290,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                     <text x="155" y="10" fontSize="8" fill="#FCA5A5" fontWeight="700">Father topic introduced @ 12:15</text>
                   </svg>
                   <div style={{ fontSize: 10, color: "#CBD5E1", lineHeight: 1.5, marginTop: 6 }}>
-                    Sarah&apos;s prefrontal OxyHb dropped <strong style={{ color: "#FCA5A5" }}>−0.28 μM</strong> when the topic shifted to her father at 12:15 — a stronger physiological reaction than self-reported. Auto-flagged for SOAP &quot;Plan&quot; section.
+                    Sarah's prefrontal OxyHb dropped <strong style={{ color: "#FCA5A5" }}>−0.28 μM</strong> when the topic shifted to her father at 12:15 — a stronger physiological reaction than self-reported. Auto-flagged for SOAP &quot;Plan&quot; section.
                   </div>
                 </div>
               </div>
@@ -3294,7 +3307,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               <div style={{ background: "#0A1320", borderRadius: 12, padding: "16px 20px", marginBottom: 14, borderLeft: "3px solid #F59E0B", border: "1px solid #1E293B", borderLeftWidth: 3, borderLeftColor: "#F59E0B" }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#F59E0B", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Signal Detected · Stalled Progress</div>
                 <div style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.65, marginBottom: 14 }}>
-                  Sarah&apos;s <strong style={{ color: "#F1F5F9" }}>brain calmness score hasn&apos;t improved</strong> in 3 sessions, even though she&apos;s training consistently. The current protocol may not be enough to settle her elevated forehead activity.
+                  Sarah's <strong style={{ color: "#F1F5F9" }}>brain calmness score hasn't improved</strong> in 3 sessions, even though she's training consistently. The current protocol may not be enough to settle her elevated forehead activity.
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }} className="demo-grid-3">
                   {[
@@ -3398,7 +3411,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(167,139,250,0.2)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, border: "1px solid rgba(167,139,250,0.3)" }}>↔</div>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Clinic ↔ Home Practice Bridge</div>
-                  <div style={{ fontSize: 11, color: "#A5B4FC" }}>Push protocols to client&apos;s Mendi at home · sessions auto-flow back</div>
+                  <div style={{ fontSize: 11, color: "#A5B4FC" }}>Push protocols to client's Mendi at home · sessions auto-flow back</div>
                 </div>
               </div>
 
@@ -3445,7 +3458,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               {/* Home practice activity feed */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }} className="demo-grid-2">
                 <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(79,70,229,0.25)", borderRadius: 10, padding: 12 }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Sarah&apos;s home practice this week</div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Sarah's home practice this week</div>
                   {[
                     { day: "Mon", date: "May 5", duration: 12, score: 71, color: "#10B981" },
                     { day: "Wed", date: "May 7", duration: 14, score: 68, color: "#10B981" },
@@ -3611,7 +3624,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(16,185,129,0.15)", color: "#10B981", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 16 }}>$</div>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>Billing + CPT Codes <span style={{ color: "#10B981", fontWeight: 600 }}>— bundled, not bolted on</span></div>
-                  <div style={{ fontSize: 12, color: "#94A3B8" }}>After each session, EEGBase auto-generates a superbill with CPT 90901 (biofeedback), 97012, and E/M codes. Export to CMS-1500 or Stripe self-pay. Most neurofeedback platforms make you pair with a separate EHR — we don&apos;t.</div>
+                  <div style={{ fontSize: 12, color: "#94A3B8" }}>After each session, EEGBase auto-generates a superbill with CPT 90901 (biofeedback), 97012, and E/M codes. Export to CMS-1500 or Stripe self-pay. Most neurofeedback platforms make you pair with a separate EHR — we don't.</div>
                 </div>
                 <button onClick={() => showToast("Superbill PDF generated · CMS-1500 + ICD-10 F90.0 · ready to print, email, or submit via Stedi")} style={{ marginLeft: "auto", fontSize: 12, fontWeight: 700, padding: "7px 16px", background: "#059669", color: "white", border: "none", borderRadius: 8, cursor: "pointer" }}>
                   Preview Superbill
@@ -3638,7 +3651,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(167,139,250,0.2)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, border: "1px solid rgba(167,139,250,0.3)" }}>M</div>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Mendi-Optimized Protocols</div>
-                    <div style={{ fontSize: 11, color: "#A5B4FC" }}>10 prefrontal-training protocols designed specifically for Mendi&apos;s dual-channel fNIRS</div>
+                    <div style={{ fontSize: 11, color: "#A5B4FC" }}>10 prefrontal-training protocols designed specifically for Mendi's dual-channel fNIRS</div>
                   </div>
                 </div>
                 <span style={{ fontSize: 9, fontWeight: 700, color: "#A5B4FC", padding: "3px 10px", background: "rgba(79,70,229,0.2)", borderRadius: 99, border: "1px solid rgba(79,70,229,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Pinned · Mendi Native</span>
@@ -3647,7 +3660,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 {[
                   { name: "Focus Boost",            target: "Fp1+Fp2 HbO ↑ · 12 min",     cite: "Yamashita 2021", color: "#60A5FA" },
                   { name: "Anxiety Reduction",      target: "R-DLPFC down-train",         cite: "Trambaiolli 2021", color: "#34D399" },
-                  { name: "Depression Asymmetry",   target: "L &gt; R asymmetry training",  cite: "Ehlis 2014; Sutoko 2021", color: "#A78BFA" },
+                  { name: "Depression Asymmetry",   target: "L > R asymmetry training",  cite: "Ehlis 2014; Sutoko 2021", color: "#A78BFA" },
                   { name: "ADHD Inhibitory Control",target: "Sustained Fp1 HbO upregulation", cite: "Marx 2015", color: "#F59E0B" },
                   { name: "Burnout Recovery",       target: "DLPFC reactivation",         cite: "KU Leuven 2026", color: "#10B981" },
                   { name: "PTSD Hyperarousal",      target: "PFC down-regulation",        cite: "Kohl 2020", color: "#EC4899" },
@@ -3664,7 +3677,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                     <span style={{ width: 8, height: 8, borderRadius: "50%", background: p.color, boxShadow: `0 0 8px ${p.color}`, flexShrink: 0 }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 12, fontWeight: 700, color: "#F1F5F9", marginBottom: 2 }}>{p.name}</div>
-                      <div style={{ fontSize: 10, color: "#94A3B8" }} dangerouslySetInnerHTML={{ __html: p.target }} />
+                      <div style={{ fontSize: 10, color: "#94A3B8" }}>{p.target}</div>
                     </div>
                     <span style={{ fontSize: 9, color: "#64748B", fontStyle: "italic", whiteSpace: "nowrap" }}>{p.cite}</span>
                   </button>
@@ -3788,7 +3801,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   evidenceColor: "#F59E0B",
                   protocols: ["Zone Training", "Flow State Protocol"],
                   tags: ["Athletes", "Peak Performance", "Focus", "Flow"],
-                  desc: "Trains alpha at the client&apos;s individual peak frequency (typically 9–12 Hz) to maximize processing speed and attentional control. Popular with elite athletes, executives, and musicians.",
+                  desc: "Trains alpha at the client's individual peak frequency (typically 9–12 Hz) to maximize processing speed and attentional control. Popular with elite athletes, executives, and musicians.",
                 },
               ];
               const filtered = allProtocols.filter((p) =>
@@ -3925,7 +3938,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 </div>
               </div>
               <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6, marginBottom: 16 }}>
-                Aggregate, de-identified, BIDS-compatible. Generates the peer-reviewed clinical evidence Mendi has been waiting for. Direct export pipeline to Mendi&apos;s science team.
+                Aggregate, de-identified, BIDS-compatible. Generates the peer-reviewed clinical evidence Mendi has been waiting for. Direct export pipeline to Mendi's science team.
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }} className="demo-grid-4">
                 {[
@@ -4144,7 +4157,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               {[
                 { label: "fNIRS + EEG + HRV in one app", sub: "Most platforms cover one modality; we unify all three with native Mendi support", color: "#06B6D4" },
                 { label: "AI cross-session pattern detector", sub: "Correlates Mendi data with sleep · mood · HRV · adherence — flags drivers", color: "#A855F7" },
-                { label: "Free OSS · or $19/session up", sub: "Legacy platforms: $95–650/mo + $2–6k upfront. We&apos;re open-source.", color: "#10B981" },
+                { label: "Free OSS · or $19/session up", sub: "Legacy platforms: $95–650/mo + $2–6k upfront. We're open-source.", color: "#10B981" },
                 { label: "Browser-based · No install", sub: "Cloud-native — no Windows-only requirement, no per-machine licenses", color: "#F59E0B" },
               ].map(({ label, sub, color }) => (
                 <div key={label} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 14, padding: "16px 18px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 24px -16px rgba(0,0,0,0.5)" }}>
@@ -4775,7 +4788,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 14 }}>
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em" }}>White-label · Mendi Clinical mode</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginTop: 2 }}>Rebrand the entire clinical platform as &ldquo;Mendi Clinical&rdquo; — Mendi&apos;s B2B SaaS arm</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginTop: 2 }}>Rebrand the entire clinical platform as &ldquo;Mendi Clinical&rdquo; — Mendi's B2B SaaS arm</div>
                   <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>One toggle hides EEGBase branding · applies Mendi logo / palette / domain · Mendi keeps the customer relationship</div>
                 </div>
                 <a href="/mendi-clinical-preview" target="_blank" rel="noopener noreferrer" style={{ ...clinicianBtnPrimary, fontSize: 12, background: "#7C3AED", textDecoration: "none", display: "inline-block" }}>Preview Mendi Clinical →</a>
@@ -4894,7 +4907,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>
                   Public TypeScript adapter interface · CI runs synthetic Mendi/Muse/Polar streams against every PR · community drivers auto-merge on green.
                 </div>
-                <a onClick={() => showToast("docs.eegbase.io/sdk · TypeScript types + Mendi reference impl")} style={{ marginTop: 10, fontSize: 10, color: "#22D3EE", cursor: "pointer", fontWeight: 700, display: "inline-block" }}>docs.eegbase.io/sdk →</a>
+                <a onClick={() => showToast("docs.eegbase.com/sdk · TypeScript types + Mendi reference impl")} style={{ marginTop: 10, fontSize: 10, color: "#22D3EE", cursor: "pointer", fontWeight: 700, display: "inline-block" }}>docs.eegbase.com/sdk →</a>
               </div>
             </div>
 
@@ -5233,7 +5246,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.55, marginBottom: 8 }}>
                   Signal quality, UX, and clinician questions: <strong style={{ color: "#F1F5F9" }}>EEGBase</strong>. Hardware defects, RMA, firmware: <strong style={{ color: "#F1F5F9" }}>Mendi</strong> with 24h handoff SLA.
                 </div>
-                <div style={{ fontSize: 10, color: "#64748B" }}>P0 incident · 15 min ack · 4 h resolve · 24/7 on-call · status.eegbase.io</div>
+                <div style={{ fontSize: 10, color: "#64748B" }}>P0 incident · 15 min ack · 4 h resolve · 24/7 on-call · status.eegbase.com</div>
               </div>
               <div style={{ ...card, padding: 16 }}>
                 <div style={{ fontSize: 10, fontWeight: 700, color: "#06B6D4", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Scale & API</div>
@@ -5285,7 +5298,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               {/* Drop-ship Mendi to client */}
               <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 18, boxShadow: "0 8px 24px -12px rgba(79,70,229,0.3)" }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>Order Mendi for Client</div>
-                <div style={{ fontSize: 13, color: "#F1F5F9", marginBottom: 4, fontWeight: 700 }}>Ship to client&apos;s home</div>
+                <div style={{ fontSize: 13, color: "#F1F5F9", marginBottom: 4, fontWeight: 700 }}>Ship to client's home</div>
                 <div style={{ fontSize: 12, color: "#CBD5E1", lineHeight: 1.5, marginBottom: 12 }}>Drop-ship a Mendi headset to your client. Pre-paired to their EEGBase account, opens in-app already provisioned.</div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
                   <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(79,70,229,0.3)", borderRadius: 8, padding: 8 }}>
@@ -5743,7 +5756,7 @@ stream.on("artifact", ({ type }) => {
                     <span style={{ fontSize: 10, color: "#64748B" }}>cURL</span>
                   </div>
                   <pre style={{ margin: 0, padding: "14px 16px", fontSize: 11, fontFamily: "ui-monospace, monospace", color: "#CBD5E1", lineHeight: 1.7, overflow: "auto" }}>
-{`curl -X POST https://api.eegbase.io/v1/sessions \\
+{`curl -X POST https://api.eegbase.com/v1/sessions \\
   -H "Authorization: Bearer $EEGBASE_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{

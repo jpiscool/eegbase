@@ -83,7 +83,7 @@ export default function PartnersPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#7C3AED", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Partners</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>The ecosystem we stand on</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
-          Hardware, AI, billing, regulatory, and clinical-channel partners. We don&apos;t pretend to make all the things we sit on. We make the clinical layer that ties them together.
+          Hardware, AI, billing, regulatory, and clinical-channel partners. We don't pretend to make all the things we sit on. We make the clinical layer that ties them together.
         </p>
 
         {GROUPS.map((g) => (
@@ -113,7 +113,7 @@ export default function PartnersPage() {
         <section style={{ marginTop: 36, background: "linear-gradient(135deg, #FEF3C7, #FFFBEB)", border: "1px solid #FCD34D", borderRadius: 16, padding: 24, textAlign: "center" }}>
           <h2 style={{ fontSize: 20, fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>Want to partner with us?</h2>
           <p style={{ fontSize: 14, color: "#78350F", lineHeight: 1.6, marginBottom: 16, maxWidth: 560, margin: "0 auto 16px" }}>
-            Hardware vendor with a BLE device? AI tool with a clinical use case? Payer with a bundled-payment program? We&apos;re especially interested in fNIRS hardware, telehealth, and EU clinical channels.
+            Hardware vendor with a BLE device? AI tool with a clinical use case? Payer with a bundled-payment program? We're especially interested in fNIRS hardware, telehealth, and EU clinical channels.
           </p>
           <Link href="/contact?role=partner" style={{ display: "inline-block", padding: "10px 18px", background: "#92400E", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>Talk to us →</Link>
         </section>

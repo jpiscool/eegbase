@@ -62,7 +62,7 @@ export default function PricingPage() {
         <CurrencyTogglePricing />
 
         {/* Feature comparison matrix */}
-        <h2 style={{ fontSize: 22, fontWeight: 800, color: "#0F172A", marginTop: 56, marginBottom: 16, textAlign: "center" }}>What&apos;s included in each tier</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 800, color: "#0F172A", marginTop: 56, marginBottom: 16, textAlign: "center" }}>What's included in each tier</h2>
         <div style={{ overflow: "auto", background: "white", border: "1px solid #E5E7EB", borderRadius: 14 }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>

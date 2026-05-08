@@ -62,7 +62,7 @@ export default function MendiPartnershipPage() {
             <span style={{ color: "#A78BFA" }}>Mendi has been waiting for</span>
           </h1>
           <p style={{ fontSize: 18, color: "#C4B5FD", lineHeight: 1.7, maxWidth: 580, margin: "0 auto 32px" }}>
-            Mendi&apos;s headband is exceptional consumer hardware. But licensed neurofeedback clinicians need more than a progress graph — they need clinical oversight, session documentation, and outcome reporting. That&apos;s EEGBase.
+            Mendi's headband is exceptional consumer hardware. But licensed neurofeedback clinicians need more than a progress graph — they need clinical oversight, session documentation, and outcome reporting. That's EEGBase.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             <Link
@@ -97,7 +97,7 @@ export default function MendiPartnershipPage() {
             <p style={{ fontSize: 11, fontWeight: 700, color: "#7C3AED", letterSpacing: "0.15em", marginBottom: 8, textTransform: "uppercase" }}>Book a meeting</p>
             <h2 style={{ fontSize: 28, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", marginBottom: 8 }}>30 minutes · live demo · your team</h2>
             <p style={{ fontSize: 14, color: "#64748B", lineHeight: 1.7, maxWidth: 600, margin: "0 auto" }}>
-              We&apos;ll walk through the demo, answer the 3 things you&apos;d most like answered, and end with a concrete next step. No slide deck unless you ask.
+              We'll walk through the demo, answer the 3 things you'd most like answered, and end with a concrete next step. No slide deck unless you ask.
             </p>
           </div>
           <div style={{ background: "white", border: "1px solid #E5E7EB", borderRadius: 16, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.04)" }}>
@@ -125,7 +125,7 @@ export default function MendiPartnershipPage() {
               The gap
             </p>
             <h2 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#111", marginBottom: 16, lineHeight: 1.2 }}>
-              What clinicians need that the Mendi app doesn&apos;t provide
+              What clinicians need that the Mendi app doesn't provide
             </h2>
             <p style={{ fontSize: 15, color: "#6B7280", lineHeight: 1.7 }}>
               The Mendi app is designed for consumers. Clinicians who prescribe or supervise Mendi-based neurofeedback sessions are flying blind — no caseload view, no documentation, no clinical accountability.
@@ -212,7 +212,7 @@ export default function MendiPartnershipPage() {
                 badge: "Strategic",
                 badgeColor: blue,
                 badgeBg: blueLight,
-                description: "EEGBase powers a \"Mendi for Clinicians\" branded dashboard. Mendi gets a B2B SaaS product and recurring revenue stream. EEGBase gets distribution to Mendi&apos;s clinician user base. Full co-brand or full white-label.",
+                description: "EEGBase powers a \"Mendi for Clinicians\" branded dashboard. Mendi gets a B2B SaaS product and recurring revenue stream. EEGBase gets distribution to Mendi's clinician user base. Full co-brand or full white-label.",
                 bullets: [
                   "Mendi-branded clinician portal",
                   "B2B SaaS revenue for Mendi",
@@ -261,7 +261,7 @@ export default function MendiPartnershipPage() {
           Built on Mendi signals
         </h2>
         <p style={{ fontSize: 15, color: "#6B7280", textAlign: "center", marginBottom: 48, maxWidth: 520, margin: "0 auto 48px" }}>
-          EEGBase already understands every signal Mendi broadcasts. Here&apos;s what each one tells clinicians.
+          EEGBase already understands every signal Mendi broadcasts. Here's what each one tells clinicians.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
           {[
@@ -332,10 +332,10 @@ export default function MendiPartnershipPage() {
                 One afternoon of<br />engineering time
               </h2>
               <p style={{ fontSize: 15, color: "#C4B5FD", lineHeight: 1.7, marginBottom: 24 }}>
-                Deep integration requires only three values from Mendi&apos;s firmware team. Once we have them, EEGBase can connect directly to the Mendi headband via Web Bluetooth — no Mendi app required for clinical sessions.
+                Deep integration requires only three values from Mendi's firmware team. Once we have them, EEGBase can connect directly to the Mendi headband via Web Bluetooth — no Mendi app required for clinical sessions.
               </p>
               <p style={{ fontSize: 14, color: "#8B5CF6", lineHeight: 1.7 }}>
-                We&apos;ve already reverse-engineered the BLE advertisement and connection flow. The values below are the only missing pieces. This is one afternoon of work for a firmware engineer.
+                We've already reverse-engineered the BLE advertisement and connection flow. The values below are the only missing pieces. This is one afternoon of work for a firmware engineer.
               </p>
             </div>
             <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(196,181,253,0.2)", borderRadius: 20, padding: 28 }}>
@@ -486,7 +486,7 @@ export default function MendiPartnershipPage() {
               hello@eegbase.com
             </a>
             <a
-              href="https://github.com/eegbase/eegbase"
+              href="https://github.com/jpiscool/eegbase"
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: "#9CA3AF", textDecoration: "none" }}

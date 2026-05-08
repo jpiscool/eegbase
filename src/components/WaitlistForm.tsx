@@ -27,7 +27,7 @@ export function WaitlistForm({ variant = "default" }: { variant?: "default" | "c
   if (submitted) {
     return (
       <div style={{ padding: "16px 20px", background: "#ECFDF5", border: "1px solid #A7F3D0", borderRadius: 12, color: "#065F46", fontSize: 14, lineHeight: 1.6 }}>
-        <strong>You&apos;re on the list.</strong> We&apos;ll email <strong>{email}</strong> as soon as paid plans launch in Q3 2026 — and earlier if private-beta seats open up.
+        <strong>You're on the list.</strong> We'll email <strong>{email}</strong> as soon as paid plans launch in Q3 2026 — and earlier if private-beta seats open up.
       </div>
     );
   }

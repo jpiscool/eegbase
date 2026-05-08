@@ -25,7 +25,7 @@ Looking forward to our call on [day, date, time]. To make the time as useful as 
 
 - Live demo: **eegbase.vercel.app/demo** — click the purple "▶ 60-sec tour" button in the top bar
 - Mendi-specific partnership doc: **eegbase.vercel.app/mendi**
-- Open-source codebase: **github.com/eegbase/eegbase**
+- Open-source codebase: **github.com/jpiscool/eegbase**
 
 If anything in there raises a flag or a question, please push back early — I'd rather hit the real concerns on the call than a polished pitch.
 

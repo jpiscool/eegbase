@@ -88,7 +88,7 @@
   "Acknowledgements": "Mendi for hardware support. Patient and guardian gave informed assent + consent.",
   "Funding": ["EEGBase research-credits program 2026-Q2"],
   "ReferencesAndLinks": [
-    "https://eegbase.vercel.app/demo",
+    "https://eegbase.com/demo",
     "https://github.com/eegbase/eegbase",
     "https://bids.neuroimaging.io/extensions/bep030_fnirs.html"
   ],

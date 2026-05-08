@@ -45,13 +45,13 @@ export default function MendiClinicalPreviewPage() {
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.08)", borderRadius: 999, padding: "6px 14px", fontSize: 12, fontWeight: 600, color: "#DDD6FE", marginBottom: 24, border: "1px solid rgba(196,181,253,0.3)" }}>
             <span style={{ width: 6, height: 6, borderRadius: "50%", background: MENDI_VIOLET_LIGHT }} />
-            White-label preview · for Mendi&apos;s eyes only
+            White-label preview · for Mendi's eyes only
           </div>
           <h1 style={{ fontSize: "clamp(2.4rem, 5vw, 3.6rem)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.03em", marginBottom: 18 }}>
             What &ldquo;<span style={{ color: MENDI_VIOLET_LIGHT }}>Mendi Clinical</span>&rdquo; could look like
           </h1>
           <p style={{ fontSize: 17, color: "#C4B5FD", lineHeight: 1.7, maxWidth: 720, marginBottom: 12 }}>
-            Same EEGBase platform · Mendi&apos;s brand · Mendi&apos;s domain · Mendi keeps the customer relationship.
+            Same EEGBase platform · Mendi's brand · Mendi's domain · Mendi keeps the customer relationship.
             One toggle, two-week launch, sixty-forty rev share.
           </p>
           <p style={{ fontSize: 12, color: "#94A3B8", fontStyle: "italic" }}>
@@ -82,7 +82,7 @@ export default function MendiClinicalPreviewPage() {
             </div>
             <DashboardMock variant="mendi" />
             <div style={{ marginTop: 12, fontSize: 13, color: "#6B7280", lineHeight: 1.6 }}>
-              <strong style={{ color: "#111" }}>Mendi Clinical mode</strong> — same EEGBase platform under Mendi&apos;s brand. Violet primary, Mendi wordmark, mendi-clinical.app domain.
+              <strong style={{ color: "#111" }}>Mendi Clinical mode</strong> — same EEGBase platform under Mendi's brand. Violet primary, Mendi wordmark, mendi-clinical.app domain.
             </div>
           </div>
         </div>
@@ -151,7 +151,7 @@ export default function MendiClinicalPreviewPage() {
             Want to see this rendered against real Mendi assets?
           </h2>
           <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 22, maxWidth: 640, margin: "0 auto 22px" }}>
-            Send us your logo, brand colors, and target subdomain. We&apos;ll spin up a private staging URL within 48 hours so your team can click through every tab in Mendi-branded form.
+            Send us your logo, brand colors, and target subdomain. We'll spin up a private staging URL within 48 hours so your team can click through every tab in Mendi-branded form.
           </p>
           <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
             <a href="mailto:hello@eegbase.com?subject=Mendi%20Clinical%20staging%20request" style={{ padding: "12px 22px", background: MENDI_VIOLET, color: "#fff", borderRadius: 12, fontSize: 14, fontWeight: 700, textDecoration: "none" }}>
@@ -167,7 +167,7 @@ export default function MendiClinicalPreviewPage() {
       {/* FOOTER DISCLOSURE */}
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 11, color: "#9CA3AF" }}>
         Mockup only. Mendi has not approved or commissioned this page. Brand colors and logo treatment are illustrative.<br />
-        © 2026 EEGBase · MIT licensed · github.com/eegbase/eegbase
+        © 2026 EEGBase · MIT licensed · github.com/jpiscool/eegbase
       </footer>
     </div>
   );

@@ -1,4 +1,4 @@
-# https://eegbase.vercel.app/robots.txt
+# https://eegbase.com/robots.txt
 
 User-agent: *
 Allow: /
@@ -29,4 +29,4 @@ Allow: /status
 Allow: /changelog
 Allow: /roadmap
 
-Sitemap: https://eegbase.vercel.app/sitemap.xml
+Sitemap: https://eegbase.com/sitemap.xml

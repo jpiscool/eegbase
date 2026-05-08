@@ -37,7 +37,7 @@ export function CheckInForm({ clientId }: { clientId: string }) {
 
   return (
     <div className="rounded-xl p-6" style={{ background: "var(--surface-raised)", border: "1px solid var(--border-subtle)" }}>
-      <h2 className="text-sm font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Log Today&apos;s Check-In</h2>
+      <h2 className="text-sm font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Log Today's Check-In</h2>
       <p className="text-xs mb-5" style={{ color: "var(--text-secondary)" }}>Record how the client is doing today.</p>
 
       <form onSubmit={handleSubmit} className="space-y-4">

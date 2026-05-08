@@ -70,7 +70,7 @@ const faqs = [
     a: "No. Deploy for free on Vercel + Neon (PostgreSQL) in under 10 minutes. Or self-host on any Linux server. A Docker Compose setup is included in the repo. Managed hosting is on the roadmap — not yet available.",
   },
   {
-    q: "Is patient data safe?",
+    q: "Is client data safe?",
     a: "Patient data never leaves your infrastructure. EEGBase is designed for self-hosting — no third-party cloud access by default. HIPAA-friendly architecture.",
   },
   {
@@ -87,7 +87,7 @@ const faqs = [
   },
   {
     q: "Is EEGBase HIPAA compliant?",
-    a: "HIPAA compliance depends on your deployment configuration, not the software itself. EEGBase is designed for self-hosting — patient data never passes through any third-party server. You control encryption at rest, access controls, and audit logging. A BAA template and HIPAA configuration guide are included in the repo.",
+    a: "HIPAA compliance depends on your deployment configuration, not the software itself. EEGBase is designed for self-hosting — client data never passes through any third-party server. You control encryption at rest, access controls, and audit logging. A BAA template and HIPAA configuration guide are included in the repo.",
   },
   {
     q: "What happens to my data if I stop using EEGBase?",
@@ -259,7 +259,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-3">
             <a
-              href="https://github.com/eegbase/eegbase"
+              href="https://github.com/jpiscool/eegbase"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
@@ -337,7 +337,7 @@ export default function LandingPage() {
             Try the live demo →
           </Link>
           <a
-            href="https://github.com/eegbase/eegbase"
+            href="https://github.com/jpiscool/eegbase"
             target="_blank"
             rel="noopener noreferrer"
             className="px-7 py-3.5 text-gray-700 text-sm font-medium rounded-xl transition-all"
@@ -381,7 +381,7 @@ export default function LandingPage() {
             <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">A 20-session arc</span>
             <span className="text-xs text-gray-400">· composite of a typical adolescent ADHD case · Mendi + EEGBase</span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">From &quot;I can&apos;t finish anything&quot; to a steady prefrontal pattern — visible in 8 sessions</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">From &quot;I can't finish anything&quot; to a steady prefrontal pattern — visible in 8 sessions</h3>
           <p className="text-sm text-gray-500 max-w-2xl mb-7 leading-relaxed">
             What a clinician sees when they pair Mendi at home with weekly EEGBase clinic check-ins.
           </p>
@@ -401,7 +401,7 @@ export default function LandingPage() {
             ))}
           </div>
           <p className="text-xs text-gray-400 mt-5 italic">
-            Composite illustration. Real outcomes vary. EEGBase doesn&apos;t cherry-pick or fabricate clinician quotes.
+            Composite illustration. Real outcomes vary. EEGBase doesn't cherry-pick or fabricate clinician quotes.
           </p>
         </div>
       </section>
@@ -628,7 +628,7 @@ export default function LandingPage() {
           ))}
         </div>
         <div className="mt-8 text-center text-xs text-gray-400">
-          Don&apos;t see your platform? <a href="mailto:hello@eegbase.com" className="text-blue-600 hover:underline">Email us</a> · we&apos;ll build the importer.
+          Don't see your platform? <a href="mailto:hello@eegbase.com" className="text-blue-600 hover:underline">Email us</a> · we'll build the importer.
         </div>
       </section>
 
@@ -636,15 +636,15 @@ export default function LandingPage() {
       <section className="max-w-5xl mx-auto px-6 pb-24">
         <div className="bg-gradient-to-br from-gray-50 to-blue-50/30 border border-gray-100 rounded-3xl p-10 text-center">
           <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3">Honest disclosure</p>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">We&apos;re a new project — be one of the first clinicians on it</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">We're a new project — be one of the first clinicians on it</h2>
           <p className="text-sm text-gray-500 leading-relaxed max-w-2xl mx-auto mb-7">
-            EEGBase is in active development. We&apos;re not going to fabricate testimonials or download counts — when real clinicians use the platform, their feedback will appear here with full names and verified affiliations. For now, the best way to evaluate is to try the live demo yourself.
+            EEGBase is in active development. We're not going to fabricate testimonials or download counts — when real clinicians use the platform, their feedback will appear here with full names and verified affiliations. For now, the best way to evaluate is to try the live demo yourself.
           </p>
           <div className="flex items-center justify-center gap-3 flex-wrap">
             <Link href="/demo" className="px-6 py-3 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors">
               Open the live demo →
             </Link>
-            <a href="https://github.com/eegbase/eegbase" target="_blank" rel="noopener noreferrer" className="px-6 py-3 border border-gray-200 text-gray-700 text-sm font-medium rounded-xl hover:border-gray-300 transition-colors">
+            <a href="https://github.com/jpiscool/eegbase" target="_blank" rel="noopener noreferrer" className="px-6 py-3 border border-gray-200 text-gray-700 text-sm font-medium rounded-xl hover:border-gray-300 transition-colors">
               Read the source on GitHub
             </a>
           </div>
@@ -690,9 +690,9 @@ export default function LandingPage() {
       <section className="max-w-3xl mx-auto px-6 pb-24">
         <div className="bg-amber-50 border border-amber-100 rounded-2xl p-7">
           <p className="text-xs font-bold text-amber-700 uppercase tracking-wider mb-3">Honest gaps</p>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">What we don&apos;t do yet</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">What we don't do yet</h2>
           <p className="text-sm text-gray-600 leading-relaxed mb-5">
-            Most platforms hide their gaps. We list ours so you can decide. We&apos;ll publish updates on each as we ship them.
+            Most platforms hide their gaps. We list ours so you can decide. We'll publish updates on each as we ship them.
           </p>
           <ul className="space-y-2 text-sm text-gray-700">
             {[
@@ -733,7 +733,7 @@ export default function LandingPage() {
               ▶ Open Live Simulator — No sign-up
             </Link>
             <a
-              href="https://github.com/eegbase/eegbase"
+              href="https://github.com/jpiscool/eegbase"
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 border border-blue-400 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-colors"
@@ -775,7 +775,7 @@ export default function LandingPage() {
               Login
             </Link>
             <a
-              href="https://github.com/eegbase/eegbase"
+              href="https://github.com/jpiscool/eegbase"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-gray-600 transition-colors"

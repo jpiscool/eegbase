@@ -70,7 +70,7 @@ function ContactInner() {
             </div>
             <h2 style={{ fontSize: 22, fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>Thanks, {name.split(" ")[0]}.</h2>
             <p style={{ fontSize: 14, color: "#64748B", lineHeight: 1.7 }}>
-              Your message routes to <strong>{routing.email}</strong>. We&apos;ll reply within 24 hours.
+              Your message routes to <strong>{routing.email}</strong>. We'll reply within 24 hours.
             </p>
             <p style={{ fontSize: 12, color: "#94A3B8", marginTop: 12 }}>
               Want to keep going? <Link href="/demo" style={{ color: "#2563EB" }}>Open the live demo</Link>.
@@ -108,7 +108,7 @@ function ContactInner() {
               Send message →
             </button>
             <p style={{ fontSize: 11, color: "#94A3B8", textAlign: "center", margin: 0 }}>
-              Plain text is fine. We don&apos;t auto-reply with marketing fluff.
+              Plain text is fine. We don't auto-reply with marketing fluff.
             </p>
           </form>
         )}

@@ -119,9 +119,9 @@ export default function CareersPage() {
         </ol>
 
         <section style={{ background: "linear-gradient(135deg, #ECFDF5, #F0FDF4)", border: "1px solid #A7F3D0", borderRadius: 14, padding: 24, textAlign: "center" }}>
-          <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>Don&apos;t see your fit?</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>Don't see your fit?</h2>
           <p style={{ fontSize: 13, color: "#047857", lineHeight: 1.6, marginBottom: 14 }}>
-            Send a great cold email. Mention how you&apos;d move the needle on something specific. We read every one.
+            Send a great cold email. Mention how you'd move the needle on something specific. We read every one.
           </p>
           <a href="mailto:hiring@eegbase.com" style={{ display: "inline-block", padding: "10px 18px", background: "#10B981", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>Email hiring@eegbase.com →</a>
         </section>

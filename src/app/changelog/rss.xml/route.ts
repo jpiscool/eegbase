@@ -1,7 +1,7 @@
 // RSS feed for the EEGBase changelog
 // Served at /changelog/rss.xml — subscribers get notified when we ship.
 
-const SITE_URL = "https://eegbase.vercel.app";
+const SITE_URL = "https://eegbase.com";
 
 const ENTRIES = [
   { date: "2026-05-06T18:00:00Z", title: "White-label /mendi-clinical-preview route", desc: "Visual artifact showing what the white-label B2B SaaS arm looks like — side-by-side dashboard mockups, 8 before/after rebrand rows, 60/40 commercial card." },
@@ -21,7 +21,7 @@ const ENTRIES = [
 ];
 
 const xmlEscape = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "'");
 
 export async function GET() {
   const items = ENTRIES.map((e) => `

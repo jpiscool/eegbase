@@ -32,9 +32,9 @@ export default function VsIndex() {
 
       <main style={{ maxWidth: 920, margin: "0 auto", padding: "48px 24px" }}>
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Comparisons</p>
-        <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>vs the platforms you&apos;re considering</h1>
+        <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>vs the platforms you're considering</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
-          Honest side-by-sides. We don&apos;t pretend to win every row — see "Honest take" at the bottom of each page.
+          Honest side-by-sides. We don't pretend to win every row — see "Honest take" at the bottom of each page.
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>

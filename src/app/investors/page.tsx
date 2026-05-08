@@ -54,8 +54,8 @@ export default function InvestorsPage() {
             <li>Sham-controlled RCT pre-registered · NCT06912xxx · IRB approved Apr 2026</li>
             <li>Mendi partnership proposal submitted Q2 2026 · 3 partnership tiers under review</li>
             <li>SOC 2 Type II + Bishop Fox pen-test complete Q1 2026</li>
-            <li>Open-source codebase · MIT license · public repo since 2025</li>
-            <li>Demo deployed at <Link href="/demo" style={{ color: "#2563EB" }}>eegbase.vercel.app/demo</Link> · 16 tabs · 10 mock clients · 88 mock sessions</li>
+            <li>Open-source codebase · MIT license · public repo since 2026</li>
+            <li>Demo deployed at <Link href="/demo" style={{ color: "#2563EB" }}>eegbase.com/demo</Link> · 16 tabs · 10 mock clients · 88 mock sessions</li>
           </ul>
         </section>
 
@@ -64,8 +64,8 @@ export default function InvestorsPage() {
           <h2 style={{ fontSize: 20, fontWeight: 800, color: "#0F172A", marginBottom: 12 }}>Why now</h2>
           <ol style={{ paddingLeft: 20, listStyle: "decimal", color: "#374151", fontSize: 14, lineHeight: 1.8 }}>
             <li><strong>Consumer fNIRS just hit price-feasible</strong> — Mendi $299, Muse Athena $475, Sens.ai $1,500. The hardware is finally affordable for clinic prescription.</li>
-            <li><strong>USCDI+ Behavioral Health pilot</strong> — ONC&apos;s 9-pilot federal program launched Q1 2026. First-mover advantage on the standards is open.</li>
-            <li><strong>AI scribe is table-stakes</strong> — Mentalyc, Upheal, DeepCura proved the workflow. We bundle it with the signal data, which they can&apos;t.</li>
+            <li><strong>USCDI+ Behavioral Health pilot</strong> — ONC's 9-pilot federal program launched Q1 2026. First-mover advantage on the standards is open.</li>
+            <li><strong>AI scribe is table-stakes</strong> — Mentalyc, Upheal, DeepCura proved the workflow. We bundle it with the signal data, which they can't.</li>
             <li><strong>Open-source + self-hostable</strong> — procurement teams can finally say yes to a startup. MIT license + BIDS export = zero lock-in.</li>
           </ol>
         </section>
@@ -96,7 +96,7 @@ export default function InvestorsPage() {
         {/* Data room */}
         <section style={{ background: "white", border: "1px solid #E5E7EB", borderRadius: 16, padding: 24, marginBottom: 18 }}>
           <h2 style={{ fontSize: 20, fontWeight: 800, color: "#0F172A", marginBottom: 8 }}>Data room</h2>
-          <p style={{ fontSize: 13, color: "#64748B", lineHeight: 1.6, marginBottom: 14 }}>NDA-gated. Sign a mutual NDA and we&apos;ll send the full data room within 24 hours.</p>
+          <p style={{ fontSize: 13, color: "#64748B", lineHeight: 1.6, marginBottom: 14 }}>NDA-gated. Sign a mutual NDA and we'll send the full data room within 24 hours.</p>
           <ul style={{ paddingLeft: 20, listStyle: "disc", color: "#374151", fontSize: 13, lineHeight: 1.8 }}>
             <li>Full pitch deck + financial model</li>
             <li>SOC 2 Type II report (Coalfire)</li>

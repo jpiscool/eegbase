@@ -355,7 +355,7 @@ const doc = new Document({
         children: [
           new TextRun({ text: "Contact: ", color: MUTED, size: 20 }),
           new TextRun({ text: "research@eegbase.com  ·  ", bold: true, size: 20 }),
-          new TextRun({ text: "github.com/eegbase/eegbase  ·  ", color: MUTED, size: 20 }),
+          new TextRun({ text: "github.com/jpiscool/eegbase  ·  ", color: MUTED, size: 20 }),
           new TextRun({ text: "eegbase.vercel.app/mendi", color: MUTED, size: 20 }),
         ],
       }),

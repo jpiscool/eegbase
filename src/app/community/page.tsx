@@ -140,10 +140,10 @@ function NewsletterForm() {
         }}
       >
         <p className="text-sm font-semibold" style={{ color: "var(--success)" }}>
-          You&apos;re subscribed.
+          You're subscribed.
         </p>
         <p className="text-xs mt-1" style={{ color: "var(--success)" }}>
-          We&apos;ll send clinical updates and community highlights to{" "}
+          We'll send clinical updates and community highlights to{" "}
           <strong>{email}</strong>.
         </p>
       </div>
@@ -252,7 +252,7 @@ export default function CommunityPage() {
             Preview content
           </p>
           <p className="text-xs mt-0.5 leading-relaxed" style={{ color: "var(--warning)" }}>
-            The protocols, discussions, downloads, and ratings shown below are illustrative examples of what the community will look like at launch. They are <strong>not</strong> real clinician contributions yet — no clinicians have submitted protocols and no sessions have been logged. We&apos;ll replace this with real content once the community goes live.
+            The protocols, discussions, downloads, and ratings shown below are illustrative examples of what the community will look like at launch. They are <strong>not</strong> real clinician contributions yet — no clinicians have submitted protocols and no sessions have been logged. We'll replace this with real content once the community goes live.
           </p>
         </div>
       </div>

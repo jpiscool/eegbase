@@ -174,10 +174,10 @@ export default async function TeamPage() {
       <div className="rounded-xl border p-5 text-center" style={{ background: "var(--surface-sunken)", borderColor: "var(--border-subtle)" }}>
         <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>Invite a team member</p>
         <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>
-          Send the registration link to a colleague — they&apos;ll join this clinic automatically.
+          Send the registration link to a colleague — they'll join this clinic automatically.
         </p>
         <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-mono select-all" style={{ background: "var(--surface-raised)", border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}>
-          {`${process.env.NEXTAUTH_URL ?? "https://app.eegbase.io"}/register`}
+          {`${process.env.NEXTAUTH_URL ?? "https://app.eegbase.com"}/register`}
         </div>
         <p className="text-xs mt-2" style={{ color: "var(--text-tertiary)" }}>
           Self-registration is disabled by default — contact your admin to enable it.

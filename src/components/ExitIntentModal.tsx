@@ -99,9 +99,9 @@ export function ExitIntentModal() {
               <div style={{ width: 56, height: 56, borderRadius: "50%", background: "#ECFDF5", display: "inline-flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
                 <span style={{ fontSize: 24, color: "#10B981" }}>✓</span>
               </div>
-              <h2 style={{ fontSize: 22, fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>You&apos;re on the list.</h2>
+              <h2 style={{ fontSize: 22, fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>You're on the list.</h2>
               <p style={{ fontSize: 14, color: "#64748B", lineHeight: 1.6 }}>
-                We&apos;ll email <strong>{email}</strong> as soon as paid plans go live.
+                We'll email <strong>{email}</strong> as soon as paid plans go live.
               </p>
             </div>
           )}

@@ -28,7 +28,7 @@ export default function TermsPage() {
           <ul style={{ listStyle: "disc", paddingLeft: 20, color: "#374151", lineHeight: 1.7, fontSize: 15 }}>
             <li>EEGBase is a software platform — not a medical device. Clinical judgment always rests with the licensed clinician.</li>
             <li>The hosted service requires an account. Self-hosting is free under MIT.</li>
-            <li>You own your clinic&apos;s data. We&apos;re a custodian, not the owner.</li>
+            <li>You own your clinic's data. We're a custodian, not the owner.</li>
             <li>30-day free trial · no card · cancel anytime.</li>
             <li>If something goes seriously wrong, our liability is capped at fees paid in the last 12 months.</li>
           </ul>
@@ -44,15 +44,15 @@ export default function TermsPage() {
         </S>
 
         <S title="3 · Account & security">
-          <p>You&apos;re responsible for keeping your credentials private and for all activity under your account. Two-factor authentication is enforced for all clinical seats. Auto-logout fires after 15 minutes of inactivity. Notify us within 24 hours of any suspected compromise.</p>
+          <p>You're responsible for keeping your credentials private and for all activity under your account. Two-factor authentication is enforced for all clinical seats. Auto-logout fires after 15 minutes of inactivity. Notify us within 24 hours of any suspected compromise.</p>
         </S>
 
         <S title="4 · Acceptable use">
-          <p>Don&apos;t reverse-engineer, attempt to derive source from compiled binaries (the source is public — read it on GitHub), enter the data of patients without lawful basis, attempt to circumvent access controls, or use the service for any unlawful purpose. We may suspend accounts that violate this section.</p>
+          <p>Don't reverse-engineer, attempt to derive source from compiled binaries (the source is public — read it on GitHub), enter the data of patients without lawful basis, attempt to circumvent access controls, or use the service for any unlawful purpose. We may suspend accounts that violate this section.</p>
         </S>
 
         <S title="5 · Pricing & billing">
-          <p>Pricing is published at <Link href="/#pricing" style={{ color: "#2563EB" }}>eegbase.vercel.app/#pricing</Link>. Monthly plans renew automatically; annual plans renew at the displayed annual rate. Cancel anytime — your account remains active through the end of the paid period. Refunds: full refund within 30 days of first paid invoice.</p>
+          <p>Pricing is published at <Link href="/#pricing" style={{ color: "#2563EB" }}>eegbase.com/#pricing</Link>. Monthly plans renew automatically; annual plans renew at the displayed annual rate. Cancel anytime — your account remains active through the end of the paid period. Refunds: full refund within 30 days of first paid invoice.</p>
         </S>
 
         <S title="6 · Data ownership & portability">
@@ -60,7 +60,7 @@ export default function TermsPage() {
         </S>
 
         <S title="7 · HIPAA / BAA">
-          <p>If you use the hosted service to store PHI, we&apos;ll execute a Business Associate Agreement before activation. Contact <a href="mailto:hello@eegbase.com" style={{ color: "#2563EB" }}>hello@eegbase.com</a>.</p>
+          <p>If you use the hosted service to store PHI, we'll execute a Business Associate Agreement before activation. Contact <a href="mailto:hello@eegbase.com" style={{ color: "#2563EB" }}>hello@eegbase.com</a>.</p>
         </S>
 
         <S title="8 · Open-source license">
@@ -80,7 +80,7 @@ export default function TermsPage() {
         </S>
 
         <S title="12 · Changes">
-          <p>We&apos;ll notify clinic admins by email at least 30 days before any material change. Continued use after the effective date constitutes acceptance.</p>
+          <p>We'll notify clinic admins by email at least 30 days before any material change. Continued use after the effective date constitutes acceptance.</p>
         </S>
 
         <S title="13 · Contact">
@@ -89,7 +89,7 @@ export default function TermsPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/privacy" style={{ color: "#9CA3AF" }}>Privacy</Link> · <a href="https://github.com/eegbase/eegbase" style={{ color: "#9CA3AF" }}>GitHub</a>
+        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/privacy" style={{ color: "#9CA3AF" }}>Privacy</Link> · <a href="https://github.com/jpiscool/eegbase" style={{ color: "#9CA3AF" }}>GitHub</a>
       </footer>
     </div>
   );

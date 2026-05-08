@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import DemoClient from "./DemoClient";
 
@@ -9,6 +10,13 @@ import DemoClient from "./DemoClient";
 //
 // Marked dynamic so Next.js never serves a stale prerendered "session" HTML.
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Live Demo · EEGBase",
+  description:
+    "Interactive demo with 16 tabs, 10 demo clients, and 88 simulated Mendi fNIRS sessions. No sign-up. No credit card. Synthetic data only.",
+  robots: { index: true, follow: true },
+};
 
 const VALID_TABS = [
   "session", "game", "brain", "hrv", "outcomes", "progress", "ai", "protocols",

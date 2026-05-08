@@ -152,7 +152,7 @@ export function ERPTest({ onComplete }: Props) {
       <div className="max-w-xl mx-auto text-center py-16">
         <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--text-primary)" }}>ERP / P300 Assessment</h2>
         <div className="rounded-xl p-8 mb-6 text-left space-y-4" style={{ background: "var(--surface-raised)", border: "1px solid var(--border-subtle)" }}>
-          <p style={{ color: "var(--text-primary)" }}>This test measures your brain&apos;s event-related response to rare targets.</p>
+          <p style={{ color: "var(--text-primary)" }}>This test measures your brain's event-related response to rare targets.</p>
           <ul className="space-y-2 text-sm list-disc list-inside" style={{ color: "var(--text-secondary)" }}>
             <li>Shapes will appear one at a time on the screen.</li>
             <li>Most shapes will be <strong>circles</strong> — ignore these.</li>

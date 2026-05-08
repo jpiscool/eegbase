@@ -307,16 +307,16 @@ export default function HipaaPage() {
           handles PHI on behalf of a covered entity. EEGBase offers BAAs for all clinics on paid
           plans. To request a BAA, please contact us at{" "}
           <a
-            href="mailto:hipaa@eegbase.io"
+            href="mailto:hipaa@eegbase.com"
             className="font-medium hover:underline"
             style={{ color: "var(--brand)" }}
           >
-            hipaa@eegbase.io
+            hipaa@eegbase.com
           </a>
           {" "}and we will respond within 2 business days.
         </p>
         <a
-          href="mailto:hipaa@eegbase.io?subject=BAA%20Request%20-%20EEGBase"
+          href="mailto:hipaa@eegbase.com?subject=BAA%20Request%20-%20EEGBase"
           className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all"
           style={{
             background: "var(--brand)",
@@ -410,12 +410,12 @@ export default function HipaaPage() {
           within 24 hours and provide a resolution timeline within 72 hours.
         </p>
         <a
-          href="mailto:security@eegbase.io?subject=Security%20Incident%20Report"
+          href="mailto:security@eegbase.com?subject=Security%20Incident%20Report"
           className="inline-flex items-center gap-1.5 text-sm font-medium hover:underline"
           style={{ color: "var(--brand)" }}
         >
           <Mail size={14} />
-          security@eegbase.io
+          security@eegbase.com
         </a>
       </section>
 

@@ -26,9 +26,9 @@ export default function PrivacyPage() {
 
         <Section title="The short version">
           <ul style={{ listStyle: "disc", paddingLeft: 20, color: "#374151", lineHeight: 1.7, fontSize: 15 }}>
-            <li>We don&apos;t sell, rent, or trade personal data. Ever.</li>
-            <li>EEGBase is open-source and self-hostable. If you self-host, your patient data never reaches us.</li>
-            <li>If you use the managed version, we&apos;re a HIPAA Business Associate and operate under a signed BAA.</li>
+            <li>We don't sell, rent, or trade personal data. Ever.</li>
+            <li>EEGBase is open-source and self-hostable. If you self-host, your client data never reaches us.</li>
+            <li>If you use the managed version, we're a HIPAA Business Associate and operate under a signed BAA.</li>
             <li>EU clinic data lives in Frankfurt (eu-west-3). US clinic data lives in us-east-1.</li>
             <li>We honor data deletion requests within 30 days. Patient records owned by clinics; clinics own deletion authority.</li>
           </ul>
@@ -80,7 +80,7 @@ export default function PrivacyPage() {
         </Section>
 
         <Section title="Changes">
-          <p>We&apos;ll notify clinic admins by email at least 30 days before any material change to this notice. Historical versions are kept on GitHub.</p>
+          <p>We'll notify clinic admins by email at least 30 days before any material change to this notice. Historical versions are kept on GitHub.</p>
         </Section>
 
         <p style={{ marginTop: 40, fontSize: 13, color: "#94A3B8", textAlign: "center" }}>
@@ -89,7 +89,7 @@ export default function PrivacyPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/terms" style={{ color: "#9CA3AF" }}>Terms</Link> · <a href="https://github.com/eegbase/eegbase" style={{ color: "#9CA3AF" }}>GitHub</a>
+        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/terms" style={{ color: "#9CA3AF" }}>Terms</Link> · <a href="https://github.com/jpiscool/eegbase" style={{ color: "#9CA3AF" }}>GitHub</a>
       </footer>
     </div>
   );

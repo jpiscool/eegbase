@@ -8,7 +8,7 @@ export const metadata = {
 const C: AudienceContent = {
   eyebrow: "For patients + families",
   eyebrowColor: "#10B981",
-  hero: { line1: "What it&apos;s like to use", line2: "EEGBase + Mendi at home", line2Color: "#10B981" },
+  hero: { line1: "What it's like to use", line2: "EEGBase + Mendi at home", line2Color: "#10B981" },
   lede: "Your clinician sets a protocol. You wear a small headband at home for 20 minutes, 2–3 times a week. The app shows real-time feedback — like a video game where the goal is to keep your brain calm and focused. Your clinician sees your progress in their dashboard.",
   pillars: [
     { title: "20 minutes, at home",        desc: "A small lightweight headband (Mendi) measures blood flow to the front of your brain. Sit comfortably, headphones on, follow the on-screen feedback.",   color: "#10B981" },

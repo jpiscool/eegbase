@@ -115,7 +115,7 @@ export default function IntegrationsPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#10B981", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Integrations · {TILES.length} total</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Everything we plug into</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 24, maxWidth: 720 }}>
-          {liveCount} live · {betaCount} beta · {plannedCount} planned. Don&apos;t see your tool? <a href="mailto:integrations@eegbase.com" style={{ color: "#2563EB" }}>Email us</a> — most adapters take ~1 sprint.
+          {liveCount} live · {betaCount} beta · {plannedCount} planned. Don't see your tool? <a href="mailto:integrations@eegbase.com" style={{ color: "#2563EB" }}>Email us</a> — most adapters take ~1 sprint.
         </p>
 
         {cats.map((cat) => (
