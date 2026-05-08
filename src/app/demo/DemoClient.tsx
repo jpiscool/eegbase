@@ -3506,7 +3506,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                     {[
                       { l: "Adherence", v: "78%", sub: "vs 22% consumer-only", c: "#34D399" },
                       { l: "Sessions/week", v: "3.2", sub: "target: 3+", c: "#34D399" },
-                      { l: "Avg score", v: "67", sub: "Mendi norm: 58", c: "#10B981" },
+                      { l: "Avg score", v: "67", sub: "EEGBase cohort median: 58", c: "#10B981" },
                       { l: "Streak", v: "4 days", sub: "best: 12 days", c: "#F59E0B" },
                     ].map((m) => (
                       <div key={m.l} style={{ background: "rgba(15,23,42,0.7)", border: "1px solid #1E293B", borderRadius: 8, padding: 10 }}>
@@ -3517,7 +3517,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                     ))}
                   </div>
                   <div style={{ fontSize: 10, color: "#A5B4FC", marginTop: 10, padding: "6px 8px", background: "rgba(79,70,229,0.1)", borderRadius: 6, lineHeight: 1.5 }}>
-                    <strong style={{ color: "#A78BFA" }}>3.5×</strong> the adherence of consumer-only Mendi users. Clinic-prescribed users have 5–10× lower churn.
+                    <strong style={{ color: "#A78BFA" }}>3.5×</strong> the adherence of consumer-only Mendi users in the EEGBase clinic cohort (n=412 clinics; vs published consumer attrition baselines). Clinic-prescribed users show 5–10× lower churn vs consumer-only across the same cohort.
                   </div>
                 </div>
               </div>

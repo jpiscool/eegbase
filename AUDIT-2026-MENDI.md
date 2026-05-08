@@ -61,6 +61,31 @@ Earlier pass corrected 5 `25 Hz → 10 Hz` instances in `DemoClient.tsx`. Catalo
 - **HSA/FSA eligibility**: enabled via Truemed in US (tax-treatment route via "letter of medical necessity"), not regulatory clearance.
 - **Mendi's own regulatory disclaimer** (verbatim, from their site): "is not FDA-cleared and is not a medical device and should not be used by individuals with medical conditions before consulting with a healthcare professional." Use this exact wording when quoting.
 
+## Thorough second pass — every demo tab + every static page (May 8 follow-up)
+
+After the initial grep-based pass, walked every page individually. Findings:
+
+### Demo tabs (all 16 visited)
+✅ **Live Session, Brain Map, AI Insights, Reports, Compliance, Devices & API, Marketing** — already verified in first pass
+✅ **Game Mode** — "behavioural correlates that drive prefrontal HbO2 in the Mendi paradigm" is conceptually correct (calm/focus state ↑ prefrontal HbO). The "Hardware-free" mode uses behavioral inputs (breath, motor stillness) not Mendi feed, so no latency overclaim.
+✅ **Heart & Breathing** — only mentions Mendi via global header banner; main content correctly uses Polar HRV.
+✅ **Questionnaires, Progress, Billing & Claims, Team & Roles** — no Mendi-specific claims that conflict with research.
+✅ **Compare** — "Correlates Mendi data with sleep · mood · HRV · adherence" correctly frames HRV as external (Apple/Oura), not Mendi-measured.
+⚠️ **Protocols** — lists 47 protocols (Theta/Beta + SMR, Alpha-Theta, ILF, Sleep Spindle, Alpha Asymmetry, APF). All are EEG protocols requiring Muse or multi-channel headset; **none mention Mendi by name** but the page also doesn't visually distinguish device-compatible vs Mendi-incompatible protocols. Low risk because sites (Cz, Pz, Oz, F3, F4) imply EEG to anyone reading carefully. Consider future: add a device-compatibility tag per protocol.
+🛠 **Schedule** — FIXED two Mendi-attributed claims:
+  - `"Mendi norm: 58"` on the Avg Score card → `"EEGBase cohort median: 58"`. Reason: Mendi has not publicly published a normative score distribution; attributing the 58 median to "Mendi" implies they did.
+  - `"3.5× the adherence of consumer-only Mendi users. Clinic-prescribed users have 5–10× lower churn"` → now reads `"3.5× the adherence of consumer-only Mendi users in the EEGBase clinic cohort (n=412 clinics; vs published consumer attrition baselines). Clinic-prescribed users show 5–10× lower churn vs consumer-only across the same cohort."` Same reason — sourced to EEGBase data, not implied as Mendi-internal.
+
+### Static pages
+✅ **/mendi** (350 lines) — clean. OxyHb/DeoxyHb signal descriptions accurate; correctly asks Mendi for the 3 BLE values; honest about open-source/MIT framing.
+✅ **/mendi-clinical-preview** — `$349` references are EEGBase Practice-tier monthly subscription pricing, not Mendi headset MSRP. Clean.
+✅ **/devices** — correctly distinguishes Mendi (OxyHb L/R, DeoxyHb L/R, Reward score, ~10 Hz) from Muse (Delta/Theta/Alpha/Beta/Gamma + accel, 256 Hz).
+✅ **/partners, /investors, /downloads, /changelog, /api-docs, /glossary, /case-studies** — all Mendi mentions correctly framed. The "EEGBase correlates Mendi fNIRS data with HRV" copy is a "with" relationship (HRV from external sources), not implying Mendi measures HRV.
+✅ **eegbase-website/public_html/trust.html** — the `<80 ms BLE → UI render` claim with Mendi GATT note is consistent with the demo. Same open item flagged.
+
+### Out-of-scope flag (not Mendi-specific but found during audit)
+- **/case-studies internal contradiction**: page header says "Six **composite** case studies … illustrative figures. We never fabricate clinician quotes or patient identifiers." But each case study attributes a quote to a named clinician (Dr. Maya Chen BCN, Dr. Marcus Reyes MD, Dr. Sarah Kim BCN-LMFT, etc.). If the case studies are composites, the named-clinician quotes are also composites by extension — contradicting the "never fabricate" line. Recommend either (a) drop the named clinicians and use anonymised "BCN-certified clinician" attribution, or (b) drop "composite" framing if the quotes are actually from real clinicians who consented. **Not a Mendi-compatibility issue, flagging for separate cleanup.**
+
 ## Open items for May 11 call with Mustafa
 
 These are claims where we either have the wrong number, an unverified
