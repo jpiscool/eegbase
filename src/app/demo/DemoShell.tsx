@@ -70,11 +70,11 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
   return (
     <div className={`min-h-screen ${dark ? "bg-gray-950 text-gray-100" : "bg-gray-50 text-gray-900"} transition-colors`}>
       {/* Demo ribbon — one line, no animation */}
-      <div className="bg-amber-50 border-b border-amber-100 text-amber-900 text-xs px-4 py-1.5 text-center" role="status">
+      <div className="no-print bg-amber-50 border-b border-amber-100 text-amber-900 text-xs px-4 py-1.5 text-center" role="status">
         Demo mode · sample data · press <kbd className="bg-white border border-amber-200 rounded px-1 py-0.5 font-mono text-[10px]">⌘K</kbd> to navigate
       </div>
 
-      {/* Slim header — logo · date · search · role · dark toggle */}
+      {/* Slim header — logo · date · search · role · dark toggle (hidden in print via existing print rule that targets <header>) */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-3xl mx-auto px-6 py-3 flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2">
@@ -128,7 +128,9 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
       />
 
       {/* Bottom-right onboarding checklist */}
-      <ChecklistDock />
+      <div className="no-print">
+        <ChecklistDock />
+      </div>
     </div>
   );
 }

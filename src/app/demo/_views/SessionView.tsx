@@ -84,7 +84,7 @@ export function SessionView({ clientId, onExit }: SessionViewProps) {
                   "#94A3B8";
 
   if (phase === "report") {
-    return <SessionReport client={client} elapsed={elapsed} finalScore={score} onExit={onExit} />;
+    return <SessionReport client={client} elapsed={elapsed} finalScore={score} trace={reward} onExit={onExit} />;
   }
 
   return (
@@ -160,43 +160,110 @@ function SessionReport({
   client,
   elapsed,
   finalScore,
+  trace,
   onExit,
 }: {
   client: Client;
   elapsed: number;
   finalScore: number;
+  trace: number[];
   onExit: () => void;
 }) {
-  const [sent, setSent] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
+  const printedAt = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+  const accent =
+    finalScore >= 70 ? "#10B981" :
+    finalScore >= 40 ? "#F59E0B" :
+                       "#94A3B8";
+
+  function downloadPdf() {
+    // Native browser print → user picks "Save as PDF" in the print dialog.
+    // No PDF library, no extra dep, looks clinical when the print stylesheet
+    // hides the demo chrome.
+    if (typeof window !== "undefined") window.print();
+  }
+  function copyShareLink() {
+    const link = `${window.location.origin}/share/demo-${Date.now().toString(36)}`;
+    try {
+      navigator.clipboard?.writeText(link);
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2500);
+    } catch {}
+  }
+
   return (
     <main id="main-content" className="max-w-2xl mx-auto px-6 py-12">
-      <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-3">Session complete</p>
-      <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-2">Nice session.</h1>
-      <p className="text-base text-gray-600 leading-relaxed mb-8">
-        {client.name.split(" ")[0]} finished in {Math.round(elapsed / 60)} minutes. Here&rsquo;s the report — the AI already drafted the note.
-      </p>
+      {/* Print-only header — appears in PDF, hidden on screen */}
+      <div className="hidden print:block mb-8 pb-4 border-b border-gray-300">
+        <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider">EEGBase · Session report</p>
+        <p className="text-sm text-gray-700 mt-1 tabular-nums">{printedAt}</p>
+      </div>
 
-      <div className="grid grid-cols-3 gap-3 mb-8">
+      {/* Screen-only intro — hidden in PDF */}
+      <div className="print:hidden">
+        <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-3">Session complete</p>
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-2">Nice session.</h1>
+        <p className="text-base text-gray-600 leading-relaxed mb-8">
+          {client.name.split(" ")[0]} finished in {Math.round(elapsed / 60)} minutes. Here&rsquo;s the report — the AI already drafted the note.
+        </p>
+      </div>
+
+      {/* Patient + protocol — visible on screen and in PDF */}
+      <div className="flex items-center gap-3 mb-6">
+        <span className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-semibold text-xs flex items-center justify-center flex-shrink-0">
+          {client.initials}
+        </span>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-gray-900 truncate">{client.name}</p>
+          <p className="text-xs text-gray-500 truncate">{client.protocol} · session {client.sessionsCompleted + 1}</p>
+        </div>
+      </div>
+
+      {/* Stats — included in PDF */}
+      <div className="grid grid-cols-3 gap-3 mb-6">
         <Stat label="Focus score"     value={finalScore} />
         <Stat label="Session length"  value={Math.round(elapsed / 60)} suffix=" min" />
         <Stat label="Vs. last session" value={"+5"} />
       </div>
 
+      {/* Trace — included in PDF */}
+      {trace.length > 1 && (
+        <section className="mb-6">
+          <div className="rounded-xl overflow-hidden border border-gray-200 p-3 bg-white">
+            <LiveChart data={trace} color={accent} label="Focus over time" height={120} />
+          </div>
+        </section>
+      )}
+
+      {/* AI-drafted note — included in PDF */}
       <section className="bg-white border border-gray-200 rounded-2xl p-6 mb-8">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Session note (AI draft)</p>
         <p className="text-base text-gray-800 leading-relaxed">
           Steady session. Focus score reached the {finalScore >= 70 ? "target range" : "building range"} during the second half.
           Client engaged throughout; no reported side effects. Continue current protocol next visit.
         </p>
-        <p className="text-xs text-gray-400 mt-4">You can edit before saving.</p>
+        <p className="text-xs text-gray-400 mt-4 print:hidden">You can edit before saving.</p>
       </section>
 
-      <div className="flex flex-wrap gap-3">
+      {/* Print-only signature line */}
+      <div className="hidden print:block mt-12 pt-6 border-t border-gray-300 text-xs text-gray-500">
+        <p>Clinician signature: ____________________________</p>
+        <p className="mt-4">Generated by EEGBase · eegbase.com</p>
+      </div>
+
+      {/* Action buttons — hidden in PDF */}
+      <div className="flex flex-wrap gap-3 print:hidden">
         <button
-          onClick={() => setSent(true)}
+          onClick={downloadPdf}
           className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors"
         >
-          {sent ? "Sent ✓" : "Send PDF to client"}
+          Download PDF
+        </button>
+        <button
+          onClick={copyShareLink}
+          className="px-5 py-2.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl text-sm font-medium transition-colors"
+        >
+          {shareCopied ? "Link copied ✓" : "Copy share link"}
         </button>
         <button className="px-5 py-2.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl text-sm font-medium transition-colors">
           Edit note
