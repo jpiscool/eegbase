@@ -60,14 +60,14 @@ export function LiveChatWidget() {
   }
 
   // Hide on signed-in app surfaces — this is a marketing widget, it doesn't
-  // belong inside the workspace demo or the real app routes. Hooks above
-  // run unconditionally to satisfy React's rules.
-  if (pathname && HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
-    return null;
-  }
+  // belong inside the workspace demo or the real app routes. Use display:none
+  // (instead of returning null) to keep the React tree shape stable across
+  // renders — Next.js Fast-Refresh + RSC boundaries flag null-vs-fragment
+  // returns as a 'static flag missing' reconciliation error.
+  const hidden = !!(pathname && HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/")));
 
   return (
-    <>
+    <div style={hidden ? { display: "none" } : undefined} aria-hidden={hidden || undefined}>
       {/* Bubble */}
       <button
         onClick={() => setOpen((v) => !v)}
@@ -159,6 +159,6 @@ export function LiveChatWidget() {
           </form>
         </div>
       )}
-    </>
+    </div>
   );
 }
