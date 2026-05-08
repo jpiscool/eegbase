@@ -18,39 +18,39 @@ import { CurrencyTogglePricing } from "@/components/CurrencyTogglePricing";
 const features = [
   {
     icon: Brain,
-    title: "Real-time neurofeedback",
+    title: "Live brain data",
     description:
-      "Stream fNIRS and EEG data live. Visual reward scoring updates every sample so clients see immediate feedback.",
+      "Stream brain and EEG data the moment a client puts the headset on. Reward score updates in real time.",
   },
   {
     icon: BarChart3,
     title: "Session analytics",
     description:
-      "OxyHb/DeoxyHb trends, EEG band power, and pre/post symptom tracking in one longitudinal dashboard.",
+      "Brain trends, EEG bands, and PHQ-9/GAD-7 scores — all on one longitudinal dashboard.",
   },
   {
     icon: Wifi,
     title: "Mendi integration",
     description:
-      "Dual-channel OxyHb/DeoxyHb adapter for Mendi's bilateral prefrontal fNIRS — Web Bluetooth, no middleware. Built to spec, awaiting BLE handoff for production.",
+      "Dual-channel adapter for Mendi's prefrontal fNIRS, no middleware. Built to spec — awaiting BLE handoff from Mendi.",
   },
   {
     icon: Users,
-    title: "Multi-client practice",
+    title: "Unlimited clients",
     description:
-      "Manage unlimited clients, assign protocols, track progress, and message clients from a single workspace.",
+      "Manage every client, assign protocols, track progress, and message them — from one workspace.",
   },
   {
     icon: ShieldCheck,
     title: "Self-hosted & private",
     description:
-      "Run on your own infrastructure. Patient data never leaves your servers — HIPAA-friendly by design.",
+      "Runs on your server. Patient data never leaves your infrastructure. HIPAA-friendly by design.",
   },
   {
     icon: Zap,
     title: "Protocol library",
     description:
-      "Start from built-in evidence-based templates or build custom protocols with per-band threshold controls.",
+      "Start with evidence-based templates or build your own with per-band threshold controls.",
   },
 ];
 
@@ -63,7 +63,7 @@ const metrics: { value: number | string; label: string; suffix?: string; prefix?
 const faqs = [
   {
     q: "How is EEGBase different from SimplePractice or TherapyNotes?",
-    a: "Those are general EHR platforms with no neurofeedback signal capture. EEGBase is purpose-built for real-time fNIRS and EEG streaming, bilateral OxyHb analysis, and device-native clinical workflows. The EHR features are included, but the signal is first-class.",
+    a: "Those are general EHR platforms — they don't capture brain signals. EEGBase is built for real-time brain and EEG streaming. EHR features are included, but the signal comes first.",
   },
   {
     q: "Do I need a server to run EEGBase?",
