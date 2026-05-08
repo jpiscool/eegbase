@@ -62,7 +62,7 @@ const PILLARS = [
 
 const DOCS = [
   { name: "SOC 2 Type II report",        sub: "Coalfire · report on request",     gated: true },
-  { name: "Bishop Fox pen-test attestation", sub: "Q1 2026",            gated: true },
+  { name: "Bishop Fox pen-test attestation", sub: "report on request",            gated: true },
   { name: "HIPAA BAA template",          sub: "Standard form",          gated: false },
   { name: "GDPR DPA + EU SCCs",          sub: "Module 2 (controller-to-processor)", gated: false },
   { name: "VPAT 2.4 (WCAG 2.2 AA)",       sub: "Deque Systems",          gated: false },
