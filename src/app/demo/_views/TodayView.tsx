@@ -8,6 +8,7 @@ import { CheckIn } from "../_components/CheckIn";
 import { DevicesCard } from "../_components/DevicesCard";
 import { WearableSyncCard } from "../_components/WearableSyncCard";
 import { SessionTypePicker } from "../_components/SessionTypePicker";
+import { SleepImpactCard } from "../_components/SleepImpactCard";
 import type { Role } from "../_components/RoleToggle";
 import type { SessionType } from "../_data/session-types";
 
@@ -195,6 +196,9 @@ function HomeUserToday({ onStartSession }: { onStartSession: (clientId: string, 
 
       <DevicesCard />
       <WearableSyncCard />
+
+      {/* Sleep impact — only on the home-user Today */}
+      <SleepImpactCard />
 
       {/* Quick check-in — 30s, three sliders */}
       <section className="mb-12">

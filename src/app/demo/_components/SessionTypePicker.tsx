@@ -62,27 +62,37 @@ export function SessionTypePicker({ open, setOpen, onPick }: SessionTypePickerPr
         <div className="px-6 py-4">
           {!selected ? (
             <ul className="space-y-2">
-              {SESSION_TYPES.map((t) => (
-                <li key={t.id}>
-                  <button
-                    onClick={() => { setSelected(t); setMinutes(t.defaultMin); }}
-                    className="w-full text-left flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-gray-50 transition-colors"
-                  >
-                    <span
-                      className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
-                      style={{ background: `${t.accent}1A` }}
-                      aria-hidden
+              {SESSION_TYPES.map((t) => {
+                // Sleep type gets a bedtime hint computed from Oura sleep average
+                // (8h 04m typical bedtime → 30-min wind-down → start ~8:42 PM).
+                const isSleep = t.id === "sleep";
+                return (
+                  <li key={t.id}>
+                    <button
+                      onClick={() => { setSelected(t); setMinutes(t.defaultMin); }}
+                      className="w-full text-left flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-gray-50 transition-colors"
                     >
-                      {t.emoji}
-                    </span>
-                    <span className="flex-1 min-w-0">
-                      <span className="block text-sm font-semibold text-gray-900">{t.name}</span>
-                      <span className="block text-xs text-gray-500 truncate">{t.purpose}</span>
-                    </span>
-                    <span className="text-xs text-gray-400 tabular-nums flex-shrink-0">{t.defaultMin} min</span>
-                  </button>
-                </li>
-              ))}
+                      <span
+                        className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
+                        style={{ background: `${t.accent}1A` }}
+                        aria-hidden
+                      >
+                        {t.emoji}
+                      </span>
+                      <span className="flex-1 min-w-0">
+                        <span className="block text-sm font-semibold text-gray-900">{t.name}</span>
+                        <span className="block text-xs text-gray-500 truncate">{t.purpose}</span>
+                        {isSleep && (
+                          <span className="block text-[11px] text-blue-600 mt-0.5 font-medium">
+                            Recommended bedtime: 8:42 PM tonight
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-xs text-gray-400 tabular-nums flex-shrink-0">{t.defaultMin} min</span>
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <div>
