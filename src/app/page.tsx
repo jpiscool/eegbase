@@ -18,39 +18,39 @@ import { CurrencyTogglePricing } from "@/components/CurrencyTogglePricing";
 const features = [
   {
     icon: Brain,
-    title: "Live brain data",
+    title: "One live signal stream",
     description:
-      "Stream brain and EEG data the moment a client puts the headset on. Reward score updates in real time.",
+      "Brain, heart, breathing — every device's data lands on one screen the moment the client puts the headset on.",
   },
   {
     icon: BarChart3,
-    title: "Session analytics",
+    title: "One client record",
     description:
-      "Brain trends, EEG bands, and PHQ-9/GAD-7 scores — all on one longitudinal dashboard.",
+      "Brain data + heart rate + sleep + symptom scores, all on one timeline. No more flipping between vendor apps.",
   },
   {
     icon: Wifi,
-    title: "Mendi integration",
+    title: "Any device, same workflow",
     description:
-      "Dual-channel adapter for Mendi's prefrontal fNIRS, no middleware. Built to spec — awaiting BLE handoff from Mendi.",
+      "Mendi, Muse, Polar, Apple Watch, OpenBCI, and 30+ more. Switch headsets — keep your client history.",
   },
   {
     icon: Users,
-    title: "Unlimited clients",
+    title: "One inbox for every client",
     description:
-      "Manage every client, assign protocols, track progress, and message them — from one workspace.",
+      "Schedule, message, push protocols, review home sessions — for every client, regardless of which device they use.",
   },
   {
     icon: ShieldCheck,
-    title: "Self-hosted & private",
+    title: "Your data, your server",
     description:
-      "Runs on your server. Patient data never leaves your infrastructure. HIPAA-friendly by design.",
+      "Your unified record stays on your infrastructure. No third party sees the data — not us, not the device makers.",
   },
   {
     icon: Zap,
-    title: "Protocol library",
+    title: "One AI, every session",
     description:
-      "Start with evidence-based templates or build your own with per-band threshold controls.",
+      "AI watches every client's data across every device. Suggests protocol changes when progress stalls. Drafts SOAP notes.",
   },
 ];
 
@@ -415,10 +415,10 @@ export default function LandingPage() {
       {/* Features grid */}
       <section className="max-w-5xl mx-auto px-6 pb-24">
         <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
-          What you get out of the box
+          What &ldquo;all your devices in one tool&rdquo; lets you do
         </h2>
         <p className="text-sm text-gray-400 text-center mb-12">
-          Everything you need to run sessions, write notes, and show clients their progress.
+          Once every device feeds the same client record, the rest gets a lot easier.
         </p>
         <div className="grid grid-cols-3 gap-6">
           {features.map(({ icon: Icon, title, description }) => (
@@ -546,10 +546,10 @@ export default function LandingPage() {
                 First-class device integration
               </div>
               <h2 className="text-2xl font-bold mb-3 leading-tight">
-                The clinical layer<br />for Mendi fNIRS
+                Example:<br />Mendi at home + EEGBase clinic
               </h2>
               <p className="text-violet-100 text-sm leading-relaxed mb-5">
-                Mendi is a great consumer brain-training headband. EEGBase adds the clinical layer Mendi alone can't ship: clinician oversight, full client records, insurance billing, and a shared research database that turns home training into proof.
+                Mendi is one of 30+ devices we plug into. Here's what the unified workflow looks like with it: client trains at home with their Mendi, sessions sync to your dashboard, you supervise on a video call, you bill insurance, and the data feeds your research record — same workflow as every other device.
               </p>
               <div className="space-y-2">
                 {[
