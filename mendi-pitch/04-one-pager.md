@@ -25,10 +25,10 @@ Mendi sells exceptional consumer hardware. Clinicians can't currently prescribe 
 - Submit CMS-1500 claims for reimbursable codes (90901 / 90875 / 90876)
 - Export every session as BIDS-fNIRS for the research registry
 
-### The numbers (illustrative · n=847 cohort)
-- 74% reached clinically significant improvement within 22 sessions
-- Mean ΔHbO +12.3% over 20-session protocol
-- ADHD-RS −8.1 points, d = 0.62, p < 0.001
+### The numbers (illustrative · multi-clinic registry, n=2,840 ADHD adolescent)
+- 74% reached clinically significant improvement within 22 sessions (n=847 matched-profile cohort)
+- Mean ΔHbO +12.3% over a 20-session protocol (registry-wide)
+- ADHD-RS −8.1 points, d = 0.62, p < 0.001 (n=2,840)
 
 ---
 
