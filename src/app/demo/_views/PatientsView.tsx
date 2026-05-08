@@ -12,6 +12,7 @@ import { ClinicianShareCard } from "../_components/ClinicianShareCard";
 import { ClinicianWatchPanel } from "../_components/LiveCoFeedback";
 import { AskWeekSheet } from "../_components/AskWeekSheet";
 import { DiagnosticCard } from "../_components/DiagnosticCard";
+import { FamilyCard } from "../_components/FamilyCard";
 
 interface PatientsViewProps {
   role: Role;
@@ -118,6 +119,9 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
 
       {/* Achievements — home-user only; gamification is patronizing in clinical UI */}
       {isHome && <AchievementsRow />}
+
+      {/* Household / family mode — home-user only; couples coherence + parent-child */}
+      {isHome && <FamilyCard />}
 
       {/* Share-with-clinician toggle — home-user only; the bridge to Mendi-attached clinics */}
       {isHome && <ClinicianShareCard />}
