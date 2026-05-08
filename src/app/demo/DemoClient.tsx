@@ -202,6 +202,10 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
   const peakReachedRef = useRef(false);
   const [visitedTabs, setVisitedTabs] = useState<Set<MainTab>>(new Set(["session"]));
   const [tourDismissed, setTourDismissed] = useState(false);
+  const [tourCollapsed, setTourCollapsed] = useState(false);
+  // Auto-collapse the onboarding popover after the first tab switch so it
+  // stops obscuring the Live Session controls / stat row.
+  useEffect(() => { if (visitedTabs.size > 1) setTourCollapsed(true); }, [visitedTabs]);
   const [breathPhase, setBreathPhase] = useState<"Inhale" | "Exhale">("Inhale");
   useEffect(() => {
     const iv = setInterval(() => setBreathPhase((p) => (p === "Inhale" ? "Exhale" : "Inhale")), 5000);
@@ -1466,11 +1470,25 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
       )}
 
       {/* Guided tour checklist */}
-      {!tourDismissed && (
+      {!tourDismissed && tourCollapsed && (
+        <button
+          onClick={() => setTourCollapsed(false)}
+          aria-label="Expand demo tour checklist"
+          className="demo-topbar-hide-mobile"
+          style={{ position: "fixed", bottom: 20, right: 20, zIndex: 90, background: "white", border: "1px solid #E2E8F0", borderRadius: 99, padding: "8px 14px", boxShadow: "0 4px 16px rgba(0,0,0,0.10)", display: "flex", alignItems: "center", gap: 8, cursor: "pointer", animation: "fadeIn 0.3s ease" }}
+        >
+          <div style={{ width: 18, height: 18, borderRadius: 99, background: "#F1F5F9", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, color: "#475569" }}>{visitedTabs.size}</div>
+          <span style={{ fontSize: 12, fontWeight: 600, color: "#0F172A" }}>Tour {visitedTabs.size}/{TABS.length}</span>
+        </button>
+      )}
+      {!tourDismissed && !tourCollapsed && (
         <div className="demo-topbar-hide-mobile" style={{ position: "fixed", bottom: 20, right: 20, zIndex: 90, background: "white", border: "1px solid #E2E8F0", borderRadius: 14, padding: "14px 16px", boxShadow: "0 8px 32px rgba(0,0,0,0.12)", minWidth: 200, animation: "fadeIn 0.3s ease" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, gap: 6 }}>
             <span style={{ fontSize: 12, fontWeight: 700, color: "#0F172A" }}>Explore the demo</span>
-            <button onClick={() => setTourDismissed(true)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, color: "#94A3B8", padding: 0 }}>✕</button>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <button onClick={() => setTourCollapsed(true)} aria-label="Collapse" title="Collapse" style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, color: "#94A3B8", padding: 0, lineHeight: 1 }}>—</button>
+              <button onClick={() => setTourDismissed(true)} aria-label="Dismiss" title="Dismiss" style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, color: "#94A3B8", padding: 0, lineHeight: 1 }}>✕</button>
+            </div>
           </div>
           <div style={{ fontSize: 11, color: "#64748B", marginBottom: 8 }}>
             {visitedTabs.size} of {TABS.length} sections visited
@@ -5181,11 +5199,11 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   <div style={{ fontSize: 12, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Mendi fNIRS Headset</div>
                   <div style={{ fontSize: 22, fontWeight: 800, color: "#F1F5F9", marginBottom: 8, letterSpacing: "-0.02em" }}>First-class native integration</div>
                   <div style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6, marginBottom: 14 }}>
-                    EEGBase ships with a hand-tuned Mendi driver: dual-channel OxyHb/DeoxyHb streaming at 25 Hz, automatic light source calibration, and motion-artifact rejection trained on 1,200+ session-hours.
+                    EEGBase ships with a hand-tuned Mendi driver: dual-channel OxyHb/DeoxyHb streaming at 10 Hz, automatic light source calibration, and motion-artifact rejection trained on 1,200+ session-hours.
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 14 }}>
                     {[
-                      { label: "Sample rate", val: "25 Hz" },
+                      { label: "Sample rate", val: "10 Hz" },
                       { label: "Latency", val: "<80 ms" },
                       { label: "Onboarding", val: "14 min" },
                       { label: "MAR accuracy", val: "96.4%" },
@@ -5230,7 +5248,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                     </div>
                   </div>
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                    <button onClick={() => showToast("Mendi headset paired ✓ — streaming OxyHb/DeoxyHb at 25 Hz")} style={{ ...clinicianBtnPrimary, fontSize: 13 }}>Pair Mendi headset</button>
+                    <button onClick={() => showToast("Mendi headset paired ✓ — streaming OxyHb/DeoxyHb at 10 Hz")} style={{ ...clinicianBtnPrimary, fontSize: 13 }}>Pair Mendi headset</button>
                     <button onClick={() => showToast("Calibration started — keep eyes closed for 30 seconds")} style={clinicianBtn}>Run calibration</button>
                     <button onClick={() => showToast("BYO device pairing — Muse / OpenBCI / Polar / any BLE EEG/HRV")} style={clinicianBtn}>Pair BYO device</button>
                   </div>
@@ -5365,7 +5383,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }} className="demo-grid-2">
                 {[
-                  { name: "Mendi fNIRS", channels: "Fp1, Fp2 · OxyHb/DeoxyHb · 25 Hz", status: "Connected", quality: 96, color: "#10B981" },
+                  { name: "Mendi fNIRS", channels: "Fp1, Fp2 · OxyHb/DeoxyHb · 10 Hz", status: "Connected", quality: 96, color: "#10B981" },
                   { name: "Muse S Athena", channels: "AF7, AF8, TP9, TP10 · 256 Hz", status: "Connected", quality: 88, color: "#10B981" },
                   { name: "Polar H10 (HRV)", channels: "RR intervals · 1000 Hz", status: "Connected", quality: 99, color: "#10B981" },
                   { name: "OpenBCI Cyton", channels: "8-channel EEG · 250 Hz", status: "Standby", quality: 0, color: "#64748B" },
@@ -5411,7 +5429,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   <div style={{ fontSize: 10, fontWeight: 700, color: "#06B6D4", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Lab Streaming Layer (LSL)</div>
                   <div style={{ fontSize: 10, color: "#64748B", marginBottom: 8 }}>Outlets advertised on this network</div>
                   {[
-                    { name: "EEGBase_Mendi_OxyHb", srate: "25 Hz", ch: 4 },
+                    { name: "EEGBase_Mendi_OxyHb", srate: "10 Hz", ch: 4 },
                     { name: "EEGBase_Polar_RR",    srate: "1 kHz", ch: 1 },
                     { name: "EEGBase_Markers",     srate: "irregular", ch: 1 },
                   ].map((s) => (
