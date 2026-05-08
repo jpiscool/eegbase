@@ -3754,6 +3754,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   evidenceColor: "#10B981",
                   protocols: ["EEGer Classic", "Lubar Protocol"],
                   tags: ["ADHD", "Focus", "Inattention"],
+                  device: "EEG required (Muse / multi-channel)",
                   desc: "The most-studied NFB protocol for ADHD. Reduces theta/beta ratio, increases SMR. Recommended first-line before alpha-theta for inattentive subtype.",
                 },
                 {
@@ -3767,6 +3768,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   evidenceColor: "#F59E0B",
                   protocols: ["Peniston-Kulkosky", "Scott-Kaiser"],
                   tags: ["PTSD", "Trauma", "Anxiety", "Addiction"],
+                  device: "EEG required (Muse / multi-channel)",
                   desc: "Produces theta-dominant relaxed state associated with memory reconsolidation. Well-supported for PTSD and substance dependence. Requires clinical preparation — not first-line without proper intake.",
                 },
                 {
@@ -3780,6 +3782,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   evidenceColor: "#6366F1",
                   protocols: ["Othmer ILF", "ANS Regulation"],
                   tags: ["Trauma", "Dysregulation", "Autonomic"],
+                  device: "EEG required (multi-channel + temporal sites)",
                   desc: "Targets autonomic nervous system regulation via slow cortical potentials. Particularly effective for highly dysregulated clients who cannot tolerate standard amplitude training. Othmer Method.",
                 },
                 {
@@ -3793,6 +3796,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   evidenceColor: "#F59E0B",
                   protocols: ["Sleep NFB", "Circadian Protocol"],
                   tags: ["Insomnia", "Sleep", "Memory"],
+                  device: "EEG required (Muse / multi-channel)",
                   desc: "Sigma band training during wakefulness enhances sleep spindle density overnight. Paired with Oura Ring data import to track sleep architecture changes between sessions.",
                 },
                 {
@@ -3806,6 +3810,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   evidenceColor: "#F59E0B",
                   protocols: ["Davidson Asymmetry", "Approach-Withdrawal"],
                   tags: ["Anxiety", "Depression", "Mood"],
+                  device: "EEG required (Muse / multi-channel)",
                   desc: "Corrects left frontal hypoactivation linked to anxiety and withdrawal states. Increases right alpha relative to left, shifting toward approach motivation. Used for generalised anxiety and MDD.",
                 },
                 {
@@ -3819,6 +3824,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   evidenceColor: "#F59E0B",
                   protocols: ["Zone Training", "Flow State Protocol"],
                   tags: ["Athletes", "Peak Performance", "Focus", "Flow"],
+                  device: "EEG required (Muse / multi-channel)",
                   desc: "Trains alpha at the client's individual peak frequency (typically 9–12 Hz) to maximize processing speed and attentional control. Popular with elite athletes, executives, and musicians.",
                 },
               ];
@@ -3865,6 +3871,9 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                         {p.tags.map((tag) => (
                           <span key={tag} style={{ fontSize: 10, background: "#1E293B", color: "#94A3B8", borderRadius: 6, padding: "3px 8px", fontWeight: 600 }}>{tag}</span>
                         ))}
+                        {p.device && (
+                          <span title="Hardware required to run this protocol" style={{ fontSize: 10, background: "rgba(165,243,252,0.10)", color: "#A5F3FC", borderRadius: 6, padding: "3px 8px", fontWeight: 700, border: "1px solid rgba(165,243,252,0.25)" }}>⚡ {p.device}</span>
+                        )}
                       </div>
                       <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.6, marginBottom: 10 }}>{p.desc}</div>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>

@@ -111,7 +111,7 @@ export default function CaseStudiesPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Case studies</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>What clinics are seeing</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
-          Six composite case studies from clinics using Mendi + EEGBase. Real clinical patterns, real outcome scales, illustrative figures. We never fabricate clinician quotes or patient identifiers.
+          Six composite case studies illustrating typical patterns from clinics using Mendi + EEGBase. Outcome scales are real (ADHD-RS, GAD-7, MBI-EE, PCL-5, peak alpha), the figures are illustrative, and the clinic names, clinician attributions, and quotes are composites — constructed from common feedback patterns, not verbatim from a single source. See footnote below. Once we have signed releases for real co-authored studies, those will appear with verbatim attribution.
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }}>
@@ -121,7 +121,10 @@ export default function CaseStudiesPage() {
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
                 <div style={{ width: 36, height: 36, borderRadius: 10, background: `${s.color}1A`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>{s.img}</div>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#0F172A" }}>{s.clinic}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#0F172A", display: "flex", alignItems: "center", gap: 6 }}>
+                    {s.clinic}
+                    <span style={{ fontSize: 9, fontWeight: 700, color: "#6B7280", padding: "1px 6px", border: "1px solid #E5E7EB", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Composite</span>
+                  </div>
                   <div style={{ fontSize: 11, color: "#94A3B8" }}>{s.location} · {s.cond} · n={s.n}</div>
                 </div>
                 <span style={{ marginLeft: "auto", fontSize: 9, fontWeight: 700, color: s.color, padding: "3px 8px", background: `${s.color}1A`, borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>{s.cond}</span>
