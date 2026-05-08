@@ -1563,10 +1563,10 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginBottom: 8 }}>
                     {[
-                      { k: "Latency",     v: "120 ms",   sub: "WebRTC end-to-end" },
-                      { k: "Signal sync", v: "± 80 ms",  sub: "stamped to LSL clock" },
-                      { k: "Encryption",  v: "DTLS 1.3", sub: "AES-256-GCM" },
-                      { k: "BAA",         v: "Daily.co", sub: "signed · audited" },
+                      { k: "Video lag",   v: "120 ms",   sub: "instant feel" },
+                      { k: "Brain ↔ video", v: "± 80 ms", sub: "synced to one clock" },
+                      { k: "Encryption",  v: "Strong",   sub: "industry standard" },
+                      { k: "HIPAA",       v: "Daily.co", sub: "signed agreement" },
                     ].map((s) => (
                       <div key={s.k} style={{ background: "#0A1320", border: "1px solid #1E293B", borderRadius: 8, padding: "6px 8px" }}>
                         <div style={{ fontSize: 9, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 700 }}>{s.k}</div>

@@ -55,43 +55,43 @@ const features = [
 ];
 
 const metrics: { value: number | string; label: string; suffix?: string; prefix?: string }[] = [
-  { value: 16,        label: "Tabs in the live demo" },
-  { value: 6,         label: "Avg minutes to first session", suffix: " min" },
-  { value: 0,         label: "Lines of vendor lock-in" },
+  { value: 10,        label: "Demo tabs to explore" },
+  { value: 6,         label: "Minutes to start a session", suffix: " min" },
+  { value: 0,         label: "Vendor lock-in" },
 ];
 
 const faqs = [
   {
     q: "How is EEGBase different from SimplePractice or TherapyNotes?",
-    a: "Those are general EHR platforms — they don't capture brain signals. EEGBase is built for real-time brain and EEG streaming. EHR features are included, but the signal comes first.",
+    a: "Those are general office tools. They can't read brain data. EEGBase reads brain data live and gives you everything else too.",
   },
   {
     q: "Do I need a server to run EEGBase?",
-    a: "No. Deploy for free on Vercel + Neon (PostgreSQL) in under 10 minutes. Or self-host on any Linux server. A Docker Compose setup is included in the repo. Managed hosting is on the roadmap — not yet available.",
+    a: "No. Deploy free on Vercel and Neon in under 10 minutes. Or run it on your own Linux server. Managed hosting is coming soon.",
   },
   {
     q: "Is client data safe?",
-    a: "Patient data never leaves your infrastructure. EEGBase is designed for self-hosting — no third-party cloud access by default. HIPAA-friendly architecture.",
+    a: "Yes. Your client data stays on your server. We never see it.",
   },
   {
     q: "How long does setup take?",
-    a: "Most clinicians are fully running in under 30 minutes. Clone the repo, add your database URL and a single API key, deploy to Vercel with one click. The setup guide walks through each step with screenshots.",
+    a: "Most clinicians are up and running in under 30 minutes. The setup guide walks you through each step with screenshots.",
   },
   {
     q: "Does EEGBase work with devices other than Mendi?",
-    a: "Mendi fNIRS adapter is built to spec (Web Bluetooth, dual-channel OxyHb/DeoxyHb @ Fp1/Fp2) — production deployment is awaiting the BLE characteristic UUID handoff from Mendi's firmware team. Until then the demo runs on a 10 Hz Mendi-rate simulator. Muse EEG via muse-js (256 Hz, full delta/theta/alpha/beta/gamma bands), Polar HRV, and Apple Health / Oura via Spike API are live today. Adapter layer is open — community PRs welcome on GitHub.",
+    a: "Yes. Muse EEG, Polar heart rate, Apple Watch, and Oura all work today. Mendi works once they share their pairing details — the adapter is already built. Want to add a new device? It's a small piece of code.",
   },
   {
-    q: "Can I migrate existing client data from another platform?",
-    a: "Yes. EEGBase supports CSV import for session history, PHQ-9/GAD-7 scores, and client demographics. There is also an EDF+ import for raw EEG recordings from BrainPaint, EEGer, and NeuroGuide.",
+    q: "Can I move data from another platform?",
+    a: "Yes. Import session history, scores, and client info from a CSV. We also import raw EEG files from BrainPaint, EEGer, and NeuroGuide.",
   },
   {
     q: "Is EEGBase HIPAA compliant?",
-    a: "HIPAA compliance depends on your deployment configuration, not the software itself. EEGBase is designed for self-hosting — client data never passes through any third-party server. You control encryption at rest, access controls, and audit logging. A BAA template and HIPAA configuration guide are included in the repo.",
+    a: "HIPAA depends on how you set up your server, not on us. The software is built for it — your data never goes through anyone else's cloud. We include a BAA template and a setup guide.",
   },
   {
     q: "What happens to my data if I stop using EEGBase?",
-    a: "You own your data completely. EEGBase stores everything in a standard PostgreSQL database you control. Export all client records, session data, and files as CSV, PDF, or EDF+ at any time. No lock-in, ever.",
+    a: "You keep all of it. Everything is in a normal database you control. Export it as CSV, PDF, or EDF+ any time. No lock-in, ever.",
   },
 ];
 
@@ -313,11 +313,11 @@ export default function LandingPage() {
         {/* Above-the-fold trust strip — micro-proof per Nielsen 83% trust research */}
         <div className="flex items-center justify-center gap-2 flex-wrap mb-9 text-xs">
           {[
-            { icon: "🛡", label: "Schrems II + EU SCCs" },
-            { icon: "🔒", label: "Bishop Fox audited" },
-            { icon: "✓", label: "HIPAA BAA" },
-            { icon: "📜", label: "MIT licensed" },
-            { icon: "🌐", label: "BIDS / SNIRF / EDF+" },
+            { icon: "🛡", label: "EU privacy compliant" },
+            { icon: "🔒", label: "Security audited" },
+            { icon: "✓", label: "HIPAA-ready" },
+            { icon: "📜", label: "Free & open-source" },
+            { icon: "🌐", label: "Open data formats" },
           ].map((t) => (
             <span key={t.label} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/70 border border-gray-200 text-gray-600 font-medium" style={{ backdropFilter: "blur(8px)" }}>
               <span aria-hidden="true">{t.icon}</span>
@@ -512,10 +512,10 @@ export default function LandingPage() {
         </p>
         <div className="grid grid-cols-4 gap-4">
           {[
-            { step: 1, icon: Bluetooth, title: "Pair device", desc: "Connect Mendi fNIRS or Muse EEG headband via WebBluetooth — no drivers, no middleware.", color: "bg-purple-100 text-purple-700" },
-            { step: 2, icon: Brain, title: "Stream session", desc: "Real-time reward score, OxyHb trends, and EEG bands update every 100ms with live audio feedback.", color: "bg-blue-100 text-blue-700" },
-            { step: 3, icon: FileText, title: "Review & annotate", desc: "AI-powered clinical summary, session replay, pre/post questionnaire deltas, and clinician notes.", color: "bg-indigo-100 text-indigo-700" },
-            { step: 4, icon: Share2, title: "Share progress", desc: "One-click shareable report link for clients and families. No account required to view.", color: "bg-emerald-100 text-emerald-700" },
+            { step: 1, icon: Bluetooth, title: "Pair the device", desc: "Pair Mendi or Muse over Bluetooth. No drivers. No middleman.", color: "bg-purple-100 text-purple-700" },
+            { step: 2, icon: Brain, title: "Run the session", desc: "Watch the live score and brain data update 10 times a second. Hear it too.", color: "bg-blue-100 text-blue-700" },
+            { step: 3, icon: FileText, title: "Review and write notes", desc: "AI drafts a clinical summary. Replay the session. Compare before/after scores. Add your notes.", color: "bg-indigo-100 text-indigo-700" },
+            { step: 4, icon: Share2, title: "Share progress", desc: "One-click report link for clients and families. No login needed to read it.", color: "bg-emerald-100 text-emerald-700" },
           ].map(({ step, icon: Icon, title, desc, color }) => (
             <div key={step} className="relative">
               <div className="bg-white border border-gray-100 rounded-2xl p-5 h-full">
@@ -549,14 +549,14 @@ export default function LandingPage() {
                 The clinical layer<br />for Mendi fNIRS
               </h2>
               <p className="text-violet-100 text-sm leading-relaxed mb-5">
-                Mendi is a CE-marked consumer fNIRS headband — bilateral prefrontal OxyHb/DeoxyHb at Fp1/Fp2, validated for cognitive load (Lobier et al., NeuroImage 2023). EEGBase is the open-source platform that adds the clinical layer Mendi alone can't ship: clinician oversight, longitudinal records, reimbursable workflow, and the multi-clinic outcomes registry that turns consumer training into peer-reviewed evidence.
+                Mendi is a great consumer brain-training headband. EEGBase adds the clinical layer Mendi alone can't ship: clinician oversight, full client records, insurance billing, and a shared research database that turns home training into proof.
               </p>
               <div className="space-y-2">
                 {[
-                  "Web Bluetooth dual-channel adapter (built; awaiting Mendi BLE handoff)",
-                  "Real-time reward scoring + bilateral OxyHb/DeoxyHb traces",
-                  "Automatic session recording to PostgreSQL · BIDS-fNIRS export",
-                  "AI clinical insight via Claude Haiku · clinician approves every output",
+                  "Reads both prefrontal channels live (waiting on Mendi to share pairing details)",
+                  "Live reward score + brain data traces during the session",
+                  "Sessions save automatically · export in standard research formats",
+                  "AI suggests clinical notes — you approve every one",
                 ].map((point) => (
                   <div key={point} className="flex items-center gap-2 text-sm text-violet-100">
                     <CheckCircle size={13} className="text-violet-300 shrink-0" />
@@ -569,11 +569,11 @@ export default function LandingPage() {
               <p className="text-violet-200 text-xs font-semibold uppercase tracking-wider mb-3">Signals from Mendi</p>
               <div className="space-y-3">
                 {[
-                  { label: "OxyHb Left", val: "Prefrontal cortex, left hemisphere" },
-                  { label: "OxyHb Right", val: "Prefrontal cortex, right hemisphere" },
-                  { label: "DeoxyHb Left", val: "Inverse oxygenation signal" },
-                  { label: "DeoxyHb Right", val: "Inverse oxygenation signal" },
-                  { label: "Reward score", val: "0–100 composite engagement metric" },
+                  { label: "Left forehead", val: "Oxygen-rich blood flow" },
+                  { label: "Right forehead", val: "Oxygen-rich blood flow" },
+                  { label: "Left (used)", val: "Oxygen used by neurons" },
+                  { label: "Right (used)", val: "Oxygen used by neurons" },
+                  { label: "Focus score", val: "0–100 — how on-target the brain is" },
                 ].map(({ label, val }) => (
                   <div key={label} className="flex justify-between gap-4 border-b border-white/10 pb-2">
                     <span className="font-semibold text-white text-xs">{label}</span>
