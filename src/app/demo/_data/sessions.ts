@@ -78,6 +78,16 @@ export const HOME_USER_STREAK: { day: string; date: number; trained: boolean }[]
   { day: "S", date: 8,  trained: false }, // today, not yet trained
 ];
 
+// Home-practice adherence per demo client — for the clinician's "Home practice"
+// strip on Today. Days since last home session.
+export const HOME_PRACTICE: { clientId: string; daysSince: number }[] = [
+  { clientId: "sarah",  daysSince: 1 },
+  { clientId: "james",  daysSince: 4 },
+  { clientId: "priya",  daysSince: 0 },
+  { clientId: "daniel", daysSince: 9 },
+  { clientId: "emily",  daysSince: 2 },
+];
+
 // Light, non-pushy rotating prompts. Picks one based on day-of-year so the
 // same person sees a stable prompt all day but different ones across days.
 export const DAILY_PROMPTS: string[] = [
