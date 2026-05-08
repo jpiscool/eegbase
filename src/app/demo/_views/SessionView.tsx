@@ -6,6 +6,7 @@ import { SimulatorAdapter } from "@/lib/device/simulator";
 import type { DeviceSample } from "@/lib/device/adapter";
 import { CLIENTS, type Client } from "../_data/clients";
 import type { SessionType } from "../_data/session-types";
+import { TrainingVisuals, VISUAL_MODES, type VisualMode } from "../_components/TrainingVisuals";
 
 interface SessionViewProps {
   clientId: string;
@@ -48,6 +49,7 @@ export function SessionView({ clientId, sessionType, sessionMinutes = 20, onExit
   const [marks, setMarks] = useState<{ atSec: number; label?: string }[]>([]);
   const [markFlash, setMarkFlash] = useState(false);
   const [journal, setJournal] = useState("");
+  const [visualMode, setVisualMode] = useState<VisualMode>("aurora");
 
   const adapterRef = useRef<SimulatorAdapter | null>(null);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -154,10 +156,36 @@ export function SessionView({ clientId, sessionType, sessionMinutes = 20, onExit
         </p>
       </section>
 
-      {/* Live signal trace */}
+      {/* Training visual + tiny mode picker */}
+      <section className="mb-6">
+        <TrainingVisuals mode={visualMode} score={score} />
+        <div className="flex items-center justify-center gap-1.5 mt-3">
+          {VISUAL_MODES.map((m) => {
+            const active = m.id === visualMode;
+            return (
+              <button
+                key={m.id}
+                onClick={() => setVisualMode(m.id)}
+                aria-label={`${m.label} \u2014 ${m.hint}`}
+                aria-pressed={active}
+                className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                  active
+                    ? "bg-gray-900 text-white border-gray-900"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"
+                }`}
+              >
+                <span className="mr-1" aria-hidden>{m.emoji}</span>
+                {m.label}
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Live signal trace beneath the visual */}
       <section className="mb-8">
-        <div className="rounded-2xl overflow-hidden border border-gray-200">
-          <LiveChart data={reward} color={accent} label="Focus" height={140} />
+        <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white p-3">
+          <LiveChart data={reward} color={accent} label="Focus over time" height={120} />
         </div>
       </section>
 
