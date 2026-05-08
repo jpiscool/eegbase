@@ -4695,7 +4695,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                   <div style={{ padding: 10, background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 10 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
                       <span style={{ fontSize: 9, fontWeight: 700, color: "#34D399", padding: "2px 7px", background: "rgba(34,197,94,0.15)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>FDA · CE</span>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: "#F1F5F9" }}>General Wellness · 21 CFR § 1140</span>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: "#F1F5F9" }}>General Wellness · FDA-CDRH guidance (2019)</span>
                     </div>
                     <div style={{ fontSize: 10, color: "#94A3B8", lineHeight: 1.55 }}>
                       EEGBase is a software platform — not a 510(k) device. Mendi headset is a CE-marked consumer wellness product (covered by FDA general wellness guidance in US — no clearance). No diagnostic claims · clinician-supervised use.
