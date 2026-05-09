@@ -3,9 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const DEMO_EMAIL = "demo@eegbase.com";
-const DEMO_PASSWORD = "demo2026";
-
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -64,8 +61,8 @@ export default function LoginPage() {
           </div>
 
           <div className="demo-banner">
-            <p className="text-xs font-semibold mb-2" style={{ color: "#4C1D95" }}>DEMO ACCESS — Pacific Neurofeedback</p>
-            <p className="text-xs mb-3" style={{ color: "#6D28D9", lineHeight: 1.5 }}>10 clients · 88 Mendi sessions · Full clinical data · No sign-up needed</p>
+            <p className="text-xs font-semibold mb-2" style={{ color: "#4C1D95" }}>DEMO ACCESS</p>
+            <p className="text-xs mb-3" style={{ color: "#6D28D9", lineHeight: 1.5 }}>5 sample clients · 20-session arcs · Full clinical data · No sign-up needed</p>
             <button type="button" onClick={() => router.push('/demo')} className="demo-btn">
               ▶ Explore Live Demo — No login needed
             </button>

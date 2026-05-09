@@ -109,7 +109,7 @@ export default function MendiPartnershipPage() {
               Email us with three windows that work for you. We reply same day.
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center", marginBottom: 20 }}>
-              <a
+              <Link
                 href="/contact?role=partner"
                 style={{
                   padding: "12px 24px", background: violet, color: "#fff",
@@ -117,9 +117,9 @@ export default function MendiPartnershipPage() {
                   textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 8,
                 }}
               >
-                Email hello@eegbase.com
+                Open the contact form
                 <span aria-hidden>→</span>
-              </a>
+              </Link>
               <Link
                 href="/demo"
                 style={{
@@ -458,8 +458,10 @@ export default function MendiPartnershipPage() {
               Explore the full clinical dashboard
             </h2>
             <p style={{ fontSize: 15, color: "#4C1D95", lineHeight: 1.7, marginBottom: 0 }}>
-              Pacific Neurofeedback is pre-loaded: 10 clients, 88 Mendi fNIRS sessions,
-              SOAP notes, outcome measures, and a live simulator. No install required.
+              The /demo route opens straight into a working clinical dashboard with 5 sample
+              clients across ADHD, PTSD, burnout, sleep, and performance archetypes —
+              including 20-session arcs, SOAP notes, outcome measures, and a live Mendi
+              fNIRS simulator. No install, no signup.
             </p>
           </div>
           <div style={{
@@ -469,28 +471,35 @@ export default function MendiPartnershipPage() {
             padding: "24px 28px",
           }}>
             <p style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 16 }}>
-              Demo credentials
+              Open the demo
             </p>
-            {[
-              { label: "URL", value: "eegbase.vercel.app/login" },
-              { label: "Email", value: "demo@eegbase.com" },
-              { label: "Password", value: "demo2026" },
-            ].map(({ label, value }) => (
-              <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid #F3F4F6" }}>
-                <span style={{ fontSize: 12, fontWeight: 600, color: "#6B7280" }}>{label}</span>
-                <code style={{ fontSize: 13, color: "#4C1D95", fontFamily: "monospace", background: "#F5F3FF", padding: "2px 8px", borderRadius: 6 }}>{value}</code>
-              </div>
-            ))}
+            <p style={{ fontSize: 13, color: "#4B5563", lineHeight: 1.65, marginBottom: 18 }}>
+              No login or signup required. Click below and you land directly inside the
+              clinical dashboard with the Mendi simulator running.
+            </p>
+            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 6 }}>
+              {[
+                "11 tabs · Live Session, Brain Map, AI Insights, Reports, Compare",
+                "5 sample clients · Mendi-only, hybrid, EEG-cap archetypes",
+                "20-session learning arcs with PHQ-9 / GAD-7 outcomes",
+                "Live Mendi fNIRS simulator · 660 + 805 nm · BA10 · 2 long + 1 short",
+              ].map((item) => (
+                <li key={item} style={{ fontSize: 12, color: "#4B5563", display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#7C3AED", flexShrink: 0 }} />
+                  {item}
+                </li>
+              ))}
+            </ul>
             <Link
-              href="/login"
+              href="/demo"
               style={{
-                display: "block", marginTop: 20, padding: "10px 0",
+                display: "block", padding: "10px 0",
                 background: "#7C3AED", color: "#fff", borderRadius: 10,
                 textAlign: "center", fontSize: 14, fontWeight: 700,
                 textDecoration: "none",
               }}
             >
-              Open Demo Clinic →
+              Open the demo clinic →
             </Link>
           </div>
         </div>

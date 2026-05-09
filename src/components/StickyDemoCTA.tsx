@@ -41,7 +41,7 @@ export function StickyDemoCTA() {
       <style>{`@keyframes slide-up { from { transform: translate(-50%, 100%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }`}</style>
       <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34D399", boxShadow: "0 0 8px #34D399", flexShrink: 0 }} />
       <span style={{ color: "#E2E8F0", fontSize: 13, fontWeight: 500, letterSpacing: "-0.01em" }}>
-        Demo loaded with 10 clients · 88 sessions
+        Demo loaded with 5 clients · 20-session arcs
       </span>
       <Link
         href="/demo"

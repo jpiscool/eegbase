@@ -53,10 +53,10 @@ export default function ResearchPage() {
             ))}
           </div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <a href="https://doi.org/10.31234/osf.io/8h2k4" style={{ padding: "8px 14px", background: "#7C3AED", color: "white", borderRadius: 8, fontSize: 12, fontWeight: 700, textDecoration: "none" }}>Read pre-print (PDF) ↓</a>
-            <button style={{ padding: "8px 14px", background: "transparent", color: "#7C3AED", border: "1px solid #7C3AED", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Copy citation (BibTeX)</button>
-            <a href="https://osf.io/8h2k4" style={{ padding: "8px 14px", background: "transparent", color: "#7C3AED", border: "1px solid #E5E7EB", borderRadius: 8, fontSize: 12, fontWeight: 700, textDecoration: "none" }}>OSF mirror →</a>
+            <Link href="/contact?role=research" style={{ padding: "8px 14px", background: "#7C3AED", color: "white", borderRadius: 8, fontSize: 12, fontWeight: 700, textDecoration: "none" }}>Request pre-print (NDA) →</Link>
+            <Link href="/contact?role=research" style={{ padding: "8px 14px", background: "transparent", color: "#7C3AED", border: "1px solid #7C3AED", borderRadius: 8, fontSize: 12, fontWeight: 700, textDecoration: "none" }}>Co-author interest</Link>
           </div>
+          <p style={{ marginTop: 10, fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>DOI minted on acceptance; full pre-print available NDA-gated to qualified researchers in the meantime.</p>
         </section>
 
         {/* Citation block */}
@@ -68,7 +68,7 @@ export default function ResearchPage() {
   author  = {Chen, J. and Reyes, M. and Patel, M. and {EEGBase Registry Group}},
   journal = {Frontiers in Human Neuroscience (under review)},
   year    = {2026},
-  doi     = {10.31234/osf.io/8h2k4},
+  note    = {DOI to be minted on acceptance},
   url     = {https://eegbase.com/research}
 }`}</pre>
         </section>
@@ -94,7 +94,7 @@ export default function ResearchPage() {
           </p>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <Link href="/downloads" style={{ padding: "8px 14px", background: "#2563EB", color: "white", borderRadius: 8, fontSize: 12, fontWeight: 700, textDecoration: "none" }}>Sample sidecar JSON →</Link>
-            <a href="mailto:research@eegbase.com?subject=Registry%20DUA%20request" style={{ padding: "8px 14px", background: "transparent", color: "#2563EB", border: "1px solid #2563EB", borderRadius: 8, fontSize: 12, fontWeight: 700, textDecoration: "none" }}>Request DUA access</a>
+            <Link href="/contact?role=research" style={{ padding: "8px 14px", background: "transparent", color: "#2563EB", border: "1px solid #2563EB", borderRadius: 8, fontSize: 12, fontWeight: 700, textDecoration: "none" }}>Request DUA access</Link>
           </div>
         </section>
 
@@ -105,7 +105,7 @@ export default function ResearchPage() {
           <p style={{ fontSize: 13, color: "#78350F", lineHeight: 1.7, marginBottom: 12 }}>
             Contributing clinics get authorship credit (rotating first author per cohort), early access to aggregate analyses, and the IRB packet to submit at your site. Mendi is the proposed instrument-provider co-author.
           </p>
-          <a href="mailto:research@eegbase.com?subject=Co-author%20interest" style={{ display: "inline-block", padding: "10px 18px", background: "#92400E", color: "white", borderRadius: 8, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>Email research@ →</a>
+          <Link href="/contact?role=research" style={{ display: "inline-block", padding: "10px 18px", background: "#92400E", color: "white", borderRadius: 8, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>Express co-author interest →</Link>
         </section>
       </main>
 
