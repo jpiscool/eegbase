@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TODAY_SCHEDULE, SPARKLINES, HOME_USER_NEXT, HOME_USER_STREAK, HOME_PRACTICE, DAILY_PROMPTS } from "../_data/sessions";
-import { CLIENTS } from "../_data/clients";
+import { TODAY_SCHEDULE, SPARKLINES, HOME_USER_NEXT, HOME_USER_STREAK, DAILY_PROMPTS } from "../_data/sessions";
 import { Sparkline } from "../_components/Sparkline";
 import { CheckIn } from "../_components/CheckIn";
 import { DevicesCard } from "../_components/DevicesCard";
@@ -10,6 +9,7 @@ import { WearableSyncCard } from "../_components/WearableSyncCard";
 import { SessionTypePicker } from "../_components/SessionTypePicker";
 import { SleepImpactCard } from "../_components/SleepImpactCard";
 import { OneThingCard } from "../_components/OneThingCard";
+import { HowIsEveryoneCard } from "../_components/HowIsEveryoneCard";
 import type { Role } from "../_components/RoleToggle";
 import type { SessionType } from "../_data/session-types";
 
@@ -57,43 +57,10 @@ function ClinicianToday({
         </section>
       )}
 
-      {/* Home practice — at-a-glance adherence for the 5 demo patients */}
-      <section className="mb-12">
-        <div className="flex items-baseline justify-between mb-4">
-          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Home practice</h2>
-          <p className="text-xs text-gray-400">Last home session per patient</p>
-        </div>
-        <div className="bg-white border border-gray-200 rounded-2xl p-5">
-          <div className="grid grid-cols-5 gap-3">
-            {HOME_PRACTICE.map((hp) => {
-              const c = CLIENTS.find((x) => x.id === hp.clientId);
-              if (!c) return null;
-              const color =
-                hp.daysSince <= 2 ? "#10B981" :
-                hp.daysSince <= 7 ? "#F59E0B" :
-                                    "#EF4444";
-              const label =
-                hp.daysSince === 0 ? "today" :
-                hp.daysSince === 1 ? "1 day"  :
-                                    `${hp.daysSince}d`;
-              return (
-                <button
-                  key={hp.clientId}
-                  onClick={() => onOpenPatient(hp.clientId)}
-                  className="text-center group"
-                  aria-label={`${c.name} \u00b7 last home session ${label}`}
-                >
-                  <span className="block w-10 h-10 mx-auto rounded-full bg-blue-100 text-blue-700 font-semibold text-xs flex items-center justify-center group-hover:ring-2 group-hover:ring-blue-300 transition-all">
-                    {c.initials}
-                  </span>
-                  <span className="block w-2 h-2 mx-auto mt-2 rounded-full" style={{ background: color }} aria-hidden />
-                  <span className="block text-[10px] text-gray-500 mt-1 tabular-nums">{label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      {/* "How is everyone today?" — replaces the prior avatar-only Home Practice strip.
+          Same 5 patients, but each row carries a single plain-English status string
+          instead of a bare day-count, sorted urgent-first. Strictly more informative. */}
+      <HowIsEveryoneCard onOpenPatient={onOpenPatient} />
 
       <section className="mb-12">
         <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Today</h2>
