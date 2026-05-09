@@ -45,7 +45,10 @@ export default function StatusPage() {
         </div>
       </header>
 
-      <main style={{ maxWidth: 920, margin: "0 auto", padding: "32px 24px" }}>
+      <main id="main-content" style={{ maxWidth: 920, margin: "0 auto", padding: "32px 24px" }}>
+        <h1 style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", border: 0 }}>
+          EEGBase Status
+        </h1>
         {/* Top status banner */}
         <div style={{ background: "linear-gradient(135deg, #ECFDF5, #F0FDF4)", border: "1px solid #A7F3D0", borderRadius: 14, padding: "20px 24px", display: "flex", alignItems: "center", gap: 16, marginBottom: 28 }}>
           <span style={{ width: 14, height: 14, borderRadius: "50%", background: "#10B981", boxShadow: "0 0 0 4px rgba(16,185,129,0.18)" }} />

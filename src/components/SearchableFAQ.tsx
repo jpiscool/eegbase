@@ -19,7 +19,7 @@ const FAQS: Faq[] = [
   { cat: "Differentiation", q: "Does EEGBase work with devices other than Mendi?", a: "Yes. Muse, Polar, Apple Watch, Oura, Whoop, and OpenBCI all work today. Mendi works once they share their pairing details — adapter is built. Adding a new device is a small piece of code." },
 
   // Data & security
-  { cat: "Data & security", q: "Is client data safe?", a: "Yes. Encrypted in transit (TLS 1.3) and at rest (AES-256-GCM via AWS KMS). Bishop Fox penetration test and Coalfire SOC 2 Type II audit are scheduled for Q1 2026. Hosted on U.S. East infrastructure (EU clinics on Frankfurt eu-west-3)." },
+  { cat: "Data & security", q: "Is client data safe?", a: "Yes. Encrypted in transit (TLS 1.3) and at rest (AES-256-GCM via AWS KMS). Bishop Fox penetration test and Coalfire SOC 2 Type II audit are scheduled for Q3 2026. Hosted on U.S. East infrastructure (EU clinics on Frankfurt eu-west-3)." },
   { cat: "Data & security", q: "Is EEGBase HIPAA compliant?", a: "Yes. HIPAA-friendly architecture; we sign a BAA on enrollment. Client data is encrypted, U.S.-resident only, and never sent to any third party without explicit clinician consent." },
   { cat: "Data & security", q: "What about GDPR / EU privacy?", a: "EU clinic data stays in Frankfurt. We follow EU privacy law (Schrems II compliant). Clinicians can request their data back within 30 days." },
   { cat: "Data & security", q: "What happens to my data if I stop using EEGBase?", a: "You keep all of it. Export everything as BIDS, SNIRF, EDF+, CSV, or PDF anytime. After cancellation you retain export rights for 90 days, then we permanently delete clinic data within 30 days. No lock-in, ever." },
@@ -63,6 +63,22 @@ export function SearchableFAQ() {
 
   return (
     <div>
+      {/* FAQPage JSON-LD — Google rich-result eligibility for the inline FAQ.
+          Renders all 19 Q&A pairs regardless of which the user has expanded. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: FAQS.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
+          }),
+        }}
+      />
       {/* Search + chips */}
       <div className="mb-5">
         <input
@@ -74,22 +90,27 @@ export function SearchableFAQ() {
           className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 bg-white"
         />
         <div className="flex gap-2 flex-wrap mt-3">
-          {categories.map((c) => (
-            <button
-              key={c}
-              onClick={() => setActiveCat(c)}
-              className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-colors ${
-                activeCat === c ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              {c}
-              {c !== "All" && (
-                <span className="ml-1.5 text-[10px] opacity-60">
-                  {FAQS.filter((f) => f.cat === c).length}
-                </span>
-              )}
-            </button>
-          ))}
+          {categories.map((c) => {
+            const count = c === "All" ? FAQS.length : FAQS.filter((f) => f.cat === c).length;
+            return (
+              <button
+                key={c}
+                onClick={() => setActiveCat(c)}
+                aria-pressed={activeCat === c}
+                aria-label={`${c} (${count} ${count === 1 ? "question" : "questions"})`}
+                className={`text-xs font-semibold px-3.5 py-2 min-h-[32px] rounded-full transition-colors ${
+                  activeCat === c ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {c}
+                {c !== "All" && (
+                  <span aria-hidden="true" className="ml-1.5 text-[10px] opacity-60">
+                    · {count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -113,18 +134,21 @@ export function SearchableFAQ() {
             return (
               <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
                 <button
+                  id={`faq-trigger-${i}`}
                   onClick={() => toggle(i)}
                   aria-expanded={open.has(i)}
+                  aria-controls={`faq-panel-${i}`}
                   className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex-1">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 mr-2">{item.cat}</span>
+                    <span className="sr-only">: </span>
                     <span className="text-sm font-semibold text-gray-900">{item.q}</span>
                   </div>
                   <ChevronDown size={16} className={`text-gray-400 shrink-0 ml-4 transition-transform ${open.has(i) ? "rotate-180" : ""}`} />
                 </button>
                 {open.has(i) && (
-                  <div className="px-5 pb-4 bg-white text-sm text-gray-600 leading-relaxed border-t border-gray-100">
+                  <div id={`faq-panel-${i}`} role="region" aria-labelledby={`faq-trigger-${i}`} className="px-5 pb-4 bg-white text-sm text-gray-600 leading-relaxed border-t border-gray-100">
                     {item.a}
                   </div>
                 )}

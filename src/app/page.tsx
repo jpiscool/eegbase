@@ -35,11 +35,12 @@ export default function LandingPage() {
         </div>
       </header>
 
+      <main id="main-content">
       {/* ════════════════════════════════════════════════════════════════
           1. HERO  ·  StoryBrand: Character + What they want
           UNCHANGED per user direction
           ════════════════════════════════════════════════════════════════ */}
-      <section id="main-content" className="relative max-w-5xl mx-auto px-6 pt-24 pb-20 text-center" style={{ overflow: "visible" }}>
+      <section className="relative max-w-5xl mx-auto px-6 pt-24 pb-20 text-center" style={{ overflow: "visible" }}>
         <style>{`
           @keyframes orbDrift1 { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(40px, -30px) scale(1.1); } 66% { transform: translate(-30px, 20px) scale(0.95); } }
           @keyframes orbDrift2 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-50px, 40px) scale(1.15); } }
@@ -55,7 +56,7 @@ export default function LandingPage() {
             Free for licensed clinicians
           </div>
           <h1 className="font-extrabold text-gray-900 mb-5" style={{ fontSize: "clamp(2.6rem, 5.2vw, 4rem)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
-            Control all your neurofeedback devices
+            Control all your neurofeedback devices{" "}
             <br />
             with{" "}
             <span style={{ background: "linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #06B6D4 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>one tool</span>
@@ -190,12 +191,12 @@ export default function LandingPage() {
               {[
                 { num: "10+",    label: "Devices supported" },
                 { num: "Free",   label: "For licensed clinicians" },
-                { num: "SOC 2",  label: "Q1 2026 audit · Coalfire" },
-                { num: "WCAG",   label: "2.2 AA · Q1 2026 · Deque" },
+                { num: "SOC 2",  label: "Q3 2026 audit · Coalfire" },
+                { num: "WCAG",   label: "2.2 AA · Q3 2026 · Deque" },
               ].map((s) => (
                 <div key={s.label} className="bg-white border border-gray-200 rounded-xl p-5 text-center">
                   <p className="text-2xl font-extrabold text-gray-900 tracking-tight mb-1">{s.num}</p>
-                  <p className="text-xs text-gray-500 leading-relaxed">{s.label}</p>
+                  <p className="text-xs text-gray-700 leading-relaxed">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -259,7 +260,7 @@ export default function LandingPage() {
               Outcome scales (PHQ-9, GAD-7, ADHD-RS-IV, MBI-EE, custom) auto-track over time. Insurance billing (CMS-1500, ERA, ICD-10) is built in. Reports send to clients and referring doctors with one click. Everything exports as BIDS, SNIRF, EDF+, CSV, or PDF — your data stays yours, forever.
             </p>
             <p>
-              EEGBase is free for licensed clinicians. Hosted on a HIPAA-friendly U.S. infrastructure (AWS us-east-1; EU clinics on eu-west-3). Bishop Fox pen-test, Coalfire SOC 2 Type II, and Deque WCAG 2.2 AA audits scheduled for Q1 2026.
+              EEGBase is free for licensed clinicians. Hosted on a HIPAA-friendly U.S. infrastructure (AWS us-east-1; EU clinics on eu-west-3). Bishop Fox pen-test, Coalfire SOC 2 Type II, and Deque WCAG 2.2 AA audits scheduled for Q3 2026.
             </p>
           </div>
         </div>
@@ -323,6 +324,7 @@ export default function LandingPage() {
           <p className="text-blue-200 text-xs mt-6">5 sample clients · 20-session arcs pre-loaded · No account required</p>
         </div>
       </section>
+      </main>
 
       {/* Footer */}
       <footer className="border-t border-gray-100 px-6 py-10">
@@ -335,13 +337,13 @@ export default function LandingPage() {
             <p className="mt-2 inline-flex items-center gap-2 flex-wrap text-xs">
               <LiveStatusPill />
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 font-medium">
-                <span aria-hidden="true">🔒</span> Bishop Fox pen-test · Q1 2026
+                <span aria-hidden="true">🔒</span> Bishop Fox pen-test · Q3 2026
               </span>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 font-medium">
-                <span aria-hidden="true">📜</span> Coalfire SOC 2 · Q1 2026
+                <span aria-hidden="true">📜</span> Coalfire SOC 2 · Q3 2026
               </span>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 font-medium">
-                <span aria-hidden="true">♿</span> Deque WCAG 2.2 AA · Q1 2026
+                <span aria-hidden="true">♿</span> Deque WCAG 2.2 AA · Q3 2026
               </span>
             </p>
           </div>

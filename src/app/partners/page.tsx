@@ -41,8 +41,8 @@ const GROUPS = [
     title: "Regulatory · audit",
     sub: "Independent verification of our security + compliance posture",
     items: [
-      { name: "Coalfire",      desc: "SOC 2 Type II audit · Q1 2026",                  status: "live", color: "#16A34A" },
-      { name: "Bishop Fox",    desc: "Pen-test · Q1 2026 · attestation NDA-gated",     status: "live", color: "#DC2626" },
+      { name: "Coalfire",      desc: "SOC 2 Type II audit · Q3 2026",                  status: "live", color: "#16A34A" },
+      { name: "Bishop Fox",    desc: "Pen-test · Q3 2026 · attestation NDA-gated",     status: "live", color: "#DC2626" },
       { name: "Deque",         desc: "WCAG 2.2 AA accessibility audit",                status: "live", color: "#7C3AED" },
     ],
   },

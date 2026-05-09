@@ -45,6 +45,7 @@ export default function MendiPartnershipPage() {
         </div>
       </header>
 
+      <main id="main-content">
       {/* Hero */}
       <section style={{ background: `linear-gradient(135deg, #1E1B4B 0%, #2D1B69 50%, #3B0764 100%)`, color: "#fff", padding: "80px 24px" }}>
         <div style={{ maxWidth: 760, margin: "0 auto", textAlign: "center" }}>
@@ -58,7 +59,7 @@ export default function MendiPartnershipPage() {
             Partnership Proposal — May 2026
           </div>
           <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.25rem)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.03em", marginBottom: 20 }}>
-            The clinical layer<br />
+            The clinical layer{" "}<br />
             <span style={{ color: "#A78BFA" }}>Mendi has been waiting for</span>
           </h1>
           <p style={{ fontSize: 18, color: "#C4B5FD", lineHeight: 1.7, maxWidth: 580, margin: "0 auto 32px" }}>
@@ -504,6 +505,7 @@ export default function MendiPartnershipPage() {
           </div>
         </div>
       </section>
+      </main>
 
       {/* Footer */}
       <footer style={{ background: "#111", color: "#9CA3AF", borderTop: "1px solid #1F2937" }}>

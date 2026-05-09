@@ -53,8 +53,11 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
   },
+  // canonical is intentionally omitted at the root so per-page metadata
+  // can declare it without duplicating to the homepage. metadataBase
+  // (above) makes per-page relative canonicals resolve against
+  // https://eegbase.com.
   alternates: {
-    canonical: SITE_URL,
     languages: {
       en: SITE_URL,
       "x-default": SITE_URL,

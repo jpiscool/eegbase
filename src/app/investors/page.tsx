@@ -53,7 +53,7 @@ export default function InvestorsPage() {
             <li>Pre-print under review at Frontiers in Human Neuroscience (n=2,840)</li>
             <li>Sham-controlled RCT pre-registered · NCT06912xxx · IRB approved Apr 2026</li>
             <li>Mendi partnership proposal submitted Q2 2026 · 3 partnership tiers under review</li>
-            <li>SOC 2 Type II + Bishop Fox pen-test scheduled Q1 2026</li>
+            <li>SOC 2 Type II + Bishop Fox pen-test scheduled Q3 2026</li>
             <li>Hosted SaaS · free for licensed clinicians during early launch</li>
             <li>Demo deployed at <Link href="/demo" style={{ color: "#2563EB" }}>eegbase.com/demo</Link> · 11 tabs · pre-loaded clients + sessions</li>
           </ul>
@@ -64,7 +64,7 @@ export default function InvestorsPage() {
           <h2 style={{ fontSize: 20, fontWeight: 800, color: "#0F172A", marginBottom: 12 }}>Why now</h2>
           <ol style={{ paddingLeft: 20, listStyle: "decimal", color: "#374151", fontSize: 14, lineHeight: 1.8 }}>
             <li><strong>Consumer fNIRS just hit price-feasible</strong> — Mendi $299, Muse Athena $475, Sens.ai $1,500. The hardware is finally affordable for clinic prescription.</li>
-            <li><strong>USCDI+ Behavioral Health pilot</strong> — ONC's 9-pilot federal program launched Q1 2026. First-mover advantage on the standards is open.</li>
+            <li><strong>USCDI+ Behavioral Health pilot</strong> — ONC's 9-pilot federal program launched Q3 2026. First-mover advantage on the standards is open.</li>
             <li><strong>AI scribe is table-stakes</strong> — Mentalyc, Upheal, DeepCura proved the workflow. We bundle it with the signal data, which they can't.</li>
             <li><strong>BIDS / SNIRF / EDF+ export anytime</strong> — procurement teams can finally say yes to a startup. Standardised exports = zero lock-in.</li>
           </ol>

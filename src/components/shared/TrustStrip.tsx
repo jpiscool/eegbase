@@ -11,7 +11,7 @@
 
 const BADGES: { dot: string; label: string; date: string; explain: string }[] = [
   { dot: "#10B981", label: "HIPAA-friendly",       date: "Today",    explain: "HIPAA-aligned architecture today. We sign a Business Associate Agreement with every clinic that stores PHI." },
-  { dot: "#2563EB", label: "SOC 2 Type II",        date: "Q1 2026",  explain: "Coalfire audit scheduled for Q1 2026. Report will be available NDA-gated on completion." },
+  { dot: "#2563EB", label: "SOC 2 Type II",        date: "Q3 2026",  explain: "Coalfire audit scheduled for Q3 2026. Report will be available NDA-gated on completion." },
   { dot: "#7C3AED", label: "US data residency",    date: "Always",   explain: "All U.S. clinic data stored in AWS us-east-1. EU clinics on Frankfurt eu-west-3. No cross-border transfer." },
   { dot: "#F59E0B", label: "End-to-end encrypted", date: "Always",   explain: "TLS 1.3 in transit, AES-256-GCM at rest. Keys managed by AWS KMS." },
 ];

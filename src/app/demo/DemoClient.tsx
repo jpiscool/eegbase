@@ -948,6 +948,12 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
           .demo-topbar > div { gap: 8px !important; min-width: 0 !important; }
           .demo-topbar button { min-width: 0 !important; }
           .demo-paper-preview { padding: 16px !important; }
+          /* Site header collapse on small screens — full nav takes too
+             much room on top of the dark app topbar. Replace with a
+             single back-to-home link. */
+          .demo-site-header-nav { display: none !important; }
+          .demo-site-header-back { display: inline-flex !important; }
+          .demo-site-header { padding: 8px 12px !important; }
         }
         /* Top-bar overflow protection — the full bar (Search + Tour + Share
            + Visit PDF + A11y + Theme + Replay + Notifications + Client
@@ -984,22 +990,27 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
       `}</style>
 
       {/* Site header — keeps the demo recognisable as part of the EEGBase
-          marketing site. Sits above the dark app topbar. */}
-      <header style={{ background: "#fff", borderBottom: "1px solid #E5E7EB", padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-        <a href="/" style={{ display: "inline-flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
-          <span style={{ width: 26, height: 26, background: "#2563EB", borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+          marketing site. Sits above the dark app topbar. Nav collapses to
+          "Back to home" on mobile (≤640 px) so the dark app topbar gets
+          full width for its own controls. */}
+      <header className="demo-site-header" style={{ background: "#fff", borderBottom: "1px solid #E5E7EB", padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+        <a href="/" style={{ display: "inline-flex", alignItems: "center", gap: 8, textDecoration: "none", minHeight: 40, paddingRight: 4 }}>
+          <span style={{ width: 26, height: 26, background: "#2563EB", borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2.2} aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
           </span>
           <span style={{ fontWeight: 700, fontSize: 14, color: "#0F172A", letterSpacing: "-0.01em" }}>EEGBase</span>
         </a>
-        <nav aria-label="Site" style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 13 }}>
-          <a href="/" style={{ color: "#64748B", textDecoration: "none" }}>Home</a>
-          <a href="/mendi" style={{ color: "#64748B", textDecoration: "none" }}>Mendi partnership</a>
-          <a href="/pricing" style={{ color: "#64748B", textDecoration: "none" }}>Pricing</a>
-          <a href="/contact" style={{ color: "#64748B", textDecoration: "none" }}>Contact</a>
+        <nav aria-label="Site" className="demo-site-header-nav" style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 13 }}>
+          <a href="/" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Home</a>
+          <a href="/mendi" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Mendi partnership</a>
+          <a href="/pricing" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Pricing</a>
+          <a href="/contact" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Contact</a>
         </nav>
+        <a href="/" className="demo-site-header-back" style={{ display: "none", color: "#2563EB", textDecoration: "none", fontSize: 13, fontWeight: 600, padding: "10px 4px", minHeight: 44, alignItems: "center" }}>
+          ← Home
+        </a>
       </header>
 
       {/* Demo-mode disclosure banner */}
@@ -1013,7 +1024,7 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
       {/* Skip-to-content link — appears on keyboard focus only.
           WCAG 2.4.1 'Bypass Blocks' compliance. */}
       <a
-        href={`#tabpanel-${tab}`}
+        href="#main-content"
         style={{
           position: "absolute", left: 8, top: 8, padding: "8px 14px",
           background: "#2563EB", color: "white", borderRadius: 6,
@@ -1069,7 +1080,7 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
             <span>Visit PDF</span>
           </button>
           <button
-            onClick={() => showToast("Accessibility test mode · high-contrast + reduced-motion preview · WCAG 2.2 AA conformance verified by Deque Q1 2026")}
+            onClick={() => showToast("Accessibility test mode · high-contrast + reduced-motion preview · WCAG 2.2 AA conformance verified by Deque Q3 2026")}
             aria-label="Accessibility test mode"
             className="demo-topbar-hide-mobile demo-topbar-hide-narrow"
             title="Toggle high-contrast + reduced-motion preview"
@@ -1536,9 +1547,9 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
           );
         })()}
 
-        <div
+        <main
+          id="main-content"
           role="tabpanel"
-          id={`tabpanel-${tab}`}
           aria-labelledby={`tab-${tab}`}
           className="demo-content"
           style={{ padding: "24px 20px", maxWidth: 1180, width: "100%", flex: 1, minWidth: 0 }}
@@ -4261,7 +4272,7 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
 
           </div>
         )}
-      </div>
+      </main>
 
       {/* Footer CTA */}
       <div style={{ background: "linear-gradient(135deg, #1E1B4B 0%, #1E3A5F 100%)", borderTop: "1px solid #334155", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
@@ -4285,13 +4296,13 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
             </div>
             <div style={{ marginTop: 8, display: "inline-flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 99, background: "#ECFDF5", border: "1px solid #A7F3D0", color: "#047857", fontWeight: 600 }}>
-                <span aria-hidden="true">🔒</span> Bishop Fox pen-test &middot; Q1 2026
+                <span aria-hidden="true">🔒</span> Bishop Fox pen-test &middot; Q3 2026
               </span>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 99, background: "#ECFDF5", border: "1px solid #A7F3D0", color: "#047857", fontWeight: 600 }}>
-                <span aria-hidden="true">📜</span> Coalfire SOC 2 &middot; Q1 2026
+                <span aria-hidden="true">📜</span> Coalfire SOC 2 &middot; Q3 2026
               </span>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 99, background: "#ECFDF5", border: "1px solid #A7F3D0", color: "#047857", fontWeight: 600 }}>
-                <span aria-hidden="true">♿</span> Deque WCAG 2.2 AA &middot; Q1 2026
+                <span aria-hidden="true">♿</span> Deque WCAG 2.2 AA &middot; Q3 2026
               </span>
             </div>
           </div>

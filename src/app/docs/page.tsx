@@ -46,13 +46,19 @@ function Endpoint({ method, path, description }: { method: string; path: string;
 
 export default async function DocsPage() {
   const session = await auth();
-  const clinicId = (session?.user as { clinicId?: string })?.clinicId ?? "";
+  const clinicId = (session?.user as { clinicId?: string })?.clinicId;
 
-  await db
-    .select({ name: clinics.name })
-    .from(clinics)
-    .where(eq(clinics.id, clinicId))
-    .limit(1);
+  // Only run the clinic lookup when there's a real UUID. Public/anonymous
+  // visitors should still see the API docs — the original code passed
+  // an empty string into a UUID column and Postgres rejected it
+  // ("invalid input syntax for type uuid"), 500-ing the whole page.
+  if (clinicId) {
+    await db
+      .select({ name: clinics.name })
+      .from(clinics)
+      .where(eq(clinics.id, clinicId))
+      .limit(1);
+  }
 
   return (
     <div className="max-w-3xl">

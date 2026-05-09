@@ -27,7 +27,7 @@ const ENTRIES: { date: string; tag: Tag; title: string; desc: string }[] = [
   { date: "May 1 2026",  tag: "fixed",    title: "Outcome-stat consistency (74% / 22 sessions)", desc: "Resolved a contradiction across 3 references in the demo — all now cite the same canonical baseline." },
   { date: "Apr 30 2026", tag: "research", title: "Pre-print submitted to Frontiers in Human Neuroscience", desc: "Home-use fNIRS neurofeedback in adolescent ADHD: a 412-clinic naturalistic registry (n=2,840). Under peer review." },
   { date: "Apr 28 2026", tag: "research", title: "Sham-controlled RCT pre-registration",         desc: "n=180 · 3-arm (active / sham / waitlist) · pre-registered on ClinicalTrials.gov NCT06912xxx · IRB approved." },
-  { date: "Apr 26 2026", tag: "improved", title: "Bishop Fox pen-test + Coalfire SOC 2 Type II scheduled", desc: "Q1 2026 audits in flight. Reports will be available NDA-gated on completion." },
+  { date: "Apr 26 2026", tag: "improved", title: "Bishop Fox pen-test + Coalfire SOC 2 Type II scheduled", desc: "Q3 2026 audits in flight. Reports will be available NDA-gated on completion." },
 ];
 
 const TAG_COLOR: Record<Tag, { bg: string; fg: string; label: string }> = {

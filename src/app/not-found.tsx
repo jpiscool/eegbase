@@ -1,8 +1,15 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Page not found · EEGBase",
+  description: "That page doesn't exist. Try the live demo, the Mendi partnership doc, or contact us.",
+  robots: { index: false, follow: false },
+};
 
 export default function NotFound() {
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAFA", fontFamily: "system-ui, -apple-system, sans-serif", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+    <main id="main-content" style={{ minHeight: "100vh", background: "#FAFAFA", fontFamily: "system-ui, -apple-system, sans-serif", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div style={{ maxWidth: 520, width: "100%", textAlign: "center" }}>
         <p style={{ fontSize: 11, fontWeight: 800, color: "#7C3AED", letterSpacing: "0.2em", marginBottom: 14, textTransform: "uppercase" }}>404 · Not found</p>
         <h1 style={{ fontSize: 56, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.03em", lineHeight: 1.05, marginBottom: 16 }}>
@@ -29,6 +36,6 @@ export default function NotFound() {
           <text x="155" y="10" fontSize="9" fill="#EF4444" fontWeight="700">drift detected</text>
         </svg>
       </div>
-    </div>
+    </main>
   );
 }
