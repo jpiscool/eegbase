@@ -983,6 +983,25 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
         [data-nextjs-toast], nextjs-portal, #__next-build-watcher, .__next-error-overlay-wrapper { display: none !important; }
       `}</style>
 
+      {/* Site header — keeps the demo recognisable as part of the EEGBase
+          marketing site. Sits above the dark app topbar. */}
+      <header style={{ background: "#fff", borderBottom: "1px solid #E5E7EB", padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+        <a href="/" style={{ display: "inline-flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
+          <span style={{ width: 26, height: 26, background: "#2563EB", borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2.2} aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </span>
+          <span style={{ fontWeight: 700, fontSize: 14, color: "#0F172A", letterSpacing: "-0.01em" }}>EEGBase</span>
+        </a>
+        <nav aria-label="Site" style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 13 }}>
+          <a href="/" style={{ color: "#64748B", textDecoration: "none" }}>Home</a>
+          <a href="/mendi" style={{ color: "#64748B", textDecoration: "none" }}>Mendi partnership</a>
+          <a href="/pricing" style={{ color: "#64748B", textDecoration: "none" }}>Pricing</a>
+          <a href="/contact" style={{ color: "#64748B", textDecoration: "none" }}>Contact</a>
+        </nav>
+      </header>
+
       {/* Demo-mode disclosure banner */}
       <div role="status" style={{ background: "#FEF3C7", borderBottom: "1px solid #FCD34D", color: "#78350F", padding: "8px 24px", fontSize: 12, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap", textAlign: "center" }}>
         <span style={{ fontSize: 14 }}>⚠️</span>
@@ -4254,6 +4273,39 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
           Talk to us →
         </a>
       </div>
+
+      {/* Site footer — same chrome as homepage so the demo reads as part
+          of the EEGBase site rather than an isolated app surface. */}
+      <footer style={{ background: "#fff", borderTop: "1px solid #E5E7EB", padding: "24px", color: "#9CA3AF", fontSize: 12 }}>
+        <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+          <div style={{ minWidth: 0 }}>
+            <div>© 2026 EEGBase &mdash; neurofeedback platform for clinics</div>
+            <div style={{ marginTop: 4, color: "#9CA3AF" }}>
+              Free for licensed clinicians. Hosted in the U.S. on HIPAA-friendly infrastructure. No lock-in.
+            </div>
+            <div style={{ marginTop: 8, display: "inline-flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 99, background: "#ECFDF5", border: "1px solid #A7F3D0", color: "#047857", fontWeight: 600 }}>
+                <span aria-hidden="true">🔒</span> Bishop Fox pen-test &middot; Q1 2026
+              </span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 99, background: "#ECFDF5", border: "1px solid #A7F3D0", color: "#047857", fontWeight: 600 }}>
+                <span aria-hidden="true">📜</span> Coalfire SOC 2 &middot; Q1 2026
+              </span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 99, background: "#ECFDF5", border: "1px solid #A7F3D0", color: "#047857", fontWeight: 600 }}>
+                <span aria-hidden="true">♿</span> Deque WCAG 2.2 AA &middot; Q1 2026
+              </span>
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
+            <a href="/" style={{ color: "#6B7280", textDecoration: "none" }}>Home</a>
+            <a href="/mendi" style={{ color: "#6B7280", textDecoration: "none" }}>Mendi</a>
+            <a href="/pricing" style={{ color: "#6B7280", textDecoration: "none" }}>Pricing</a>
+            <a href="/privacy" style={{ color: "#6B7280", textDecoration: "none" }}>Privacy</a>
+            <a href="/terms" style={{ color: "#6B7280", textDecoration: "none" }}>Terms</a>
+            <a href="/status" style={{ color: "#6B7280", textDecoration: "none" }}>Status</a>
+            <a href="/contact" style={{ color: "#6B7280", textDecoration: "none" }}>Contact</a>
+          </div>
+        </div>
+      </footer>
         </div>
       </div>
     </div>
