@@ -13,6 +13,7 @@ import { ClinicianWatchPanel } from "../_components/LiveCoFeedback";
 import { AskWeekSheet } from "../_components/AskWeekSheet";
 import { DiagnosticCard } from "../_components/DiagnosticCard";
 import { FamilyCard } from "../_components/FamilyCard";
+import { EmailReportSheet } from "../_components/EmailReportSheet";
 
 interface PatientsViewProps {
   role: Role;
@@ -32,6 +33,7 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
   const [askOpen, setAskOpen] = useState(false);
   const [diagnosticOpen, setDiagnosticOpen] = useState(false);
   const [sessionLive, setSessionLive] = useState(false);
+  const [emailOpenFor, setEmailOpenFor] = useState<number | null>(null);
 
   // Detect whether the patient is currently in a session by polling the
   // live-score key written by SessionView. Cheap; only the clinician panel
@@ -219,6 +221,12 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
                   <p className="text-sm text-gray-700 leading-relaxed mb-3 italic">&ldquo;{s.noteSummary}&rdquo;</p>
                   <div className="flex flex-wrap gap-2">
                     <button className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:border-gray-300">Send PDF</button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setEmailOpenFor(s.id); }}
+                      className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:border-gray-300"
+                    >
+                      Email report
+                    </button>
                     <button className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:border-gray-300">Edit note</button>
                   </div>
                 </div>
@@ -250,6 +258,11 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
         patientFirstName={client.name.split(" ")[0]}
       />
       <DiagnosticCard open={diagnosticOpen} setOpen={setDiagnosticOpen} />
+      <EmailReportSheet
+        open={emailOpenFor !== null}
+        setOpen={(v) => { if (!v) setEmailOpenFor(null); }}
+        patientFirstName={client.name.split(" ")[0]}
+      />
     </main>
   );
 }

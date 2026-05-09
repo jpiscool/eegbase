@@ -135,8 +135,10 @@ export function SessionView({ clientId, sessionType, sessionMinutes = 20, role =
       {/* First-session tutor — home-user only; clinicians know what they're doing */}
       {role === "home" && <TutorOverlay />}
 
-      {/* Watching-with-clinician pill — appears when share toggle is on */}
-      <LiveCoFeedbackPill />
+      {/* Watching-with-clinician pill — home-user only. Clinicians ARE the
+          person on the other end, so showing "watching with Dr. Maya" to them
+          would be confusing. */}
+      {role === "home" && <LiveCoFeedbackPill />}
 
       {/* Patient + protocol — one line, no chrome */}
       <header className="flex items-center justify-between mb-8">

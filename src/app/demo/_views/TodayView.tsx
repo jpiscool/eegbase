@@ -35,7 +35,7 @@ function ClinicianToday({
   const next = TODAY_SCHEDULE.find((a) => a.status === "Now") ?? TODAY_SCHEDULE.find((a) => a.status === "Upcoming");
   const stats = [
     { label: "Sessions this week", value: 12, sub: "↗ up 2 vs last week", series: SPARKLINES.sessionsThisWeek },
-    { label: "Avg session length", value: 28, sub: "minutes",             series: SPARKLINES.avgSessionMin, suffix: " min" },
+    { label: "Avg session length", value: 28, sub: "minutes",             series: SPARKLINES.avgSessionMin },
     { label: "Reports pending",    value: 1,  sub: "Sarah Mitchell",      series: SPARKLINES.reportsPending },
   ];
 
@@ -98,7 +98,7 @@ function ClinicianToday({
             <div key={s.label} className="bg-white border border-gray-200 rounded-2xl p-5">
               <p className="text-xs text-gray-500 mb-1.5">{s.label}</p>
               <div className="flex items-end justify-between gap-3">
-                <p className="text-2xl font-bold text-gray-900 tabular-nums">{s.value}{s.suffix ?? ""}</p>
+                <p className="text-2xl font-bold text-gray-900 tabular-nums">{s.value}</p>
                 <Sparkline data={s.series} />
               </div>
               <p className="text-xs text-gray-500 mt-2">{s.sub}</p>

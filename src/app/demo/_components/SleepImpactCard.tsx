@@ -23,7 +23,7 @@ export function SleepImpactCard() {
       <div className="bg-white border border-gray-200 rounded-2xl p-5">
         <p className="text-base text-gray-800 leading-relaxed mb-4">
           On nights you ran a <span className="font-semibold text-gray-900">Calm session</span>, your readiness was{" "}
-          <span className="font-semibold tabular-nums text-emerald-600">+{DELTA_VS_BASELINE}</span> vs nights you didn&rsquo;t.
+          <span className="font-semibold tabular-nums text-emerald-600">+{DELTA_VS_BASELINE}</span>{" "}vs nights you didn&rsquo;t.
         </p>
         <div className="flex items-end justify-between gap-4">
           <div className="flex-1">
