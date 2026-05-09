@@ -2656,7 +2656,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 alpha={sample?.alpha ?? null}
                 theta={sample?.theta ?? null}
                 beta={sample?.beta ?? null}
-                title="Live Prefrontal fNIRS"
+                title="Mendi · Live Prefrontal fNIRS"
               />
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 20 }} className="demo-grid-2">
                 {[

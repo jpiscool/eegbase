@@ -73,26 +73,35 @@ interface Region {
   normValue: number;
   band: string;
   signal: "fnirs" | "eeg"; // physical modality — fnirs comes from Mendi, eeg from Muse / multi-channel
+  hhb?: number | null;     // For fNIRS: paired DeoxyHb value (Mendi captures both HbO + HHb)
 }
 
 export function BrainMapPanel({
   oxyHbLeft,
   oxyHbRight,
+  deoxyHbLeft,
+  deoxyHbRight,
   alpha,
   theta,
   beta,
-  title = "Live Prefrontal fNIRS",
+  title = "Mendi · Live Prefrontal fNIRS",
 }: Props) {
   const [hoveredRegion, setHoveredRegion] = useState<Region | null>(null);
 
   // Build the regions array — top-down brain view.
-  // Fp1/Fp2 are fNIRS hemoglobin channels (Mendi: 2 forehead optodes).
-  // All other regions are EEG band-power channels (require a multi-channel
-  // EEG headset such as Muse). The two signals are different physical
-  // modalities and must not be conflated in copy or visuals.
+  // Mendi specs: 2-channel fNIRS at Fp1 + Fp2 (forehead), dual-wavelength
+  // LED-photodiode pairs (~660 nm + ~850 nm), ~10 Hz sampling. Each channel
+  // captures both oxygenated (HbO) and deoxygenated (HHb) hemoglobin via
+  // modified Beer-Lambert. We render the HbO heat for the dot color, and
+  // attach the paired HHb value for hover detail so both halves of Mendi's
+  // signal are visible.
+  //
+  // EEG band-power channels below require a multi-channel headset (e.g.
+  // Muse) and are NOT part of Mendi's signal. Kept for the optional
+  // multi-vendor mode but visually distinct.
   const regions: Region[] = [
-    { id: "fp1", cx: 78, cy: 60,  r: 13, label: "Prefrontal L", electrode: "Fp1", metric: "oxyL",  rawValue: oxyHbLeft,  normValue: normalizeOxy(oxyHbLeft),  band: "OxyHb", signal: "fnirs" },
-    { id: "fp2", cx: 142, cy: 60, r: 13, label: "Prefrontal R", electrode: "Fp2", metric: "oxyR",  rawValue: oxyHbRight, normValue: normalizeOxy(oxyHbRight), band: "OxyHb", signal: "fnirs" },
+    { id: "fp1", cx: 78, cy: 60,  r: 13, label: "Prefrontal L", electrode: "Fp1", metric: "oxyL",  rawValue: oxyHbLeft,  normValue: normalizeOxy(oxyHbLeft),  band: "HbO", signal: "fnirs", hhb: deoxyHbLeft  ?? null },
+    { id: "fp2", cx: 142, cy: 60, r: 13, label: "Prefrontal R", electrode: "Fp2", metric: "oxyR",  rawValue: oxyHbRight, normValue: normalizeOxy(oxyHbRight), band: "HbO", signal: "fnirs", hhb: deoxyHbRight ?? null },
     { id: "f3",  cx: 65,  cy: 100,r: 11, label: "Frontal L",    electrode: "F3",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta",  signal: "eeg" },
     { id: "fz",  cx: 110, cy: 95, r: 11, label: "Frontal Mid",  electrode: "Fz",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta",  signal: "eeg" },
     { id: "f4",  cx: 155, cy: 100,r: 11, label: "Frontal R",    electrode: "F4",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta",  signal: "eeg" },
@@ -114,7 +123,7 @@ export function BrainMapPanel({
             {title}
           </div>
           <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>
-            2 fNIRS (Mendi forehead) + 11 EEG bands (Muse / multi-channel)
+            2 channels @ Fp1/Fp2 · 10 Hz · 660 + 850 nm dual-wavelength · HbO + HHb
           </div>
         </div>
         <div style={{ fontSize: 10, color: "#64748B", display: "flex", alignItems: "center", gap: 8 }}>
@@ -261,7 +270,18 @@ export function BrainMapPanel({
                 </span>
               </div>
               <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>
-                {hoveredRegion.band}: {hoveredRegion.metric.startsWith("oxy") ? fmtOxy(hoveredRegion.rawValue) : fmtBand(hoveredRegion.rawValue)}
+                {hoveredRegion.signal === "fnirs" ? (
+                  <>
+                    HbO: <span style={{ color: "#A5F3FC" }}>{fmtOxy(hoveredRegion.rawValue)}</span>
+                    {hoveredRegion.hhb != null && (
+                      <span style={{ marginLeft: 10, fontWeight: 600 }}>
+                        HHb: <span style={{ color: "#94A3B8" }}>{fmtOxy(hoveredRegion.hhb)}</span>
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <>{hoveredRegion.band}: {fmtBand(hoveredRegion.rawValue)}</>
+                )}
               </div>
             </div>
             <div style={{ width: 32, height: 32, borderRadius: 8, background: heatColor(Math.max(0, hoveredRegion.normValue)), boxShadow: "0 2px 12px " + heatColor(Math.max(0, hoveredRegion.normValue)) + "55" }} />
@@ -277,14 +297,21 @@ export function BrainMapPanel({
       <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 14, fontSize: 10, color: "#94A3B8" }}>
         <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
           <span style={{ display: "inline-block", width: 14, height: 14, borderRadius: 99, border: "2px solid rgba(165,243,252,0.85)", boxSizing: "border-box" }} />
-          <strong style={{ color: "#A5F3FC", fontWeight: 700 }}>fNIRS · Mendi</strong>
-          <span>Fp1/Fp2 (forehead)</span>
+          <strong style={{ color: "#A5F3FC", fontWeight: 700 }}>Mendi fNIRS</strong>
+          <span>2 channels · HbO + HHb</span>
         </span>
         <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
           <span style={{ display: "inline-block", width: 14, height: 14, borderRadius: 99, border: "1px solid rgba(255,255,255,0.25)", boxSizing: "border-box" }} />
           <strong style={{ color: "#CBD5E1", fontWeight: 700 }}>EEG bands</strong>
-          <span>11 sites · requires Muse / multi-channel</span>
+          <span>11 sites · optional, requires Muse / multi-channel</span>
         </span>
+      </div>
+
+      {/* Mendi technical spec footer — accurate to public hardware specs */}
+      <div style={{ marginTop: 10, padding: "8px 10px", background: "rgba(165,243,252,0.06)", border: "1px solid rgba(165,243,252,0.18)", borderRadius: 8, fontSize: 9.5, color: "#94A3B8", lineHeight: 1.6 }}>
+        <strong style={{ color: "#A5F3FC", fontWeight: 700 }}>Mendi spec:</strong>{" "}
+        2-channel fNIRS · LED-photodiode pairs at <strong style={{ color: "#CBD5E1" }}>660 nm + 850 nm</strong> ·
+        ~10 Hz · placement Fp1 / Fp2 (forehead) · HbO &amp; HHb computed via modified Beer-Lambert.
       </div>
 
       {/* Heat scale legend */}
