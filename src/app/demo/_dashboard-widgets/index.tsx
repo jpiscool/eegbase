@@ -570,11 +570,16 @@ export function WidgetCard({ def, ctx, onRemove }: { def: WidgetDef; ctx: Widget
           onClick={onRemove}
           aria-label={`Remove ${def.title} widget`}
           title="Remove widget"
-          style={{ background: "transparent", border: "none", color: "#475569", cursor: "pointer", padding: 4, borderRadius: 4, display: "flex", alignItems: "center", lineHeight: 0 }}
+          style={{
+            background: "transparent", border: "none", color: "#475569", cursor: "pointer",
+            // 44×44 hit area for WCAG-compliant touch target
+            width: 44, height: 44, display: "inline-flex", alignItems: "center", justifyContent: "center",
+            borderRadius: 6, marginRight: -10, marginTop: -10, marginBottom: -10,
+          }}
           onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = COLORS.alert; }}
           onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#475569"; }}
         >
-          <X size={13} />
+          <X size={14} />
         </button>
       </div>
       <div style={{ flex: 1, minHeight: 0 }}>{def.render(ctx)}</div>
@@ -897,11 +902,16 @@ export function MyDevicesSection({ pairedIds, onUnpair, onOpenConnect }: MyDevic
                   onClick={() => onUnpair(d.id)}
                   aria-label={`Unpair ${d.name}`}
                   title="Unpair"
-                  style={{ background: "transparent", border: "none", color: "#475569", cursor: "pointer", padding: 2, lineHeight: 0, borderRadius: 4 }}
+                  style={{
+                    background: "transparent", border: "none", color: "#475569", cursor: "pointer",
+                    // WCAG-compliant 44×44 hit area — was 15×15 which is unusable on touch
+                    width: 44, height: 44, display: "inline-flex", alignItems: "center", justifyContent: "center",
+                    borderRadius: 6, marginRight: -10, marginTop: -10, marginBottom: -10, // pull back so visual size is still small
+                  }}
                   onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = COLORS.alert; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#475569"; }}
                 >
-                  <X size={11} />
+                  <X size={14} />
                 </button>
               </div>
               <div style={{ fontSize: 10, color: COLORS.muted, fontFamily: NUM, marginBottom: 2 }}>{d.modality}</div>

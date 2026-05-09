@@ -969,6 +969,15 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
              doesn't push 'Get Access' off-screen at 375px width. */
           .demo-topbar-client-select { max-width: 130px !important; }
         }
+        /* iOS Safari auto-zooms when focusing an input/select with
+           font-size < 16px. Force 16px on all form controls at mobile
+           widths to prevent the annoying zoom-and-pan dance every time
+           a user picks a client or types in a field. */
+        @media (max-width: 768px) {
+          select, input[type="text"], input[type="email"], input[type="search"], input[type="number"], textarea {
+            font-size: 16px !important;
+          }
+        }
         /* Hide Next.js dev-mode error/issue badge overlay */
         [data-nextjs-toast], nextjs-portal, #__next-build-watcher, .__next-error-overlay-wrapper { display: none !important; }
       `}</style>
@@ -980,6 +989,22 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           <strong style={{ fontWeight: 700 }}>Live demo</strong> · all client data is illustrative · email/SMS/calendar actions are simulated · Mendi BLE integration shown is proposed (no public Mendi SDK yet) — running on simulator · click <strong style={{ fontWeight: 700 }}>“Run with live Claude Haiku”</strong> in AI Insights for a real model call
         </span>
       </div>
+
+      {/* Skip-to-content link — appears on keyboard focus only.
+          WCAG 2.4.1 'Bypass Blocks' compliance. */}
+      <a
+        href="#tabpanel-dashboard"
+        style={{
+          position: "absolute", left: 8, top: 8, padding: "8px 14px",
+          background: "#2563EB", color: "white", borderRadius: 6,
+          fontSize: 13, fontWeight: 700, textDecoration: "none",
+          zIndex: 9999, transform: "translateY(-200%)", transition: "transform 0.15s",
+        }}
+        onFocus={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; }}
+        onBlur={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-200%)"; }}
+      >
+        Skip to main content
+      </a>
 
       {/* Top bar */}
       <div className="demo-topbar" style={{ background: "#0F172A", borderBottom: "1px solid #1E293B", padding: "0 24px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -1498,6 +1523,12 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           className="demo-content"
           style={{ padding: "24px 20px", maxWidth: 1180, width: "100%", flex: 1, minWidth: 0 }}
         >
+          {/* Visually-hidden but screen-reader-readable H1 per tab — fixes
+              WCAG 2.4.6 'Headings and Labels' on every tab and gives SEO
+              the document outline it expects. */}
+          <h1 style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", border: 0 }}>
+            {TABS.find(t => t.id === tab)?.label ?? "EEGBase Demo"}
+          </h1>
 
         {/* ── MY DASHBOARD ── composable widget grid pulling from any
             connected device. Default 4 widgets shown; user adds/removes
