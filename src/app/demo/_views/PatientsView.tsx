@@ -14,6 +14,7 @@ import { AskWeekSheet } from "../_components/AskWeekSheet";
 import { DiagnosticCard } from "../_components/DiagnosticCard";
 import { FamilyCard } from "../_components/FamilyCard";
 import { EmailReportSheet } from "../_components/EmailReportSheet";
+import { MendiProgressionCard } from "../_components/MendiProgressionCard";
 
 interface PatientsViewProps {
   role: Role;
@@ -117,6 +118,15 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
       <HistoryChart
         title={isHome ? "Your progress" : "Focus over the last 12 sessions"}
         scores={sessions.slice(0, 12).map((s) => s.focusScore).reverse()}
+      />
+
+      {/* Phase 35 — Mendi 12-week protocol progression card. Shows where the
+          patient sits in Mendi's recommended program. Heavy Mendi alignment,
+          shipped to both audiences. */}
+      <MendiProgressionCard
+        currentWeek={4}
+        audience={isHome ? "home" : "clinician"}
+        patientFirstName={client.name.split(" ")[0]}
       />
 
       {/* Achievements — home-user only; gamification is patronizing in clinical UI */}

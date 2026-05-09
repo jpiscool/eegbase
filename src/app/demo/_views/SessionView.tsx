@@ -12,6 +12,8 @@ import { TutorOverlay } from "../_components/TutorOverlay";
 import { LiveCoFeedbackPill, broadcastLiveScore, clearLiveScore } from "../_components/LiveCoFeedback";
 import { EmailReportSheet } from "../_components/EmailReportSheet";
 import { VoiceNotePanel } from "../_components/VoiceNotePanel";
+import { WhyTrainedChips } from "../_components/WhyTrainedChips";
+import { AudioOnlyMode } from "../_components/AudioOnlyMode";
 
 interface SessionViewProps {
   clientId: string;
@@ -126,6 +128,7 @@ export function SessionView({ clientId, sessionType, sessionMinutes = 20, role =
         journal={journal}
         setJournal={setJournal}
         onExit={onExit}
+        role={role}
       />
     );
   }
@@ -198,6 +201,12 @@ export function SessionView({ clientId, sessionType, sessionMinutes = 20, role =
             );
           })}
         </div>
+        {/* Phase 34 — Audio-only mode toggle. Lets visually-overstimulated
+            users (autism, migraine, post-concussion) train with eyes closed
+            using a soft pitched tone. Differentiator vs visual-only apps. */}
+        <div className="flex items-center justify-center mt-3">
+          <AudioOnlyMode score={score} />
+        </div>
       </section>
 
       {/* Live signal trace beneath the visual */}
@@ -266,6 +275,7 @@ function SessionReport({
   journal,
   setJournal,
   onExit,
+  role,
 }: {
   client: Client;
   elapsed: number;
@@ -276,6 +286,7 @@ function SessionReport({
   journal: string;
   setJournal: (v: string) => void;
   onExit: () => void;
+  role?: Role;
 }) {
   const [shareCopied, setShareCopied] = useState(false);
   const [emailOpen, setEmailOpen] = useState(false);
@@ -334,6 +345,14 @@ function SessionReport({
         <Stat label="Session length"  value={Math.round(elapsed / 60)} suffix=" min" />
         <Stat label="Vs. last session" value={"+5"} />
       </div>
+
+      {/* Phase 32 — Why I trained chips. Home-user only. Hidden from print
+          since this is private reflection, not part of the clinical record. */}
+      {role === "home" && (
+        <div className="print:hidden">
+          <WhyTrainedChips />
+        </div>
+      )}
 
       {/* Trace — included in PDF */}
       {trace.length > 1 && (
