@@ -43,7 +43,7 @@ export default function BlogIndex() {
             </div>
             <span style={{ fontWeight: 700, fontSize: 16, color: "#111" }}>EEGBase</span>
           </Link>
-          <Link href="/changelog/rss.xml" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none" }}>RSS →</Link>
+          <Link href="/changelog" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none" }}>Changelog →</Link>
         </div>
       </header>
 

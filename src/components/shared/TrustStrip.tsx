@@ -10,10 +10,10 @@
 // Server component (no client hooks). Pure render, no JS.
 
 const BADGES: { dot: string; label: string; date: string; explain: string }[] = [
-  { dot: "#10B981", label: "HIPAA verified",       date: "Apr 2026", explain: "Compliant with U.S. health-data privacy law. Last verified April 2026 by Drata." },
-  { dot: "#2563EB", label: "SOC 2 Type II",        date: "Mar 2026", explain: "Independent auditor (Coalfire) verified our security controls over a 12-month window." },
-  { dot: "#7C3AED", label: "US data residency",    date: "Always",   explain: "All client data stored in U.S. East (Vercel + Neon, AWS us-east-1). No cross-border transfer." },
-  { dot: "#F59E0B", label: "End-to-end encrypted", date: "Always",   explain: "TLS 1.3 in transit, AES-256-GCM at rest. Keys managed by AWS KMS. We can't read your data." },
+  { dot: "#10B981", label: "HIPAA-friendly",       date: "Today",    explain: "HIPAA-aligned architecture today. We sign a Business Associate Agreement with every clinic that stores PHI." },
+  { dot: "#2563EB", label: "SOC 2 Type II",        date: "Q1 2026",  explain: "Coalfire audit scheduled for Q1 2026. Report will be available NDA-gated on completion." },
+  { dot: "#7C3AED", label: "US data residency",    date: "Always",   explain: "All U.S. clinic data stored in AWS us-east-1. EU clinics on Frankfurt eu-west-3. No cross-border transfer." },
+  { dot: "#F59E0B", label: "End-to-end encrypted", date: "Always",   explain: "TLS 1.3 in transit, AES-256-GCM at rest. Keys managed by AWS KMS." },
 ];
 
 export function TrustStrip({ className = "" }: { className?: string }) {

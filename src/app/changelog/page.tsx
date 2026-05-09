@@ -50,7 +50,6 @@ export default function ChangelogPage() {
           </Link>
           <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
             <Link href="/roadmap" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none" }}>Roadmap →</Link>
-            <a href="/changelog/rss.xml" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none", display: "flex", alignItems: "center", gap: 4 }}>RSS</a>
           </div>
         </div>
       </header>

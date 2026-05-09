@@ -133,14 +133,16 @@ A: Client engagement improving — reward score +52% from session 1 baseline (38
 
 P: 1. Consider switching to alpha-theta (Pz/Oz, 8–12 Hz reward) for sessions 9–12 per EEGBase protocol recommendation. 2. Reassess PHQ-9 at session 10. 3. Discuss sleep hygiene strategies at next appointment. 4. Continue 22-minute weekly sessions. 5. Client to complete daily symptom journal between sessions.`;
 
-// Schedule appointments
+// Schedule appointments — week of May 11, 2026 (next Mon onwards from today May 9).
+// Clients here must match DEMO_CLIENTS below; protocols match each client's
+// active protocol so the schedule reads as a real next-session calendar.
 const APPOINTMENTS = [
-  { time: "Mon May 6 · 9:00 AM",  client: "Sarah Mitchell",   protocol: "SMR — Session 9",              status: "confirmed" },
-  { time: "Mon May 6 · 11:00 AM", client: "James Okafor",     protocol: "Alpha-Theta — Session 4",      status: "confirmed" },
-  { time: "Tue May 7 · 2:30 PM",  client: "Priya Sharma",     protocol: "Intake + QEEG Assessment",     status: "pending" },
-  { time: "Wed May 8 · 10:00 AM", client: "Daniel Cruz",      protocol: "ILF — Session 12",             status: "confirmed" },
-  { time: "Thu May 9 · 3:00 PM",  client: "Emily Tanaka",     protocol: "Neuromuscular — Session 6",    status: "confirmed" },
-  { time: "Fri May 10 · 1:00 PM", client: "Marcus Webb",      protocol: "SMR — Session 2",              status: "pending" },
+  { time: "Mon May 11 · 9:00 AM",  client: "Sarah Mitchell",   protocol: "SMR · Cz — Session 9",                       status: "confirmed" },
+  { time: "Mon May 11 · 11:00 AM", client: "James Okafor",     protocol: "Alpha-Theta · Pz/Oz — Session 5",            status: "confirmed" },
+  { time: "Tue May 12 · 2:30 PM",  client: "Priya Sharma",     protocol: "Prefrontal HbO · Mendi — Session 13",        status: "confirmed" },
+  { time: "Wed May 13 · 10:00 AM", client: "Daniel Cruz",      protocol: "Sleep Spindle · Cz/Pz — Session 4",          status: "confirmed" },
+  { time: "Thu May 14 · 3:00 PM",  client: "Emily Tanaka",     protocol: "Neuromuscular · C3/C4 — Session 7",          status: "confirmed" },
+  { time: "Fri May 15 · 1:00 PM",  client: "Sarah Mitchell",   protocol: "SMR · Cz — Session 10",                      status: "pending"   },
 ];
 
 const VALID_TABS: MainTab[] = [
@@ -157,7 +159,7 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
   // URL + localStorage hybrid tab state.
   //  • ?tab=schedule in URL  → that tab (deep links, refresh)
   //  • bare /demo + storage  → last-used tab (returning visitor)
-  //  • neither               → "session"
+  //  • neither               → "dashboard" (My Workspace landing)
   // The parent server component resolves initialTab from searchParams, so SSR
   // HTML already matches the requested tab — zero hydration flash on refresh.
   const [tab, setTab] = useTabState<MainTab>({
@@ -179,7 +181,6 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
   const [showClientApp, setShowClientApp] = useState(false);
   const [detailModal, setDetailModal] = useState<{ type: "session" | "competitor" | "scoreBreakdown" | "zscore" | "phq9hist"; data: Record<string, unknown> } | null>(null);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const [hoveredRegion, setHoveredRegion] = useState<{ name: string; x: number; y: number } | null>(null);
   const [connectedWearables, setConnectedWearables] = useState<Set<string>>(new Set());
   const [featureCategory, setFeatureCategory] = useState<string | null>(null);
   const [reportExported, setReportExported] = useState(false);
@@ -3903,7 +3904,7 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
                     { condition: "Trauma / PTSD", name: "Infraslow Frequency (ILF) Training", tags: ["Trauma", "Dysregulation", "Autonomic"] },
                     { condition: "Sleep Disorders", name: "Sleep Spindle Enhancement", tags: ["Insomnia", "Sleep", "Memory"] },
                     { condition: "Anxiety", name: "Alpha Asymmetry Training (F4 > F3)", tags: ["Anxiety", "Depression", "Mood"] },
-                    { condition: "Peak Performance", name: "Alpha Peak Frequency (APF) Optimization", tags: ["Athletes", "Peak Performance", "Focus", "Flow"] },
+                    { condition: "Peak Performance", name: "Alpha Peak Frequency (APF) Optimisation", tags: ["Athletes", "Peak Performance", "Focus", "Flow"] },
                   ];
                   const count = proto.filter((p) =>
                     !protocolSearch ||
@@ -3911,7 +3912,7 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
                     p.name.toLowerCase().includes(protocolSearch.toLowerCase()) ||
                     p.tags.some((t) => t.toLowerCase().includes(protocolSearch.toLowerCase()))
                   ).length;
-                  return `Showing ${count} of 15 protocols in demo`;
+                  return `Showing ${count} of 6 searchable EEG protocols (plus 9 Mendi-optimized pinned above)`;
                 })()} — full library on roadmap will add ILF variants, LORETA-guided, gamma training, neuromuscular (TBI), and additional pediatric protocols.
               </span>
               <button
@@ -4157,7 +4158,7 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
               {[
                 { label: "fNIRS + EEG + HRV in one app", sub: "Most platforms cover one modality; we unify all three with native Mendi support", color: "#06B6D4" },
                 { label: "AI cross-session pattern detector", sub: "Correlates Mendi data with sleep · mood · HRV · adherence — flags drivers", color: "#A855F7" },
-                { label: "Free for licensed clinicians", sub: "No card · no per-seat fees · no &ldquo;contact sales&rdquo; · hosted on HIPAA-friendly U.S. infra", color: "#10B981" },
+                { label: "Free for licensed clinicians", sub: "No card · no per-seat fees · no \u201ccontact sales\u201d · hosted on HIPAA-friendly U.S. infra", color: "#10B981" },
                 { label: "Browser-based · No install", sub: "Cloud-native — no Windows-only requirement, no per-machine licenses", color: "#F59E0B" },
               ].map(({ label, sub, color }) => (
                 <div key={label} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 14, padding: "16px 18px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 24px -16px rgba(0,0,0,0.5)" }}>

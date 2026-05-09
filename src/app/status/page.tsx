@@ -51,7 +51,7 @@ export default function StatusPage() {
           <span style={{ width: 14, height: 14, borderRadius: "50%", background: "#10B981", boxShadow: "0 0 0 4px rgba(16,185,129,0.18)" }} />
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: "#065F46", letterSpacing: "-0.01em" }}>All systems operational</div>
-            <div style={{ fontSize: 12, color: "#047857", marginTop: 2 }}>99.95% rolling 90-day uptime · last incident 28 days ago</div>
+            <div style={{ fontSize: 12, color: "#047857", marginTop: 2 }}>99.95% rolling 90-day uptime · last incident 21 days ago</div>
           </div>
           <div style={{ fontSize: 11, color: "#047857", fontWeight: 700, padding: "4px 10px", background: "rgba(16,185,129,0.15)", border: "1px solid #6EE7B7", borderRadius: 99 }}>UPDATED LIVE · 30s</div>
         </div>
@@ -77,7 +77,9 @@ export default function StatusPage() {
         <div style={{ background: "white", border: "1px solid #E5E7EB", borderRadius: 14, padding: 20, marginBottom: 28 }}>
           <div style={{ display: "flex", gap: 2, marginBottom: 12 }}>
             {Array.from({ length: 90 }).map((_, i) => {
-              const isIncident = i === 17 || i === 64 || i === 88; // Apr 18, Mar 02, Feb 11
+              // Index 0 = 90 days ago; index 89 = today (May 9, 2026).
+              // Apr 18 ≈ 21 days ago → index 68; Mar 2 ≈ 68 days ago → index 21; Feb 11 ≈ 87 days ago → index 2.
+              const isIncident = i === 2 || i === 21 || i === 68;
               const fill = isIncident ? "#F59E0B" : "#10B981";
               return <div key={i} title={`Day ${90 - i}`} style={{ flex: 1, height: 28, background: fill, borderRadius: 2, opacity: 0.85 }} />;
             })}

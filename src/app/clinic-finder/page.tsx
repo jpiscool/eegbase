@@ -5,12 +5,14 @@ export const metadata = {
   description: "Locate clinicians using EEGBase + Mendi for neurofeedback near you.",
 };
 
+// Waitlist counts are illustrative pre-launch — kept distinct from the
+// 412-clinic naturalistic registry referenced on /research and /reports.
 const REGIONS = [
-  { name: "United States", clinics: 247, cities: ["Portland · OR", "Austin · TX", "Boston · MA", "San Diego · CA", "Minneapolis · MN", "San Antonio · TX"], color: "#2563EB" },
-  { name: "Canada",        clinics: 38,  cities: ["Toronto · ON", "Vancouver · BC", "Montreal · QC"],                                            color: "#DC2626" },
-  { name: "European Union", clinics: 89,  cities: ["Amsterdam · NL", "Berlin · DE", "Paris · FR", "Madrid · ES", "Stockholm · SE"],              color: "#7C3AED" },
-  { name: "United Kingdom", clinics: 23, cities: ["London", "Manchester", "Edinburgh"],                                                       color: "#10B981" },
-  { name: "Australia",     clinics: 15, cities: ["Sydney", "Melbourne"],                                                                       color: "#F59E0B" },
+  { name: "United States", clinics: 168, cities: ["Portland · OR", "Austin · TX", "Boston · MA", "San Diego · CA", "Minneapolis · MN", "San Antonio · TX"], color: "#2563EB" },
+  { name: "Canada",        clinics: 22,  cities: ["Toronto · ON", "Vancouver · BC", "Montreal · QC"],                                            color: "#DC2626" },
+  { name: "European Union", clinics: 54,  cities: ["Amsterdam · NL", "Berlin · DE", "Paris · FR", "Madrid · ES", "Stockholm · SE"],              color: "#7C3AED" },
+  { name: "United Kingdom", clinics: 17, cities: ["London", "Manchester", "Edinburgh"],                                                       color: "#10B981" },
+  { name: "Australia",     clinics: 9, cities: ["Sydney", "Melbourne"],                                                                       color: "#F59E0B" },
 ];
 
 export default function ClinicFinderPage() {

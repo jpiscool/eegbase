@@ -358,7 +358,7 @@ export default function MarketplacePage() {
           </p>
         </div>
         <Link
-          href="/protocols/new"
+          href="/contact?role=research"
           className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap"
           style={{
             background: "var(--brand)",

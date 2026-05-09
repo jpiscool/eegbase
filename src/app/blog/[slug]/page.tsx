@@ -81,7 +81,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
           ))}
         </article>
         <p style={{ marginTop: 36, fontSize: 12, color: "#94A3B8", textAlign: "center" }}>
-          Subscribe to new posts via <Link href="/changelog/rss.xml" style={{ color: "#2563EB" }}>RSS</Link> or email <a href="mailto:blog-subscribe@eegbase.com" style={{ color: "#2563EB" }}>blog-subscribe@eegbase.com</a>.
+          See more in the <Link href="/changelog" style={{ color: "#2563EB" }}>changelog</Link> or <Link href="/contact" style={{ color: "#2563EB" }}>get in touch</Link>.
         </p>
       </main>
 

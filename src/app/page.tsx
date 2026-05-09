@@ -26,7 +26,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link
-              href="/login"
+              href="/demo"
               className="text-sm font-medium px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               Try Demo
@@ -250,7 +250,7 @@ export default function LandingPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-5">What EEGBase actually is</h2>
           <div className="space-y-4 text-base text-gray-700 leading-relaxed">
             <p>
-              EEGBase is the simplest neurofeedback clinic platform on the market. It plugs into Mendi fNIRS headbands, Muse EEG headsets, Polar heart-rate straps, Apple Watch, Oura rings, OpenBCI hardware, Whoop bands, and 30+ other devices. Every reading lands in one client record on one screen.
+              EEGBase is the simplest neurofeedback clinic platform on the market. It plugs into Mendi fNIRS headbands, Muse EEG headsets, Polar heart-rate straps, Apple Watch, Oura rings, OpenBCI hardware, Whoop bands, and other BLE neurofeedback devices. Every reading lands in one client record on one screen.
             </p>
             <p>
               During a session, you see the live brain signal, a HIPAA-compliant video call with the client, the reward score, and the running notes — all without leaving the page. After the session, the AI drafts the clinical note in any of six standard formats (SOAP, DAP, BIRP, GIRP, PIE, SIRP). You read it, fix anything, save.

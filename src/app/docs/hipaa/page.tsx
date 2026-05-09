@@ -233,7 +233,7 @@ export default function HipaaPage() {
           </p>
         </div>
         <a
-          href="/docs/baa-template.pdf"
+          href="/contact?role=clinician"
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg whitespace-nowrap transition-all"
           style={{
             background: "var(--brand)",
@@ -242,7 +242,7 @@ export default function HipaaPage() {
           }}
         >
           <Download size={14} />
-          Download BAA template
+          Request BAA template
         </a>
       </div>
 
@@ -421,7 +421,7 @@ export default function HipaaPage() {
 
       {/* ── Footer note ── */}
       <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-        Last updated: January 2025. This page is informational only and does not constitute legal
+        Last updated: April 2026. This page is informational only and does not constitute legal
         advice. Consult a qualified attorney to assess your specific HIPAA compliance obligations.
       </p>
 
