@@ -89,12 +89,16 @@ export function BrainMapPanel({
   const [hoveredRegion, setHoveredRegion] = useState<Region | null>(null);
 
   // Build the regions array — top-down brain view.
-  // Mendi specs: 2-channel fNIRS at Fp1 + Fp2 (forehead), dual-wavelength
-  // LED-photodiode pairs (~660 nm + ~850 nm), ~10 Hz sampling. Each channel
-  // captures both oxygenated (HbO) and deoxygenated (HHb) hemoglobin via
-  // modified Beer-Lambert. We render the HbO heat for the dot color, and
-  // attach the paired HHb value for hover detail so both halves of Mendi's
-  // signal are visible.
+  // Mendi specs (verified against Boere/Krigolson 2023 validation study,
+  // Int J Psychophysiology): 2-channel fNIRS over bilateral Brodmann
+  // area 10 (dorsolateral PFC, roughly Fp1 + Fp2 in the 10-20 system),
+  // dual LED at 660 nm (red) + 805 nm (NIR), ~31 Hz sampling rate
+  // (downsampled from 2.5 kHz hardware), with one short channel for
+  // superficial-noise removal. Each long channel captures both
+  // oxygenated (HbO) and deoxygenated (HHb) hemoglobin via modified
+  // Beer-Lambert. We render the HbO heat for the dot color, and
+  // attach the paired HHb value for hover detail so both halves of
+  // Mendi's signal are visible.
   //
   // EEG band-power channels below require a multi-channel headset (e.g.
   // Muse) and are NOT part of Mendi's signal. Kept for the optional
@@ -123,7 +127,7 @@ export function BrainMapPanel({
             {title}
           </div>
           <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>
-            2 channels @ Fp1/Fp2 · 10 Hz · 660 + 850 nm dual-wavelength · HbO + HHb
+            2 long channels + 1 short · ~31 Hz · 660 + 805 nm · HbO + HHb
           </div>
         </div>
         <div style={{ fontSize: 10, color: "#64748B", display: "flex", alignItems: "center", gap: 8 }}>
@@ -307,11 +311,15 @@ export function BrainMapPanel({
         </span>
       </div>
 
-      {/* Mendi technical spec footer — accurate to public hardware specs */}
+      {/* Mendi technical spec footer — accurate to public hardware specs.
+          Sourced from Boere/Krigolson 2023 validation study (Int J
+          Psychophysiology) — peer-reviewed against laboratory-grade fNIRS. */}
       <div style={{ marginTop: 10, padding: "8px 10px", background: "rgba(165,243,252,0.06)", border: "1px solid rgba(165,243,252,0.18)", borderRadius: 8, fontSize: 9.5, color: "#94A3B8", lineHeight: 1.6 }}>
         <strong style={{ color: "#A5F3FC", fontWeight: 700 }}>Mendi spec:</strong>{" "}
-        2-channel fNIRS · LED-photodiode pairs at <strong style={{ color: "#CBD5E1" }}>660 nm + 850 nm</strong> ·
-        ~10 Hz · placement Fp1 / Fp2 (forehead) · HbO &amp; HHb computed via modified Beer-Lambert.
+        2 long channels + 1 short channel (noise reference) over bilateral{" "}
+        <strong style={{ color: "#CBD5E1" }}>Brodmann area 10</strong> ·
+        dual LED at <strong style={{ color: "#CBD5E1" }}>660 nm + 805 nm</strong> ·
+        ~31 Hz sampling · HbO &amp; HHb computed via modified Beer-Lambert.
       </div>
 
       {/* Heat scale legend */}
