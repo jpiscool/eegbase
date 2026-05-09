@@ -9,6 +9,7 @@ import { DevicesCard } from "../_components/DevicesCard";
 import { WearableSyncCard } from "../_components/WearableSyncCard";
 import { SessionTypePicker } from "../_components/SessionTypePicker";
 import { SleepImpactCard } from "../_components/SleepImpactCard";
+import { OneThingCard } from "../_components/OneThingCard";
 import type { Role } from "../_components/RoleToggle";
 import type { SessionType } from "../_data/session-types";
 
@@ -195,6 +196,13 @@ function HomeUserToday({ onStartSession }: { onStartSession: (clientId: string, 
           </div>
         </div>
       </section>
+
+      {/* Today's one thing — single rule-based suggestion. Sits right under the
+          streak so it's the next thing the user reads after seeing where they are. */}
+      <OneThingCard
+        onStartSession={() => setPickerOpen(true)}
+        onOpenCheckIn={() => setCheckInOpen(true)}
+      />
 
       <DevicesCard />
       <WearableSyncCard />
