@@ -14,11 +14,15 @@ import {
   Search, Bell,
   Pause, Play, RotateCcw, Plus, Volume2, VolumeX, Smartphone,
   Mail, Building2, Download, UploadCloud,
+  LayoutDashboard,
 } from "lucide-react";
 import { generateDemoInsight } from "./ai-insight-action";
+import {
+  WIDGET_CATALOG, WidgetCard, WidgetPicker, DashboardEmptyState, useDashboardState,
+} from "./_dashboard-widgets";
 
 const MAX_POINTS = 60;
-type MainTab = "session" | "game" | "brain" | "progress" | "ai" | "schedule" | "hrv" | "protocols" | "reports" | "compare";
+type MainTab = "dashboard" | "session" | "game" | "brain" | "progress" | "ai" | "schedule" | "hrv" | "protocols" | "reports" | "compare";
 
 function fmt(sec: number) {
   return `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`;
@@ -139,6 +143,7 @@ const APPOINTMENTS = [
 ];
 
 const VALID_TABS: MainTab[] = [
+  "dashboard",
   "session","game","brain","hrv","progress","ai","protocols",
   "schedule","reports","compare",
 ];
@@ -310,6 +315,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
   })();
 
   const TABS: { id: MainTab; label: string; icon: React.ComponentType<{ size?: number; strokeWidth?: number }>; groupStart?: string; badge?: string }[] = [
+    { id: "dashboard", label: "My Dashboard",       icon: LayoutDashboard, groupStart: "My Workspace" },
     { id: "session",   label: "Live Session",       icon: Activity,       groupStart: "During a Session", badge: "FOR MENDI" },
     { id: "game",      label: "Game Mode",          icon: Gamepad2 },
     { id: "brain",     label: "Brain Map",          icon: Brain },
@@ -354,6 +360,10 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
   const [enabledBands, setEnabledBands] = useState<{ theta: boolean; alpha: boolean; beta: boolean }>({ theta: true, alpha: true, beta: true });
   const [markers, setMarkers] = useState<Array<{ time: number; label: string }>>([]);
   const [quickNote, setQuickNote] = useState("");
+  // Custom Dashboard tab state — widget IDs persisted to localStorage,
+  // plus a separate quick-note widget value (also persisted).
+  const dashboard = useDashboardState();
+  const [dashboardPickerOpen, setDashboardPickerOpen] = useState(false);
   const [noteSavedFlash, setNoteSavedFlash] = useState(false);
   const [audioReward, setAudioReward] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
@@ -1474,6 +1484,79 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           className="demo-content"
           style={{ padding: "24px 20px", maxWidth: 1180, width: "100%", flex: 1, minWidth: 0 }}
         >
+
+        {/* ── MY DASHBOARD ── composable widget grid pulling from any
+            connected device. Default 4 widgets shown; user adds/removes
+            via the picker. State persisted to localStorage. */}
+        {tab === "dashboard" && (
+          <>
+            {/* Context strip + Add Widget */}
+            <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #60A5FA", borderRadius: 12, padding: "12px 18px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(96,165,250,0.15)", color: "#60A5FA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <LayoutDashboard size={14} />
+              </div>
+              <span style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.5, flex: 1, minWidth: 0 }}>
+                <strong style={{ color: "#F1F5F9" }}>Your dashboard</strong> &mdash; pick widgets that pull live from any connected device. Layout saves to this browser. Hardware-agnostic by design.
+              </span>
+              <button
+                onClick={() => setDashboardPickerOpen(true)}
+                style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: "#2563EB", color: "white", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+              >
+                <Plus size={14} /> Add widget
+              </button>
+            </div>
+
+            {dashboard.hydrated && dashboard.widgets.length === 0 && (
+              <DashboardEmptyState onAdd={() => setDashboardPickerOpen(true)} />
+            )}
+
+            {dashboard.widgets.length > 0 && (
+              <div className="demo-dashboard-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 14 }}>
+                {dashboard.widgets.map((id) => {
+                  const def = WIDGET_CATALOG.find((w) => w.id === id);
+                  if (!def) return null;
+                  return (
+                    <WidgetCard
+                      key={id}
+                      def={def}
+                      onRemove={() => {
+                        dashboard.setWidgets((prev) => prev.filter((x) => x !== id));
+                        showToast(`Removed: ${def.title}`);
+                      }}
+                      ctx={{
+                        sample,
+                        reward: reward.data,
+                        oxyL: oxyL.data,
+                        oxyR: oxyR.data,
+                        deoxyL: deoxyL.data,
+                        deoxyR: deoxyR.data,
+                        thetaW: thetaW.data,
+                        alphaW: alphaW.data,
+                        betaW: betaW.data,
+                        elapsed,
+                        markersCount: markers.length,
+                        quickNote: dashboard.quickNote,
+                        setQuickNote: dashboard.setQuickNote,
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            )}
+
+            <WidgetPicker
+              open={dashboardPickerOpen}
+              onClose={() => setDashboardPickerOpen(false)}
+              currentIds={dashboard.widgets}
+              onAdd={(id) => {
+                dashboard.setWidgets((prev) => [...prev, id]);
+                setDashboardPickerOpen(false);
+                const def = WIDGET_CATALOG.find((w) => w.id === id);
+                if (def) showToast(`Added: ${def.title}`);
+              }}
+            />
+          </>
+        )}
 
         {/* ── LIVE SESSION ── */}
         {tab === "session" && (
