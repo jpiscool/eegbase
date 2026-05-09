@@ -8,6 +8,7 @@ import { SessionView } from "./_views/SessionView";
 import { CmdK } from "./_views/CmdK";
 import { RoleToggle, type Role } from "./_components/RoleToggle";
 import { SettingsSheet } from "./_components/SettingsSheet";
+import { TrustStrip } from "./_components/TrustStrip";
 import type { SessionType } from "./_data/session-types";
 
 type Surface = "today" | "patients" | "session";
@@ -113,6 +114,9 @@ export default function DemoShell({ initialSurface, initialClientId }: DemoShell
           </div>
         </div>
       </header>
+
+      {/* Live trust strip — hidden during the live session so the workspace stays clean */}
+      {surface !== "session" && <TrustStrip />}
 
       {/* Surface area */}
       <div className="bg-gray-50">
