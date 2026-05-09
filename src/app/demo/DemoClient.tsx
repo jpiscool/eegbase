@@ -190,7 +190,6 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
   const [protocolApplied, setProtocolApplied] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
   const [faxSent, setFaxSent] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
   const [showSimilarCasesModal, setShowSimilarCasesModal] = useState(false);
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
   const [showCmdK, setShowCmdK] = useState(false);
@@ -205,12 +204,6 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
     const iv = setInterval(() => setBreathPhase((p) => (p === "Inhale" ? "Exhale" : "Inhale")), 5000);
     return () => clearInterval(iv);
   }, []);
-  useEffect(() => {
-    if (sessionStorage.getItem("demo-onboarding-dismissed") !== "1") {
-      setShowOnboarding(true);
-    }
-  }, []);
-
   const reward  = useSlidingWindow(MAX_POINTS);
   const oxyL    = useSlidingWindow(MAX_POINTS);
   const oxyR    = useSlidingWindow(MAX_POINTS);
@@ -1077,49 +1070,6 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
       <div role="progressbar" aria-label={`Session time: ${Math.floor(elapsed / 60)} of 30 minutes`} aria-valuenow={Math.min(100, Math.round((elapsed / 1800) * 100))} aria-valuemin={0} aria-valuemax={100} title={`Session progress · ${Math.floor(elapsed / 60)} of 30 min`} style={{ height: 4, background: "#1E293B" }}>
         <div style={{ height: "100%", background: "linear-gradient(90deg, #2563EB, #8B5CF6, #EC4899)", width: `${Math.min(100, (elapsed / 1800) * 100)}%`, transition: "width 1s linear" }} />
       </div>
-
-      {/* Onboarding overlay */}
-      {showOnboarding && (
-        <div className="demo-modal-backdrop" style={{ position: "fixed", inset: 0, background: "rgba(2,6,23,0.75)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, animation: "overlayIn 0.2s ease-out" }}>
-          <div style={{ background: "white", borderRadius: 20, maxWidth: 520, width: "100%", boxShadow: "0 32px 80px rgba(0,0,0,0.5)", animation: "fadeIn 0.25s ease", overflow: "hidden" }}>
-            <div style={{ height: 4, background: "linear-gradient(90deg, #2563EB, #7C3AED, #EC4899)" }} />
-            <div style={{ padding: "28px 32px 32px" }}>
-              <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>The clinical layer for any neurofeedback hardware</div>
-              <p style={{ fontSize: 14, color: "#64748B", marginBottom: 24, lineHeight: 1.7 }}>
-                Mendi · Muse · Polar HRV · Apple Health → one client record, one SOAP note, one billable session. This demo runs synthetic data — no hardware needed.
-              </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
-                {[
-                  { icon: "🧠", title: "Live Session + co-feedback video", desc: "Mendi fNIRS streaming with HIPAA video — clinician sees client's live signals during the call. Rare among neurofeedback platforms." },
-                  { icon: "🤖", title: "AI cross-session pattern detector", desc: "Correlates Mendi data with Apple Health · Oura · mood · HRV · adherence. Surfaces drivers most platforms can't see in one place." },
-                  { icon: "📋", title: "Ambient SOAP scribe (6 formats)", desc: "Records audio with consent → drafts SOAP / DAP / BIRP / GIRP / PIE / SIRP notes tied to the live signal data." },
-                  { icon: "🏥", title: "EHR + claims + research registry", desc: "CMS-1500 + ERA + BIDS-fNIRS export + IRB packet auto-gen — bundled, not bolted on. Open-source · self-hostable." },
-                ].map(({ icon, title, desc }) => (
-                  <div key={title} style={{ display: "flex", gap: 14, alignItems: "flex-start", padding: "10px 14px", background: "#F8FAFC", borderRadius: 12 }}>
-                    <div style={{ fontSize: 20, lineHeight: 1.3 }}>{icon}</div>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: "#0F172A", marginBottom: 2 }}>{title}</div>
-                      <div style={{ fontSize: 12, color: "#64748B", lineHeight: 1.5 }}>{desc}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div>
-                <button
-                  aria-label="Close welcome modal and explore freely"
-                  onClick={() => { sessionStorage.setItem("demo-onboarding-dismissed", "1"); setShowOnboarding(false); }}
-                  style={{ width: "100%", padding: "13px 16px", background: "#2563EB", color: "white", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", letterSpacing: "0.01em" }}
-                >
-                  Explore freely →
-                </button>
-              </div>
-              <p style={{ fontSize: 11, color: "#94A3B8", textAlign: "center", marginTop: 12 }}>
-                Press <kbd style={{ fontFamily: "ui-monospace, monospace", padding: "1px 5px", background: "#F1F5F9", borderRadius: 3, color: "#475569" }}>⌘K</kbd> anywhere · No sign-up required · Synthetic data only
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Universal Detail Modal */}
       {detailModal && (
