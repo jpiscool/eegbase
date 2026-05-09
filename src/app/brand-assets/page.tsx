@@ -20,8 +20,8 @@ const ASSETS = [
   { name: "Logo · square (PNG)",   sub: "Light + dark backgrounds · 1024×1024", file: "/og-image.svg", color: "#2563EB" },
   { name: "Logo · wordmark (SVG)", sub: "Vector · scales infinitely",            file: "/og-image.svg", color: "#7C3AED" },
   { name: "Open Graph card (SVG)", sub: "1200×630 · for social sharing",        file: "/og-image.svg", color: "#06B6D4" },
-  { name: "Demo screenshots",      sub: "16 tabs · 1440×900 PNG · zip",         file: "mailto:hello@eegbase.com?subject=Demo%20screenshots", color: "#10B981" },
-  { name: "One-pager PDF",         sub: "Printable summary for press / partners", file: "mailto:hello@eegbase.com?subject=One-pager%20PDF", color: "#F59E0B" },
+  { name: "Demo screenshots",      sub: "16 tabs · 1440×900 PNG · zip",         file: "/contact?role=press", color: "#10B981" },
+  { name: "One-pager PDF",         sub: "Printable summary for press / partners", file: "/contact?role=press", color: "#F59E0B" },
 ];
 
 export default function BrandAssetsPage() {
@@ -43,7 +43,7 @@ export default function BrandAssetsPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>For press, partners, designers</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Brand assets</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
-          Logos, palette, screenshots, and usage guidelines. Free to use under the same MIT license as the codebase, with attribution. Email <a href="mailto:hello@eegbase.com" style={{ color: "#2563EB" }}>hello@eegbase.com</a> for high-res versions or for partner co-branding requests.
+          Logos, palette, screenshots, and usage guidelines. Free to use with attribution. <Link href="/contact?role=press" style={{ color: "#2563EB" }}>Get in touch</Link> for high-res versions or for partner co-branding requests.
         </p>
 
         {/* Logo block */}
@@ -125,7 +125,7 @@ export default function BrandAssetsPage() {
           <ul style={{ paddingLeft: 20, listStyle: "disc", color: "#78350F", lineHeight: 1.7, fontSize: 13 }}>
             <li>Distort, recolor, or restyle the logo. Keep the EB mark on its blue square.</li>
             <li>Place the logo on busy photos without a high-contrast underlay.</li>
-            <li>Combine with the Mendi logo without first contacting <a href="mailto:hello@eegbase.com" style={{ color: "#92400E", textDecoration: "underline" }}>hello@eegbase.com</a>.</li>
+            <li>Combine with the Mendi logo without <Link href="/contact?role=partner" style={{ color: "#92400E", textDecoration: "underline" }}>contacting us first</Link>.</li>
             <li>Use the EEGBase brand to imply endorsement of products or services not built by us.</li>
             <li>Use clinician quotes or case-study figures from this site as if they were peer-reviewed primary literature. They are illustrative.</li>
           </ul>

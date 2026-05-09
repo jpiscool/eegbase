@@ -4249,7 +4249,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
         <a href="/login" style={{ fontSize: 14, fontWeight: 700, padding: "8px 20px", background: "#7C3AED", color: "#fff", borderRadius: 8, textDecoration: "none" }}>
           Get Access →
         </a>
-        <a href="mailto:hello@eegbase.com" style={{ fontSize: 13, color: "#A78BFA", textDecoration: "none", fontWeight: 600 }}>
+        <a href="/contact" style={{ fontSize: 13, color: "#A78BFA", textDecoration: "none", fontWeight: 600 }}>
           Talk to us →
         </a>
       </div>

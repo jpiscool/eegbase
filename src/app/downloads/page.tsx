@@ -47,8 +47,8 @@ export default function DownloadsPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Public artifacts</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Downloads</h1>
         <p style={{ fontSize: 15, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
-          Concrete artifacts for evaluating the platform. SOC 2 + Bishop Fox + DPA documents are NDA-gated — email{" "}
-          <a href="mailto:hello@eegbase.com" style={{ color: "#2563EB" }}>hello@eegbase.com</a> for access.
+          Concrete artifacts for evaluating the platform. SOC 2 + Bishop Fox + DPA documents are NDA-gated —{" "}
+          <Link href="/contact" style={{ color: "#2563EB" }}>request access</Link>.
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>

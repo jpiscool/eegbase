@@ -33,7 +33,7 @@ export default function ClinicFinderPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#10B981", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Clinic finder · waitlist</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Find a Mendi-attached clinic near you</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 30, maxWidth: 720 }}>
-          Live finder ships in a future update. Today: {total}+ clinics on the waitlist across {REGIONS.length} regions. Email <a href="mailto:hello@eegbase.com?subject=Clinic%20near%20me" style={{ color: "#2563EB" }}>hello@eegbase.com</a> with your zip code and we'll connect you when one is available.
+          Live finder ships in a future update. Today: {total}+ clinics on the waitlist across {REGIONS.length} regions. <Link href="/contact?role=patient" style={{ color: "#2563EB" }}>Send us your zip code</Link> and we'll connect you when one is available.
         </p>
 
         {/* Map placeholder */}

@@ -78,13 +78,13 @@ export default function LandingPage() {
             >
               Try the live demo →
             </Link>
-            <a
-              href="mailto:hello@eegbase.com?subject=EEGBase%20demo"
+            <Link
+              href="/contact"
               className="px-7 py-3.5 text-gray-700 text-sm font-medium rounded-xl transition-all"
               style={{ background: "rgba(255,255,255,0.7)", border: "1px solid rgba(0,0,0,0.08)", backdropFilter: "blur(12px)" }}
             >
               Talk to us
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -319,12 +319,12 @@ export default function LandingPage() {
             >
               Open the live demo →
             </Link>
-            <a
-              href="mailto:hello@eegbase.com?subject=EEGBase%20demo"
+            <Link
+              href="/contact"
               className="px-7 py-4 border border-blue-300/50 text-white text-sm font-medium rounded-xl hover:bg-white/10 transition-colors inline-flex items-center gap-2"
             >
               Talk to us
-            </a>
+            </Link>
           </div>
           <p className="text-blue-200 text-xs mt-6">10 sample clients · 88 sessions pre-loaded · No account required</p>
         </div>
@@ -354,7 +354,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-6">
             <Link href="/demo" className="hover:text-gray-600 transition-colors">Demo</Link>
             <Link href="/login" className="hover:text-gray-600 transition-colors">Login</Link>
-            <a href="mailto:hello@eegbase.com" className="hover:text-gray-600 transition-colors">Contact</a>
+            <Link href="/contact" className="hover:text-gray-600 transition-colors">Contact</Link>
           </div>
         </div>
       </footer>

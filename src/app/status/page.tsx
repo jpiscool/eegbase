@@ -41,7 +41,7 @@ export default function StatusPage() {
             </div>
             <span style={{ fontWeight: 700, fontSize: 16, color: "#111" }}>EEGBase Status</span>
           </Link>
-          <a href="mailto:hello@eegbase.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none" }}>Contact →</a>
+          <Link href="/contact" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none" }}>Contact →</Link>
         </div>
       </header>
 

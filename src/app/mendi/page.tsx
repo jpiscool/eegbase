@@ -110,7 +110,7 @@ export default function MendiPartnershipPage() {
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center", marginBottom: 20 }}>
               <a
-                href="mailto:hello@eegbase.com?subject=Mendi%20partnership%20call&body=Hi%20EEGBase%2C%0A%0AI%27d%20like%20to%20book%20a%2030-minute%20call.%20Three%20windows%20that%20work%20for%20me%3A%0A%0A1.%20%0A2.%20%0A3.%20%0A%0AThanks"
+                href="/contact?role=partner"
                 style={{
                   padding: "12px 24px", background: violet, color: "#fff",
                   borderRadius: 12, fontSize: 14, fontWeight: 700,
@@ -388,7 +388,7 @@ export default function MendiPartnershipPage() {
                 </div>
               ))}
               <a
-                href="mailto:hello@eegbase.com?subject=Mendi BLE Integration"
+                href="/contact?role=partner"
                 style={{
                   display: "block", textAlign: "center", padding: "12px 20px",
                   background: violet, color: "#fff", borderRadius: 10,

@@ -26,7 +26,7 @@ const C: AudienceContent = {
     "MNE-Python interop · MNE-NIRS 0.5+ pipeline",
   ],
   cta: { label: "Read API docs →", href: "/api-docs" },
-  secondaryCta: { label: "GitHub repo", href: "mailto:hello@eegbase.com" },
+  secondaryCta: { label: "Talk to us", href: "/contact" },
   proofPoints: [
     { val: "MIT",     lbl: "Open-source license" },
     { val: "<10 min", lbl: "Vercel + Neon deploy" },

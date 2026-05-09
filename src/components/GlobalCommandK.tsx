@@ -50,9 +50,8 @@ export function GlobalCommandK() {
       { kind: "Pages", label: "Community",            action: nav("/community"),                  keywords: "forum protocols" },
       // Actions
       { kind: "Action", label: "Subscribe to changelog RSS", action: () => { window.open("/changelog/rss.xml", "_blank"); setOpen(false); } },
-      { kind: "Action", label: "Email hello@eegbase.com",     action: () => { window.location.href = "mailto:hello@eegbase.com"; setOpen(false); } },
-      { kind: "Action", label: "Email security@eegbase.com",  action: () => { window.location.href = "mailto:security@eegbase.com"; setOpen(false); } },
-      { kind: "Action", label: "Open GitHub repo",             action: () => { window.open("mailto:hello@eegbase.com", "_blank"); setOpen(false); } },
+      { kind: "Action", label: "Open contact form",            action: nav("/contact") },
+      { kind: "Action", label: "Email security@eegbase.com",   action: () => { window.location.href = "mailto:security@eegbase.com"; setOpen(false); } },
       { kind: "Action", label: "Download BIDS-fNIRS sample",  action: () => { window.location.href = "/downloads/sub-021_ses-08_task-focus_nirs.json"; setOpen(false); } },
       { kind: "Action", label: "Download IRB packet sample",  action: () => { window.location.href = "/downloads/EEGBase-Mendi-IRB-Packet-Sample.docx"; setOpen(false); } },
     ];

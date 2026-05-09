@@ -147,7 +147,7 @@ export default function GlossaryPage() {
         ))}
 
         <div style={{ background: "linear-gradient(135deg, #ECFDF5, #F0FDF4)", border: "1px solid #A7F3D0", borderRadius: 14, padding: 20, textAlign: "center", marginTop: 28 }}>
-          <p style={{ fontSize: 13, color: "#065F46" }}>Term missing? <a href="mailto:hello@eegbase.com?subject=Glossary%20term%20request" style={{ color: "#10B981", textDecoration: "underline", fontWeight: 700 }}>Email us</a> — we add common requests within a week.</p>
+          <p style={{ fontSize: 13, color: "#065F46" }}>Term missing? <Link href="/contact" style={{ color: "#10B981", textDecoration: "underline", fontWeight: 700 }}>Let us know</Link> — we add common requests within a week.</p>
         </div>
       </main>
 

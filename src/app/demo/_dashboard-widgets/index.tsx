@@ -1033,8 +1033,8 @@ export function ConnectDeviceModal({ open, onClose, pairedIds, onPair }: Connect
 
         <p style={{ fontSize: 10, color: "#475569", marginTop: 14, lineHeight: 1.5, textAlign: "center" }}>
           Don&rsquo;t see your device?{" "}
-          <a href="mailto:hello@eegbase.com?subject=Device%20support%20request" style={{ color: COLORS.blue, textDecoration: "none", fontWeight: 600 }}>
-            Email us &mdash; new vendors land in the registry within a week.
+          <a href="/contact" style={{ color: COLORS.blue, textDecoration: "none", fontWeight: 600 }}>
+            Let us know &mdash; new vendors land in the registry within a week.
           </a>
         </p>
       </div>

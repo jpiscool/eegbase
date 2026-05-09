@@ -20,7 +20,7 @@ export default function NotFound() {
           </Link>
         </div>
         <p style={{ fontSize: 12, color: "#94A3B8" }}>
-          Looking for something specific? <a href="mailto:hello@eegbase.com" style={{ color: "#2563EB", textDecoration: "underline" }}>hello@eegbase.com</a>
+          Looking for something specific? <Link href="/contact" style={{ color: "#2563EB", textDecoration: "underline" }}>Get in touch</Link>
         </p>
         {/* Decorative offset signal-line */}
         <svg viewBox="0 0 400 60" width="100%" height="60" style={{ marginTop: 36, opacity: 0.5 }}>

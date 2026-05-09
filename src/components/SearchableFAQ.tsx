@@ -105,7 +105,7 @@ export function SearchableFAQ() {
       <div className="space-y-3">
         {filtered.length === 0 ? (
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 text-center text-sm text-gray-500">
-            No matches. Try a different term — or <a href="mailto:hello@eegbase.com" className="text-blue-600 underline">email us</a>.
+            No matches. Try a different term — or <a href="/contact" className="text-blue-600 underline">ask us directly</a>.
           </div>
         ) : (
           filtered.map((item, originalIdx) => {

@@ -88,7 +88,7 @@ export default function TermsPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/privacy" style={{ color: "#9CA3AF" }}>Privacy</Link> · <a href="mailto:hello@eegbase.com" style={{ color: "#9CA3AF" }}>GitHub</a>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/privacy" style={{ color: "#9CA3AF" }}>Privacy</Link> · <Link href="/contact" style={{ color: "#9CA3AF" }}>Contact</Link>
       </footer>
     </div>
   );

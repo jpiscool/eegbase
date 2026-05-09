@@ -33,9 +33,9 @@ export default function MendiClinicalPreviewPage() {
           <div style={{ display: "flex", alignItems: "center", gap: 20, fontSize: 14 }}>
             <Link href="/mendi" style={{ color: "#6B7280", textDecoration: "none" }}>Partnership</Link>
             <Link href="/demo" style={{ color: "#6B7280", textDecoration: "none" }}>Live demo</Link>
-            <a href="mailto:hello@eegbase.com" style={{ fontWeight: 600, padding: "8px 16px", background: MENDI_VIOLET, color: "#fff", borderRadius: 8, textDecoration: "none" }}>
+            <Link href="/contact?role=partner" style={{ fontWeight: 600, padding: "8px 16px", background: MENDI_VIOLET, color: "#fff", borderRadius: 8, textDecoration: "none" }}>
               Talk to us →
-            </a>
+            </Link>
           </div>
         </div>
       </header>
@@ -153,9 +153,9 @@ export default function MendiClinicalPreviewPage() {
             Send us your logo, brand colors, and target subdomain. We'll spin up a private staging URL within 48 hours so your team can click through every tab in Mendi-branded form.
           </p>
           <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-            <a href="mailto:hello@eegbase.com?subject=Mendi%20Clinical%20staging%20request" style={{ padding: "12px 22px", background: MENDI_VIOLET, color: "#fff", borderRadius: 12, fontSize: 14, fontWeight: 700, textDecoration: "none" }}>
+            <Link href="/contact?role=partner" style={{ padding: "12px 22px", background: MENDI_VIOLET, color: "#fff", borderRadius: 12, fontSize: 14, fontWeight: 700, textDecoration: "none" }}>
               Request private staging →
-            </a>
+            </Link>
             <Link href="/mendi" style={{ padding: "12px 22px", background: "transparent", border: "1px solid #E5E7EB", color: "#374151", borderRadius: 12, fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
               See full partnership doc
             </Link>

@@ -66,13 +66,13 @@ export default function OfficeHoursPage() {
 
         <section style={{ background: "linear-gradient(135deg, #FEF3C7, #FFFBEB)", border: "1px solid #FCD34D", borderRadius: 14, padding: 18, textAlign: "center" }}>
           <p style={{ fontSize: 13, color: "#78350F", lineHeight: 1.6 }}>
-            Calendly links pending live setup. Until then, email <a href="mailto:hello@eegbase.com?subject=Office%20hours" style={{ color: "#92400E", textDecoration: "underline", fontWeight: 700 }}>hello@eegbase.com</a> with three windows that work for you.
+            Calendly links pending live setup. Until then, <Link href="/contact" style={{ color: "#92400E", textDecoration: "underline", fontWeight: 700 }}>send us three windows that work</Link> and we'll book it.
           </p>
         </section>
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link>
       </footer>
     </div>
   );

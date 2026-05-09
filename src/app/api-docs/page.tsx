@@ -32,7 +32,7 @@ export default function ApiDocsPage() {
             </div>
             <span style={{ fontWeight: 700, fontSize: 16, color: "#111" }}>EEGBase API</span>
           </Link>
-          <a href="mailto:hello@eegbase.com" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none" }}>Contact →</a>
+          <Link href="/contact" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none" }}>Contact →</Link>
         </div>
       </header>
 
