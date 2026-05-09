@@ -87,10 +87,14 @@ export function AskWeekSheet({ open, setOpen, audience, patientFirstName = "your
     audience === "home"
       ? "Ask about your week"
       : `Ask about ${patientFirstName}\u2019s week`;
+  // Subhead avoids the "Real Claude Haiku" claim — when ANTHROPIC_API_KEY is
+  // unset the server falls back to deterministic answers grounded in the same
+  // data, so the live-API claim wouldn't always be true. The honest framing
+  // ("grounded in last 4 sessions") covers both modes.
   const subhead =
     audience === "home"
-      ? "Real Claude Haiku answer, grounded in your last 4 sessions and patterns."
-      : `Real Claude Haiku answer, grounded in ${patientFirstName}\u2019s last 4 sessions and patterns.`;
+      ? "Grounded in your last 4 sessions and patterns."
+      : `Grounded in ${patientFirstName}\u2019s last 4 sessions and patterns.`;
 
   return (
     <div
@@ -181,7 +185,7 @@ export function AskWeekSheet({ open, setOpen, audience, patientFirstName = "your
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") send(draft); }}
-            placeholder="Ask anything about your training…"
+            placeholder={audience === "home" ? "Ask anything about your training…" : `Ask anything about ${patientFirstName}\u2019s training…`}
             disabled={busy}
             aria-label="Message"
             className="flex-1 min-w-0 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-300 disabled:opacity-50"
