@@ -941,6 +941,11 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           .demo-mobile-nav { display: block !important; }
           .demo-topbar-hide-mobile { display: none !important; }
           .demo-topbar { padding: 0 12px !important; gap: 8px !important; }
+          /* Tighten the right-side action group on mobile so the
+             client switcher + Get Access button fit within 375px
+             without horizontal scroll. */
+          .demo-topbar > div { gap: 8px !important; min-width: 0 !important; }
+          .demo-topbar button { min-width: 0 !important; }
           .demo-paper-preview { padding: 16px !important; }
         }
         /* Top-bar overflow protection — the full bar (Search + Tour + Share
@@ -960,6 +965,9 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
         @media (max-width: 480px) {
           .demo-topbar-logo-text { display: none !important; }
           .demo-topbar-client-label { display: none !important; }
+          /* Cap the client switcher so 'Sarah Mitchell · ADHD adolescent'
+             doesn't push 'Get Access' off-screen at 375px width. */
+          .demo-topbar-client-select { max-width: 130px !important; }
         }
         /* Hide Next.js dev-mode error/issue badge overlay */
         [data-nextjs-toast], nextjs-portal, #__next-build-watcher, .__next-error-overlay-wrapper { display: none !important; }
@@ -1054,13 +1062,14 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             <Bell size={14} strokeWidth={1.75} />
             <span style={{ position: "absolute", top: -3, right: -3, background: "#EF4444", color: "white", fontSize: 9, fontWeight: 700, borderRadius: 99, padding: "1px 5px", border: "1.5px solid #0F172A" }}>3</span>
           </button>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div className="demo-topbar-client-wrap" style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
             <span className="demo-topbar-client-label" style={{ fontSize: "0.72rem", color: "#94A3B8", fontWeight: 600 }}>Client:</span>
             <select
               aria-label="Select demo client"
               value={demoClientIdx}
               onChange={(e) => setDemoClientIdx(Number(e.target.value))}
-              style={{ fontSize: "0.78rem", fontWeight: 600, color: "white", border: "1px solid #334155", borderRadius: 6, padding: "4px 8px", background: "#1E293B", cursor: "pointer", outline: "none" }}
+              className="demo-topbar-client-select"
+              style={{ fontSize: "0.78rem", fontWeight: 600, color: "white", border: "1px solid #334155", borderRadius: 6, padding: "4px 8px", background: "#1E293B", cursor: "pointer", outline: "none", maxWidth: "100%", textOverflow: "ellipsis" }}
             >
               {DEMO_CLIENTS.map((c, i) => (
                 <option key={c.name} value={i}>{c.name}</option>

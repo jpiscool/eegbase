@@ -105,7 +105,13 @@ body {
   color: var(--text-primary);
   font-family: var(--font-geist-sans, system-ui, sans-serif);
   -webkit-font-smoothing: antialiased;
+  /* Prevent horizontal scroll on narrow viewports — any rogue wide
+     element gets clipped instead of pushing the whole page sideways.
+     Specific containers that need scroll inside still get it via
+     their own `overflow-x: auto`. */
+  overflow-x: hidden;
 }
+html { overflow-x: hidden; }
 
 /* Cards */
 .bg-white   { background: var(--surface-raised); }
