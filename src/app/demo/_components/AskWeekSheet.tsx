@@ -10,10 +10,20 @@ interface AskWeekSheetProps {
   patientFirstName?: string;
 }
 
-const STARTERS = [
-  "What changed for me this week?",
-  "Show me what's working.",
-];
+// Starters are audience-aware. Home-user reads "me / my", clinician reads
+// the patient's first name. Falls back to generic phrasing if no name.
+function startersFor(audience: "clinician" | "home", patientFirstName: string) {
+  if (audience === "home") {
+    return [
+      "What changed for me this week?",
+      "Show me what's working.",
+    ];
+  }
+  return [
+    `What changed for ${patientFirstName} this week?`,
+    `Show me what's working for ${patientFirstName}.`,
+  ];
+}
 
 export function AskWeekSheet({ open, setOpen, audience, patientFirstName = "your client" }: AskWeekSheetProps) {
   const [messages, setMessages] = useState<AskMessage[]>([]);
@@ -118,7 +128,7 @@ export function AskWeekSheet({ open, setOpen, audience, patientFirstName = "your
             <div>
               <p className="text-sm text-gray-500 mb-3">Try a starter:</p>
               <div className="flex flex-col gap-2">
-                {STARTERS.map((s) => (
+                {startersFor(audience, patientFirstName).map((s) => (
                   <button
                     key={s}
                     onClick={() => send(s)}

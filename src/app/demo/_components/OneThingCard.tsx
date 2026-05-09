@@ -39,12 +39,15 @@ function pickSuggestion(): Suggestion {
     };
   }
 
-  // Streak ≥ 6 days and not trained today → 'one more day' push
+  // Trained 5+ of last 7 days, not yet today → 'one more session' push.
+  // Phrased as a session count (not a streak) because the demo data has a
+  // mid-week gap, so technically the streak is broken — but the weekly
+  // session goal is still in reach.
   const trainedDays = HOME_USER_STREAK.filter((d) => d.trained).length;
   const today = HOME_USER_STREAK[HOME_USER_STREAK.length - 1];
   if (trainedDays >= 5 && !today.trained) {
     return {
-      text: `You're 1 day from a 7-day streak. 12 minutes does it.`,
+      text: `One more session today and you've trained ${trainedDays + 1} times this week. 12 minutes does it.`,
       cta: "Start 12-min Focus",
       action: "start",
     };
