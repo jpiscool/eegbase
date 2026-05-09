@@ -104,19 +104,13 @@ export function BrainMapPanel({
   // Muse) and are NOT part of Mendi's signal. Kept for the optional
   // multi-vendor mode but visually distinct.
   const regions: Region[] = [
-    { id: "fp1", cx: 78, cy: 60,  r: 13, label: "Prefrontal L", electrode: "Fp1", metric: "oxyL",  rawValue: oxyHbLeft,  normValue: normalizeOxy(oxyHbLeft),  band: "HbO", signal: "fnirs", hhb: deoxyHbLeft  ?? null },
-    { id: "fp2", cx: 142, cy: 60, r: 13, label: "Prefrontal R", electrode: "Fp2", metric: "oxyR",  rawValue: oxyHbRight, normValue: normalizeOxy(oxyHbRight), band: "HbO", signal: "fnirs", hhb: deoxyHbRight ?? null },
-    { id: "f3",  cx: 65,  cy: 100,r: 11, label: "Frontal L",    electrode: "F3",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta",  signal: "eeg" },
-    { id: "fz",  cx: 110, cy: 95, r: 11, label: "Frontal Mid",  electrode: "Fz",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta",  signal: "eeg" },
-    { id: "f4",  cx: 155, cy: 100,r: 11, label: "Frontal R",    electrode: "F4",  metric: "beta",  rawValue: beta,       normValue: normalizeBand(beta),       band: "Beta",  signal: "eeg" },
-    { id: "t3",  cx: 38,  cy: 145,r: 11, label: "Temporal L",   electrode: "T3",  metric: "theta", rawValue: theta,      normValue: normalizeBand(theta),      band: "Theta", signal: "eeg" },
-    { id: "cz",  cx: 110, cy: 145,r: 12, label: "Central",      electrode: "Cz",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha", signal: "eeg" },
-    { id: "t4",  cx: 182, cy: 145,r: 11, label: "Temporal R",   electrode: "T4",  metric: "theta", rawValue: theta,      normValue: normalizeBand(theta),      band: "Theta", signal: "eeg" },
-    { id: "p3",  cx: 70,  cy: 195,r: 11, label: "Parietal L",   electrode: "P3",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha", signal: "eeg" },
-    { id: "pz",  cx: 110, cy: 200,r: 11, label: "Parietal Mid", electrode: "Pz",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha", signal: "eeg" },
-    { id: "p4",  cx: 150, cy: 195,r: 11, label: "Parietal R",   electrode: "P4",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha", signal: "eeg" },
-    { id: "o1",  cx: 90,  cy: 245,r: 10, label: "Occipital L",  electrode: "O1",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha", signal: "eeg" },
-    { id: "o2",  cx: 130, cy: 245,r: 10, label: "Occipital R",  electrode: "O2",  metric: "alpha", rawValue: alpha,      normValue: normalizeBand(alpha),      band: "Alpha", signal: "eeg" },
+    // Mendi's actual hardware: 2 long channels (one per hemisphere) over
+    // bilateral Brodmann area 10. We do NOT render the third short channel
+    // here because it samples superficial blood flow at the same head
+    // position — it's a noise reference, not a separate brain location.
+    // Showing it as a third dot would imply a third measurement site.
+    { id: "fp1", cx: 78,  cy: 60, r: 16, label: "Prefrontal L (BA10)", electrode: "Fp1", metric: "oxyL", rawValue: oxyHbLeft,  normValue: normalizeOxy(oxyHbLeft),  band: "HbO", signal: "fnirs", hhb: deoxyHbLeft  ?? null },
+    { id: "fp2", cx: 142, cy: 60, r: 16, label: "Prefrontal R (BA10)", electrode: "Fp2", metric: "oxyR", rawValue: oxyHbRight, normValue: normalizeOxy(oxyHbRight), band: "HbO", signal: "fnirs", hhb: deoxyHbRight ?? null },
   ];
 
   return (
@@ -297,17 +291,14 @@ export function BrainMapPanel({
         )}
       </div>
 
-      {/* Signal modality legend — keeps fNIRS (hemoglobin) visually distinct from EEG band power */}
+      {/* Signal modality legend — Mendi only. EEG bands intentionally omitted
+          because Mendi is pure fNIRS — adding them would misrepresent what
+          this device actually captures. */}
       <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 14, fontSize: 10, color: "#94A3B8" }}>
         <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
           <span style={{ display: "inline-block", width: 14, height: 14, borderRadius: 99, border: "2px solid rgba(165,243,252,0.85)", boxSizing: "border-box" }} />
           <strong style={{ color: "#A5F3FC", fontWeight: 700 }}>Mendi fNIRS</strong>
-          <span>2 channels · HbO + HHb</span>
-        </span>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <span style={{ display: "inline-block", width: 14, height: 14, borderRadius: 99, border: "1px solid rgba(255,255,255,0.25)", boxSizing: "border-box" }} />
-          <strong style={{ color: "#CBD5E1", fontWeight: 700 }}>EEG bands</strong>
-          <span>11 sites · optional, requires Muse / multi-channel</span>
+          <span>2 long channels · HbO + HHb · the short noise-reference channel sits at the same forehead site</span>
         </span>
       </div>
 
