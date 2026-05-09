@@ -2,17 +2,10 @@
 
 import Link from "next/link";
 import { Brain, ShieldCheck, Zap, Bluetooth, FileText, MousePointerClick, AlertTriangle, Sparkles, ArrowRight } from "lucide-react";
-import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { StickyDemoCTA } from "@/components/StickyDemoCTA";
 import { LiveStatusPill } from "@/components/LiveStatusPill";
 import { SearchableFAQ } from "@/components/SearchableFAQ";
 import { PartnerLogos } from "@/components/PartnerLogos";
-
-const metrics: { value: number | string; label: string; suffix?: string; prefix?: string }[] = [
-  { value: 26,        label: "Features in the live demo" },
-  { value: 0,         label: "Setup. Open the demo and explore" },
-  { value: "Free",    label: "For licensed clinicians, forever" },
-];
 
 export default function LandingPage() {
   return (
@@ -85,22 +78,6 @@ export default function LandingPage() {
             Plug in Mendi, Muse, Polar, Apple Watch, Oura, OpenBCI — any neurofeedback or wearable. <strong className="text-gray-900">All your data in one place.</strong>
           </p>
 
-          {/* Trust strip */}
-          <div className="flex items-center justify-center gap-2 flex-wrap mb-9 text-xs">
-            {[
-              { icon: "🛡", label: "EU privacy compliant" },
-              { icon: "🔒", label: "Security audited" },
-              { icon: "✓", label: "HIPAA-ready" },
-              { icon: "📜", label: "Free & open-source" },
-              { icon: "🌐", label: "Open data formats" },
-            ].map((t) => (
-              <span key={t.label} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/70 border border-gray-200 text-gray-600 font-medium" style={{ backdropFilter: "blur(8px)" }}>
-                <span aria-hidden="true">{t.icon}</span>
-                {t.label}
-              </span>
-            ))}
-          </div>
-
           <div className="flex items-center justify-center gap-4">
             <Link
               href="/demo"
@@ -119,31 +96,6 @@ export default function LandingPage() {
               View on GitHub
             </a>
           </div>
-          <p className="text-xs text-gray-400 mt-5 flex items-center justify-center gap-2 flex-wrap">
-            <span className="inline-flex items-center gap-1"><span className="text-emerald-500">✓</span> No card required</span>
-            <span className="text-gray-300">·</span>
-            <span className="inline-flex items-center gap-1"><span className="text-emerald-500">✓</span> Synthetic data</span>
-            <span className="text-gray-300">·</span>
-            <span className="inline-flex items-center gap-1"><span className="text-emerald-500">✓</span> Open source on GitHub</span>
-          </p>
-          <p className="text-xs text-gray-500 mt-3">
-            Short on time?{" "}
-            <Link href="/demo/quick" className="text-blue-600 font-semibold hover:underline">
-              See it in 30 seconds →
-            </Link>
-          </p>
-        </div>
-
-        {/* Hero metrics */}
-        <div className="flex items-center justify-center gap-12 mt-16 pt-10 border-t border-gray-100">
-          {metrics.map((m) => (
-            <div key={m.label} className="text-center">
-              <p className="text-3xl font-bold text-gray-900 tracking-tight">
-                <AnimatedCounter value={m.value} suffix={m.suffix} prefix={m.prefix} />
-              </p>
-              <p className="text-xs text-gray-400 mt-0.5">{m.label}</p>
-            </div>
-          ))}
         </div>
       </section>
 
