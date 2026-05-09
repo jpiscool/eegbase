@@ -954,7 +954,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
       <div role="status" style={{ background: "#FEF3C7", borderBottom: "1px solid #FCD34D", color: "#78350F", padding: "8px 24px", fontSize: 12, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap", textAlign: "center" }}>
         <span style={{ fontSize: 14 }}>⚠️</span>
         <span>
-          <strong style={{ fontWeight: 700 }}>Live demo</strong> · all client data is illustrative · email/SMS/calendar actions are simulated · Mendi BLE pairing pending May 11 SDK handoff · click <strong style={{ fontWeight: 700 }}>“Run with live Claude Haiku”</strong> in AI Insights for a real model call
+          <strong style={{ fontWeight: 700 }}>Live demo</strong> · all client data is illustrative · email/SMS/calendar actions are simulated · Mendi BLE integration shown is proposed (no public Mendi SDK yet) — running on simulator · click <strong style={{ fontWeight: 700 }}>“Run with live Claude Haiku”</strong> in AI Insights for a real model call
         </span>
       </div>
 
@@ -2970,7 +2970,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
 
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", fontSize: 11 }}>
                 <button onClick={() => showToast("Recommended: 'Sleep-coupled session' — 8 AM start after ≥85% sleep efficiency. Auto-suggested calendar slots.")} style={{ ...clinicianBtnPrimary, background: "#7C3AED", fontSize: 12 }}>Apply finding to schedule →</button>
-                <button onClick={() => showToast("Pattern saved to research registry · auto-tagged for Mendi science team review")} style={{ ...clinicianBtn, fontSize: 12 }}>Send to research registry</button>
+                <button onClick={() => showToast("Pattern saved to EEGBase research registry · ready for Mendi co-publication once partnership confirmed")} style={{ ...clinicianBtn, fontSize: 12 }}>Send to research registry</button>
                 <button
                   onClick={async () => {
                     setAiInsightLoading(true);
@@ -3246,12 +3246,12 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
 
             {/* MENDI HOME-CONTINUITY BRIDGE */}
             <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 20, marginBottom: 16, boxShadow: "0 12px 36px -16px rgba(79,70,229,0.4)", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, color: "#A5B4FC", background: "rgba(79,70,229,0.2)", padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(79,70,229,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Mendi Home-Continuity</div>
+              <div style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, color: "#FBBF24", background: "rgba(251,191,36,0.15)", padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(251,191,36,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Proposed · Pending Mendi SDK</div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(167,139,250,0.2)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, border: "1px solid rgba(167,139,250,0.3)" }}>↔</div>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Clinic ↔ Home Practice Bridge</div>
-                  <div style={{ fontSize: 11, color: "#A5B4FC" }}>Push protocols to client's Mendi at home · sessions auto-flow back</div>
+                  <div style={{ fontSize: 11, color: "#A5B4FC" }}>What becomes possible once Mendi&rsquo;s BLE SDK is shared with us · today: simulator data only</div>
                 </div>
               </div>
 
@@ -3339,15 +3339,15 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                     ))}
                   </div>
                   <div style={{ fontSize: 10, color: "#A5B4FC", marginTop: 10, padding: "6px 8px", background: "rgba(79,70,229,0.1)", borderRadius: 6, lineHeight: 1.5 }}>
-                    <strong style={{ color: "#A78BFA" }}>3.5×</strong> the adherence of consumer-only Mendi users in the EEGBase clinic cohort (n=412 clinics; vs published consumer attrition baselines). Clinic-prescribed users show 5–10× lower churn vs consumer-only across the same cohort.
+                    <strong style={{ color: "#FBBF24" }}>Modeled estimate</strong> · clinically-prescribed neurofeedback retention is documented at 3-5× consumer-app attrition rates (Linardon 2020, Carlbring 2018). Real EEGBase + Mendi cohort numbers TBD pending pilot rollout.
                   </div>
                 </div>
               </div>
 
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <button onClick={() => showToast("Sent: Focus Boost protocol pushed to Sarah's Mendi · 3 sessions/week × 12 min")} style={{ ...clinicianBtnPrimary, background: "#7C3AED" }}>Push protocol to Mendi →</button>
-                <button onClick={() => showToast("Message sent · Sarah will see it in the Mendi app")} style={clinicianBtn}>💬 Message via Mendi app</button>
-                <button onClick={() => showToast("Home session video summary opening — Sarah's last training")} style={clinicianBtn}>View last home session</button>
+                <button onClick={() => showToast("Demo: protocol PDF emailed to Sarah · 3×/week × 12 min · today, before SDK: PDF; with Mendi SDK: direct push")} style={{ ...clinicianBtnPrimary, background: "#7C3AED" }}>Send protocol → Sarah</button>
+                <button onClick={() => showToast("Demo: SMS reminder sent · with Mendi SDK this would be an in-app message")} style={clinicianBtn}>💬 SMS reminder</button>
+                <button onClick={() => showToast("Demo: home session screenshot opens — automatic sync requires Mendi SDK access")} style={clinicianBtn}>View last home session</button>
               </div>
             </div>
 
@@ -3494,7 +3494,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                     <div style={{ fontSize: 11, color: "#A5B4FC" }}>9 prefrontal-training protocols designed specifically for Mendi's dual-channel fNIRS</div>
                   </div>
                 </div>
-                <span style={{ fontSize: 9, fontWeight: 700, color: "#A5B4FC", padding: "3px 10px", background: "rgba(79,70,229,0.2)", borderRadius: 99, border: "1px solid rgba(79,70,229,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Pinned · Mendi Native</span>
+                <span style={{ fontSize: 9, fontWeight: 700, color: "#A5B4FC", padding: "3px 10px", background: "rgba(79,70,229,0.2)", borderRadius: 99, border: "1px solid rgba(79,70,229,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Pinned · Mendi-Compatible</span>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }} className="demo-grid-2">
                 {[
@@ -3777,7 +3777,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             {/* Mendi Outcomes Registry */}
             <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 24, marginBottom: 20, boxShadow: "0 12px 36px -16px rgba(79,70,229,0.4)", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, color: "#A5B4FC", background: "rgba(79,70,229,0.2)", padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(79,70,229,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Mendi Co-Published</div>
+              <div style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, color: "#FBBF24", background: "rgba(251,191,36,0.15)", padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(251,191,36,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Proposed · Pending Mendi Partnership</div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
                 <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(79,70,229,0.25)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, border: "1px solid rgba(79,70,229,0.4)" }}>📊</div>
                 <div>
@@ -3786,7 +3786,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 </div>
               </div>
               <p style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.6, marginBottom: 16 }}>
-                Anonymous session data from clinics that opt in. Standard research format. Sends Mendi the peer-reviewed proof their consumer claims need.
+                Anonymous session data from EEGBase-pilot clinics, opt-in. Standard research format. <strong style={{ color: "#FBBF24" }}>Proposed</strong>: once Mendi joins as device partner, this becomes the peer-reviewed evidence pipeline their consumer claims have been missing. Numbers below are illustrative until pilot data lands.
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }} className="demo-grid-4">
                 {[
@@ -3822,15 +3822,15 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 </div>
                 <div style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.18), rgba(15,23,42,0.6))", border: "1px solid rgba(124,58,237,0.4)", borderRadius: 10, padding: 12, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                   <div>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: "#C4B5FD", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Co-author with Mendi</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#C4B5FD", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Proposed: Co-author with Mendi</div>
                     <div style={{ fontSize: 12, color: "#F1F5F9", fontWeight: 700, lineHeight: 1.4, marginBottom: 6 }}>
                       12-week multi-clinic registry · IRB-pack ready
                     </div>
                     <div style={{ fontSize: 10, color: "#94A3B8", lineHeight: 1.5, marginBottom: 8 }}>
-                      Pre-built study protocol, IRB packet, and data pipeline. Mendi is listed as the device. You rotate as lead author across cohorts.
+                      Pre-built study protocol, IRB packet, and data pipeline. The proposal: Mendi is listed as the device, EEGBase-pilot clinics rotate as lead author. Open to discuss structure.
                     </div>
                   </div>
-                  <button onClick={() => showToast("Mendi science team intro · IRB pack & DPA email queued")} style={{ fontSize: 11, padding: "6px 12px", background: "#7C3AED", color: "white", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700 }}>Open IRB packet →</button>
+                  <button onClick={() => showToast("Demo: opens our proposed IRB pack to share with Mendi · DPA template included")} style={{ fontSize: 11, padding: "6px 12px", background: "#7C3AED", color: "white", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700 }}>Open IRB packet →</button>
                 </div>
               </div>
 
