@@ -258,7 +258,7 @@ export default async function ConditionPage({ params }: { params: Promise<{ slug
         <section style={{ background: "white", border: "1px solid #E5E7EB", borderRadius: 14, padding: 20, marginTop: 28, textAlign: "center" }}>
           <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>Try the {c.name} demo</h2>
           <p style={{ fontSize: 13, color: "#64748B", marginBottom: 14 }}>Pre-loaded session for a {c.short.split(",")[0].toLowerCase()} client. No sign-up.</p>
-          <Link href="/demo?tab=session" style={{ display: "inline-block", padding: "10px 18px", background: "#2563EB", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>Open the demo →</Link>
+          <Link href="/demo" style={{ display: "inline-block", padding: "10px 18px", background: "#2563EB", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>Open the demo →</Link>
         </section>
 
         <p style={{ fontSize: 11, color: "#94A3B8", textAlign: "center", marginTop: 24, lineHeight: 1.6, fontStyle: "italic" }}>

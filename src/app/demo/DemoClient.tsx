@@ -164,7 +164,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
     urlKey: "tab",
     storageKey: "demo:tab",
     cookieName: "demo_tab",
-    defaultValue: "session",
+    defaultValue: "dashboard",
     serverInitialValue: initialTab,
     validate: isMainTab,
   });

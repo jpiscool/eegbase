@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 const VALID_TABS = [
-  "session", "game", "brain", "hrv", "progress", "ai", "protocols",
+  "dashboard", "session", "game", "brain", "hrv", "progress", "ai", "protocols",
   "schedule", "reports", "compare",
 ] as const;
 type MainTab = (typeof VALID_TABS)[number];
@@ -49,6 +49,6 @@ export default async function DemoPage({
     fromCookie = pickTab(store.get("demo_tab")?.value);
   }
 
-  const initialTab: MainTab = fromUrl ?? fromCookie ?? "session";
+  const initialTab: MainTab = fromUrl ?? fromCookie ?? "dashboard";
   return <DemoClient initialTab={initialTab} />;
 }
