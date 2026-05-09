@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   applicationName: "EEGBase",
   keywords: [
     "neurofeedback", "fNIRS", "EEG", "Mendi", "clinician",
-    "BIDS", "SNIRF", "EDF+", "HIPAA", "telehealth", "open source",
+    "BIDS", "SNIRF", "EDF+", "HIPAA", "telehealth", "Muse", "Polar HRV",
   ],
   authors: [{ name: "EEGBase" }],
   appleWebApp: {

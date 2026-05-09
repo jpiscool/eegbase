@@ -188,10 +188,10 @@ export default function LandingPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { num: "10",     label: "Devices supported" },
+                { num: "10+",    label: "Devices supported" },
                 { num: "Free",   label: "For licensed clinicians" },
-                { num: "SOC 2",  label: "Coalfire audited" },
-                { num: "WCAG",   label: "Accessibility certified" },
+                { num: "SOC 2",  label: "Q1 2026 audit · Coalfire" },
+                { num: "WCAG",   label: "2.2 AA · Q1 2026 · Deque" },
               ].map((s) => (
                 <div key={s.label} className="bg-white border border-gray-200 rounded-xl p-5 text-center">
                   <p className="text-2xl font-extrabold text-gray-900 tracking-tight mb-1">{s.num}</p>
@@ -221,7 +221,7 @@ export default function LandingPage() {
         </div>
         <div className="grid md:grid-cols-3 gap-5">
           {[
-            { num: "1", title: "Open the demo",  desc: "It&rsquo;s already loaded with 10 sample clients and a live session in progress. Click around for 2 minutes — you&rsquo;ll see the whole platform." },
+            { num: "1", title: "Open the demo",  desc: "It&rsquo;s already loaded with sample clients and a live session in progress. Click around for 2 minutes — you&rsquo;ll see the whole platform." },
             { num: "2", title: "Sign up free",   desc: "It takes 90 seconds. No card. No trial limit. Every feature, every device, every clinician on your team." },
             { num: "3", title: "Run a real session", desc: "Pair your headset, click Start, talk to your client. The session records, the AI writes the note, the report sends in one click." },
           ].map((s) => (
@@ -259,7 +259,7 @@ export default function LandingPage() {
               Outcome scales (PHQ-9, GAD-7, ADHD-RS-IV, MBI-EE, custom) auto-track over time. Insurance billing (CMS-1500, ERA, ICD-10) is built in. Reports send to clients and referring doctors with one click. Everything exports as BIDS, SNIRF, EDF+, CSV, or PDF — your data stays yours, forever.
             </p>
             <p>
-              EEGBase is free for licensed clinicians. Hosted on a HIPAA-friendly U.S. infrastructure (Vercel + Neon, AWS us-east-1). Audited by Bishop Fox, Coalfire (SOC 2), and Deque (WCAG 2.2 AA).
+              EEGBase is free for licensed clinicians. Hosted on a HIPAA-friendly U.S. infrastructure (AWS us-east-1; EU clinics on eu-west-3). Bishop Fox pen-test, Coalfire SOC 2 Type II, and Deque WCAG 2.2 AA audits scheduled for Q1 2026.
             </p>
           </div>
         </div>
@@ -320,7 +320,7 @@ export default function LandingPage() {
               Talk to us
             </Link>
           </div>
-          <p className="text-blue-200 text-xs mt-6">10 sample clients · 88 sessions pre-loaded · No account required</p>
+          <p className="text-blue-200 text-xs mt-6">5 sample clients · 20-session arcs pre-loaded · No account required</p>
         </div>
       </section>
 

@@ -27,7 +27,7 @@ export default function TermsPage() {
         <S title="Plain-English summary">
           <ul style={{ listStyle: "disc", paddingLeft: 20, color: "#374151", lineHeight: 1.7, fontSize: 15 }}>
             <li>EEGBase is a software platform — not a medical device. Clinical judgment always rests with the licensed clinician.</li>
-            <li>The software is free for now. Self-hosting is free under MIT. The hosted service requires an account but no payment.</li>
+            <li>The hosted service is free for licensed clinicians during early launch. An account is required but no payment.</li>
             <li>You own your clinic's data. We're a custodian, not the owner.</li>
             <li>If something goes seriously wrong, our liability is capped at zero — the software is free.</li>
           </ul>
@@ -47,7 +47,7 @@ export default function TermsPage() {
         </S>
 
         <S title="4 · Acceptable use">
-          <p>Don't reverse-engineer, attempt to derive source from compiled binaries (the source is public — read it on GitHub), enter the data of patients without lawful basis, attempt to circumvent access controls, or use the service for any unlawful purpose. We may suspend accounts that violate this section.</p>
+          <p>Don't reverse-engineer or attempt to derive source from the compiled service, enter the data of patients without lawful basis, attempt to circumvent access controls, or use the service for any unlawful purpose. We may suspend accounts that violate this section.</p>
         </S>
 
         <S title="5 · Pricing & billing">
@@ -62,27 +62,23 @@ export default function TermsPage() {
           <p>If you use the hosted service to store PHI, we'll execute a Business Associate Agreement before activation. Contact <a href="mailto:hello@eegbase.com" style={{ color: "#2563EB" }}>hello@eegbase.com</a>.</p>
         </S>
 
-        <S title="8 · Open-source license">
-          <p>The EEGBase codebase is released under the MIT license. You may fork, self-host, modify, and redistribute under the terms of MIT. Self-hosted deployments are not covered by our hosted-service terms — you operate them at your own risk and under your own compliance posture.</p>
-        </S>
-
-        <S title="9 · Warranty disclaimer">
+        <S title="8 · Warranty disclaimer">
           <p style={{ textTransform: "uppercase", fontSize: 12, lineHeight: 1.7 }}>The service is provided &quot;as is&quot; without warranty of any kind, express or implied, including merchantability, fitness for a particular purpose, or non-infringement.</p>
         </S>
 
-        <S title="10 · Limitation of liability">
+        <S title="9 · Limitation of liability">
           <p>Our aggregate liability is capped at the fees you paid us in the 12 months preceding the event giving rise to the claim. We are not liable for indirect, consequential, or punitive damages, except where prohibited by law.</p>
         </S>
 
-        <S title="11 · Governing law">
+        <S title="10 · Governing law">
           <p>These Terms are governed by the laws of the State of Delaware, USA, without regard to its conflict of laws principles. EU clinics may exercise GDPR rights as set out in the Privacy Notice.</p>
         </S>
 
-        <S title="12 · Changes">
+        <S title="11 · Changes">
           <p>We'll notify clinic admins by email at least 30 days before any material change. Continued use after the effective date constitutes acceptance.</p>
         </S>
 
-        <S title="13 · Contact">
+        <S title="12 · Contact">
           <p>Legal: <a href="mailto:legal@eegbase.com" style={{ color: "#2563EB" }}>legal@eegbase.com</a> · Support: <a href="mailto:hello@eegbase.com" style={{ color: "#2563EB" }}>hello@eegbase.com</a> · DPO: <a href="mailto:dpo@eegbase.com" style={{ color: "#2563EB" }}>dpo@eegbase.com</a></p>
         </S>
       </main>

@@ -24,7 +24,7 @@ export default function InvestorsPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>For prospective investors</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>The clinical layer for consumer neuroscience</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
-          EEGBase is the open-source clinical layer for any neurofeedback hardware. Mendi at home, Muse in clinic, Polar HRV, and Apple Health become one client record, one SOAP note, one billable session.
+          EEGBase is the clinical layer for any neurofeedback hardware. Mendi at home, Muse in clinic, Polar HRV, and Apple Health become one client record, one SOAP note, one billable session.
         </p>
 
         {/* Market thesis */}
@@ -53,9 +53,9 @@ export default function InvestorsPage() {
             <li>Pre-print under review at Frontiers in Human Neuroscience (n=2,840)</li>
             <li>Sham-controlled RCT pre-registered · NCT06912xxx · IRB approved Apr 2026</li>
             <li>Mendi partnership proposal submitted Q2 2026 · 3 partnership tiers under review</li>
-            <li>SOC 2 Type II + Bishop Fox pen-test complete Q1 2026</li>
-            <li>Open-source codebase · MIT license · public repo since 2026</li>
-            <li>Demo deployed at <Link href="/demo" style={{ color: "#2563EB" }}>eegbase.com/demo</Link> · 16 tabs · 10 mock clients · 88 mock sessions</li>
+            <li>SOC 2 Type II + Bishop Fox pen-test scheduled Q1 2026</li>
+            <li>Hosted SaaS · free for licensed clinicians during early launch</li>
+            <li>Demo deployed at <Link href="/demo" style={{ color: "#2563EB" }}>eegbase.com/demo</Link> · 11 tabs · pre-loaded clients + sessions</li>
           </ul>
         </section>
 
@@ -66,7 +66,7 @@ export default function InvestorsPage() {
             <li><strong>Consumer fNIRS just hit price-feasible</strong> — Mendi $299, Muse Athena $475, Sens.ai $1,500. The hardware is finally affordable for clinic prescription.</li>
             <li><strong>USCDI+ Behavioral Health pilot</strong> — ONC's 9-pilot federal program launched Q1 2026. First-mover advantage on the standards is open.</li>
             <li><strong>AI scribe is table-stakes</strong> — Mentalyc, Upheal, DeepCura proved the workflow. We bundle it with the signal data, which they can't.</li>
-            <li><strong>Open-source + self-hostable</strong> — procurement teams can finally say yes to a startup. MIT license + BIDS export = zero lock-in.</li>
+            <li><strong>BIDS / SNIRF / EDF+ export anytime</strong> — procurement teams can finally say yes to a startup. Standardised exports = zero lock-in.</li>
           </ol>
         </section>
 
@@ -115,7 +115,7 @@ export default function InvestorsPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/team" style={{ color: "#9CA3AF" }}>Team</Link> · <Link href="/security" style={{ color: "#9CA3AF" }}>Security</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/team" style={{ color: "#9CA3AF" }}>Team</Link> · <Link href="/security" style={{ color: "#9CA3AF" }}>Security</Link>
       </footer>
     </div>
   );

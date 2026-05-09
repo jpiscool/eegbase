@@ -110,7 +110,7 @@ export default function ResearchPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/case-studies" style={{ color: "#9CA3AF" }}>Case studies</Link> · <Link href="/downloads" style={{ color: "#9CA3AF" }}>Downloads</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/case-studies" style={{ color: "#9CA3AF" }}>Case studies</Link> · <Link href="/downloads" style={{ color: "#9CA3AF" }}>Downloads</Link>
       </footer>
     </div>
   );

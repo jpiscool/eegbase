@@ -90,7 +90,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <p className="text-center text-xs mt-6" style={{ color: "var(--text-tertiary)" }}>EEGBase is open source · MIT License</p>
+          <p className="text-center text-xs mt-6" style={{ color: "var(--text-tertiary)" }}>Free for licensed clinicians</p>
         </div>
       </div>
     </>

@@ -10,10 +10,10 @@ const GROUPS = [
     title: "Hardware",
     sub: "Devices we natively support",
     items: [
-      { name: "Mendi",         desc: "fNIRS prefrontal · flagship · co-branded clinical channel proposal", status: "live", color: "#7C3AED" },
+      { name: "Mendi",         desc: "fNIRS prefrontal · co-branded clinical channel · pending Mendi SDK", status: "planned", color: "#7C3AED" },
       { name: "Muse / Athena",  desc: "EEG · 4-channel · home-use friendly",          status: "live", color: "#06B6D4" },
       { name: "Polar",         desc: "HRV · chest strap + optical forearm",            status: "live", color: "#EF4444" },
-      { name: "OpenBCI",       desc: "8-channel EEG · open-source hardware",           status: "live", color: "#10B981" },
+      { name: "OpenBCI",       desc: "8-channel EEG · open-design hardware (theirs)",  status: "live", color: "#10B981" },
       { name: "NIRx",          desc: "Research-grade fNIRS · 8–48 channels",           status: "beta", color: "#F59E0B" },
       { name: "Artinis",       desc: "Wearable Brite MKIII fNIRS",                     status: "beta", color: "#06B6D4" },
     ],
@@ -120,7 +120,7 @@ export default function PartnersPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link>
       </footer>
     </div>
   );

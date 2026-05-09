@@ -9,11 +9,11 @@ const C: AudienceContent = {
   eyebrow: "For clinicians",
   eyebrowColor: "#2563EB",
   hero: { line1: "Run your whole neurofeedback practice", line2: "from one app.", line2Color: "#2563EB" },
-  lede: "Stop juggling four tools to run one session. Live signal capture, AI session notes, insurance billing, outcome reports, and HIPAA video — all in one open-source platform built for licensed BCN/LPC/MD clinicians.",
+  lede: "Stop juggling four tools to run one session. Live signal capture, AI session notes, insurance billing, outcome reports, and HIPAA video — all in one hosted SaaS built for licensed BCN/LPC/MD clinicians.",
   pillars: [
     { title: "Bill insurance built-in",    desc: "CMS-1500 + ERA auto-posting · CPT 90901, 90875, 90876, 90849 auto-suggested per session · ICD-10 codes pulled from chart",       color: "#10B981" },
     { title: "AI scribe in 6 formats",     desc: "SOAP / DAP / BIRP / GIRP / PIE / SIRP from session audio · clinician approves before save · Claude Haiku + GPT-4o fallback",   color: "#7C3AED" },
-    { title: "Open data · zero lock-in",   desc: "BIDS / SNIRF / EDF+ export · MIT-licensed · self-hostable · your data lives in your Postgres, not ours",                       color: "#06B6D4" },
+    { title: "Open data · zero lock-in",   desc: "BIDS / SNIRF / EDF+ export anytime · standardised formats · take your data with you whenever you want",  color: "#06B6D4" },
   ],
   features: [
     "Native Mendi fNIRS support · Muse · Polar HRV · OpenBCI · BYO BLE",
@@ -28,10 +28,10 @@ const C: AudienceContent = {
   cta: { label: "Try the live demo →", href: "/demo" },
   secondaryCta: { label: "Read the docs", href: "/api-docs" },
   proofPoints: [
-    { val: "10",     lbl: "Tabs in the live demo" },
+    { val: "11",     lbl: "Tabs in the live demo" },
     { val: "6 min",  lbl: "Avg time to first session" },
     { val: "Free",   lbl: "Every feature, every device" },
-    { val: "MIT",    lbl: "Open-source license" },
+    { val: "Hosted", lbl: "U.S. infrastructure · HIPAA-friendly" },
   ],
   footnote: "BCIA-listed coming Q3 2026 · ISNR + AAPB directories pending.",
 };

@@ -10,7 +10,7 @@ const ROLES = [
     title: "Senior Full-stack Engineer",
     level: "Senior · Remote · USA / EU",
     salary: "$160–210k + equity",
-    desc: "Own the cross-session pattern detector and coaching marketplace. Next.js + Postgres + WebSocket. Most code is open-source under MIT — your work ships in public.",
+    desc: "Own the cross-session pattern detector and coaching marketplace. Next.js + Postgres + WebSocket. We ship a public changelog; your work has visible impact within weeks.",
     quals: ["6+ years shipping production web apps", "Strong TypeScript + React", "Postgres / SQL fluency", "Have shipped a real-time streaming feature"],
   },
   {
@@ -39,7 +39,7 @@ const ROLES = [
 const VALUES = [
   { title: "Honest gaps over fake polish", desc: "We list what we can't do yet on the homepage. Anyone who pretends to be perfect is hiding something." },
   { title: "Clinicians > engineers > investors", desc: "If a clinical workflow is broken, we fix the workflow before we add a feature. Investors come third in this order on purpose." },
-  { title: "Open source by default", desc: "MIT-licensed unless there's a specific reason not to. We assume our code will be read, forked, and improved by people we'll never meet." },
+  { title: "Free for clinicians", desc: "We don't charge licensed clinicians during early launch. Revenue comes from clinic-scale enterprise tiers and hardware partnerships, not per-seat fees." },
   { title: "Show your work", desc: "Public changelog, public roadmap, public RCA. Status page is real, not theatrical. We talk publicly about mistakes within 5 days." },
   { title: "Protect the patient", desc: "Patient data never leaves the site of care without explicit consent. Cross-site registry data is de-identified per Safe Harbor + Expert Determination." },
 ];
@@ -71,7 +71,7 @@ export default function CareersPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#10B981", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Careers · {ROLES.length} open roles</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Build the clinical layer</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
-          A small team (4 right now, hiring to 8 by Q4 2026) building the clinical software layer for consumer + research neurofeedback hardware. Open-source, profitable-by-Q3-2027 plan, well-funded for 18 months runway, fully remote.
+          A small team (4 right now, hiring to 8 by Q4 2026) building the clinical software layer for consumer + research neurofeedback hardware. Profitable-by-Q3-2027 plan, well-funded for 18 months runway, fully remote.
         </p>
 
         {/* Roles */}
@@ -128,7 +128,7 @@ export default function CareersPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link>
       </footer>
     </div>
   );

@@ -9,7 +9,7 @@ export default function NotFound() {
           Off-protocol.
         </h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 28 }}>
-          That page doesn't exist — or hasn't shipped yet. The good news: the live demo, the partnership doc, and the source code all do.
+          That page doesn't exist — or hasn't shipped yet. The good news: the live demo, the partnership doc, and our team all do.
         </p>
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginBottom: 22 }}>
           <Link href="/demo" style={{ padding: "12px 20px", background: "#2563EB", color: "white", borderRadius: 10, fontSize: 14, fontWeight: 700, textDecoration: "none" }}>

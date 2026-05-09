@@ -116,12 +116,12 @@ const FRAMES: Frame[] = [
   {
     eyebrow: "5 of 5 · Free",
     title: "Free for licensed clinicians, forever",
-    body: "Open source on GitHub. Self-host or use the hosted version. No per-seat pricing, no setup fee.",
+    body: "We host the platform for you on HIPAA-friendly U.S. infrastructure. No per-seat pricing, no setup fee. Your data exports as BIDS / SNIRF / EDF+ anytime.",
     visual: () => (
       <div className="bg-gradient-to-br from-blue-50 to-violet-50 border border-blue-100 rounded-2xl p-8 text-center">
         <p className="text-5xl font-bold text-blue-600 mb-2">Free</p>
         <p className="text-sm text-gray-700">For licensed clinicians</p>
-        <p className="text-xs text-gray-500 mt-3">MIT license · self-host or hosted · no card required</p>
+        <p className="text-xs text-gray-500 mt-3">Hosted by us · no card required</p>
       </div>
     ),
   },

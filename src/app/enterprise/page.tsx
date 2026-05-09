@@ -11,7 +11,7 @@ const C: AudienceContent = {
   hero: { line1: "Multi-clinic. Multi-region.", line2: "Mendi-attached or white-label.", line2Color: "#7C3AED" },
   lede: "Enterprise deployment of EEGBase for health systems, multi-location practices, and corporate-wellness programs. White-label option ('Mendi Clinical' is one example), full SSO, signed BAA + DPA, dedicated CSM, 99.97% uptime SLA.",
   pillars: [
-    { title: "White-label ready",          desc: "Theme switcher rebrands across all 16 tabs, patient portal, booking page, share-link viewer, outbound email. 2-week launch · 0 hrs Mendi engineering.", color: "#7C3AED" },
+    { title: "White-label ready",          desc: "Theme switcher rebrands across all 11 tabs, patient portal, booking page, share-link viewer, outbound email. 2-week launch · 0 hrs Mendi engineering.", color: "#7C3AED" },
     { title: "Procurement-ready compliance", desc: "SOC 2 Type II + Bishop Fox + HIPAA BAA + EU SCCs + Schrems II + WCAG 2.2 AA. SIG-LITE/HECVAT questionnaires answered.",                                  color: "#10B981" },
     { title: "Dedicated SLA + CSM",         desc: "99.97% uptime · 15-min P0 ack · 4h mitigation · 5-day public RCA · multi-region failover · cross-AZ tested monthly.",                                       color: "#06B6D4" },
   ],

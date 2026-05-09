@@ -44,9 +44,9 @@ export default function OfficeHoursPage() {
               <p style={{ fontSize: 13, color: "#0F172A", marginBottom: 10 }}>{s.host}</p>
               <p style={{ fontSize: 11, fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Best for</p>
               <p style={{ fontSize: 12, color: "#64748B", lineHeight: 1.55, marginBottom: 14 }}>{s.topic}</p>
-              <a href={`https://calendly.com/eegbase/office-hours-${s.day.toLowerCase()}`} style={{ display: "block", padding: "8px 14px", background: ["#2563EB", "#10B981", "#7C3AED"][i % 3], color: "white", borderRadius: 8, fontSize: 12, fontWeight: 700, textDecoration: "none", textAlign: "center" }}>
+              <Link href={`/contact?role=other`} style={{ display: "block", padding: "8px 14px", background: ["#2563EB", "#10B981", "#7C3AED"][i % 3], color: "white", borderRadius: 8, fontSize: 12, fontWeight: 700, textDecoration: "none", textAlign: "center" }}>
                 Reserve a slot →
-              </a>
+              </Link>
             </article>
           ))}
         </div>

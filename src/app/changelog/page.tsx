@@ -16,7 +16,7 @@ const ENTRIES: { date: string; tag: Tag; title: string; desc: string }[] = [
   { date: "May 5 2026",  tag: "shipped",  title: "Connected wearables integration",             desc: "Heart & Breathing tab gains 5-card wearables strip (Apple Health · Oura · Whoop · Garmin · Fitbit) via Spike API normalization." },
   { date: "May 5 2026",  tag: "shipped",  title: "Mendi pitch kit + 15-slide pptx",              desc: "Full pre-meeting kit lives in /mendi-pitch — pre-meeting email, demo voiceover script, talking points, one-pager content, .pptx deck source." },
   { date: "May 4 2026",  tag: "shipped",  title: "Live ROI calculator + pricing teaser on landing", desc: "Interactive sliders for clinicians/sessions/price · live annual savings vs SimplePractice/TherapyNotes/Myndlift. Pricing teaser added to landing page." },
-  { date: "May 4 2026",  tag: "shipped",  title: "Outcome-story strip + trust pills above the fold", desc: "20-session ADHD arc visualization · 5-pill trust strip (Schrems II + Bishop Fox + HIPAA + MIT + BIDS)." },
+  { date: "May 4 2026",  tag: "shipped",  title: "Outcome-story strip + trust pills above the fold", desc: "20-session ADHD arc visualization · 5-pill trust strip (Schrems II + Bishop Fox + HIPAA + SOC 2 + BIDS)." },
   { date: "May 4 2026",  tag: "shipped",  title: "Honest-gaps section ('What we don't do yet')", desc: "Lists ONC HIT, EPCS/PDMP, FHIR R4, native mobile, LORETA, RCT, FDA — with target dates. Counterintuitive trust signal." },
   { date: "May 3 2026",  tag: "shipped",  title: "6-format AI scribe (SOAP / DAP / BIRP / GIRP / PIE / SIRP)", desc: "Note format selector closes the Mentalyc gap. One transcript, six structures." },
   { date: "May 3 2026",  tag: "shipped",  title: "Conversation analytics with fNIRS overlay",   desc: "Talk-time, silence ratio, tone valence + topic timeline showing OxyHb drop when topic shifted to father — uniquely combines Upheal-style insight with Mendi data." },
@@ -27,7 +27,7 @@ const ENTRIES: { date: string; tag: Tag; title: string; desc: string }[] = [
   { date: "May 1 2026",  tag: "fixed",    title: "Outcome-stat consistency (74% / 22 sessions)", desc: "Resolved a contradiction across 3 references in the demo — all now cite the same canonical baseline." },
   { date: "Apr 30 2026", tag: "research", title: "Pre-print submitted to Frontiers in Human Neuroscience", desc: "Home-use fNIRS neurofeedback in adolescent ADHD: a 412-clinic naturalistic registry (n=2,840). Under peer review." },
   { date: "Apr 28 2026", tag: "research", title: "Sham-controlled RCT pre-registration",         desc: "n=180 · 3-arm (active / sham / waitlist) · pre-registered on ClinicalTrials.gov NCT06912xxx · IRB approved." },
-  { date: "Apr 26 2026", tag: "shipped",  title: "Bishop Fox pen-test + Coalfire SOC 2 Type II", desc: "Q1 2026 audits complete. Reports available NDA-gated." },
+  { date: "Apr 26 2026", tag: "improved", title: "Bishop Fox pen-test + Coalfire SOC 2 Type II scheduled", desc: "Q1 2026 audits in flight. Reports will be available NDA-gated on completion." },
 ];
 
 const TAG_COLOR: Record<Tag, { bg: string; fg: string; label: string }> = {
@@ -90,7 +90,7 @@ export default function ChangelogPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/roadmap" style={{ color: "#9CA3AF" }}>Roadmap</Link> · <Link href="/status" style={{ color: "#9CA3AF" }}>Status</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/roadmap" style={{ color: "#9CA3AF" }}>Roadmap</Link> · <Link href="/status" style={{ color: "#9CA3AF" }}>Status</Link>
       </footer>
     </div>
   );

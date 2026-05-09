@@ -94,7 +94,7 @@ export default function MendiClinicalPreviewPage() {
           What changes when Mendi Clinical mode is on
         </h2>
         <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 28 }}>
-          One toggle in admin settings. Theme propagates across all 16 tabs, the patient portal, the booking page, the share-link viewer, and outbound emails.
+          One toggle in admin settings. Theme propagates across all 11 tabs, the patient portal, the booking page, the share-link viewer, and outbound emails.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16 }}>
           {[
@@ -138,7 +138,7 @@ export default function MendiClinicalPreviewPage() {
             ))}
           </div>
           <div style={{ marginTop: 20, padding: "12px 16px", background: "rgba(0,0,0,0.25)", borderRadius: 8, fontSize: 12, color: "#C4B5FD", lineHeight: 1.7 }}>
-            <strong style={{ color: "#fff" }}>No commercial strings.</strong> EEGBase is MIT-licensed. Mendi-attached clinics get the white-label brand at no cost — the partnership is about distribution and clinical credibility, not revenue.
+            <strong style={{ color: "#fff" }}>No commercial strings.</strong> EEGBase is free. Mendi-attached clinics get the white-label brand at no cost — the partnership is about distribution and clinical credibility, not revenue.
           </div>
         </div>
       </section>
@@ -166,7 +166,7 @@ export default function MendiClinicalPreviewPage() {
       {/* FOOTER DISCLOSURE */}
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 11, color: "#9CA3AF" }}>
         Mockup only. Mendi has not approved or commissioned this page. Brand colors and logo treatment are illustrative.<br />
-        © 2026 EEGBase · MIT licensed · github.com/jpiscool/eegbase
+        © 2026 EEGBase · eegbase.com
       </footer>
     </div>
   );
@@ -273,7 +273,7 @@ function DashboardMock({ variant }: { variant: "eegbase" | "mendi" }) {
           <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
             {[
               { name: isMendi ? "Mendi fNIRS" : "Mendi fNIRS", q: "96%" },
-              { name: "Cz EEG", q: "88%" },
+              { name: "AF7 EEG · Muse", q: "88%" },
               { name: "Polar HRV", q: "99%" },
             ].map((p) => (
               <div key={p.name} style={{ background: PANEL_BG, border: `1px solid ${BORDER}`, borderRadius: 99, padding: "3px 8px", fontSize: 9, color: SUBTLE, display: "flex", alignItems: "center", gap: 4 }}>

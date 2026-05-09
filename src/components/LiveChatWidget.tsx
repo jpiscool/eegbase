@@ -8,7 +8,7 @@ type Msg = { role: "bot" | "user"; text: string };
 const STORAGE_KEY = "eegbase-chat";
 
 const QUICK = [
-  { label: "What does EEGBase do?",    answer: "Control all your neurofeedback devices with one tool. Mendi at home, Muse in clinic, Polar, Apple Watch — every device feeds one client record. Free and open-source." },
+  { label: "What does EEGBase do?",    answer: "Control all your neurofeedback devices with one tool. Mendi at home, Muse in clinic, Polar, Apple Watch — every device feeds one client record. Free and ." },
   { label: "Pricing?",                 answer: "It's free. Every feature, every device, every clinician on your team. No card, no trial limit." },
   { label: "Is it HIPAA compliant?",   answer: "Yes. Encrypted, audited by Bishop Fox and Coalfire in 2026, signed BAA. EU clinics covered by EU privacy law (Schrems II). Full details at /security." },
   { label: "Does it work with Mendi?", answer: "Yes. Mendi is the flagship device. Brain data streams live from both forehead sensors, reconnects instantly, and stays in sync. See /devices for the full breakdown." },

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/docs" },
   openGraph: {
     title: "Developer Docs · EEGBase",
-    description: "REST + WebSocket APIs for clinical neurofeedback. Self-hosted, open-source, MIT.",
+    description: "REST + WebSocket APIs for clinical neurofeedback. BIDS-fNIRS native.",
     url: "/docs",
     type: "website",
   },

@@ -15,7 +15,7 @@ const COMPARISONS: Comp[] = [
     slug: "simplepractice",
     name: "SimplePractice",
     cat: "General mental-health EHR",
-    pricing: "SimplePractice is paid SaaS · EEGBase is free (MIT-licensed, self-hostable)",
+    pricing: "SimplePractice is paid SaaS · EEGBase is free for licensed clinicians",
     rows: [
       { feature: "Real-time fNIRS / EEG signal capture", us: true,  them: false },
       { feature: "AI cross-session pattern detector",     us: true,  them: false },
@@ -23,7 +23,6 @@ const COMPARISONS: Comp[] = [
       { feature: "CMS-1500 + ERA + ICD-10",                us: true,  them: true },
       { feature: "HIPAA video co-feedback",                us: true,  them: false, sub: "Theirs is video-only, no signal overlay" },
       { feature: "Group + couples + family modes",         us: true,  them: true,  sub: "Comparable" },
-      { feature: "Open-source · self-hostable",           us: true,  them: false },
       { feature: "BIDS / SNIRF / EDF+ export",            us: true,  them: false },
       { feature: "ONC HIT certification",                  us: false, them: false, sub: "Both not yet · we target Q1 2027" },
       { feature: "Existing clinician base (millions)",    us: false, them: true,  sub: "Their advantage today" },
@@ -34,7 +33,7 @@ const COMPARISONS: Comp[] = [
     slug: "therapynotes",
     name: "TherapyNotes",
     cat: "General mental-health EHR · ONC-certified",
-    pricing: "TherapyNotes is paid SaaS · EEGBase is free (MIT-licensed, self-hostable)",
+    pricing: "TherapyNotes is paid SaaS · EEGBase is free for licensed clinicians",
     rows: [
       { feature: "Real-time fNIRS / EEG signal capture", us: true,  them: false },
       { feature: "ONC HIT 2025 Edition certification",   us: false, them: true,  sub: "Their advantage; we're targeting Q1 2027" },
@@ -42,7 +41,6 @@ const COMPARISONS: Comp[] = [
       { feature: "ICD-10 auto-suggest from session",      us: true,  them: false },
       { feature: "AI cross-session pattern detector",     us: true,  them: false },
       { feature: "Ambient SOAP scribe (6 formats)",       us: true,  them: false },
-      { feature: "Open-source · self-hostable",           us: true,  them: false },
       { feature: "BIDS / SNIRF / EDF+ export",            us: true,  them: false },
       { feature: "EPCS / PDMP for psychiatrists",         us: false, them: true,  sub: "We're targeting Q4 2026 via DrFirst" },
     ],
@@ -52,12 +50,11 @@ const COMPARISONS: Comp[] = [
     slug: "myndlift",
     name: "Myndlift",
     cat: "Muse-only home neurofeedback platform",
-    pricing: "Myndlift is paid coaching SaaS + hardware kit · EEGBase software is free",
+    pricing: "Myndlift is paid coaching SaaS + hardware kit · EEGBase is free for licensed clinicians",
     rows: [
       { feature: "Hardware-agnostic (any BLE)",           us: true,  them: false, sub: "Theirs is Muse-only" },
       { feature: "Native Mendi fNIRS support",             us: true,  them: false },
       { feature: "AI cross-session pattern detector",     us: true,  them: false },
-      { feature: "Open-source · self-hostable",           us: true,  them: false },
       { feature: "BIDS / SNIRF / EDF+ export",            us: true,  them: false },
       { feature: "Coaching marketplace",                  us: true,  them: true,  sub: "Theirs is more mature today" },
       { feature: "qEEG brain mapping",                    us: true,  them: true,  sub: "Comparable" },
@@ -65,20 +62,19 @@ const COMPARISONS: Comp[] = [
       { feature: "Insurance billing + claims",             us: true,  them: false, sub: "They don't bill" },
       { feature: "Existing clinician base",               us: false, them: true,  sub: "10k+ vs our private beta" },
     ],
-    closing: "Myndlift is our nearest competitor. Their advantage: mature consumer mobile app + an established Muse-clinician network. Our advantage: hardware-agnostic with native Mendi, full EHR + billing, open-source no lock-in, and the cross-session AI pattern detector nobody else ships.",
+    closing: "Myndlift is our nearest competitor. Their advantage: mature consumer mobile app + an established Muse-clinician network. Our advantage: hardware-agnostic with native Mendi, full EHR + billing, BIDS exports for zero lock-in, and the cross-session AI pattern detector nobody else ships.",
   },
   {
     slug: "brainmaster",
     name: "BrainMaster · Discovery / Atlantis",
     cat: "Legacy clinical neurofeedback hardware + Windows software",
-    pricing: "Discovery is hardware + paid software · EEGBase is free (MIT-licensed)",
+    pricing: "Discovery is hardware + paid software · EEGBase is free for licensed clinicians",
     rows: [
       { feature: "Cloud-native · web-based",              us: true,  them: false, sub: "Theirs is Windows installed" },
       { feature: "Hardware-agnostic",                      us: true,  them: false, sub: "Theirs is BrainMaster-only" },
       { feature: "Modern UX (2026 standards)",            us: true,  them: false },
       { feature: "AI scribe + cross-session patterns",     us: true,  them: false },
       { feature: "BIDS / SNIRF / EDF+ open export",       us: true,  them: "partial" },
-      { feature: "Open-source · MIT",                     us: true,  them: false },
       { feature: "Established protocol library",           us: true,  them: true,  sub: "Both have them" },
       { feature: "Long-tenured clinical credibility",     us: false, them: true,  sub: "Their 25-year head start" },
     ],
@@ -88,14 +84,13 @@ const COMPARISONS: Comp[] = [
     slug: "cygnet",
     name: "Cygnet · BEE Medic",
     cat: "Z-score-focused clinical neurofeedback platform · Windows",
-    pricing: "Cygnet is paid subscription · EEGBase is free (MIT-licensed)",
+    pricing: "Cygnet is paid subscription · EEGBase is free for licensed clinicians",
     rows: [
       { feature: "Cloud-native",                          us: true,  them: false, sub: "Cygnet is Windows-only" },
       { feature: "Z-score training",                      us: true,  them: true,  sub: "Both support · their depth is greater today" },
       { feature: "Hardware-agnostic",                      us: true,  them: false, sub: "Cygnet ties to BEE Medic hardware" },
       { feature: "AI cross-session pattern detector",     us: true,  them: false },
       { feature: "Insurance billing built-in",             us: true,  them: false, sub: "Cygnet relies on external EHR" },
-      { feature: "Open-source · MIT",                     us: true,  them: false },
       { feature: "Established z-score evidence base",     us: false, them: true,  sub: "Their advantage today" },
       { feature: "Mendi fNIRS support",                   us: true,  them: false },
     ],
@@ -105,14 +100,13 @@ const COMPARISONS: Comp[] = [
     slug: "bioexplorer",
     name: "BioExplorer",
     cat: "Open-design legacy biofeedback designer · Windows",
-    pricing: "BioExplorer is a paid perpetual licence · EEGBase is free (MIT-licensed)",
+    pricing: "BioExplorer is a paid perpetual licence · EEGBase is free for licensed clinicians",
     rows: [
       { feature: "Cloud-native · web-based",              us: true,  them: false },
       { feature: "Visual protocol designer",              us: true,  them: true,  sub: "Their advantage — the designer is excellent" },
       { feature: "AI scribe · SOAP automation",            us: true,  them: false },
       { feature: "EHR + claims bundled",                  us: true,  them: false },
       { feature: "Hardware-agnostic",                      us: true,  them: true,  sub: "Comparable" },
-      { feature: "Open-source · MIT",                     us: true,  them: false },
       { feature: "Custom-protocol depth",                  us: false, them: true,  sub: "Their open-design approach has 20-year head start" },
       { feature: "BIDS / SNIRF export",                   us: true,  them: false },
     ],
@@ -122,14 +116,13 @@ const COMPARISONS: Comp[] = [
     slug: "neuroguide",
     name: "NeuroGuide",
     cat: "qEEG + LORETA gold standard · Windows desktop",
-    pricing: "NeuroGuide is a paid perpetual licence · EEGBase is free (MIT-licensed)",
+    pricing: "NeuroGuide is a paid perpetual licence · EEGBase is free for licensed clinicians",
     rows: [
       { feature: "Cloud-native",                          us: true,  them: false },
       { feature: "qEEG with normative database",          us: true,  them: true,  sub: "NeuroGuide's normative database is the field standard" },
       { feature: "3D LORETA source localization",         us: false, them: true,  sub: "Their gold-standard feature; we ship Q4 2026" },
       { feature: "AI scribe · cross-session AI",          us: true,  them: false },
       { feature: "Insurance billing built-in",             us: true,  them: false },
-      { feature: "Open-source · MIT",                     us: true,  them: false },
       { feature: "Long-tenured clinical credibility",     us: false, them: true,  sub: "Their 30-year reputation" },
       { feature: "Mendi fNIRS support",                   us: true,  them: false },
     ],
@@ -139,18 +132,16 @@ const COMPARISONS: Comp[] = [
     slug: "divergence-neuro",
     name: "Divergence Neuro",
     cat: "Modern cloud-based multi-vendor neurofeedback platform",
-    pricing: "Divergence is paid SaaS · EEGBase is free (MIT-licensed, self-hostable)",
+    pricing: "Divergence is paid SaaS · EEGBase is free for licensed clinicians",
     rows: [
       { feature: "Cloud-native",                          us: true,  them: true,  sub: "Both" },
       { feature: "Hardware-agnostic",                      us: true,  them: true,  sub: "Both — but they treat all vendors equally" },
       { feature: "Mendi flagship / preferred status",     us: true,  them: false, sub: "We can offer Mendi flagship; Divergence keeps multi-vendor parity" },
-      { feature: "Open-source · MIT",                     us: true,  them: false },
-      { feature: "Self-hostable",                         us: true,  them: false },
       { feature: "AI cross-session pattern detector",     us: true,  them: false },
       { feature: "BIDS / SNIRF / EDF+ open export",       us: true,  them: "partial" },
       { feature: "Mature product · existing clinic base", us: false, them: true,  sub: "Their advantage today" },
     ],
-    closing: "Divergence is our nearest cloud peer. Their structural choice — multi-vendor parity — means Mendi gets equal weight with BrainBit and Muse. We can offer Mendi flagship/preferred status, plus open-source + self-hostable, which Divergence isn't.",
+    closing: "Divergence is our nearest cloud peer. Their structural choice — multi-vendor parity — means Mendi gets equal weight with BrainBit and Muse. We can offer Mendi flagship/preferred status plus a bundled AI scribe and EHR layer, which Divergence isn't.",
   },
 ];
 
@@ -227,7 +218,7 @@ export default async function VsPage({ params }: { params: Promise<{ slug: strin
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link>
       </footer>
     </div>
   );

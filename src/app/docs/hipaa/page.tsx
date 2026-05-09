@@ -30,8 +30,8 @@ const PROTECTIONS = [
   },
   {
     icon: Server,
-    title: "Self-Hosted Option",
-    body: "EEGBase is open-source and can be deployed entirely on your own infrastructure. Your PHI never leaves your servers, giving you full control over data residency and retention.",
+    title: "U.S.-Hosted on HIPAA Infrastructure",
+    body: "We host every clinic on HIPAA-eligible AWS infrastructure in the U.S. (us-east-1) or EU (eu-west-3). PHI is encrypted at rest with AES-256 and in transit with TLS 1.3.",
   },
 ];
 
@@ -55,9 +55,9 @@ const CHECKLIST_SECTIONS: ChecklistSection[] = [
   {
     title: "Infrastructure",
     items: [
-      { text: "Self-host on your own server or VPS (not shared hosting)" },
-      { text: "Enable disk encryption on the host volume" },
-      { text: "Use TLS 1.2+ for all connections; redirect HTTP to HTTPS" },
+      { text: "Confirm region (us-east-1 or eu-west-3) before onboarding" },
+      { text: "Enable two-factor authentication on every clinical seat" },
+      { text: "Use the auto-logout default (15 minutes inactivity)" },
     ],
   },
   {

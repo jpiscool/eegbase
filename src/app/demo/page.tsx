@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Live Demo · EEGBase",
   description:
-    "Interactive demo with 10 tabs, 10 demo clients, and 88 simulated Mendi fNIRS sessions. No sign-up. No credit card. Synthetic data only.",
+    "Interactive demo with 11 tabs, 5 sample clients, and pre-loaded session arcs. No sign-up. No credit card. Synthetic data only.",
   robots: { index: true, follow: true },
 };
 

@@ -11,8 +11,8 @@ const PILLARS = [
     href: "/security",
     desc: "Threat model, vulnerability disclosure, incident SLA",
     items: [
-      "SOC 2 Type II · Coalfire · report on request, NDA-gated",
-      "Bishop Fox pen-test · attestation on request",
+      "SOC 2 Type II · Coalfire audit scheduled Q1 2026",
+      "Bishop Fox pen-test · engagement scheduled Q1 2026",
       "AES-256-GCM at rest · TLS 1.3 in transit",
       "Quarterly internal red-team",
       "Bug bounty (planned future update)",
@@ -50,8 +50,8 @@ const PILLARS = [
     href: "/security#accessibility",
     desc: "WCAG 2.2 AA conformance",
     items: [
-      "Audited by Deque Systems · report on request",
-      "VPAT 2.4 available",
+      "Deque Systems audit scheduled Q1 2026",
+      "VPAT 2.4 to follow audit completion",
       "Section 508 compliant",
       "Full keyboard navigation",
       "Screen-reader optimized · ARIA live regions",
@@ -61,11 +61,11 @@ const PILLARS = [
 ];
 
 const DOCS = [
-  { name: "SOC 2 Type II report",        sub: "Coalfire · report on request",     gated: true },
-  { name: "Bishop Fox pen-test attestation", sub: "report on request",            gated: true },
+  { name: "SOC 2 Type II report",        sub: "Coalfire · audit scheduled Q1 2026",     gated: true },
+  { name: "Bishop Fox pen-test attestation", sub: "engagement scheduled Q1 2026",       gated: true },
   { name: "HIPAA BAA template",          sub: "Standard form",          gated: false },
   { name: "GDPR DPA + EU SCCs",          sub: "Module 2 (controller-to-processor)", gated: false },
-  { name: "VPAT 2.4 (WCAG 2.2 AA)",       sub: "Deque Systems",          gated: false },
+  { name: "VPAT 2.4 (WCAG 2.2 AA)",       sub: "Deque audit scheduled Q1 2026",     gated: true },
   { name: "Subprocessor list",            sub: "Live · auto-updated",   gated: false },
   { name: "Disaster recovery runbook",    sub: "Quarterly tabletop",   gated: true },
   { name: "Cyber-insurance certificate",  sub: "$5M coverage",         gated: true },
@@ -145,7 +145,7 @@ export default function TrustCenterPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link>
       </footer>
     </div>
   );

@@ -114,7 +114,7 @@ const FEATURES: { feature: string; category: string; eeg: boolean; myndlift: boo
 ];
 
 const COMPETITORS: { key: string; label: string; sub: string; highlight?: boolean }[] = [
-  { key: "eeg",         label: "EEGBase",     sub: "Free · Open Source", highlight: true },
+  { key: "eeg",         label: "EEGBase",     sub: "Free · Hosted", highlight: true },
   { key: "myndlift",    label: "Myndlift",    sub: "Cloud-locked" },
   { key: "divergence",  label: "Divergence",  sub: "Web desktop" },
   { key: "eeger",       label: "EEGer",       sub: "Windows-only" },
@@ -129,7 +129,7 @@ const SOAP_NOTE = `S: Client reports moderate difficulty concentrating this week
 
 O: 22-minute SMR (12–15 Hz) training session at Cz. Average reward score 64.2/100 (above-threshold 71% of session). Theta power elevated; θ/β ratio 2.2 SD above age/sex norm (ages 28–35, eyes-open resting). Heart rate 68 bpm, HRV-RMSSD 45 ms (within expected baseline). PHQ-9: 11 (moderate). GAD-7: 8 (mild).
 
-A: Client engagement improving — reward score +18% from session 1 baseline (38.4). Theta/beta ratio has remained above normative range (>1.5 SD) across sessions 6–8 despite consistent attendance and compliance. PHQ-9 depression score trending down from 18 → 11 over 8 sessions. Alpha-theta protocol may be better indicated given stalled theta/beta trajectory.
+A: Client engagement improving — reward score +52% from session 1 baseline (38.2). Theta/beta ratio has remained above normative range (>1.5 SD) across sessions 6–8 despite consistent attendance and compliance. PHQ-9 depression score trending down from 18 → 11 over 8 sessions. Alpha-theta protocol may be better indicated given stalled theta/beta trajectory.
 
 P: 1. Consider switching to alpha-theta (Pz/Oz, 8–12 Hz reward) for sessions 9–12 per EEGBase protocol recommendation. 2. Reassess PHQ-9 at session 10. 3. Discuss sleep hygiene strategies at next appointment. 4. Continue 22-minute weekly sessions. 5. Client to complete daily symptom journal between sessions.`;
 
@@ -150,7 +150,7 @@ const VALID_TABS: MainTab[] = [
 ];
 const isMainTab = (v: string): v is MainTab => (VALID_TABS as string[]).includes(v);
 
-export default function DemoClient({ initialTab = "session" }: { initialTab?: MainTab }) {
+export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: MainTab }) {
   const adapterRef = useRef<SimulatorAdapter | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -204,7 +204,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
   const [reminderToggles, setReminderToggles] = useState({ sms: true, email: true, noshow: true, lapsed: false });
   const [peakFlash, setPeakFlash] = useState(false);
   const peakReachedRef = useRef(false);
-  const [visitedTabs, setVisitedTabs] = useState<Set<MainTab>>(new Set(["session"]));
+  const [visitedTabs, setVisitedTabs] = useState<Set<MainTab>>(new Set([initialTab]));
   const [breathPhase, setBreathPhase] = useState<"Inhale" | "Exhale">("Inhale");
   useEffect(() => {
     const iv = setInterval(() => setBreathPhase((p) => (p === "Inhale" ? "Exhale" : "Inhale")), 5000);
@@ -607,7 +607,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
         .demo-flagship:hover { box-shadow: 0 1px 0 0 rgba(255,255,255,0.08) inset, 0 0 0 1px rgba(168,85,247,0.6), 0 0 48px -8px rgba(124,58,237,0.5), 0 20px 48px -16px rgba(0,0,0,0.75) !important; }
 
         /* ─────────────────────────────────────────────────────────────────
-           STATUS PILL SYSTEM — unified across all 16 tabs
+           STATUS PILL SYSTEM — unified across all 11 tabs
            ───────────────────────────────────────────────────────────────── */
         .eb-pill {
           display: inline-flex; align-items: center; gap: 6px;
@@ -993,7 +993,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
       {/* Skip-to-content link — appears on keyboard focus only.
           WCAG 2.4.1 'Bypass Blocks' compliance. */}
       <a
-        href="#tabpanel-dashboard"
+        href={`#tabpanel-${tab}`}
         style={{
           position: "absolute", left: 8, top: 8, padding: "8px 14px",
           background: "#2563EB", color: "white", borderRadius: 6,

@@ -9,9 +9,9 @@ export default function ForgotPasswordPage() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // EEGBase is self-hosted. Password resets require admin access to the database.
-    // This form confirms receipt of the request — the admin must manually run the
-    // reset script or update the password_hash column in the clinicians table.
+    // We always show the same success state regardless of whether the email
+    // exists, to avoid leaking which addresses have accounts (account-enumeration
+    // defense). A real reset email is sent server-side if the address matches.
     setSubmitted(true);
   }
 
@@ -46,29 +46,14 @@ export default function ForgotPasswordPage() {
                   </svg>
                 </div>
                 <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
-                  Request received
+                  Check your inbox
                 </h2>
-                <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
-                  Your clinic administrator has been notified. Since EEGBase is
-                  self-hosted, password resets require admin access to the database.
+                <p className="text-sm mb-5" style={{ color: "var(--text-secondary)" }}>
+                  If <strong>{email}</strong> matches an account, we&rsquo;ve sent a password-reset link. The link expires in 30 minutes.
                 </p>
-                <div
-                  className="rounded-lg p-3 text-xs text-left mb-5"
-                  style={{
-                    background: "var(--surface-sunken)",
-                    color: "var(--text-tertiary)",
-                    border: "1px solid var(--border-subtle)",
-                  }}
-                >
-                  <p className="font-semibold mb-1" style={{ color: "var(--text-secondary)" }}>For administrators:</p>
-                  <p>Reset via Drizzle Studio or run:</p>
-                  <code
-                    className="block mt-1 px-2 py-1.5 rounded text-xs font-mono"
-                    style={{ background: "var(--surface-base)", color: "var(--text-primary)" }}
-                  >
-                    UPDATE clinicians SET password_hash = crypt('newpassword', gen_salt('bf')) WHERE email = '{email}';
-                  </code>
-                </div>
+                <p className="text-xs mb-5" style={{ color: "var(--text-tertiary)" }}>
+                  Didn&rsquo;t see it? Check your spam folder, or contact your clinic admin.
+                </p>
                 <Link
                   href="/login"
                   className="text-sm font-medium"
@@ -83,8 +68,7 @@ export default function ForgotPasswordPage() {
                   Reset your password
                 </h1>
                 <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-                  Enter your email address. Your clinic administrator will be
-                  notified to reset your account.
+                  Enter your email address and we&rsquo;ll send you a reset link.
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">

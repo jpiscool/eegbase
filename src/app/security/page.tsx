@@ -31,10 +31,10 @@ export default function SecurityPage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 28 }}>
           {[
             { tag: "🛡 HIPAA",       desc: "BAA available · 7-year audit log retention" },
-            { tag: "🔒 SOC 2 Type II", desc: "Coalfire · report on request, NDA-gated download" },
-            { tag: "🎯 Pen-test",    desc: "Bishop Fox · attestation on request available" },
+            { tag: "🔒 SOC 2 Type II", desc: "Coalfire audit scheduled Q1 2026 · report NDA-gated on completion" },
+            { tag: "🎯 Pen-test",    desc: "Bishop Fox engagement scheduled Q1 2026" },
             { tag: "🇪🇺 Schrems II", desc: "EU SCCs (2021/914) · Frankfurt eu-west-3" },
-            { tag: "♿ WCAG 2.2 AA", desc: "Deque-audited · Section 508 · VPAT 2.4" },
+            { tag: "♿ WCAG 2.2 AA", desc: "Deque audit scheduled Q1 2026 · VPAT 2.4 to follow" },
             { tag: "🔑 SSO",         desc: "SAML · Okta · Google · Microsoft Entra" },
             { tag: "🔐 At rest",     desc: "AES-256-GCM · keys rotated quarterly" },
             { tag: "🌐 In transit",  desc: "TLS 1.3 · forward secrecy · HSTS preload" },
@@ -84,14 +84,14 @@ export default function SecurityPage() {
         </Section>
 
         <Section title="Compliance documents">
-          <p>The following are NDA-gated. Sign a mutual NDA via <a href="mailto:legal@eegbase.com" style={{ color: "#2563EB" }}>legal@eegbase.com</a> to receive:</p>
+          <p>The following are NDA-gated. Sign a mutual NDA via <a href="mailto:legal@eegbase.com" style={{ color: "#2563EB" }}>legal@eegbase.com</a> to receive on completion:</p>
           <ul style={{ listStyle: "disc", paddingLeft: 20, marginTop: 6, lineHeight: 1.8 }}>
-            <li>SOC 2 Type II report (Coalfire, report on request)</li>
-            <li>Bishop Fox pen-test attestation + remediation log</li>
-            <li>HIPAA risk assessment + Security Rule audit</li>
-            <li>GDPR Data Processing Addendum + EU SCCs (2021/914)</li>
-            <li>VPAT 2.4 (WCAG 2.2 AA · Deque-audited)</li>
-            <li>Disaster recovery runbook + tabletop exercise notes</li>
+            <li>SOC 2 Type II report (Coalfire) — audit scheduled Q1 2026</li>
+            <li>Bishop Fox pen-test attestation + remediation log — engagement scheduled Q1 2026</li>
+            <li>HIPAA risk assessment + Security Rule audit (available today)</li>
+            <li>GDPR Data Processing Addendum + EU SCCs (2021/914) (available today)</li>
+            <li>VPAT 2.4 (WCAG 2.2 AA · Deque audit scheduled Q1 2026)</li>
+            <li>Disaster recovery runbook + tabletop exercise notes (available today)</li>
           </ul>
         </Section>
 
@@ -108,7 +108,7 @@ export default function SecurityPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/privacy" style={{ color: "#9CA3AF" }}>Privacy</Link> · <Link href="/terms" style={{ color: "#9CA3AF" }}>Terms</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/privacy" style={{ color: "#9CA3AF" }}>Privacy</Link> · <Link href="/terms" style={{ color: "#9CA3AF" }}>Terms</Link>
       </footer>
     </div>
   );

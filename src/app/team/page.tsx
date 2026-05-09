@@ -9,7 +9,7 @@ const TEAM = [
   {
     role: "Founder · Engineering",
     name: "Bio at public launch",
-    bio: "Prior healthcare-software product. Ships fast, ships open-source, debugs production at 2 a.m.",
+    bio: "Prior healthcare-software product. Ships fast, debugs production at 2 a.m.",
     color: "#2563EB",
     initials: "EB",
   },
@@ -106,7 +106,7 @@ export default function TeamPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/security" style={{ color: "#9CA3AF" }}>Security</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/security" style={{ color: "#9CA3AF" }}>Security</Link>
       </footer>
     </div>
   );

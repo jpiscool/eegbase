@@ -78,7 +78,7 @@ const THREADS = [
 const STATS = [
   { value: "Q3 2026", label: "Public launch" },
   { value: "Pre-launch", label: "Waitlist open" },
-  { value: "MIT", label: "Open source" },
+  { value: "Free", label: "For licensed clinicians" },
 ];
 
 // ── Professional Resources ────────────────────────────────────────────────────

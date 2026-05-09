@@ -17,10 +17,9 @@ const COLORS = [
 ];
 
 const ASSETS = [
-  { name: "Logo · square (PNG)",   sub: "Light + dark backgrounds · 1024×1024", file: "/og-image.svg", color: "#2563EB" },
-  { name: "Logo · wordmark (SVG)", sub: "Vector · scales infinitely",            file: "/og-image.svg", color: "#7C3AED" },
   { name: "Open Graph card (SVG)", sub: "1200×630 · for social sharing",        file: "/og-image.svg", color: "#06B6D4" },
-  { name: "Demo screenshots",      sub: "16 tabs · 1440×900 PNG · zip",         file: "/contact?role=press", color: "#10B981" },
+  { name: "Logo + wordmark pack",  sub: "Square + wordmark · light + dark · SVG/PNG", file: "/contact?role=press", color: "#2563EB" },
+  { name: "Demo screenshots",      sub: "11 tabs · 1440×900 PNG · zip",         file: "/contact?role=press", color: "#10B981" },
   { name: "One-pager PDF",         sub: "Printable summary for press / partners", file: "/contact?role=press", color: "#F59E0B" },
 ];
 
@@ -133,7 +132,7 @@ export default function BrandAssetsPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/team" style={{ color: "#9CA3AF" }}>Team</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/team" style={{ color: "#9CA3AF" }}>Team</Link>
       </footer>
     </div>
   );

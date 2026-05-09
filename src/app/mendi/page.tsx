@@ -282,8 +282,11 @@ export default function MendiPartnershipPage() {
         <h2 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#111", marginBottom: 8, textAlign: "center" }}>
           Built on Mendi signals
         </h2>
-        <p style={{ fontSize: 15, color: "#6B7280", textAlign: "center", marginBottom: 48, maxWidth: 520, margin: "0 auto 48px" }}>
+        <p style={{ fontSize: 15, color: "#6B7280", textAlign: "center", marginBottom: 16, maxWidth: 600, margin: "0 auto 16px" }}>
           EEGBase already understands every signal Mendi broadcasts. Here's what each one tells clinicians.
+        </p>
+        <p style={{ fontSize: 12, color: "#94A3B8", textAlign: "center", marginBottom: 40, maxWidth: 600, margin: "0 auto 40px", fontFamily: "ui-monospace, monospace" }}>
+          Hardware: 660 + 805 nm wavelengths · ~31 Hz sampling · Brodmann area 10 (Fp1 / Fp2) · 2 long channels + 1 short-separation channel for skin-blood-flow regression.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
           {[

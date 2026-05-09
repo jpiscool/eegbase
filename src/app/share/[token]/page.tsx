@@ -485,14 +485,14 @@ export default async function SharedReportPage({
 
           {/* Footer */}
           <div style={{ marginTop: 32, paddingTop: 16, borderTop: "1px solid #E2E8F0", display: "flex", justifyContent: "space-between", fontSize: 10, color: "#94A3B8" }}>
-            <span>EEGBase · eegbase.com · Open-source neurofeedback platform</span>
+            <span>EEGBase · eegbase.com ·  neurofeedback platform</span>
             <span>{t("shareFooter", lang)}</span>
           </div>
         </div>
 
         {/* Powered by footer */}
         <div style={{ textAlign: "center", marginTop: 20, fontSize: 11, color: "#94A3B8" }}>
-          Powered by <strong>EEGBase</strong> — the open-source neurofeedback platform
+          Powered by <strong>EEGBase</strong> — the  neurofeedback platform
         </div>
       </div>
     </div>

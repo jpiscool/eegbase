@@ -373,7 +373,7 @@ export default async function ReportPage({
 
           {/* Footer */}
           <div style={{ marginTop: 32, paddingTop: 16, borderTop: "1px solid #E2E8F0", display: "flex", justifyContent: "space-between", fontSize: 10, color: "#94A3B8" }}>
-            <span>EEGBase · eegbase.com · Open-source neurofeedback platform</span>
+            <span>EEGBase · eegbase.com · neurofeedback clinical platform</span>
             <span>Confidential — For clinical use only</span>
           </div>
         </div>
