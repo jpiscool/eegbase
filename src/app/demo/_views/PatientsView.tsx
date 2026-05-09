@@ -15,6 +15,7 @@ import { DiagnosticCard } from "../_components/DiagnosticCard";
 import { FamilyCard } from "../_components/FamilyCard";
 import { EmailReportSheet } from "../_components/EmailReportSheet";
 import { MendiProgressionCard } from "../_components/MendiProgressionCard";
+import { TrajectoryChart } from "../_components/TrajectoryChart";
 
 interface PatientsViewProps {
   role: Role;
@@ -118,6 +119,14 @@ export function PatientsView({ role, initialClientId, onStartSession }: Patients
       <HistoryChart
         title={isHome ? "Your progress" : "Focus over the last 12 sessions"}
         scores={sessions.slice(0, 12).map((s) => s.focusScore).reverse()}
+      />
+
+      {/* Phase 37 — Predicted trajectory. Plain-English projection over the
+          next 4 sessions with a confidence band. Reads like a forecast, not
+          a research paper. */}
+      <TrajectoryChart
+        historical={sessions.slice(0, 12).map((s) => s.focusScore).reverse()}
+        firstName={isHome ? "You" : client.name.split(" ")[0]}
       />
 
       {/* Phase 35 — Mendi 12-week protocol progression card. Shows where the

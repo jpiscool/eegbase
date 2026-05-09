@@ -14,6 +14,7 @@ import { EmailReportSheet } from "../_components/EmailReportSheet";
 import { VoiceNotePanel } from "../_components/VoiceNotePanel";
 import { WhyTrainedChips } from "../_components/WhyTrainedChips";
 import { AudioOnlyMode } from "../_components/AudioOnlyMode";
+import { BrainChannelView } from "../_components/BrainChannelView";
 
 interface SessionViewProps {
   clientId: string;
@@ -210,11 +211,19 @@ export function SessionView({ clientId, sessionType, sessionMinutes = 20, role =
       </section>
 
       {/* Live signal trace beneath the visual */}
-      <section className="mb-8">
+      <section className="mb-2">
         <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white p-3">
           <LiveChart data={reward} color={accent} label="Focus over time" height={120} />
         </div>
       </section>
+
+      {/* Phase 36 — Brain channel view. Mendi captures 4 channels but its
+          consumer app shows one composite score. Here we let the user (or
+          clinician) expand to see all 4 in plain English. Off by default
+          so the live workspace stays clean. */}
+      <BrainChannelView score={score} />
+
+      <div className="mb-8" />
 
       {/* Step + timer */}
       <section className="text-center mb-8">
