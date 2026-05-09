@@ -9,9 +9,9 @@ import { SearchableFAQ } from "@/components/SearchableFAQ";
 import { PartnerLogos } from "@/components/PartnerLogos";
 
 const metrics: { value: number | string; label: string; suffix?: string; prefix?: string }[] = [
-  { value: 10,        label: "Demo tabs to explore" },
-  { value: 6,         label: "Minutes to start a session", suffix: " min" },
-  { value: 0,         label: "Vendor lock-in" },
+  { value: 26,        label: "Features in the live demo" },
+  { value: 0,         label: "Setup. Open the demo and explore" },
+  { value: "Free",    label: "For licensed clinicians, forever" },
 ];
 
 export default function LandingPage() {

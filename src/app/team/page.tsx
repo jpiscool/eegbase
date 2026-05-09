@@ -8,28 +8,28 @@ export const metadata = {
 const TEAM = [
   {
     role: "Founder · Engineering",
-    name: "[Replace with your name]",
+    name: "Bio at public launch",
     bio: "Prior healthcare-software product. Ships fast, ships open-source, debugs production at 2 a.m.",
     color: "#2563EB",
     initials: "EB",
   },
   {
     role: "Clinical advisor (BCN)",
-    name: "[Insert clinical advisor name]",
+    name: "Bio at public launch",
     bio: "20+ years neurofeedback. BCIA-board-certified. Multi-clinic operator. Has seen every protocol fail and recover.",
     color: "#10B981",
     initials: "CA",
   },
   {
     role: "Research advisor (PhD fNIRS)",
-    name: "[Insert research advisor name]",
+    name: "Bio at public launch",
     bio: "Published in NeuroImage. Active BIDS-fNIRS contributor. IRB experience across 12+ studies.",
     color: "#7C3AED",
     initials: "RA",
   },
   {
     role: "Compliance counsel",
-    name: "[Insert DPO / counsel]",
+    name: "Bio at public launch",
     bio: "HIPAA + GDPR + 42 CFR Part 2. Prior digital-health Series A and B compliance lead.",
     color: "#F59E0B",
     initials: "DC",

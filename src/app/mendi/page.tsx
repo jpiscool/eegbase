@@ -447,7 +447,7 @@ export default function MendiPartnershipPage() {
               Demo credentials
             </p>
             {[
-              { label: "URL", value: "eegbase.com/login" },
+              { label: "URL", value: "eegbase.vercel.app/login" },
               { label: "Email", value: "demo@eegbase.com" },
               { label: "Password", value: "demo2026" },
             ].map(({ label, value }) => (
