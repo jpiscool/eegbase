@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import {
   Activity, Brain, HeartPulse, BarChart3, LineChart,
-  Timer, Bluetooth, Moon, NotebookPen, Plus, X, Gauge,
+  Timer, Bluetooth, Moon, NotebookPen, Plus, X, Gauge, Wifi, Search,
 } from "lucide-react";
 import { LiveChart } from "@/components/LiveChart";
 import type { DeviceSample } from "@/lib/device/adapter";
@@ -581,4 +581,265 @@ export function useDashboardState() {
   };
 
   return { widgets, setWidgets, quickNote, setQuickNote, hydrated };
+}
+
+// ── My Devices ────────────────────────────────────────────────────────────
+//
+// A dedicated devices section that sits above the widget grid in the
+// Dashboard tab. Shows the operator's currently-paired devices with
+// signal-quality indicators + a 'Connect new device' button that opens
+// a modal listing every device the platform supports. Mirrors what a
+// real Bluetooth pairing flow would look like.
+
+export interface DeviceMeta {
+  id: string;
+  name: string;
+  vendor: string;
+  modality: string;             // e.g. "fNIRS · 2 ch", "EEG · 4 ch"
+  spec: string;                 // short tech detail
+  signal: number;               // 0-100 quality % when paired
+  defaultPaired: boolean;       // shipped paired by default
+  blurb: string;                // shown in the connect modal
+}
+
+// The platform's full device catalog. Mendi sits at the top.
+// Specs verified against vendor public docs (Mendi: Boere/Krigolson 2023;
+// Muse: choosemuse.com tech sheet; Polar: H10 product spec).
+export const DEVICE_REGISTRY: DeviceMeta[] = [
+  { id: "mendi",     name: "Mendi headband",       vendor: "Mendi",    modality: "fNIRS · 2 ch",   spec: "31 Hz · 660+805 nm · BA10",     signal: 96, defaultPaired: true,  blurb: "2-channel functional NIRS over bilateral prefrontal cortex. Pairs over BLE. Shipping integration pending public Mendi SDK." },
+  { id: "muse2",     name: "Muse 2",                vendor: "Interaxon", modality: "EEG · 4 ch",     spec: "256 Hz · TP9/AF7/AF8/TP10",      signal: 88, defaultPaired: true,  blurb: "4-electrode dry-contact EEG headband. Forehead + behind-ear placement. Real-time band power for theta/alpha/beta/gamma." },
+  { id: "polar-h10", name: "Polar H10",             vendor: "Polar",    modality: "ECG / HRV",      spec: "1000 Hz ECG · BLE · gold-std",   signal: 99, defaultPaired: true,  blurb: "Gold-standard chest strap for HRV. 1000 Hz ECG signal, RMSSD/SDNN computed onboard, BLE streaming." },
+  { id: "apple-watch", name: "Apple Watch",         vendor: "Apple",    modality: "HR · sleep",     spec: "5-min sync via HealthKit",       signal: 84, defaultPaired: true,  blurb: "Reads heart rate, HRV, sleep stages, steps from HealthKit. 5-minute sync interval. Best for passive context, not session-grade." },
+  { id: "oura",      name: "Oura Ring (Gen 3+)",    vendor: "Oura",     modality: "Sleep · readiness", spec: "Cloud sync · daily summary",  signal: 0,  defaultPaired: false, blurb: "Overnight sleep + readiness + body temperature. One-way pull from Oura Cloud, refreshed each morning." },
+  { id: "whoop",     name: "Whoop 4.0",             vendor: "Whoop",    modality: "HRV · recovery", spec: "Continuous · cloud sync",        signal: 0,  defaultPaired: false, blurb: "Strain + recovery + sleep across 24 hours. Cloud sync; pulls into the daily check-in for trend analysis." },
+  { id: "brainbit",  name: "BrainBit",              vendor: "BrainBit", modality: "EEG · 4 ch",     spec: "250 Hz · O1/O2/T3/T4",            signal: 0,  defaultPaired: false, blurb: "Dry-contact 4-channel EEG headband. Posterior placement (O1/O2) — useful for alpha-theta protocols." },
+  { id: "openbci",   name: "OpenBCI Cyton",         vendor: "OpenBCI",  modality: "EEG · 8 ch",     spec: "250 Hz · 10-20 montage",          signal: 0,  defaultPaired: false, blurb: "Open-source 8-channel EEG board. Researchers configure their own electrode layout. Full raw signal access." },
+  { id: "neurosity", name: "Neurosity Crown",       vendor: "Neurosity", modality: "EEG · 8 ch",    spec: "256 Hz · 10-20 montage",          signal: 0,  defaultPaired: false, blurb: "8-channel headset with onboard ML for focus/calm states. Streams cleaned signals over WiFi." },
+  { id: "muse-s",    name: "Muse S (Athena)",       vendor: "Interaxon", modality: "EEG + fNIRS",    spec: "256 Hz EEG + 4-ch fNIRS",        signal: 0,  defaultPaired: false, blurb: "Sleep-band form factor with EEG + photoplethysmography. Multi-night use; sleep staging built-in." },
+];
+
+const LS_KEY_DEVICES = "eegbase-demo-paired-devices";
+
+function loadPairedDeviceIds(): string[] {
+  if (typeof window === "undefined") return DEVICE_REGISTRY.filter((d) => d.defaultPaired).map((d) => d.id);
+  try {
+    const raw = window.localStorage.getItem(LS_KEY_DEVICES);
+    if (!raw) return DEVICE_REGISTRY.filter((d) => d.defaultPaired).map((d) => d.id);
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return DEVICE_REGISTRY.filter((d) => d.defaultPaired).map((d) => d.id);
+    return parsed.filter((id: unknown): id is string => typeof id === "string" && DEVICE_REGISTRY.some((d) => d.id === id));
+  } catch {
+    return DEVICE_REGISTRY.filter((d) => d.defaultPaired).map((d) => d.id);
+  }
+}
+
+function savePairedDeviceIds(ids: string[]) {
+  if (typeof window === "undefined") return;
+  try { window.localStorage.setItem(LS_KEY_DEVICES, JSON.stringify(ids)); } catch {}
+}
+
+export function usePairedDevices() {
+  const [pairedIds, setPairedIdsState] = useState<string[]>(() => DEVICE_REGISTRY.filter((d) => d.defaultPaired).map((d) => d.id));
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setPairedIdsState(loadPairedDeviceIds());
+    setHydrated(true);
+  }, []);
+
+  const setPairedIds = (next: string[] | ((prev: string[]) => string[])) => {
+    setPairedIdsState((prev) => {
+      const computed = typeof next === "function" ? next(prev) : next;
+      savePairedDeviceIds(computed);
+      return computed;
+    });
+  };
+
+  return { pairedIds, setPairedIds, hydrated };
+}
+
+const DEVICES_CARD: React.CSSProperties = {
+  background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)",
+  border: "1px solid #1E293B",
+  borderRadius: 14,
+  padding: 16,
+  boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 4px 16px -8px rgba(0,0,0,0.6)",
+  marginBottom: 16,
+};
+
+interface MyDevicesSectionProps {
+  pairedIds: string[];
+  onUnpair: (id: string) => void;
+  onOpenConnect: () => void;
+}
+
+export function MyDevicesSection({ pairedIds, onUnpair, onOpenConnect }: MyDevicesSectionProps) {
+  const paired = pairedIds.map((id) => DEVICE_REGISTRY.find((d) => d.id === id)).filter((d): d is DeviceMeta => !!d);
+
+  return (
+    <div style={DEVICES_CARD}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+          <Bluetooth size={14} color={COLORS.cyan} />
+          <span style={{ fontSize: 11, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: "0.06em" }}>My devices</span>
+          <span style={{ fontFamily: NUM, fontSize: 10, color: "#475569", fontWeight: 600, marginLeft: 6 }}>{paired.length} paired</span>
+        </div>
+        <button
+          onClick={onOpenConnect}
+          style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 12px", background: "rgba(96,165,250,0.15)", color: COLORS.blue, border: "1px solid rgba(96,165,250,0.4)", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(96,165,250,0.25)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(96,165,250,0.15)"; }}
+        >
+          <Plus size={12} /> Connect new device
+        </button>
+      </div>
+
+      {paired.length === 0 ? (
+        <div style={{ padding: "20px 12px", textAlign: "center", color: COLORS.muted, fontSize: 12, fontStyle: "italic" }}>
+          No devices paired yet. Click <strong style={{ color: COLORS.blue, fontStyle: "normal" }}>Connect new device</strong> to add one.
+        </div>
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 10 }}>
+          {paired.map((d) => (
+            <div key={d.id} style={{ background: "rgba(15,23,42,0.6)", border: "1px solid #1E293B", borderRadius: 10, padding: "10px 12px", position: "relative" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: COLORS.ok, boxShadow: `0 0 8px ${COLORS.ok}88`, flexShrink: 0 }} />
+                <span style={{ fontSize: 12, fontWeight: 700, color: COLORS.ink, lineHeight: 1.2, flex: 1, minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{d.name}</span>
+                <button
+                  onClick={() => onUnpair(d.id)}
+                  aria-label={`Unpair ${d.name}`}
+                  title="Unpair"
+                  style={{ background: "transparent", border: "none", color: "#475569", cursor: "pointer", padding: 2, lineHeight: 0, borderRadius: 4 }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = COLORS.alert; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#475569"; }}
+                >
+                  <X size={11} />
+                </button>
+              </div>
+              <div style={{ fontSize: 10, color: COLORS.muted, fontFamily: NUM, marginBottom: 2 }}>{d.modality}</div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                <span style={{ fontSize: 9.5, color: "#475569", fontFamily: NUM }}>{d.spec}</span>
+                {d.signal > 0 && <span style={{ fontFamily: NUM, fontSize: 10, fontWeight: 700, color: d.signal >= 90 ? COLORS.ok : d.signal >= 75 ? COLORS.warn : COLORS.alert }}>{d.signal}%</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+interface ConnectDeviceModalProps {
+  open: boolean;
+  onClose: () => void;
+  pairedIds: string[];
+  onPair: (id: string) => void;
+}
+
+export function ConnectDeviceModal({ open, onClose, pairedIds, onPair }: ConnectDeviceModalProps) {
+  const [scanning, setScanning] = useState(false);
+
+  // Trigger a brief "scanning…" animation on open, then reveal the device list.
+  useEffect(() => {
+    if (!open) { setScanning(false); return; }
+    setScanning(true);
+    const t = setTimeout(() => setScanning(false), 800);
+    return () => clearTimeout(t);
+  }, [open]);
+
+  if (!open) return null;
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, background: "rgba(2,6,23,0.78)", zIndex: 1000,
+        display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
+        animation: "overlayIn 0.18s ease-out",
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: "#0F172A", border: "1px solid #1E293B", borderRadius: 18,
+          padding: 24, maxWidth: 720, width: "100%", maxHeight: "85vh", overflowY: "auto",
+          boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 700, color: COLORS.cyan, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4, display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <Bluetooth size={11} /> Pair a device
+            </p>
+            <h2 style={{ fontSize: 18, fontWeight: 800, color: COLORS.ink, margin: 0 }}>Connect new device</h2>
+            <p style={{ fontSize: 12, color: COLORS.muted, marginTop: 4 }}>
+              Pick from the supported list. Real Bluetooth pairing prompt appears in production; this demo simulates instantly.
+            </p>
+          </div>
+          <button onClick={onClose} aria-label="Close" style={{ background: "transparent", border: "none", color: COLORS.muted, cursor: "pointer", padding: 4, lineHeight: 0 }}>
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Scanning indicator */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: scanning ? "rgba(165,243,252,0.10)" : "rgba(15,23,42,0.6)", border: `1px solid ${scanning ? "rgba(165,243,252,0.3)" : "#1E293B"}`, borderRadius: 8, marginBottom: 14, fontSize: 11, color: scanning ? COLORS.cyan : COLORS.muted, transition: "all 0.2s" }}>
+          {scanning ? (
+            <>
+              <Search size={12} style={{ animation: "pulse 1s ease-in-out infinite" }} />
+              <span style={{ fontWeight: 600 }}>Scanning for nearby devices…</span>
+            </>
+          ) : (
+            <>
+              <Wifi size={12} />
+              <span>Showing all supported devices · {DEVICE_REGISTRY.length} total</span>
+            </>
+          )}
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
+          {DEVICE_REGISTRY.map((d) => {
+            const paired = pairedIds.includes(d.id);
+            return (
+              <div
+                key={d.id}
+                style={{
+                  background: paired ? "rgba(15,23,42,0.4)" : "rgba(15,23,42,0.7)",
+                  border: `1px solid ${paired ? "#1E293B" : "#334155"}`,
+                  borderRadius: 12, padding: 14,
+                  display: "flex", flexDirection: "column", gap: 6,
+                  opacity: scanning ? 0.4 : 1, transition: "opacity 0.2s",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: COLORS.ink }}>{d.name}</span>
+                  {paired && <span style={{ marginLeft: "auto", fontSize: 9, color: COLORS.ok, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", padding: "2px 6px", background: "rgba(16,185,129,0.15)", borderRadius: 99 }}>Paired ✓</span>}
+                </div>
+                <div style={{ fontSize: 10, color: COLORS.muted, fontFamily: NUM, letterSpacing: "0.04em" }}>
+                  {d.vendor} · {d.modality} · {d.spec}
+                </div>
+                <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.45, marginTop: 2 }}>
+                  {d.blurb}
+                </div>
+                {!paired && !scanning && (
+                  <button
+                    onClick={() => onPair(d.id)}
+                    style={{ marginTop: 4, padding: "6px 12px", background: COLORS.blue, color: "#0F172A", border: "none", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer", alignSelf: "flex-start" }}
+                  >
+                    Pair →
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        <p style={{ fontSize: 10, color: "#475569", marginTop: 14, lineHeight: 1.5, textAlign: "center" }}>
+          Don&rsquo;t see your device?{" "}
+          <a href="mailto:hello@eegbase.com?subject=Device%20support%20request" style={{ color: COLORS.blue, textDecoration: "none", fontWeight: 600 }}>
+            Email us &mdash; new vendors land in the registry within a week.
+          </a>
+        </p>
+      </div>
+    </div>
+  );
 }

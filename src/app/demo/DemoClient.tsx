@@ -19,6 +19,7 @@ import {
 import { generateDemoInsight } from "./ai-insight-action";
 import {
   WIDGET_CATALOG, WidgetCard, WidgetPicker, DashboardEmptyState, useDashboardState,
+  MyDevicesSection, ConnectDeviceModal, usePairedDevices, DEVICE_REGISTRY,
 } from "./_dashboard-widgets";
 
 const MAX_POINTS = 60;
@@ -364,6 +365,10 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
   // plus a separate quick-note widget value (also persisted).
   const dashboard = useDashboardState();
   const [dashboardPickerOpen, setDashboardPickerOpen] = useState(false);
+  // Paired devices live independently of widgets — even with no widgets
+  // added, the operator should see and manage their devices.
+  const devices = usePairedDevices();
+  const [connectDeviceOpen, setConnectDeviceOpen] = useState(false);
   const [noteSavedFlash, setNoteSavedFlash] = useState(false);
   const [audioReward, setAudioReward] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
@@ -1506,6 +1511,18 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               </button>
             </div>
 
+            {/* My Devices — sits above widgets so the operator can manage
+                what's paired before composing the dashboard around it. */}
+            <MyDevicesSection
+              pairedIds={devices.pairedIds}
+              onUnpair={(id) => {
+                devices.setPairedIds((prev) => prev.filter((x) => x !== id));
+                const d = DEVICE_REGISTRY.find((x) => x.id === id);
+                if (d) showToast(`Unpaired: ${d.name}`);
+              }}
+              onOpenConnect={() => setConnectDeviceOpen(true)}
+            />
+
             {dashboard.hydrated && dashboard.widgets.length === 0 && (
               <DashboardEmptyState onAdd={() => setDashboardPickerOpen(true)} />
             )}
@@ -1553,6 +1570,18 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
                 setDashboardPickerOpen(false);
                 const def = WIDGET_CATALOG.find((w) => w.id === id);
                 if (def) showToast(`Added: ${def.title}`);
+              }}
+            />
+
+            <ConnectDeviceModal
+              open={connectDeviceOpen}
+              onClose={() => setConnectDeviceOpen(false)}
+              pairedIds={devices.pairedIds}
+              onPair={(id) => {
+                devices.setPairedIds((prev) => prev.includes(id) ? prev : [...prev, id]);
+                const d = DEVICE_REGISTRY.find((x) => x.id === id);
+                if (d) showToast(`Paired: ${d.name}`);
+                setConnectDeviceOpen(false);
               }}
             />
           </>
