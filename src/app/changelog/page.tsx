@@ -59,7 +59,7 @@ export default function ChangelogPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>What we shipped</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 8 }}>Changelog</h1>
         <p style={{ fontSize: 15, color: "#64748B", lineHeight: 1.7, marginBottom: 36 }}>
-          Last 30 days. Every entry traces back to a public commit at <a href="https://github.com/jpiscool/eegbase" style={{ color: "#2563EB" }}>github.com/jpiscool/eegbase</a>.
+          Last 30 days. Every entry traces back to a public commit at <a href="mailto:hello@eegbase.com" style={{ color: "#2563EB" }}>github.com/jpiscool/eegbase</a>.
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>

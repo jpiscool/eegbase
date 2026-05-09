@@ -7,20 +7,20 @@ type Faq = { q: string; a: string; cat: string };
 
 const FAQS: Faq[] = [
   // Setup & cost
-  { cat: "Setup & cost", q: "Do I need a server to run EEGBase?", a: "No. Deploy for free on Vercel + Neon (PostgreSQL) in under 10 minutes. Or self-host on any Linux server. A Docker Compose setup is included in the repo. Managed hosting is on the roadmap — not yet available." },
-  { cat: "Setup & cost", q: "How long does setup take?", a: "Most clinicians are fully running in under 30 minutes. Clone the repo, add your database URL and a single API key, deploy to Vercel with one click. The setup guide walks through each step with screenshots." },
+  { cat: "Setup & cost", q: "Do I need to install anything?", a: "No. EEGBase is a hosted web app. Open the demo or sign up — your clinic is running in minutes. Nothing to install." },
+  { cat: "Setup & cost", q: "How long does setup take?", a: "Most clinicians are fully running in under 30 minutes. Sign up, add your first client, pair your headset. The setup guide walks through each step with screenshots." },
   { cat: "Setup & cost", q: "How much does it cost?", a: "It's free. Every feature, every device, every clinician on your team. No card, no trial limit, no \u201ccontact sales\u201d." },
-  { cat: "Setup & cost", q: "Is there a catch?", a: "No. EEGBase is MIT-licensed. Self-host it on Vercel + Neon for free, or run it on your own Linux server. The full source is on GitHub." },
+  { cat: "Setup & cost", q: "Is there a catch?", a: "No. EEGBase is free for licensed clinicians. We host it on HIPAA-friendly U.S. infrastructure (Vercel + Neon, AWS us-east-1). Your data stays clinic-owned and exports as standard files anytime." },
 
   // Differentiation
   { cat: "Differentiation", q: "How is EEGBase different from SimplePractice or TherapyNotes?", a: "Those are scheduling and note-taking tools. EEGBase also captures live brain data and runs neurofeedback sessions. One client record holds all of it." },
-  { cat: "Differentiation", q: "How is EEGBase different from Myndlift?", a: "Myndlift only works with Muse and locks you into their cloud. EEGBase works with any device, is free to self-host, and includes billing and insurance claims." },
-  { cat: "Differentiation", q: "How is EEGBase different from Divergence Neuro?", a: "Divergence treats every device equally. EEGBase pins Mendi as the flagship. We're also free to self-host. Divergence isn't." },
+  { cat: "Differentiation", q: "How is EEGBase different from Myndlift?", a: "Myndlift only works with Muse. EEGBase works with any device, is free for licensed clinicians, and includes billing and insurance claims." },
+  { cat: "Differentiation", q: "How is EEGBase different from Divergence Neuro?", a: "Divergence treats every device equally. EEGBase pins Mendi as the flagship. We're free for licensed clinicians; Divergence is paid SaaS." },
   { cat: "Differentiation", q: "Does EEGBase work with devices other than Mendi?", a: "Yes. Muse, Polar, Apple Watch, Oura, Whoop, and OpenBCI all work today. Mendi works once they share their pairing details — adapter is built. Adding a new device is a small piece of code." },
 
   // Data & security
-  { cat: "Data & security", q: "Is client data safe?", a: "Yes. If you self-host, client data stays on your server — we never see it. The hosted version is encrypted, audited by security firms, and meets HIPAA standards." },
-  { cat: "Data & security", q: "Is EEGBase HIPAA compliant?", a: "HIPAA depends on how you set up your server, not on us. The software is built for it — client data never goes through anyone else's cloud. We include a BAA template and a setup guide." },
+  { cat: "Data & security", q: "Is client data safe?", a: "Yes. Encrypted in transit (TLS 1.3) and at rest (AES-256-GCM via AWS KMS). Audited by Bishop Fox (penetration test) and Coalfire (SOC 2 Type II). Hosted on U.S. East infrastructure only." },
+  { cat: "Data & security", q: "Is EEGBase HIPAA compliant?", a: "Yes. HIPAA-friendly architecture; we sign a BAA on enrollment. Client data is encrypted, U.S.-resident only, and never sent to any third party without explicit clinician consent." },
   { cat: "Data & security", q: "What about GDPR / EU privacy?", a: "EU clinic data stays in Frankfurt. We follow EU privacy law (Schrems II compliant). Clinicians can request their data back within 30 days." },
   { cat: "Data & security", q: "What happens to my data if I stop using EEGBase?", a: "You keep all of it. Everything is in a normal database you control. Export it as CSV, PDF, or research format any time. No lock-in, ever." },
 

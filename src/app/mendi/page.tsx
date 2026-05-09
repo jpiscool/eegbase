@@ -164,7 +164,7 @@ export default function MendiPartnershipPage() {
                 { icon: "📤", text: "Shareable progress reports for clients, families, and referrers" },
                 { icon: "🏥", text: "Billing codes, scheduling, and outcome measure tracking" },
                 { icon: "💾", text: "EDF+ / CSV / PDF export for research and insurance" },
-                { icon: "🔒", text: "HIPAA-friendly self-hosted architecture — no third-party data access" },
+                { icon: "🔒", text: "HIPAA-friendly U.S.-hosted architecture — clinic-owned data, full export anytime" },
               ].map(({ icon, text }) => (
                 <li key={text} style={{
                   display: "flex", alignItems: "flex-start", gap: 12,
@@ -413,19 +413,19 @@ export default function MendiPartnershipPage() {
               Built by clinicians,<br />for clinicians
             </h2>
             <p style={{ fontSize: 15, color: "#6B7280", lineHeight: 1.7, marginBottom: 16 }}>
-              EEGBase is an MIT-licensed, fully open-source neurofeedback platform. Clinicians can self-host it on their own infrastructure in under 10 minutes — or deploy free on Vercel + Neon.
+              EEGBase is a clinician-built neurofeedback practice-management platform. Free for licensed clinicians. Hosted by us on HIPAA-friendly U.S. infrastructure (Vercel + Neon, AWS us-east-1).
             </p>
             <p style={{ fontSize: 15, color: "#6B7280", lineHeight: 1.7 }}>
-              Patient data never leaves your infrastructure. No third-party cloud access by default. HIPAA-friendly architecture designed with clinical privacy as the primary constraint — not an afterthought.
+              Patient data is clinic-owned. Standard exports (BIDS-fNIRS, SNIRF, EDF+, CSV, PDF) anytime. No vendor lock-in, no third-party cloud access by default. HIPAA-friendly architecture designed with clinical privacy as the primary constraint — not an afterthought.
             </p>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {[
-              { label: "License", value: "MIT — fork it, self-host it, contribute to it", icon: "⚖️" },
-              { label: "Stack", value: "Next.js 15, PostgreSQL (Neon), TypeScript", icon: "🛠️" },
-              { label: "Deployment", value: "Vercel + Neon free tier, or Docker Compose on any Linux server", icon: "🚀" },
-              { label: "Data residency", value: "Self-hosted by default — no EEGBase cloud required", icon: "🔒" },
-              { label: "Devices", value: "Mendi fNIRS, Muse EEG, extensible adapter API", icon: "📡" },
+              { label: "Pricing", value: "Free for licensed clinicians — no card, no per-seat fee", icon: "🎁" },
+              { label: "Stack", value: "Next.js 16, PostgreSQL (Neon), TypeScript", icon: "🛠️" },
+              { label: "Hosting", value: "Vercel + Neon · U.S. East · HIPAA-friendly architecture", icon: "🚀" },
+              { label: "Data residency", value: "U.S. by default · clinic-owned · full export anytime", icon: "🔒" },
+              { label: "Devices", value: "Mendi fNIRS, Muse EEG, Polar HRV, Apple Watch, Oura, extensible adapter API", icon: "📡" },
               { label: "AI features", value: "Claude Haiku for clinical summaries — opt-in only", icon: "🤖" },
             ].map(({ label, value, icon }) => (
               <div key={label} style={{
@@ -506,14 +506,6 @@ export default function MendiPartnershipPage() {
               style={{ color: "#A78BFA", textDecoration: "none", fontWeight: 600 }}
             >
               hello@eegbase.com
-            </a>
-            <a
-              href="https://github.com/jpiscool/eegbase"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: "#9CA3AF", textDecoration: "none" }}
-            >
-              GitHub
             </a>
             <Link href="/demo" style={{ color: "#9CA3AF", textDecoration: "none" }}>
               Live Demo

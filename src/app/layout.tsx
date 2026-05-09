@@ -12,7 +12,7 @@ const PLAUSIBLE_DOMAIN = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 const SITE_URL = "https://eegbase.com";
 const SITE_TITLE = "EEGBase — The clinical layer for any neurofeedback hardware";
 const SITE_DESC =
-  "Mendi at home, Muse in clinic, Polar HRV, and Apple Health become one client record, one SOAP note, one billable session. Open-source · MIT · BIDS-fNIRS / SNIRF / EDF+ export.";
+  "Mendi at home, Muse in clinic, Polar HRV, and Apple Health become one client record, one SOAP note, one billable session. Free for licensed clinicians · BIDS-fNIRS / SNIRF / EDF+ export.";
 
 export const viewport: Viewport = {
   themeColor: "#2563eb",
@@ -86,7 +86,6 @@ export default function RootLayout({
                   url: SITE_URL,
                   logo: `${SITE_URL}/og-image.svg`,
                   description: SITE_DESC,
-                  sameAs: ["https://github.com/jpiscool/eegbase"],
                   contactPoint: [
                     { "@type": "ContactPoint", email: "hello@eegbase.com",    contactType: "customer support" },
                     { "@type": "ContactPoint", email: "security@eegbase.com",  contactType: "security disclosure" },
@@ -100,7 +99,6 @@ export default function RootLayout({
                   url: SITE_URL,
                   applicationCategory: "MedicalApplication",
                   operatingSystem: "Web",
-                  license: "https://opensource.org/licenses/MIT",
                   offers: { "@type": "Offer", price: "0", priceCurrency: "USD", availability: "https://schema.org/InStock" },
                   publisher: { "@id": `${SITE_URL}#org` },
                 },

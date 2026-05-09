@@ -25,14 +25,6 @@ export default function LandingPage() {
             <span className="text-base font-bold text-gray-900">EEGBase</span>
           </div>
           <div className="flex items-center gap-3">
-            <a
-              href="https://github.com/jpiscool/eegbase"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
-            >
-              Self-host for free →
-            </a>
             <Link
               href="/demo"
               className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
@@ -87,13 +79,11 @@ export default function LandingPage() {
               Try the live demo →
             </Link>
             <a
-              href="https://github.com/jpiscool/eegbase"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="mailto:hello@eegbase.com?subject=EEGBase%20demo"
               className="px-7 py-3.5 text-gray-700 text-sm font-medium rounded-xl transition-all"
               style={{ background: "rgba(255,255,255,0.7)", border: "1px solid rgba(0,0,0,0.08)", backdropFilter: "blur(12px)" }}
             >
-              View on GitHub
+              Talk to us
             </a>
           </div>
         </div>
@@ -181,7 +171,7 @@ export default function LandingPage() {
           <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-7">
             <ShieldCheck size={20} className="text-amber-600 mb-3" />
             <h3 className="text-base font-bold text-gray-900 mb-2">Your data stays yours</h3>
-            <p className="text-sm text-gray-700 leading-relaxed">Self-host on your own server, or run our hosted version. Either way, you can export everything as standard files anytime. No lock-in, ever.</p>
+            <p className="text-sm text-gray-700 leading-relaxed">We host the platform for you. Your data exports as standard BIDS / SNIRF / EDF+ / CSV / PDF anytime. No lock-in, ever.</p>
           </div>
         </div>
       </section>
@@ -199,13 +189,13 @@ export default function LandingPage() {
                 EEGBase was built with neurofeedback clinicians, not at them. We watched too many smart people give up on the field because the software made every session feel like a fight.
               </p>
               <p className="text-base text-gray-600 leading-relaxed">
-                So we built the opposite: open source, audited, and simple enough that a brand-new clinician can run a real session their first day.
+                So we built the opposite: audited, hardware-agnostic, and simple enough that a brand-new clinician can run a real session their first day.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {[
                 { num: "10",     label: "Devices supported" },
-                { num: "MIT",    label: "Open-source license" },
+                { num: "Free",   label: "For licensed clinicians" },
                 { num: "SOC 2",  label: "Coalfire audited" },
                 { num: "WCAG",   label: "Accessibility certified" },
               ].map((s) => (
@@ -275,7 +265,7 @@ export default function LandingPage() {
               Outcome scales (PHQ-9, GAD-7, ADHD-RS-IV, MBI-EE, custom) auto-track over time. Insurance billing (CMS-1500, ERA, ICD-10) is built in. Reports send to clients and referring doctors with one click. Everything exports as BIDS, SNIRF, EDF+, CSV, or PDF — your data stays yours, forever.
             </p>
             <p>
-              EEGBase is MIT-licensed and free for licensed clinicians. Self-host on Vercel + Neon in 10 minutes, or run it on your own Linux server. Audited by Bishop Fox, Coalfire (SOC 2), and Deque (WCAG 2.2 AA).
+              EEGBase is free for licensed clinicians. Hosted on a HIPAA-friendly U.S. infrastructure (Vercel + Neon, AWS us-east-1). Audited by Bishop Fox, Coalfire (SOC 2), and Deque (WCAG 2.2 AA).
             </p>
           </div>
         </div>
@@ -330,12 +320,10 @@ export default function LandingPage() {
               Open the live demo →
             </Link>
             <a
-              href="https://github.com/jpiscool/eegbase"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="mailto:hello@eegbase.com?subject=EEGBase%20demo"
               className="px-7 py-4 border border-blue-300/50 text-white text-sm font-medium rounded-xl hover:bg-white/10 transition-colors inline-flex items-center gap-2"
             >
-              ★ Star on GitHub
+              Talk to us
             </a>
           </div>
           <p className="text-blue-200 text-xs mt-6">10 sample clients · 88 sessions pre-loaded · No account required</p>
@@ -346,9 +334,9 @@ export default function LandingPage() {
       <footer className="border-t border-gray-100 px-6 py-10">
         <div className="max-w-5xl mx-auto flex items-start justify-between text-xs text-gray-400 flex-wrap gap-4">
           <div>
-            <span>© 2026 EEGBase — open-source neurofeedback platform</span>
+            <span>© 2026 EEGBase — neurofeedback platform for clinics</span>
             <p className="mt-1 text-gray-400">
-              MIT licensed — fork it, self-host it, contribute to it. No lock-in.
+              Free for licensed clinicians. Hosted in the U.S. on HIPAA-friendly infrastructure. No lock-in.
             </p>
             <p className="mt-2 inline-flex items-center gap-2 flex-wrap text-xs">
               <LiveStatusPill />
@@ -366,7 +354,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-6">
             <Link href="/demo" className="hover:text-gray-600 transition-colors">Demo</Link>
             <Link href="/login" className="hover:text-gray-600 transition-colors">Login</Link>
-            <a href="https://github.com/jpiscool/eegbase" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 transition-colors">GitHub</a>
+            <a href="mailto:hello@eegbase.com" className="hover:text-gray-600 transition-colors">Contact</a>
           </div>
         </div>
       </footer>

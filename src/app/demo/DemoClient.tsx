@@ -100,7 +100,7 @@ const FEATURES: { feature: string; category: string; eeg: boolean; myndlift: boo
   { category: "Practice Mgmt",      feature: "EHR / SimplePractice integration",      eeg: true,  myndlift: false, divergence: false, eeger: false, brainpaint: false, neuroptimal: false, neuroguide: false, brainavatar: false },
   // Platform
   { category: "Platform",           feature: "Cloud / web-based (no Windows install)", eeg: true,  myndlift: true,  divergence: true,  eeger: false, brainpaint: false, neuroptimal: false, neuroguide: false, brainavatar: false },
-  { category: "Platform",           feature: "Open source / self-hosted",              eeg: true,  myndlift: false, divergence: false, eeger: false, brainpaint: false, neuroptimal: false, neuroguide: false, brainavatar: false },
+  { category: "Platform",           feature: "Free for licensed clinicians",          eeg: true,  myndlift: false, divergence: false, eeger: false, brainpaint: false, neuroptimal: false, neuroguide: false, brainavatar: false },
   { category: "Platform",           feature: "No per-session or per-client fees",     eeg: true,  myndlift: false, divergence: false, eeger: false, brainpaint: false, neuroptimal: false, neuroguide: false, brainavatar: false },
   { category: "Platform",           feature: "HIPAA-compliant data residency options", eeg: true,  myndlift: true,  divergence: true,  eeger: false, brainpaint: false, neuroptimal: false, neuroguide: false, brainavatar: false },
   // Multimodal
@@ -4148,7 +4148,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             <div style={{ marginBottom: 20 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>EEGBase vs every competitor</h2>
               <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
-                We're the only one that covers everything in one open-source app — live signal, AI, notes, billing, scheduling. Updated May 2026 from platform docs and clinician reviews.
+                We're the only one that covers everything in one app — live signal, AI, notes, billing, scheduling. Updated May 2026 from platform docs and clinician reviews.
               </p>
             </div>
 
@@ -4157,7 +4157,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               {[
                 { label: "fNIRS + EEG + HRV in one app", sub: "Most platforms cover one modality; we unify all three with native Mendi support", color: "#06B6D4" },
                 { label: "AI cross-session pattern detector", sub: "Correlates Mendi data with sleep · mood · HRV · adherence — flags drivers", color: "#A855F7" },
-                { label: "Free & open-source", sub: "MIT licence · self-host on Vercel + Neon in 10 minutes · no per-seat fees", color: "#10B981" },
+                { label: "Free for licensed clinicians", sub: "No card · no per-seat fees · no &ldquo;contact sales&rdquo; · hosted on HIPAA-friendly U.S. infra", color: "#10B981" },
                 { label: "Browser-based · No install", sub: "Cloud-native — no Windows-only requirement, no per-machine licenses", color: "#F59E0B" },
               ].map(({ label, sub, color }) => (
                 <div key={label} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 14, padding: "16px 18px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 24px -16px rgba(0,0,0,0.5)" }}>
@@ -4249,8 +4249,8 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
         <a href="/login" style={{ fontSize: 14, fontWeight: 700, padding: "8px 20px", background: "#7C3AED", color: "#fff", borderRadius: 8, textDecoration: "none" }}>
           Get Access →
         </a>
-        <a href="https://github.com/jpiscool/eegbase" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "#A78BFA", textDecoration: "none", fontWeight: 600 }}>
-          ★ GitHub →
+        <a href="mailto:hello@eegbase.com" style={{ fontSize: 13, color: "#A78BFA", textDecoration: "none", fontWeight: 600 }}>
+          Talk to us →
         </a>
       </div>
         </div>

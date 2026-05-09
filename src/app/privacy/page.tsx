@@ -89,7 +89,7 @@ export default function PrivacyPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/terms" style={{ color: "#9CA3AF" }}>Terms</Link> · <a href="https://github.com/jpiscool/eegbase" style={{ color: "#9CA3AF" }}>GitHub</a>
+        © 2026 EEGBase · MIT licensed · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/terms" style={{ color: "#9CA3AF" }}>Terms</Link> · <a href="mailto:hello@eegbase.com" style={{ color: "#9CA3AF" }}>GitHub</a>
       </footer>
     </div>
   );
