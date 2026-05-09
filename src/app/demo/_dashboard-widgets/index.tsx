@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   Activity, Brain, HeartPulse, BarChart3, LineChart,
   Timer, Bluetooth, Moon, NotebookPen, Plus, X, Gauge, Wifi, Search,
+  Scale, Wind, Target, ClipboardList,
 } from "lucide-react";
 import { LiveChart } from "@/components/LiveChart";
 import type { DeviceSample } from "@/lib/device/adapter";
@@ -330,6 +331,144 @@ export const WIDGET_CATALOG: WidgetDef[] = [
   },
 
   {
+    id: "asymmetry",
+    title: "Prefrontal asymmetry",
+    device: "Mendi headband",
+    icon: Scale,
+    blurb: "L-R HbO balance — Mendi's flagship clinical metric.",
+    render: ({ sample }) => {
+      const l = sample?.oxyHbLeft;
+      const r = sample?.oxyHbRight;
+      if (l == null || r == null) return <Waiting label="Mendi feed" />;
+      const diff = l - r;
+      // ±0.05 is roughly within normal asymmetry; outside → leaning one side
+      const status = Math.abs(diff) <= 0.05 ? "symmetric" : diff > 0 ? "left-leaning" : "right-leaning";
+      const color = Math.abs(diff) <= 0.05 ? COLORS.ok : Math.abs(diff) <= 0.10 ? COLORS.warn : COLORS.alert;
+      // Render a horizontal scale: -0.20 (R) … 0 … +0.20 (L), needle at diff
+      const W = 100;
+      const needlePct = Math.max(0, Math.min(100, ((diff + 0.20) / 0.40) * 100));
+      return (
+        <div style={{ padding: "6px 0" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 4 }}>
+            <span style={{ fontFamily: NUM, fontSize: 32, fontWeight: 800, color, lineHeight: 1, letterSpacing: "-0.02em" }}>{fmtSigned(diff)}</span>
+            <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>{status}</span>
+          </div>
+          <div style={{ position: "relative", width: "100%", height: 8, background: "rgba(15,23,42,0.6)", border: "1px solid #1E293B", borderRadius: 4, marginTop: 12, overflow: "visible" }}>
+            {/* Target zone (±0.05) */}
+            <div style={{ position: "absolute", left: `${((-0.05 + 0.20) / 0.40) * W}%`, width: `${(0.10 / 0.40) * W}%`, top: 0, bottom: 0, background: "rgba(16,185,129,0.18)", borderLeft: "1px solid rgba(16,185,129,0.5)", borderRight: "1px solid rgba(16,185,129,0.5)" }} />
+            {/* Center line */}
+            <div style={{ position: "absolute", left: "50%", top: -2, bottom: -2, width: 1, background: "#475569" }} />
+            {/* Needle */}
+            <div style={{ position: "absolute", left: `${needlePct}%`, top: -4, transform: "translateX(-50%)", width: 4, height: 16, background: color, borderRadius: 2, boxShadow: `0 0 8px ${color}` }} />
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9.5, color: COLORS.muted, marginTop: 6, fontFamily: NUM }}>
+            <span>R-leaning</span>
+            <span style={{ color: COLORS.ok }}>balanced</span>
+            <span>L-leaning</span>
+          </div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 8, lineHeight: 1.45 }}>
+            (HbO L − HbO R). Sustained asymmetry beyond ±0.10 over a session is a signal — not an error.
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "breathing-pacer",
+    title: "Breathing pacer",
+    device: "—",
+    icon: Wind,
+    blurb: "5.5 bpm resonance breathing (Lehrer/Vaschillo) — sync with the orb.",
+    render: () => <BreathingPacerWidget />,
+  },
+
+  {
+    id: "reward-histogram",
+    title: "Reward distribution",
+    device: "Any device",
+    icon: Target,
+    blurb: "% of session above threshold — clinical success metric.",
+    render: ({ reward }) => {
+      if (reward.length < 5) return <Waiting label="reward stream" />;
+      const threshold = 0.6; // 60% — common reward threshold
+      const above = reward.filter((v) => v >= threshold).length;
+      const pctAbove = Math.round((above / reward.length) * 100);
+      const color = pctAbove >= 65 ? COLORS.ok : pctAbove >= 40 ? COLORS.warn : COLORS.alert;
+      // Build a 10-bin histogram of the reward array
+      const bins = new Array(10).fill(0);
+      for (const v of reward) {
+        const idx = Math.min(9, Math.max(0, Math.floor(v * 10)));
+        bins[idx]++;
+      }
+      const maxBin = Math.max(1, ...bins);
+      return (
+        <div style={{ padding: "6px 0" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 6 }}>
+            <span style={{ fontFamily: NUM, fontSize: 32, fontWeight: 800, color, lineHeight: 1, letterSpacing: "-0.02em" }}>{pctAbove}%</span>
+            <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600 }}>above threshold</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 2, height: 56, marginTop: 8 }}>
+            {bins.map((count, i) => {
+              const isAbove = (i / 10) >= threshold;
+              return (
+                <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+                  <div style={{ height: `${(count / maxBin) * 100}%`, background: isAbove ? color : "#334155", borderRadius: "2px 2px 0 0", minHeight: 2 }} />
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: COLORS.muted, marginTop: 4, fontFamily: NUM }}>
+            <span>0</span>
+            <span style={{ color: COLORS.warn }}>↑ threshold {Math.round(threshold * 100)}</span>
+            <span>100</span>
+          </div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 8 }}>
+            Target {">"}65% of session time above threshold for a strong session.
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "todays-checkin",
+    title: "Today's check-in",
+    device: "—",
+    icon: ClipboardList,
+    blurb: "Mood / sleep / anxiety — what the patient logged this morning.",
+    render: () => {
+      // In production this reads from the most recent CheckIn row for the
+      // active client. Demo values are plausible for Sarah Mitchell.
+      const items = [
+        { label: "Mood",     v: 7,   max: 10, color: COLORS.ok,    sub: "good" },
+        { label: "Sleep",    v: 7.4, max: 10, color: COLORS.ok,    sub: "7h 24m", isTime: true },
+        { label: "Anxiety",  v: 4,   max: 10, color: COLORS.warn,  sub: "mild" },
+        { label: "Energy",   v: 6,   max: 10, color: COLORS.ok,    sub: "OK" },
+      ];
+      return (
+        <div style={{ padding: "2px 0" }}>
+          {items.map((i) => {
+            const pct = (i.v / i.max) * 100;
+            return (
+              <div key={i.label} style={{ marginBottom: 8 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 3 }}>
+                  <span style={{ fontSize: 11, color: COLORS.ink, fontWeight: 600 }}>{i.label}</span>
+                  <span style={{ fontFamily: NUM, fontSize: 11, fontWeight: 700, color: i.color }}>
+                    {i.isTime ? i.sub : `${i.v}/${i.max}`} <span style={{ color: COLORS.muted, fontWeight: 500 }}>· {i.isTime ? "" : i.sub}</span>
+                  </span>
+                </div>
+                <MiniBar pct={pct} color={i.color} />
+              </div>
+            );
+          })}
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 8, fontStyle: "italic" }}>Logged 8:42 AM via mobile check-in</div>
+        </div>
+      );
+    },
+  },
+
+  {
     id: "quick-note",
     title: "Quick note",
     device: "—",
@@ -358,6 +497,47 @@ export const WIDGET_CATALOG: WidgetDef[] = [
     },
   },
 ];
+
+// ── breathing pacer (interactive) ─────────────────────────────────────────
+//
+// Resonance breathing at 5.5 breaths/min (Lehrer/Vaschillo canonical).
+// 5.5 bpm = ~10.9 s per cycle ≈ 5.45 s inhale + 5.45 s exhale.
+// Pure CSS animation; no external timer state, no audio.
+
+function BreathingPacerWidget() {
+  const [phase, setPhase] = useState<"inhale" | "exhale">("inhale");
+  useEffect(() => {
+    const half = 5450; // ms — half of one 10.9s cycle
+    const i = setInterval(() => setPhase((p) => (p === "inhale" ? "exhale" : "inhale")), half);
+    return () => clearInterval(i);
+  }, []);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "8px 0", height: "100%" }}>
+      <style>{`
+        @keyframes pacer-inhale { from { transform: scale(0.55); } to { transform: scale(1); } }
+        @keyframes pacer-exhale { from { transform: scale(1); }    to { transform: scale(0.55); } }
+      `}</style>
+      <div style={{
+        width: 90, height: 90, borderRadius: "50%",
+        background: "radial-gradient(circle at 35% 30%, rgba(165,243,252,0.6), rgba(96,165,250,0.4) 50%, rgba(96,165,250,0.05) 100%)",
+        boxShadow: "0 0 30px rgba(165,243,252,0.3), inset 0 0 20px rgba(165,243,252,0.2)",
+        animation: `${phase === "inhale" ? "pacer-inhale" : "pacer-exhale"} 5450ms ease-in-out forwards`,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        marginBottom: 14,
+      }}>
+        <span style={{ fontSize: 11, fontWeight: 700, color: COLORS.ink, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+          {phase === "inhale" ? "in" : "out"}
+        </span>
+      </div>
+      <div style={{ fontSize: 11, fontWeight: 700, color: COLORS.cyan, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>
+        5.5 bpm · resonance
+      </div>
+      <div style={{ fontSize: 10, color: COLORS.muted, textAlign: "center", lineHeight: 1.45, padding: "0 8px" }}>
+        Match your breath to the orb. ~5.5 sec in, ~5.5 sec out — Lehrer/Vaschillo canonical resonance frequency for HRV coherence.
+      </div>
+    </div>
+  );
+}
 
 // ── widget host ───────────────────────────────────────────────────────────
 
