@@ -322,20 +322,27 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
     { id: "compare",   label: "Compare",            icon: BarChart3 },
   ];
 
+  // Each protocol carries the hardware it requires. Priya is the
+  // demo's flagship Mendi-only client (pure fNIRS, no EEG cap needed) so
+  // her protocol stays on Mendi's 2-channel forehead stack. The other four
+  // need a multi-channel EEG headset (Cz/Pz/C3/C4 are 10-20 positions
+  // outside both Mendi's and Muse's electrode coverage). The hw label
+  // surfaces this honestly so a reviewer doesn't think we're claiming
+  // Mendi or Muse can do site-specific SMR/ILF/spindle work alone.
   const DEMO_CLIENTS = [
-    { name: "Sarah Mitchell · ADHD adolescent",    protocol: "SMR · Cz (12–15 Hz)",         session: 8,  archetype: "ADHD" },
-    { name: "James Okafor · PTSD veteran",          protocol: "Alpha-Theta · Pz/Oz",         session: 4,  archetype: "PTSD" },
-    { name: "Priya Sharma · burnout exec",          protocol: "ILF · Fp1/Fp2",                session: 12, archetype: "Burnout" },
-    { name: "Daniel Cruz · sleep onset",            protocol: "Sleep Spindle · Cz/Pz",       session: 3,  archetype: "Sleep" },
-    { name: "Emily Tanaka · performance",            protocol: "Neuromuscular · C3/C4",        session: 6,  archetype: "Performance" },
+    { name: "Sarah Mitchell · ADHD adolescent",    protocol: "SMR · Cz (12–15 Hz)",                  session: 8,  archetype: "ADHD",        hw: "EEG cap (Discovery / BrainBit)" },
+    { name: "James Okafor · PTSD veteran",          protocol: "Alpha-Theta · Pz/Oz",                  session: 4,  archetype: "PTSD",        hw: "EEG cap (Discovery / BrainBit)" },
+    { name: "Priya Sharma · burnout exec",          protocol: "Prefrontal HbO · bilateral (Mendi)",   session: 12, archetype: "Burnout",     hw: "Mendi headband" },
+    { name: "Daniel Cruz · sleep onset",            protocol: "Sleep Spindle · Cz/Pz",                session: 3,  archetype: "Sleep",       hw: "EEG cap (Discovery / BrainBit)" },
+    { name: "Emily Tanaka · performance",            protocol: "Neuromuscular · C3/C4",                session: 6,  archetype: "Performance", hw: "EEG cap (Discovery / BrainBit)" },
   ];
 
   const PROTOCOL_GOALS: Record<string, string> = {
-    "SMR · Cz (12–15 Hz)":    "Increase SMR (12–15 Hz) · Reduce Theta (4–8 Hz) · Score rises when sensorimotor rhythm is sustained",
-    "Alpha-Theta · Pz/Oz":    "Reward Alpha (8–12 Hz) · Reward Theta (4–8 Hz) · Score rises during deep relaxation states",
-    "ILF · Fp1/Fp2":          "Train infra-low frequencies (<0.1 Hz) · Improve autonomic regulation · Score rises with sustained ILF coherence",
-    "Sleep Spindle · Cz/Pz":  "Increase Sigma (12–16 Hz) sleep spindles · Reduce hyperarousal · Score rises when spindle activity is detected",
-    "Neuromuscular · C3/C4":  "Increase SMR at motor cortex · Reduce excess Theta · Score rises with sustained sensorimotor balance",
+    "SMR · Cz (12–15 Hz)":                    "Increase SMR (12–15 Hz) · Reduce Theta (4–8 Hz) · Score rises when sensorimotor rhythm is sustained",
+    "Alpha-Theta · Pz/Oz":                    "Reward Alpha (8–12 Hz) · Reward Theta (4–8 Hz) · Score rises during deep relaxation states",
+    "Prefrontal HbO · bilateral (Mendi)":     "Reward bilateral prefrontal HbO concentration via Mendi's 2-channel fNIRS · Improve self-regulation · Score rises with sustained activation under attention demand",
+    "Sleep Spindle · Cz/Pz":                  "Increase Sigma (12–16 Hz) sleep spindles · Reduce hyperarousal · Score rises when spindle activity is detected",
+    "Neuromuscular · C3/C4":                  "Increase SMR at motor cortex · Reduce excess Theta · Score rises with sustained sensorimotor balance",
   };
   const [demoClientIdx, setDemoClientIdx] = useState(0);
   const demoClient = DEMO_CLIENTS[demoClientIdx];
@@ -1542,7 +1549,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               {[
                 { label: "Fp1 OxyHb · Mendi", quality: 96, color: "#10B981", impedance: "8 kΩ" },
                 { label: "Fp2 OxyHb · Mendi", quality: 94, color: "#10B981", impedance: "9 kΩ" },
-                { label: "Cz EEG · Muse", quality: 88, color: "#10B981", impedance: "12 kΩ" },
+                { label: "AF7 EEG · Muse", quality: 88, color: "#10B981", impedance: "12 kΩ" },
                 { label: "HRV · Polar", quality: 99, color: "#10B981", impedance: "—" },
                 { label: "EMG Artifact", quality: emgRejection ? 92 : 0, color: emgRejection ? "#10B981" : "#64748B", impedance: emgRejection ? "Rejected" : "Off" },
               ].map((s) => (
@@ -1629,7 +1636,7 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
               {[
                 { label: "Client", value: demoClient.name, updated: false },
                 { label: "Protocol", value: recommendationApplied ? "Alpha-Theta · Pz/Oz" : demoClient.protocol, updated: recommendationApplied },
-                { label: "Device", value: "Mendi fNIRS (sim)", updated: false },
+                { label: "Device", value: `${demoClient.hw} (sim)`, updated: false },
                 { label: "Elapsed", value: fmt(elapsed), updated: false },
               ].map(({ label, value, updated }) => (
                 <div key={label} style={{ background: "#0F172A", boxShadow: updated ? "0 0 0 2px #10B981, 0 4px 12px rgba(16,185,129,0.15)" : "0 1px 4px rgba(0,0,0,0.3), 0 0 0 1px #334155", borderRadius: 12, padding: "14px 18px", transition: "box-shadow 0.4s ease" }}>
