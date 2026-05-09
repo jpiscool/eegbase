@@ -10,6 +10,7 @@ import type { Role } from "../_components/RoleToggle";
 import { TrainingVisuals, VISUAL_MODES, type VisualMode } from "../_components/TrainingVisuals";
 import { TutorOverlay } from "../_components/TutorOverlay";
 import { LiveCoFeedbackPill, broadcastLiveScore, clearLiveScore } from "../_components/LiveCoFeedback";
+import { EmailReportSheet } from "../_components/EmailReportSheet";
 
 interface SessionViewProps {
   clientId: string;
@@ -268,6 +269,7 @@ function SessionReport({
   onExit: () => void;
 }) {
   const [shareCopied, setShareCopied] = useState(false);
+  const [emailOpen, setEmailOpen] = useState(false);
   const printedAt = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
   const accent =
     finalScore >= 70 ? "#10B981" :
@@ -398,6 +400,12 @@ function SessionReport({
           Download PDF
         </button>
         <button
+          onClick={() => setEmailOpen(true)}
+          className="px-5 py-2.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl text-sm font-medium transition-colors"
+        >
+          Email report
+        </button>
+        <button
           onClick={copyShareLink}
           className="px-5 py-2.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl text-sm font-medium transition-colors"
         >
@@ -410,6 +418,12 @@ function SessionReport({
           Done
         </button>
       </div>
+
+      <EmailReportSheet
+        open={emailOpen}
+        setOpen={setEmailOpen}
+        patientFirstName={client.name.split(" ")[0]}
+      />
     </main>
   );
 }
