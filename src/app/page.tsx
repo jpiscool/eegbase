@@ -126,6 +126,12 @@ export default function LandingPage() {
             <span className="text-gray-300">·</span>
             <span className="inline-flex items-center gap-1"><span className="text-emerald-500">✓</span> Open source on GitHub</span>
           </p>
+          <p className="text-xs text-gray-500 mt-3">
+            Short on time?{" "}
+            <Link href="/demo/quick" className="text-blue-600 font-semibold hover:underline">
+              See it in 30 seconds →
+            </Link>
+          </p>
         </div>
 
         {/* Hero metrics */}

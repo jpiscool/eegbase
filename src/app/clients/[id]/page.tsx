@@ -509,6 +509,15 @@ export default async function ClientDetailPage({
               {[
                 { href: `/api/clients/${id}/export`, download: true, icon: <Download size={14} />, label: "Export CSV", asAnchor: true },
                 { href: `/clients/${id}/report`, icon: <FileText size={14} />, label: "Print Report" },
+                {
+                  // Email report — mirrors Phase 24 from the demo. mailto: opens the
+                  // clinician's email client with a sensible pre-filled draft so they
+                  // can attach the PDF report (downloaded via Print Report) and send.
+                  href: `mailto:${client.email ?? ""}?subject=${encodeURIComponent(`Your session report — ${client.name}`)}&body=${encodeURIComponent(`Hi ${client.name.split(" ")[0]},\n\nAttached is your latest session report. Let me know if you'd like to discuss anything in our next visit.\n\nBest,\n`)}`,
+                  icon: <FileText size={14} />,
+                  label: "Email report",
+                  asAnchor: true,
+                },
                 { href: `/clients/${id}/intake`, icon: <Brain size={14} />, label: "Intake Form" },
                 { href: `/clients/${id}/erp`, icon: <Activity size={14} />, label: "ERP Assessment" },
                 { href: `/clients/${id}/cpt`, icon: <BarChart2 size={14} />, label: "CPT Assessment" },
@@ -519,7 +528,7 @@ export default async function ClientDetailPage({
                   <a
                     key={item.href}
                     href={item.href}
-                    download
+                    {...("download" in item && item.download ? { download: true } : {})}
                     className="flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors"
                     style={{ color: "var(--text-secondary)" }}
                   >

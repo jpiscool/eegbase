@@ -10,6 +10,9 @@ import { SessionTypePicker } from "../_components/SessionTypePicker";
 import { SleepImpactCard } from "../_components/SleepImpactCard";
 import { OneThingCard } from "../_components/OneThingCard";
 import { HowIsEveryoneCard } from "../_components/HowIsEveryoneCard";
+import { BuddyCard } from "../_components/BuddyCard";
+import { LockScreenPreview } from "../_components/LockScreenPreview";
+import { StreakCertificateCard } from "../_components/StreakCertificateCard";
 import type { Role } from "../_components/RoleToggle";
 import type { SessionType } from "../_data/session-types";
 
@@ -164,12 +167,24 @@ function HomeUserToday({ onStartSession }: { onStartSession: (clientId: string, 
         </div>
       </section>
 
-      {/* Today's one thing — single rule-based suggestion. Sits right under the
-          streak so it's the next thing the user reads after seeing where they are. */}
+      {/* Streak certificate milestone — sits under the streak strip so the
+          milestone math is visible right after the user sees where they are.
+          Phase 30. */}
+      <StreakCertificateCard trainedDays={trainedDays} />
+
+      {/* Today's one thing — single rule-based suggestion. */}
       <OneThingCard
         onStartSession={() => setPickerOpen(true)}
         onOpenCheckIn={() => setCheckInOpen(true)}
       />
+
+      {/* Pair-with-one-person buddy — Phase 28. Optional, only shows after
+          the primary actions so it doesn't push them down. */}
+      <BuddyCard />
+
+      {/* Lock-screen + Apple Watch preview — Phase 29. Visual sell for a
+          shipping-soon feature. */}
+      <LockScreenPreview />
 
       <DevicesCard />
       <WearableSyncCard />
