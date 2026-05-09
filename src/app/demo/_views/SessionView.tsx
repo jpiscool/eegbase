@@ -11,6 +11,7 @@ import { TrainingVisuals, VISUAL_MODES, type VisualMode } from "../_components/T
 import { TutorOverlay } from "../_components/TutorOverlay";
 import { LiveCoFeedbackPill, broadcastLiveScore, clearLiveScore } from "../_components/LiveCoFeedback";
 import { EmailReportSheet } from "../_components/EmailReportSheet";
+import { VoiceNotePanel } from "../_components/VoiceNotePanel";
 
 interface SessionViewProps {
   clientId: string;
@@ -244,6 +245,12 @@ export function SessionView({ clientId, sessionType, sessionMinutes = 20, role =
           </p>
         )}
       </section>
+
+      {/* Voice note — clinician only. Lets the clinician dictate the SOAP
+          note while watching the session, then polishes the transcript via
+          server action. Phase 31. Hidden for home users (they're the patient,
+          they don't write the note). */}
+      {role !== "home" && <VoiceNotePanel />}
     </main>
   );
 }
