@@ -6,6 +6,7 @@ import { eq, and, isNull, count, gte, lte } from "drizzle-orm";
 import { Sidebar } from "@/components/layout/sidebar";
 import { CommandMenu } from "@/components/CommandMenu";
 import { getReviewQueueCount } from "@/lib/reviewQueueCount";
+import { TrustStrip } from "@/components/shared/TrustStrip";
 
 export default async function DashboardLayout({
   children,
@@ -61,7 +62,10 @@ export default async function DashboardLayout({
         notificationCount={notificationCount}
         reviewQueueCount={reviewQueueCount}
       />
-      <main className="flex-1 p-8 overflow-auto">{children}</main>
+      <main className="flex-1 overflow-auto">
+        <TrustStrip />
+        <div className="p-8">{children}</div>
+      </main>
       <CommandMenu />
     </div>
   );
