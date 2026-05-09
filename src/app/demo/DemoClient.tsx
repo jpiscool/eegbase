@@ -1082,8 +1082,8 @@ export default function DemoClient({ initialTab = "session" }: { initialTab?: Ma
             <span style={{ color: "#475569" }}>·</span>
             <span>SOC 2</span>
           </span>
-          <a href="/login" style={{ fontSize: "0.82rem", fontWeight: 700, padding: "7px 16px", background: "#2563EB", color: "white", borderRadius: 8, textDecoration: "none", letterSpacing: "0.01em" }}>
-            Get Access →
+          <a href="/login" style={{ fontSize: "0.82rem", fontWeight: 700, padding: "7px 16px", background: "#2563EB", color: "white", borderRadius: 8, textDecoration: "none", letterSpacing: "0.01em", whiteSpace: "nowrap", flexShrink: 0 }}>
+            Get Access <span aria-hidden>→</span>
           </a>
         </div>
       </div>

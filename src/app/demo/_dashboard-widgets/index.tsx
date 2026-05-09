@@ -155,15 +155,19 @@ export const WIDGET_CATALOG: WidgetDef[] = [
     icon: HeartPulse,
     blurb: "RMSSD ms + sparkline + above/below 50 ms target.",
     render: ({ sample }) => {
-      const v = sample?.hrvRmssd ?? null;
-      if (v == null) return <Waiting label="Polar / Apple Watch" />;
+      const raw = sample?.hrvRmssd ?? null;
+      if (raw == null) return <Waiting label="Polar / Apple Watch" />;
+      // Round once and use the rounded value for both display + threshold,
+      // so a value of 49.7 (which displays as "50") doesn't get tagged
+      // 'BELOW 50 MS TARGET' — that off-by-one rounding gap was a wart.
+      const v = Math.round(raw);
       const onTarget = v >= 50;
       // Synthesize a small sparkline from a smoothed view of recent reward
       // (we don't have a separate HRV buffer; this gives motion without lying — see comment in plan).
       return (
         <div style={{ padding: "6px 0" }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 4 }}>
-            <span style={{ fontFamily: NUM, fontSize: 36, fontWeight: 800, color: onTarget ? COLORS.ok : COLORS.warn, lineHeight: 1, letterSpacing: "-0.02em" }}>{v.toFixed(0)}</span>
+            <span style={{ fontFamily: NUM, fontSize: 36, fontWeight: 800, color: onTarget ? COLORS.ok : COLORS.warn, lineHeight: 1, letterSpacing: "-0.02em" }}>{v}</span>
             <span style={{ fontSize: 12, color: COLORS.muted, fontWeight: 600 }}>ms</span>
           </div>
           <div style={{ fontSize: 10, color: onTarget ? COLORS.ok : COLORS.warn, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>
@@ -697,7 +701,11 @@ export function DashboardEmptyState({ onAdd }: { onAdd: () => void }) {
 
 // ── default widget set (4 widgets shown on first visit) ───────────────────
 
-export const DEFAULT_WIDGETS = ["live-score", "mendi-channels", "hrv-live", "connected-devices"];
+// MY DEVICES section above the widget grid already shows the connected-
+// devices list, so the connected-devices widget would be redundant in the
+// defaults. Replaced with reward-trace so the default set has more visual
+// variety (big number + bilateral bars + ms gauge + sparkline).
+export const DEFAULT_WIDGETS = ["live-score", "mendi-channels", "hrv-live", "reward-trace"];
 
 // ── localStorage helpers ──────────────────────────────────────────────────
 
