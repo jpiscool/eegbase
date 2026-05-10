@@ -23,6 +23,12 @@ function ContactInner() {
   const [email, setEmail] = useState("");
   const [org, setOrg] = useState("");
   const [message, setMessage] = useState("");
+  // Honeypot: legitimate users won't fill this hidden field; bots will.
+  // If non-empty on submit, silently drop the request (still show success
+  // to avoid telling the bot it's been detected).
+  const [website, setWebsite] = useState("");
+  // Render-time anchor used by an anti-replay check below.
+  const [mountedAt] = useState(() => Date.now());
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,6 +37,16 @@ function ContactInner() {
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
+    // Honeypot tripped → pretend success. No localStorage write, no email.
+    if (website.trim().length > 0) {
+      setSubmitted(true);
+      return;
+    }
+    // Submitted in less than 1.5s → almost certainly a bot. Silently drop.
+    if (Date.now() - mountedAt < 1500) {
+      setSubmitted(true);
+      return;
+    }
     if (!email.includes("@") || !name.trim() || !role || !message.trim()) {
       setError("Please fill in name, email, role, and a message.");
       return;
@@ -78,6 +94,19 @@ function ContactInner() {
           </section>
         ) : (
           <form onSubmit={submit} style={{ background: "white", border: "1px solid #E5E7EB", borderRadius: 14, padding: 24, display: "flex", flexDirection: "column", gap: 14 }}>
+            {/* Honeypot — hidden from real users via clip + aria-hidden, but
+                bots scraping the DOM will likely fill it. tabIndex={-1} keeps
+                it out of keyboard tab order. */}
+            <label aria-hidden="true" style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
+              Website (leave blank)
+              <input
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+              />
+            </label>
             <Field label="Your name">
               <input required value={name} onChange={(e) => setName(e.target.value)} placeholder="Dr. Maya Chen" style={input} />
             </Field>

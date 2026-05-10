@@ -12,9 +12,12 @@ import type { NextConfig } from "next";
  *  - X-Frame-Options=DENY blocks clickjacking. If you ever embed EEGBase in
  *    an iframe (e.g. inside an EHR), change to SAMEORIGIN or use frame-ancestors
  *    in CSP.
- *  - Content-Security-Policy is intentionally NOT set yet — it needs a careful
- *    audit of every inline script, font CDN, and Anthropic API origin first.
- *    Track that in a follow-up issue.
+ *  - Content-Security-Policy: starter policy that locks down the most-abused
+ *    surface (frame-ancestors, base-uri, form-action, object-src) without
+ *    requiring a full inline-script/style audit. script-src and style-src
+ *    intentionally left default so Next.js inline RSC scripts + Tailwind
+ *    inline styles continue to work. Tighten further once a nonce strategy
+ *    is in place.
  */
 const securityHeaders = [
   {
@@ -41,6 +44,24 @@ const securityHeaders = [
       "midi=()",          // not used; explicitly deny
     ].join(", "),
   },
+  {
+    // Starter CSP — locks down clickjacking, base-tag injection, form
+    // hijacking, and legacy plugin objects without breaking Next.js
+    // inline RSC scripts or Tailwind inline styles. Tighten with nonces
+    // for script-src/style-src in a follow-up.
+    key: "Content-Security-Policy",
+    value: [
+      "default-src 'self'",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "object-src 'none'",
+      "img-src 'self' data: blob:",
+      "font-src 'self' data:",
+      "connect-src 'self' https://api.anthropic.com https://plausible.io",
+      "upgrade-insecure-requests",
+    ].join("; "),
+  },
 ];
 
 const productionOnlyHeaders = [
@@ -55,6 +76,11 @@ const productionOnlyHeaders = [
 const nextConfig: NextConfig = {
   // Powered-by header leaks framework info; turn it off.
   poweredByHeader: false,
+
+  // Tree-shake commonly imported barrel packages more aggressively.
+  experimental: {
+    optimizePackageImports: ["lucide-react", "drizzle-orm"],
+  },
 
   async headers() {
     const all = [

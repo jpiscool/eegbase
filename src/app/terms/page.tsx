@@ -5,6 +5,8 @@ export const metadata = {
   description: "Terms of service for the EEGBase platform.",
 };
 
+export const dynamic = "force-static";
+
 export default function TermsPage() {
   return (
     <div style={{ minHeight: "100vh", background: "#FAFAFA", fontFamily: "system-ui, -apple-system, sans-serif" }}>

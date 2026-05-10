@@ -6,6 +6,8 @@ export const metadata = {
   description: "Common questions about EEGBase — setup, security, pricing, migration, clinical use, research integration.",
 };
 
+export const dynamic = "force-static";
+
 export default function FaqPage() {
   return (
     <div style={{ minHeight: "100vh", background: "#FAFAFA", fontFamily: "system-ui, -apple-system, sans-serif" }}>

@@ -5,6 +5,8 @@ export const metadata = {
   description: "Locate clinicians using EEGBase + Mendi for neurofeedback near you.",
 };
 
+export const dynamic = "force-static";
+
 // Waitlist counts are illustrative pre-launch — kept distinct from the
 // 412-clinic naturalistic registry referenced on /research and /reports.
 const REGIONS = [

@@ -5,6 +5,8 @@ export const metadata = {
   description: "How EEGBase handles personal and clinical data.",
 };
 
+export const dynamic = "force-static";
+
 export default function PrivacyPage() {
   return (
     <div style={{ minHeight: "100vh", background: "#FAFAFA", fontFamily: "system-ui, -apple-system, sans-serif" }}>

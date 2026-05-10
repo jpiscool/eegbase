@@ -2,8 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Geist } from "next/font/google";
 import { GlobalCommandK } from "@/components/GlobalCommandK";
-import { InstallPwaPrompt } from "@/components/InstallPwaPrompt";
-import { LiveChatWidget } from "@/components/LiveChatWidget";
+import { DeferredClientWidgets } from "@/components/DeferredClientWidgets";
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"] });
@@ -111,8 +110,7 @@ export default function RootLayout({
         />
         {children}
         <GlobalCommandK />
-        <InstallPwaPrompt />
-        <LiveChatWidget />
+        <DeferredClientWidgets />
         {PLAUSIBLE_DOMAIN && (
           <Script
             defer
