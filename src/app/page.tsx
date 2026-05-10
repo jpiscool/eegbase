@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Brain, ShieldCheck, Bluetooth, FileText, MousePointerClick, AlertTriangle, Sparkles, ArrowRight } from "lucide-react";
+import { Brain, ShieldCheck, Zap, Bluetooth, FileText, MousePointerClick, AlertTriangle, Sparkles, ArrowRight } from "lucide-react";
 import { StickyDemoCTA } from "@/components/StickyDemoCTA";
 import { SearchableFAQ } from "@/components/SearchableFAQ";
 
@@ -83,11 +83,12 @@ export default function LandingPage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
-          2. VALUE STACK  ·  StoryBrand: 2 quick wins, success the customer wants
+          2. VALUE STACK  ·  StoryBrand: 3 quick wins, success the customer wants
           ════════════════════════════════════════════════════════════════ */}
       <section className="max-w-5xl mx-auto px-6 pb-20">
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-3 gap-6">
           {[
+            { icon: Zap,      title: "Set up in minutes",   desc: "Open the app. Pair the headset. Start the session. No installer, no IT ticket, no Windows-only quirks." },
             { icon: MousePointerClick, title: "Run a session in one click", desc: "Click Pair. Click Start. Watch the score move. The whole platform fits on one screen." },
             { icon: FileText, title: "Notes write themselves", desc: "AI drafts the session note in your format. You read, fix, save. 60 seconds, not 15 minutes." },
           ].map(({ icon: Icon, title, desc }) => (
