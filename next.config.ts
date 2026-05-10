@@ -52,6 +52,12 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
+      // Next.js relies on inline <script> for RSC payload + hydration data,
+      // and the homepage uses inline style={{}} attributes + inline <style>
+      // blocks for hero animations. Allow inline for both until a nonce
+      // strategy is in place.
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io",
+      "style-src 'self' 'unsafe-inline'",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
