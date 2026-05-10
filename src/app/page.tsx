@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ShieldCheck, Bluetooth, Brain, AlertTriangle, Sparkles, ArrowRight } from "lucide-react";
+import { ShieldCheck, Bluetooth, Brain, Sparkles, ArrowRight } from "lucide-react";
 import { StickyDemoCTA } from "@/components/StickyDemoCTA";
 import { SearchableFAQ } from "@/components/SearchableFAQ";
 
@@ -152,110 +152,47 @@ export default function LandingPage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
-          3. STAKES  ·  parallel cost to clinical practices AND home users.
-             Two cards side-by-side so neither audience reads "this isn't
-             for me" — each with three real industry-attributed stats.
+          3. THESIS  ·  short declarative manifesto. Intentionally bare —
+             no cards, no stats, no icons. Three statements of growing
+             weight, then one quiet credibility line. Stark visual
+             contrast to every surrounding card-heavy section.
           ════════════════════════════════════════════════════════════════ */}
-      <section className="max-w-5xl mx-auto px-6 pb-20">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 mb-3">
-            <AlertTriangle size={16} className="text-rose-600" />
-            <p className="text-xs font-bold text-rose-600 uppercase tracking-wider">Why this matters</p>
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3 leading-tight tracking-tight">
-            Bad neurofeedback software has a <span className="text-rose-600">real cost</span>.
-          </h2>
-          <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            For clinics it&rsquo;s burnout, denied claims, and client drop-off. For individuals it&rsquo;s subscription overload and data you can&rsquo;t take with you. EEGBase fixes both.
-          </p>
-        </div>
+      <section className="max-w-3xl mx-auto px-6 pb-20">
+        <div className="relative text-center py-20 md:py-28 overflow-hidden">
+          {/* Soft ambient glow — same palette as the hero, dialed way down */}
+          <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(60% 60% at 50% 40%, rgba(124,58,237,0.06), transparent 70%)" }} />
 
-        <div className="grid md:grid-cols-2 gap-5">
-          {/* LEFT — Clinical practice */}
-          <div className="bg-rose-50 border border-rose-100 rounded-2xl p-7">
-            <p className="text-[11px] font-bold text-rose-600 uppercase tracking-wider mb-4">For clinical practices</p>
-            <ul className="space-y-4">
-              {[
-                {
-                  num: "45%",
-                  unit: "of psychologists",
-                  label: "report symptoms of burnout. Documentation overload is the most-cited driver.",
-                  source: "APA Worker Wellbeing Survey, 2024",
-                },
-                {
-                  num: "1 in 5",
-                  unit: "behavioural-health claims",
-                  label: "denied for incomplete or late documentation. Ambient AI scribes cut error-driven denials roughly in half in early pilot data.",
-                  source: "AMA Claim Denial Snapshot",
-                },
-                {
-                  num: "30–50%",
-                  unit: "of clients",
-                  label: "drop out before treatment completes. Visible session-by-session progress is one of the strongest retention factors.",
-                  source: "SAMHSA Treatment Outcomes Research",
-                },
-              ].map((s) => (
-                <li key={s.num} className="bg-white rounded-xl p-4 border border-rose-100">
-                  <div className="flex items-baseline gap-2 mb-1 flex-wrap">
-                    <span className="text-2xl font-extrabold text-rose-600 tracking-tight whitespace-nowrap">{s.num}</span>
-                    <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">{s.unit}</span>
-                  </div>
-                  <p className="text-sm text-gray-700 leading-relaxed mb-2">{s.label}</p>
-                  <p className="text-[11px] text-gray-500 font-medium">{s.source}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <div className="relative">
+            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.22em] mb-12">Our thesis</p>
 
-          {/* RIGHT — Solo training at home.
-              Stats describe today's pain WITHOUT EEGBase, not our
-              pricing. EEGBase is free — closing pill at the end of
-              the card makes that explicit so the $$$ figure doesn't
-              read as our price tag. */}
-          <div className="bg-amber-50 border border-amber-100 rounded-2xl p-7">
-            <p className="text-[11px] font-bold text-amber-700 uppercase tracking-wider mb-1">For solo training at home</p>
-            <p className="text-[11px] text-amber-700/80 mb-4">What home users face <em>without</em> EEGBase &mdash;</p>
-            <ul className="space-y-4">
-              {[
-                {
-                  num: "$200–$500",
-                  unit: "wasted per year",
-                  label: "across 3–5 overlapping consumer wellness apps that don't talk to each other — sleep here, HRV there, brain training somewhere else.",
-                  source: "Pew Research consumer health-tracking, 2023",
-                },
-                {
-                  num: "71%",
-                  unit: "abandon within 90 days",
-                  label: "of users quit their wellness app inside the first three months. Lack of visible progress is the most-cited reason.",
-                  source: "Localytics mobile retention benchmarks, 2024",
-                },
-                {
-                  num: "Most",
-                  unit: "apps lock your data",
-                  label: "consumer neurofeedback apps tie you to one headset vendor and don't let you export the raw signal — when you switch devices, your training history dies with the old app.",
-                  source: "EEGBase comparative review, May 2026",
-                },
-              ].map((s) => (
-                <li key={s.num} className="bg-white rounded-xl p-4 border border-amber-100">
-                  <div className="flex items-baseline gap-2 mb-1 flex-wrap">
-                    <span className="text-2xl font-extrabold text-amber-700 tracking-tight whitespace-nowrap">{s.num}</span>
-                    <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">{s.unit}</span>
-                  </div>
-                  <p className="text-sm text-gray-700 leading-relaxed mb-2">{s.label}</p>
-                  <p className="text-[11px] text-gray-500 font-medium">{s.source}</p>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-5 inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-emerald-50 border border-emerald-200">
-              <span aria-hidden="true" className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="text-xs font-bold text-emerald-700">EEGBase replaces all of them &mdash; $0 / forever</span>
-            </div>
+            <p className="text-2xl md:text-3xl font-medium text-gray-500 leading-snug mb-5 tracking-tight">
+              Neurofeedback isn&rsquo;t broken.
+            </p>
+            <p className="text-3xl md:text-4xl font-semibold text-gray-900 leading-snug mb-10 tracking-tight">
+              The software around it has been &mdash; for 30 years.
+            </p>
+
+            <p
+              className="text-5xl md:text-7xl font-extrabold leading-[1.02] tracking-[-0.035em]"
+              style={{
+                background: "linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #06B6D4 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              EEGBase is the fix.
+            </p>
+
+            <p className="text-base md:text-lg text-gray-700 mt-6 leading-relaxed">
+              For the clinic. For the home. For free.
+            </p>
+
+            <p className="text-xs text-gray-400 mt-14 max-w-md mx-auto leading-relaxed">
+              Neurofeedback has been clinically studied since the 1970s. Consumer fNIRS became affordable in the 2010s. We built the dashboard the field has been waiting on.
+            </p>
           </div>
         </div>
-
-        <p className="text-center text-base font-semibold text-gray-900 leading-relaxed mt-7 max-w-2xl mx-auto">
-          The science of neurofeedback already works. The software shouldn&rsquo;t be the part that costs you time, money, or progress &mdash; whether you&rsquo;re running a clinic or training yourself at home.
-        </p>
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
