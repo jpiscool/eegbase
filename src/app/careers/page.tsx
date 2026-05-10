@@ -52,9 +52,42 @@ const PROCESS = [
   { step: 5, title: "Reference check · offer",             time: "Within a week" },
 ];
 
+// JobPosting JSON-LD generator — emits one Schema.org JobPosting per role.
+// Eligible for Google Jobs rich-result. Salary range parsed from "$160-210k".
+function rolesJsonLd() {
+  const today = new Date().toISOString().slice(0, 10);
+  return ROLES.map((r) => {
+    const m = r.salary.match(/\$([\d.]+)[–\-]([\d.]+)k/);
+    const base: Record<string, unknown> = {
+      "@context": "https://schema.org",
+      "@type": "JobPosting",
+      title: r.title,
+      description: `${r.desc} Qualifications: ${r.quals.join("; ")}.`,
+      datePosted: today,
+      employmentType: "FULL_TIME",
+      hiringOrganization: { "@type": "Organization", name: "EEGBase", sameAs: "https://eegbase.com" },
+      jobLocationType: "TELECOMMUTE",
+      applicantLocationRequirements: { "@type": "Country", name: "USA" },
+      directApply: false,
+    };
+    if (m) {
+      base.baseSalary = {
+        "@type": "MonetaryAmount",
+        currency: "USD",
+        value: { "@type": "QuantitativeValue", minValue: Number(m[1]) * 1000, maxValue: Number(m[2]) * 1000, unitText: "YEAR" },
+      };
+    }
+    return base;
+  });
+}
+
 export default function CareersPage() {
   return (
     <div style={{ minHeight: "100vh", background: "#FAFAFA", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(rolesJsonLd()) }}
+      />
       <header style={{ borderBottom: "1px solid #E5E7EB", background: "#fff" }}>
         <div style={{ maxWidth: 1000, margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
