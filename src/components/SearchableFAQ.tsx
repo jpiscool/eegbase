@@ -7,10 +7,11 @@ type Faq = { q: string; a: string; cat: string };
 
 const FAQS: Faq[] = [
   // Setup & cost
-  { cat: "Setup & cost", q: "Do I need to install anything?", a: "No. EEGBase is a hosted web app. Open the demo or sign up — your clinic is running in minutes. Nothing to install." },
-  { cat: "Setup & cost", q: "How long does setup take?", a: "Most clinicians are fully running in under 30 minutes. Sign up, add your first client, pair your headset. The setup guide walks through each step with screenshots." },
-  { cat: "Setup & cost", q: "How much does it cost?", a: "It's free. Every feature, every device, every clinician on your team. No card, no trial limit, no \u201ccontact sales\u201d." },
-  { cat: "Setup & cost", q: "Is there a catch?", a: "No. EEGBase is free for licensed clinicians during early launch. We host it on HIPAA-friendly U.S. infrastructure (AWS us-east-1; EU clinics on eu-west-3). Your data stays clinic-owned and exports as standard files anytime." },
+  { cat: "Setup & cost", q: "Can I use this myself if I'm not a clinician?", a: "Yes. EEGBase is free for individuals too. Bring your own headset (Mendi, Muse, Polar, OpenBCI, etc.), pair it, and start training. You get the same dashboard a clinician uses — just skip the parts about clients, insurance, and SOAP notes if they don't apply to you. No clinical license required, no signup hoops." },
+  { cat: "Setup & cost", q: "Do I need to install anything?", a: "No. EEGBase is a hosted web app. Open the demo or sign up — your clinic (or your home setup) is running in minutes. Nothing to install." },
+  { cat: "Setup & cost", q: "How long does setup take?", a: "Most clinicians are fully running in under 30 minutes. Sign up, add your first client, pair your headset. Solo users skip the client step. The setup guide walks through each step with screenshots." },
+  { cat: "Setup & cost", q: "How much does it cost?", a: "It's free. Every feature, every device, whether you're a clinic with 50 clients or one person with one headset. No card, no trial limit, no \u201ccontact sales\u201d." },
+  { cat: "Setup & cost", q: "Is there a catch?", a: "No. EEGBase is free for licensed clinicians and free for individuals during early launch. We host it on HIPAA-friendly U.S. infrastructure (AWS us-east-1; EU clinics on eu-west-3). Your data stays yours and exports as standard files anytime." },
 
   // Differentiation
   { cat: "Differentiation", q: "How is EEGBase different from SimplePractice or TherapyNotes?", a: "Those are scheduling and note-taking tools. EEGBase also captures live brain data and runs neurofeedback sessions. One client record holds all of it." },
@@ -85,7 +86,7 @@ export function SearchableFAQ() {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search 19 questions…"
+          placeholder="Search 20 questions…"
           aria-label="Search FAQ"
           className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 bg-white"
         />

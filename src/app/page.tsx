@@ -92,7 +92,7 @@ export default function LandingPage() {
             Five tools, or one.
           </h2>
           <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Most neurofeedback clinicians juggle five disconnected apps — streaming, EHR, billing, video, and notes. EEGBase replaces all of them with a single screen.
+            Most neurofeedback clinicians juggle five disconnected apps — streaming, EHR, billing, video, and notes. EEGBase replaces all of them with a single screen. <strong className="text-gray-900">Using it for yourself at home?</strong> Same software, same price (free) — just skip the parts you don&rsquo;t need.
           </p>
         </div>
 
@@ -129,7 +129,7 @@ export default function LandingPage() {
             <ul className="space-y-3.5 text-sm text-gray-700 leading-relaxed">
               {[
                 <><strong className="text-gray-900">One screen, one client record</strong> — live brain signal, HIPAA video, reward score, and AI notes side-by-side</>,
-                <><strong className="text-gray-900">Free for every licensed clinician</strong> · no card, no per-seat fee, no &ldquo;contact sales&rdquo;</>,
+                <><strong className="text-gray-900">Free for clinicians and individuals</strong> · no card, no per-seat fee, no &ldquo;contact sales&rdquo; — same platform whether you&rsquo;re a clinic or one person at home</>,
                 <><strong className="text-gray-900">Hardware-agnostic</strong> — Mendi, Muse, Polar, Apple Watch, Oura, OpenBCI, Whoop · switch headsets and keep every client&rsquo;s history</>,
                 <><strong className="text-gray-900">AI drafts the note in 60 seconds</strong> in your format (SOAP, DAP, BIRP, +3 more) · you review and save</>,
                 <><strong className="text-gray-900">Runs in any browser</strong> — Mac, Windows, iPad, Chromebook · zero install, zero IT ticket</>,
@@ -197,6 +197,9 @@ export default function LandingPage() {
           <p className="text-base font-semibold text-gray-900 leading-relaxed">
             The science of neurofeedback already works. The software shouldn&rsquo;t be the part that costs you clinicians, claims, or clients.
           </p>
+          <p className="text-sm text-gray-600 leading-relaxed mt-3 italic">
+            Using EEGBase for yourself instead of in a clinic? None of the above touches you — you just get the same free tool to track your own training.
+          </p>
         </div>
       </section>
 
@@ -206,9 +209,9 @@ export default function LandingPage() {
       <section className="max-w-5xl mx-auto px-6 pb-20">
         <div className="text-center mb-10">
           <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3">How it works</p>
-          <h2 className="text-3xl font-bold text-gray-900 mb-3 leading-tight">One screen. One client record. One AI that does the boring stuff.</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-3 leading-tight">One screen. One record. One AI that does the boring stuff.</h2>
           <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            EEGBase plugs into the headsets, watches, and rings you already use. Every session feeds the same client record. The AI watches everything and writes your notes for you.
+            EEGBase plugs into the headsets, watches, and rings you already use. Every session feeds the same record — yours, or your client&rsquo;s. The AI watches everything and (if you&rsquo;re running clinical sessions) writes the notes for you.
           </p>
         </div>
 
@@ -216,17 +219,17 @@ export default function LandingPage() {
           <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 rounded-2xl p-7">
             <Bluetooth size={20} className="text-blue-600 mb-3" />
             <h3 className="text-base font-bold text-gray-900 mb-2">Plug in any device</h3>
-            <p className="text-sm text-gray-700 leading-relaxed">Mendi, Muse, Polar, Apple Watch, Oura, OpenBCI, Whoop. One button to pair. Switch headsets next year — you keep every client&rsquo;s history.</p>
+            <p className="text-sm text-gray-700 leading-relaxed">Mendi, Muse, Polar, Apple Watch, Oura, OpenBCI, Whoop. One button to pair. Switch headsets next year — you keep every session&rsquo;s history.</p>
           </div>
           <div className="bg-gradient-to-br from-violet-50 to-fuchsia-50 border border-violet-100 rounded-2xl p-7">
             <Brain size={20} className="text-violet-600 mb-3" />
             <h3 className="text-base font-bold text-gray-900 mb-2">See the whole session live</h3>
-            <p className="text-sm text-gray-700 leading-relaxed">Brain data, heart rate, video call, score, notes — all on one screen. Talk to the client; the rest just works.</p>
+            <p className="text-sm text-gray-700 leading-relaxed">Brain data, heart rate, score, notes — all on one screen. Whether you&rsquo;re training your own brain or watching a client train theirs, the rest just works.</p>
           </div>
           <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-2xl p-7">
             <Sparkles size={20} className="text-emerald-600 mb-3" />
             <h3 className="text-base font-bold text-gray-900 mb-2">Let the AI write the note</h3>
-            <p className="text-sm text-gray-700 leading-relaxed">Pick your format (SOAP, DAP, BIRP, plus 3 more). The AI drafts. You read, fix anything, hit save. Done.</p>
+            <p className="text-sm text-gray-700 leading-relaxed">Clinicians: pick your format (SOAP, DAP, BIRP, plus 3 more). AI drafts, you review, hit save. Solo users: skip it — or use the AI to summarise your own training run.</p>
           </div>
           <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-7">
             <ShieldCheck size={20} className="text-amber-600 mb-3" />
@@ -248,14 +251,17 @@ export default function LandingPage() {
               <p className="text-base text-gray-600 leading-relaxed mb-4">
                 EEGBase was built with neurofeedback clinicians, not at them. We watched too many smart people give up on the field because the software made every session feel like a fight.
               </p>
-              <p className="text-base text-gray-600 leading-relaxed">
+              <p className="text-base text-gray-600 leading-relaxed mb-4">
                 So we built the opposite: audited, hardware-agnostic, and simple enough that a brand-new clinician can run a real session their first day.
+              </p>
+              <p className="text-base text-gray-600 leading-relaxed">
+                Built for clinicians first &mdash; <strong className="text-gray-900">but free for anyone</strong> who owns a headset and wants to track their own training. Same software, same data export, no signup hoops.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {[
                 { num: "10+",    label: "Devices supported" },
-                { num: "Free",   label: "For licensed clinicians" },
+                { num: "Free",   label: "Clinicians + individuals" },
                 { num: "SOC 2",  label: "Q3 2026 audit · Coalfire" },
                 { num: "WCAG",   label: "2.2 AA · Q3 2026 · Deque" },
               ].map((s) => (
@@ -283,8 +289,8 @@ export default function LandingPage() {
         <div className="grid md:grid-cols-3 gap-5">
           {[
             { num: "1", title: "Open the demo",  desc: "It&rsquo;s already loaded with sample clients and a live session in progress. Click around for 2 minutes — you&rsquo;ll see the whole platform." },
-            { num: "2", title: "Sign up free",   desc: "It takes 90 seconds. No card. No trial limit. Every feature, every device, every clinician on your team." },
-            { num: "3", title: "Run a real session", desc: "Pair your headset, click Start, talk to your client. The session records, the AI writes the note, the report sends in one click." },
+            { num: "2", title: "Sign up free",   desc: "It takes 90 seconds. No card. No trial limit. Whether you&rsquo;re a clinic with 50 clients or one person with one headset — every feature, every device." },
+            { num: "3", title: "Run a real session", desc: "Pair your headset, click Start. Watch your own brain or your client&rsquo;s brain. The session records, the AI handles the notes (if you want them), the report sends in one click." },
           ].map((s) => (
             <div key={s.num} className="bg-white border-2 border-gray-100 rounded-2xl p-7 relative hover:border-blue-300 transition-colors">
               <div className="absolute -top-4 left-7 w-9 h-9 bg-blue-600 text-white rounded-xl flex items-center justify-center font-extrabold text-base shadow-lg">
@@ -311,16 +317,16 @@ export default function LandingPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-5">What EEGBase actually is</h2>
           <div className="space-y-4 text-base text-gray-700 leading-relaxed">
             <p>
-              EEGBase is the simplest neurofeedback clinic platform on the market. It plugs into Mendi fNIRS headbands, Muse EEG headsets, Polar heart-rate straps, Apple Watch, Oura rings, OpenBCI hardware, Whoop bands, and other BLE neurofeedback devices. Every reading lands in one client record on one screen.
+              EEGBase is the simplest neurofeedback platform on the market. It plugs into Mendi fNIRS headbands, Muse EEG headsets, Polar heart-rate straps, Apple Watch, Oura rings, OpenBCI hardware, Whoop bands, and other BLE neurofeedback devices. Every reading lands in one record on one screen.
             </p>
             <p>
-              During a session, you see the live brain signal, a HIPAA-compliant video call with the client, the reward score, and the running notes — all without leaving the page. After the session, the AI drafts the clinical note in any of six standard formats (SOAP, DAP, BIRP, GIRP, PIE, SIRP). You read it, fix anything, save.
+              <strong>For clinicians:</strong> during a session, you see the live brain signal, a HIPAA-compliant video call with the client, the reward score, and the running notes — all without leaving the page. After the session, the AI drafts the clinical note in any of six standard formats (SOAP, DAP, BIRP, GIRP, PIE, SIRP). Outcome scales (PHQ-9, GAD-7, ADHD-RS-IV, MBI-EE, custom) auto-track over time. Insurance billing (CMS-1500, ERA, ICD-10) is built in.
             </p>
             <p>
-              Outcome scales (PHQ-9, GAD-7, ADHD-RS-IV, MBI-EE, custom) auto-track over time. Insurance billing (CMS-1500, ERA, ICD-10) is built in. Reports send to clients and referring doctors with one click. Everything exports as BIDS, SNIRF, EDF+, CSV, or PDF — your data stays yours, forever.
+              <strong>For individuals:</strong> bring your own headset, pair it, run a session, see your own progress over time. No client record to fill out, no insurance forms to file, no clinical license required. You get the same dashboard a clinician uses — just without the bits that don&rsquo;t apply to one person.
             </p>
             <p>
-              EEGBase is free for licensed clinicians. Hosted on a HIPAA-friendly U.S. infrastructure (AWS us-east-1; EU clinics on eu-west-3). Bishop Fox pen-test, Coalfire SOC 2 Type II, and Deque WCAG 2.2 AA audits scheduled for Q3 2026.
+              Everything exports as BIDS, SNIRF, EDF+, CSV, or PDF — your data stays yours, forever. EEGBase is free for licensed clinicians and free for individuals. Hosted on a HIPAA-friendly U.S. infrastructure (AWS us-east-1; EU clinics on eu-west-3). Bishop Fox pen-test, Coalfire SOC 2 Type II, and Deque WCAG 2.2 AA audits scheduled for Q3 2026.
             </p>
           </div>
         </div>
@@ -334,7 +340,7 @@ export default function LandingPage() {
           <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3">Pricing</p>
           <h2 className="text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">It&rsquo;s free.</h2>
           <p className="text-base text-gray-600 leading-relaxed max-w-lg mx-auto mb-6">
-            Every feature. Every device. Every clinician on your team. No card, no trial limit, no &ldquo;contact sales&rdquo;.
+            Every feature. Every device. Whether you&rsquo;re a clinic with 50 clients or one person with one headset. No card, no trial limit, no &ldquo;contact sales&rdquo;.
           </p>
           <Link href="/demo" className="inline-block px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors">
             Open the demo →
@@ -348,7 +354,7 @@ export default function LandingPage() {
       <section className="max-w-3xl mx-auto px-6 pb-20" id="faq">
         <div className="text-center mb-10">
           <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3">Common questions</p>
-          <h2 className="text-3xl font-bold text-gray-900 mb-3 leading-tight">What clinicians ask before they sign up.</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-3 leading-tight">What people ask before they sign up.</h2>
           <p className="text-base text-gray-600 max-w-xl mx-auto leading-relaxed">
             Plain answers, no jargon. Search if you don&rsquo;t see what you need.
           </p>
@@ -381,7 +387,7 @@ export default function LandingPage() {
               Talk to us
             </Link>
           </div>
-          <p className="text-blue-200 text-xs mt-6">5 sample clients · 20-session arcs pre-loaded · No account required</p>
+          <p className="text-blue-200 text-xs mt-6">5 sample clients · 20-session arcs pre-loaded · No account or clinical license required</p>
         </div>
       </section>
       </main>
@@ -389,7 +395,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-gray-100 px-6 py-10">
         <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-gray-400 flex-wrap gap-4">
-          <span>© 2026 EEGBase — neurofeedback platform for clinics</span>
+          <span>© 2026 EEGBase — neurofeedback platform for clinics and individuals</span>
           <div className="flex items-center gap-6">
             <Link href="/demo" className="hover:text-gray-600 transition-colors">Demo</Link>
             <Link href="/login" className="hover:text-gray-600 transition-colors">Login</Link>

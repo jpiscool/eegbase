@@ -25,7 +25,7 @@ export default function FaqPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>FAQ</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Common questions</h1>
         <p style={{ fontSize: 15, color: "#64748B", lineHeight: 1.7, marginBottom: 36 }}>
-          Search 19 questions across setup, security, migration, clinical use, and research. Don't see yours? <Link href="/contact" style={{ color: "#2563EB" }}>Get in touch</Link> — we respond within 24 hours.
+          Search 20 questions across setup, security, migration, clinical use, individual use, and research. Don't see yours? <Link href="/contact" style={{ color: "#2563EB" }}>Get in touch</Link> — we respond within 24 hours.
         </p>
 
         <SearchableFAQ />
