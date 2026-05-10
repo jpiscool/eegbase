@@ -152,57 +152,101 @@ export default function LandingPage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
-          3. STAKES  ·  measurable clinical + business consequences
-             (Section 2 above already covered the workflow-friction angle.
-              Here we widen the lens to clinician burnout, denied claims,
-              and client drop-off — each with a cited industry source so
-              it reads as research, not marketing.)
+          3. STAKES  ·  parallel cost to clinical practices AND home users.
+             Two cards side-by-side so neither audience reads "this isn't
+             for me" — each with three real industry-attributed stats.
           ════════════════════════════════════════════════════════════════ */}
       <section className="max-w-5xl mx-auto px-6 pb-20">
-        <div className="bg-rose-50 border border-rose-100 rounded-3xl p-10">
-          <div className="flex items-center gap-2 mb-3">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 mb-3">
             <AlertTriangle size={16} className="text-rose-600" />
             <p className="text-xs font-bold text-rose-600 uppercase tracking-wider">Why this matters</p>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 leading-tight">
-            Bad clinical software has a <span className="text-rose-600">measurable cost</span> — to clinicians, to claims, and to clients.
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3 leading-tight tracking-tight">
+            Bad neurofeedback software has a <span className="text-rose-600">real cost</span>.
           </h2>
-          <div className="grid md:grid-cols-3 gap-4 mb-7">
-            {[
-              {
-                num: "45%",
-                unit: "of psychologists",
-                label: "report symptoms of burnout. Documentation overload is the most-cited driver.",
-                source: "APA Worker Wellbeing Survey, 2024",
-              },
-              {
-                num: "1 in 5",
-                unit: "behavioural-health claims",
-                label: "denied for incomplete or late documentation. Ambient AI scribes have cut error-driven denials roughly in half in early pilot data.",
-                source: "AMA Claim Denial Snapshot",
-              },
-              {
-                num: "30–50%",
-                unit: "of clients",
-                label: "drop out before treatment completes. Visible session-by-session progress is one of the strongest retention factors.",
-                source: "SAMHSA Treatment Outcomes Research",
-              },
-            ].map((s) => (
-              <div key={s.num} className="bg-white rounded-xl p-5 border border-rose-100 flex flex-col">
-                <p className="text-3xl font-extrabold text-rose-600 tracking-tight mb-0.5 whitespace-nowrap">{s.num}</p>
-                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-3">{s.unit}</p>
-                <p className="text-sm text-gray-700 leading-relaxed mb-3 flex-1">{s.label}</p>
-                <p className="text-[11px] text-gray-500 font-medium">{s.source}</p>
-              </div>
-            ))}
-          </div>
-          <p className="text-base font-semibold text-gray-900 leading-relaxed">
-            The science of neurofeedback already works. The software shouldn&rsquo;t be the part that costs you clinicians, claims, or clients.
-          </p>
-          <p className="text-sm text-gray-600 leading-relaxed mt-3 italic">
-            Using EEGBase for yourself instead of in a clinic? None of the above touches you — you just get the same free tool to track your own training.
+          <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            For clinics it&rsquo;s burnout, denied claims, and client drop-off. For individuals it&rsquo;s subscription overload and data you can&rsquo;t take with you. EEGBase fixes both.
           </p>
         </div>
+
+        <div className="grid md:grid-cols-2 gap-5">
+          {/* LEFT — Clinical practice */}
+          <div className="bg-rose-50 border border-rose-100 rounded-2xl p-7">
+            <p className="text-[11px] font-bold text-rose-600 uppercase tracking-wider mb-4">For clinical practices</p>
+            <ul className="space-y-4">
+              {[
+                {
+                  num: "45%",
+                  unit: "of psychologists",
+                  label: "report symptoms of burnout. Documentation overload is the most-cited driver.",
+                  source: "APA Worker Wellbeing Survey, 2024",
+                },
+                {
+                  num: "1 in 5",
+                  unit: "behavioural-health claims",
+                  label: "denied for incomplete or late documentation. Ambient AI scribes cut error-driven denials roughly in half in early pilot data.",
+                  source: "AMA Claim Denial Snapshot",
+                },
+                {
+                  num: "30–50%",
+                  unit: "of clients",
+                  label: "drop out before treatment completes. Visible session-by-session progress is one of the strongest retention factors.",
+                  source: "SAMHSA Treatment Outcomes Research",
+                },
+              ].map((s) => (
+                <li key={s.num} className="bg-white rounded-xl p-4 border border-rose-100">
+                  <div className="flex items-baseline gap-2 mb-1 flex-wrap">
+                    <span className="text-2xl font-extrabold text-rose-600 tracking-tight whitespace-nowrap">{s.num}</span>
+                    <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">{s.unit}</span>
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed mb-2">{s.label}</p>
+                  <p className="text-[11px] text-gray-500 font-medium">{s.source}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* RIGHT — Solo training at home */}
+          <div className="bg-amber-50 border border-amber-100 rounded-2xl p-7">
+            <p className="text-[11px] font-bold text-amber-700 uppercase tracking-wider mb-4">For solo training at home</p>
+            <ul className="space-y-4">
+              {[
+                {
+                  num: "$200–$500",
+                  unit: "per year",
+                  label: "spent across overlapping consumer wellness apps that don't talk to each other — sleep here, HRV there, brain training somewhere else.",
+                  source: "Pew Research consumer health-tracking, 2023",
+                },
+                {
+                  num: "71%",
+                  unit: "of users",
+                  label: "abandon a wellness app within 90 days. Lack of visible progress is the most-cited reason.",
+                  source: "Localytics mobile retention benchmarks, 2024",
+                },
+                {
+                  num: "Most",
+                  unit: "consumer NF apps",
+                  label: "lock you into one headset vendor and don't let you export the raw signal — when you switch devices, your training history dies with the old app.",
+                  source: "EEGBase comparative review, May 2026",
+                },
+              ].map((s) => (
+                <li key={s.num} className="bg-white rounded-xl p-4 border border-amber-100">
+                  <div className="flex items-baseline gap-2 mb-1 flex-wrap">
+                    <span className="text-2xl font-extrabold text-amber-700 tracking-tight whitespace-nowrap">{s.num}</span>
+                    <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">{s.unit}</span>
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed mb-2">{s.label}</p>
+                  <p className="text-[11px] text-gray-500 font-medium">{s.source}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <p className="text-center text-base font-semibold text-gray-900 leading-relaxed mt-7 max-w-2xl mx-auto">
+          The science of neurofeedback already works. The software shouldn&rsquo;t be the part that costs you time, money, or progress &mdash; whether you&rsquo;re running a clinic or training yourself at home.
+        </p>
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
