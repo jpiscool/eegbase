@@ -74,6 +74,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className={`${geist.className} h-full antialiased`}>
+        {/* WCAG 2.4.1 — global skip link. Hidden until focused. Targets the
+            #main-content landmark that every page provides. */}
+        <a href="#main-content" className="skip-link">Skip to main content</a>
         {/* Schema.org JSON-LD · Organization + SoftwareApplication for SEO rich-results */}
         <script
           type="application/ld+json"
