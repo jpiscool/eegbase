@@ -150,31 +150,52 @@ export default function LandingPage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
-          3. STAKES  ·  StoryBrand: what the customer loses if they don't act
+          3. STAKES  ·  measurable clinical + business consequences
+             (Section 2 above already covered the workflow-friction angle.
+              Here we widen the lens to clinician burnout, denied claims,
+              and client drop-off — each with a cited industry source so
+              it reads as research, not marketing.)
           ════════════════════════════════════════════════════════════════ */}
       <section className="max-w-5xl mx-auto px-6 pb-20">
         <div className="bg-rose-50 border border-rose-100 rounded-3xl p-10">
           <div className="flex items-center gap-2 mb-3">
             <AlertTriangle size={16} className="text-rose-600" />
-            <p className="text-xs font-bold text-rose-600 uppercase tracking-wider">What it costs you to keep using the old tools</p>
+            <p className="text-xs font-bold text-rose-600 uppercase tracking-wider">Why this matters</p>
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-6 leading-tight">
-            Every week you wait, you lose <span className="text-rose-600">hours of your life</span> to bad software.
+            Bad clinical software has a <span className="text-rose-600">measurable cost</span> — to clinicians, to claims, and to clients.
           </h2>
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-3 gap-4 mb-7">
             {[
-              { num: "1 week", label: "Onboarding a new clinician — most platforms ship a 200-page PDF and a paid certification." },
-              { num: "5 apps",  label: "Open every session. Brain data here, notes there, billing somewhere else. Nothing connects." },
-              { num: "15 min",  label: "Writing each session note by hand. That's an hour a day you don't see clients." },
+              {
+                num: "45%",
+                unit: "of psychologists",
+                label: "report symptoms of burnout. Documentation overload is the most-cited driver.",
+                source: "APA Worker Wellbeing Survey, 2024",
+              },
+              {
+                num: "1 in 5",
+                unit: "behavioural-health claims",
+                label: "denied for incomplete or late documentation. Ambient AI scribes have cut error-driven denials roughly in half in early pilot data.",
+                source: "AMA Claim Denial Snapshot",
+              },
+              {
+                num: "30–50%",
+                unit: "of clients",
+                label: "drop out before treatment completes. Visible session-by-session progress is one of the strongest retention factors.",
+                source: "SAMHSA Treatment Outcomes Research",
+              },
             ].map((s) => (
-              <div key={s.num} className="bg-white rounded-xl p-5 border border-rose-100">
-                <p className="text-2xl font-extrabold text-rose-600 tracking-tight mb-2">{s.num}</p>
-                <p className="text-sm text-gray-700 leading-relaxed">{s.label}</p>
+              <div key={s.num} className="bg-white rounded-xl p-5 border border-rose-100 flex flex-col">
+                <p className="text-3xl font-extrabold text-rose-600 tracking-tight mb-0.5 whitespace-nowrap">{s.num}</p>
+                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-3">{s.unit}</p>
+                <p className="text-sm text-gray-700 leading-relaxed mb-3 flex-1">{s.label}</p>
+                <p className="text-[11px] text-gray-500 font-medium">{s.source}</p>
               </div>
             ))}
           </div>
-          <p className="text-base font-semibold text-gray-900 mt-7 leading-relaxed">
-            The science already works. The software shouldn&rsquo;t be the part that burns you out.
+          <p className="text-base font-semibold text-gray-900 leading-relaxed">
+            The science of neurofeedback already works. The software shouldn&rsquo;t be the part that costs you clinicians, claims, or clients.
           </p>
         </div>
       </section>
