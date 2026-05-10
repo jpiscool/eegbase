@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Brain, ShieldCheck, Zap, Bluetooth, FileText, MousePointerClick, AlertTriangle, Sparkles, ArrowRight } from "lucide-react";
+import { ShieldCheck, Bluetooth, Brain, AlertTriangle, Sparkles, ArrowRight } from "lucide-react";
 import { StickyDemoCTA } from "@/components/StickyDemoCTA";
 import { SearchableFAQ } from "@/components/SearchableFAQ";
 
@@ -83,24 +83,70 @@ export default function LandingPage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
-          2. VALUE STACK  ·  StoryBrand: 3 quick wins, success the customer wants
+          2. CONTRAST · without vs with — concrete, comparison-based
           ════════════════════════════════════════════════════════════════ */}
       <section className="max-w-5xl mx-auto px-6 pb-20">
-        <div className="grid md:grid-cols-3 gap-6">
-          {[
-            { icon: Zap,      title: "Set up in minutes",   desc: "Open the app. Pair the headset. Start the session. No installer, no IT ticket, no Windows-only quirks." },
-            { icon: MousePointerClick, title: "Run a session in one click", desc: "Click Pair. Click Start. Watch the score move. The whole platform fits on one screen." },
-            { icon: FileText, title: "Notes write themselves", desc: "AI drafts the session note in your format. You read, fix, save. 60 seconds, not 15 minutes." },
-          ].map(({ icon: Icon, title, desc }) => (
-            <div key={title} className="bg-white border border-gray-200 rounded-2xl p-7 hover:border-blue-200 hover:shadow-md transition-all">
-              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                <Icon size={20} className="text-blue-600" />
-              </div>
-              <h3 className="text-base font-bold text-gray-900 mb-2">{title}</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">{desc}</p>
-            </div>
-          ))}
+        <div className="text-center mb-10">
+          <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3">Without vs with</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight tracking-tight">
+            Five tools, or one.
+          </h2>
+          <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Most neurofeedback clinicians juggle five disconnected apps — streaming, EHR, billing, video, and notes. EEGBase replaces all of them with a single screen.
+          </p>
         </div>
+
+        <div className="grid md:grid-cols-2 gap-5">
+          {/* LEFT — without EEGBase */}
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-7">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-200">
+              <span className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">×</span>
+              <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">Without EEGBase</h3>
+            </div>
+            <ul className="space-y-3.5 text-sm text-gray-600 leading-relaxed">
+              {[
+                <><strong className="text-gray-800">5 disconnected apps</strong> — brain capture, EHR, billing, video, notes — none of them share data</>,
+                <><strong className="text-gray-800">$300–$800 / month</strong> in software subscriptions before you see a client</>,
+                <><strong className="text-gray-800">Locked to one headset vendor</strong> — Muse-only or Mendi-only platforms force you to start over if you switch</>,
+                <><strong className="text-gray-800">15 minutes writing each clinical note</strong> by hand · an hour a day you don't see clients</>,
+                <><strong className="text-gray-800">Windows desktop installer</strong> with IT setup, per-machine licenses, and 200-page PDFs</>,
+                <><strong className="text-gray-800">Insurance forms by hand</strong> — CMS-1500 entry, ERA reconciliation, payer follow-up</>,
+              ].map((item, i) => (
+                <li key={i} className="flex gap-2.5">
+                  <span aria-hidden="true" className="text-gray-400 mt-0.5">×</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* RIGHT — with EEGBase */}
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-7 relative" style={{ boxShadow: "0 8px 24px -12px rgba(37,99,235,0.25)" }}>
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-blue-200">
+              <span className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">✓</span>
+              <h3 className="text-sm font-bold text-blue-700 uppercase tracking-wider">With EEGBase</h3>
+            </div>
+            <ul className="space-y-3.5 text-sm text-gray-700 leading-relaxed">
+              {[
+                <><strong className="text-gray-900">One screen, one client record</strong> — live brain signal, HIPAA video, reward score, and AI notes side-by-side</>,
+                <><strong className="text-gray-900">Free for every licensed clinician</strong> · no card, no per-seat fee, no &ldquo;contact sales&rdquo;</>,
+                <><strong className="text-gray-900">Hardware-agnostic</strong> — Mendi, Muse, Polar, Apple Watch, Oura, OpenBCI, Whoop · switch headsets and keep every client&rsquo;s history</>,
+                <><strong className="text-gray-900">AI drafts the note in 60 seconds</strong> in your format (SOAP, DAP, BIRP, +3 more) · you review and save</>,
+                <><strong className="text-gray-900">Runs in any browser</strong> — Mac, Windows, iPad, Chromebook · zero install, zero IT ticket</>,
+                <><strong className="text-gray-900">CMS-1500 + ERA auto-posted</strong> via Stedi or Office Ally clearinghouses</>,
+              ].map((item, i) => (
+                <li key={i} className="flex gap-2.5">
+                  <span aria-hidden="true" className="text-blue-600 font-bold mt-0.5">✓</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <p className="text-center text-xs text-gray-500 mt-6">
+          Subscription estimates compiled May 2026 from public pricing of SimplePractice ($69–$149), TherapyNotes ($59–$99), Myndlift ($99+), and BrainMaster Discovery ($150+/mo).
+        </p>
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
