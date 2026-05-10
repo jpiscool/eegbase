@@ -996,7 +996,7 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
       <header className="demo-site-header" style={{ background: "#fff", borderBottom: "1px solid #E5E7EB", padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
         <a href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none", minHeight: 40, paddingRight: 4 }}>
           <span style={{ width: 32, height: 32, background: "#2563EB", borderRadius: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <span style={{ color: "white", fontWeight: 800, fontSize: 14 }}>EB</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/></svg>
           </span>
           <span style={{ fontWeight: 700, fontSize: 16, color: "#0F172A", letterSpacing: "-0.01em" }}>EEGBase</span>
         </a>
