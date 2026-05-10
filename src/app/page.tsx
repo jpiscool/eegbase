@@ -3,9 +3,7 @@
 import Link from "next/link";
 import { Brain, ShieldCheck, Zap, Bluetooth, FileText, MousePointerClick, AlertTriangle, Sparkles, ArrowRight } from "lucide-react";
 import { StickyDemoCTA } from "@/components/StickyDemoCTA";
-import { LiveStatusPill } from "@/components/LiveStatusPill";
 import { SearchableFAQ } from "@/components/SearchableFAQ";
-import { PartnerLogos } from "@/components/PartnerLogos";
 
 export default function LandingPage() {
   return (
@@ -204,11 +202,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Authority row — partner / ecosystem logos */}
-      <section className="max-w-5xl mx-auto px-6 pb-20">
-        <PartnerLogos />
-      </section>
-
       {/* ════════════════════════════════════════════════════════════════
           6. THE PLAN  ·  StoryBrand: 3 simple steps to get started
           ════════════════════════════════════════════════════════════════ */}
@@ -328,25 +321,8 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-gray-100 px-6 py-10">
-        <div className="max-w-5xl mx-auto flex items-start justify-between text-xs text-gray-400 flex-wrap gap-4">
-          <div>
-            <span>© 2026 EEGBase — neurofeedback platform for clinics</span>
-            <p className="mt-1 text-gray-400">
-              Free for licensed clinicians. Hosted in the U.S. on HIPAA-friendly infrastructure. No lock-in.
-            </p>
-            <p className="mt-2 inline-flex items-center gap-2 flex-wrap text-xs">
-              <LiveStatusPill />
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 font-medium">
-                <span aria-hidden="true">🔒</span> Bishop Fox pen-test · Q3 2026
-              </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 font-medium">
-                <span aria-hidden="true">📜</span> Coalfire SOC 2 · Q3 2026
-              </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 font-medium">
-                <span aria-hidden="true">♿</span> Deque WCAG 2.2 AA · Q3 2026
-              </span>
-            </p>
-          </div>
+        <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-gray-400 flex-wrap gap-4">
+          <span>© 2026 EEGBase — neurofeedback platform for clinics</span>
           <div className="flex items-center gap-6">
             <Link href="/demo" className="hover:text-gray-600 transition-colors">Demo</Link>
             <Link href="/login" className="hover:text-gray-600 transition-colors">Login</Link>
