@@ -29,9 +29,12 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-sm">
           {/* Logo */}
           <div className="text-center mb-8">
-            <span className="text-3xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>
-              EEG<span style={{ color: "var(--brand)" }}>Base</span>
-            </span>
+            <a href="/" className="inline-flex items-center gap-2.5" style={{ textDecoration: "none" }}>
+              <span style={{ width: 32, height: 32, background: "#2563EB", borderRadius: 8, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ color: "white", fontWeight: 800, fontSize: 14 }}>EB</span>
+              </span>
+              <span className="text-xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>EEGBase</span>
+            </a>
           </div>
 
           <div className="login-card">

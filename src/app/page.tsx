@@ -16,12 +16,12 @@ export default function LandingPage() {
       {/* Nav */}
       <header className="border-b border-gray-100 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2.5" style={{ textDecoration: "none" }}>
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Brain size={18} className="text-white" />
+              <span className="text-white font-extrabold text-sm">EB</span>
             </div>
             <span className="text-base font-bold text-gray-900">EEGBase</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-3">
             <Link
               href="/demo"

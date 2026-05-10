@@ -994,13 +994,11 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
           "Back to home" on mobile (≤640 px) so the dark app topbar gets
           full width for its own controls. */}
       <header className="demo-site-header" style={{ background: "#fff", borderBottom: "1px solid #E5E7EB", padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
-        <a href="/" style={{ display: "inline-flex", alignItems: "center", gap: 8, textDecoration: "none", minHeight: 40, paddingRight: 4 }}>
-          <span style={{ width: 26, height: 26, background: "#2563EB", borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2.2} aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-            </svg>
+        <a href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none", minHeight: 40, paddingRight: 4 }}>
+          <span style={{ width: 32, height: 32, background: "#2563EB", borderRadius: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <span style={{ color: "white", fontWeight: 800, fontSize: 14 }}>EB</span>
           </span>
-          <span style={{ fontWeight: 700, fontSize: 14, color: "#0F172A", letterSpacing: "-0.01em" }}>EEGBase</span>
+          <span style={{ fontWeight: 700, fontSize: 16, color: "#0F172A", letterSpacing: "-0.01em" }}>EEGBase</span>
         </a>
         <nav aria-label="Site" className="demo-site-header-nav" style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 13 }}>
           <a href="/" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Home</a>
