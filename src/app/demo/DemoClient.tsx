@@ -4285,36 +4285,19 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
         </a>
       </div>
 
-      {/* Site footer — same chrome as homepage so the demo reads as part
-          of the EEGBase site rather than an isolated app surface. */}
+      {/* Site footer — mirrors the simplified homepage footer for cross-page
+          chrome consistency. */}
       <footer style={{ background: "#fff", borderTop: "1px solid #E5E7EB", padding: "24px", color: "#9CA3AF", fontSize: 12 }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
-          <div style={{ minWidth: 0 }}>
-            <div>© 2026 EEGBase &mdash; neurofeedback platform for clinics</div>
-            <div style={{ marginTop: 4, color: "#9CA3AF" }}>
-              Free for licensed clinicians. Hosted in the U.S. on HIPAA-friendly infrastructure. No lock-in.
-            </div>
-            <div style={{ marginTop: 8, display: "inline-flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 99, background: "#ECFDF5", border: "1px solid #A7F3D0", color: "#047857", fontWeight: 600 }}>
-                <span aria-hidden="true">🔒</span> Bishop Fox pen-test &middot; Q3 2026
-              </span>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 99, background: "#ECFDF5", border: "1px solid #A7F3D0", color: "#047857", fontWeight: 600 }}>
-                <span aria-hidden="true">📜</span> Coalfire SOC 2 &middot; Q3 2026
-              </span>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 99, background: "#ECFDF5", border: "1px solid #A7F3D0", color: "#047857", fontWeight: 600 }}>
-                <span aria-hidden="true">♿</span> Deque WCAG 2.2 AA &middot; Q3 2026
-              </span>
-            </div>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
-            <a href="/" style={{ color: "#6B7280", textDecoration: "none" }}>Home</a>
-            <a href="/mendi" style={{ color: "#6B7280", textDecoration: "none" }}>Mendi</a>
-            <a href="/pricing" style={{ color: "#6B7280", textDecoration: "none" }}>Pricing</a>
-            <a href="/privacy" style={{ color: "#6B7280", textDecoration: "none" }}>Privacy</a>
-            <a href="/terms" style={{ color: "#6B7280", textDecoration: "none" }}>Terms</a>
-            <a href="/status" style={{ color: "#6B7280", textDecoration: "none" }}>Status</a>
-            <a href="/contact" style={{ color: "#6B7280", textDecoration: "none" }}>Contact</a>
-          </div>
+        <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+          <span>© 2026 EEGBase &mdash; neurofeedback platform for clinics</span>
+          <nav aria-label="Footer" style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap", fontSize: 12 }}>
+            <a href="/" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Home</a>
+            <a href="/mendi" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Mendi</a>
+            <a href="/pricing" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Pricing</a>
+            <a href="/privacy" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Privacy</a>
+            <a href="/terms" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Terms</a>
+            <a href="/contact" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Contact</a>
+          </nav>
         </div>
       </footer>
         </div>
