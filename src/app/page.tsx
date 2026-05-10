@@ -169,7 +169,7 @@ export default function LandingPage() {
               Neurofeedback isn&rsquo;t broken.
             </p>
             <p className="text-3xl md:text-4xl font-semibold text-gray-900 leading-snug mb-10 tracking-tight">
-              The software around it has been &mdash; for 30 years.
+              The software around it is just lagging behind.
             </p>
 
             <p
@@ -181,7 +181,7 @@ export default function LandingPage() {
                 backgroundClip: "text",
               }}
             >
-              EEGBase is the fix.
+              EEGBase is the solution!
             </p>
 
             <p className="text-base md:text-lg text-gray-700 mt-6 leading-relaxed">
