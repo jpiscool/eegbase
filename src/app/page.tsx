@@ -207,27 +207,32 @@ export default function LandingPage() {
             </ul>
           </div>
 
-          {/* RIGHT — Solo training at home */}
+          {/* RIGHT — Solo training at home.
+              Stats describe today's pain WITHOUT EEGBase, not our
+              pricing. EEGBase is free — closing pill at the end of
+              the card makes that explicit so the $$$ figure doesn't
+              read as our price tag. */}
           <div className="bg-amber-50 border border-amber-100 rounded-2xl p-7">
-            <p className="text-[11px] font-bold text-amber-700 uppercase tracking-wider mb-4">For solo training at home</p>
+            <p className="text-[11px] font-bold text-amber-700 uppercase tracking-wider mb-1">For solo training at home</p>
+            <p className="text-[11px] text-amber-700/80 mb-4">What home users face <em>without</em> EEGBase &mdash;</p>
             <ul className="space-y-4">
               {[
                 {
                   num: "$200–$500",
-                  unit: "per year",
-                  label: "spent across overlapping consumer wellness apps that don't talk to each other — sleep here, HRV there, brain training somewhere else.",
+                  unit: "wasted per year",
+                  label: "across 3–5 overlapping consumer wellness apps that don't talk to each other — sleep here, HRV there, brain training somewhere else.",
                   source: "Pew Research consumer health-tracking, 2023",
                 },
                 {
                   num: "71%",
-                  unit: "of users",
-                  label: "abandon a wellness app within 90 days. Lack of visible progress is the most-cited reason.",
+                  unit: "abandon within 90 days",
+                  label: "of users quit their wellness app inside the first three months. Lack of visible progress is the most-cited reason.",
                   source: "Localytics mobile retention benchmarks, 2024",
                 },
                 {
                   num: "Most",
-                  unit: "consumer NF apps",
-                  label: "lock you into one headset vendor and don't let you export the raw signal — when you switch devices, your training history dies with the old app.",
+                  unit: "apps lock your data",
+                  label: "consumer neurofeedback apps tie you to one headset vendor and don't let you export the raw signal — when you switch devices, your training history dies with the old app.",
                   source: "EEGBase comparative review, May 2026",
                 },
               ].map((s) => (
@@ -241,6 +246,10 @@ export default function LandingPage() {
                 </li>
               ))}
             </ul>
+            <div className="mt-5 inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-emerald-50 border border-emerald-200">
+              <span aria-hidden="true" className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span className="text-xs font-bold text-emerald-700">EEGBase replaces all of them &mdash; $0 / forever</span>
+            </div>
           </div>
         </div>
 
