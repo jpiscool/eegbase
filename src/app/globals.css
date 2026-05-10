@@ -191,25 +191,6 @@ a, button, [role="button"] {
   border-radius: 4px;
 }
 
-/* Skip link (WCAG 2.4.1) — off-screen until keyboard-focused, then top-left */
-.skip-link {
-  position: fixed;
-  top: 8px;
-  left: 8px;
-  z-index: 9999;
-  padding: 10px 16px;
-  background: var(--brand);
-  color: var(--text-inverse);
-  font-weight: 600;
-  border-radius: 6px;
-  text-decoration: none;
-  transform: translateY(-200%);
-  transition: transform 0.15s ease;
-}
-.skip-link:focus {
-  transform: translateY(0);
-}
-
 /* Table row hover */
 .table-row-hover:hover {
   background: var(--surface-sunken);
