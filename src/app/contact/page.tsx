@@ -56,7 +56,7 @@ function ContactInner() {
         </div>
       </header>
 
-      <main style={{ maxWidth: 600, margin: "0 auto", padding: "48px 24px" }}>
+      <main id="main-content" style={{ maxWidth: 600, margin: "0 auto", padding: "48px 24px" }}>
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>{routing?.eyebrow || "Contact"}</p>
         <h1 style={{ fontSize: 36, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Talk to us</h1>
         <p style={{ fontSize: 15, color: "#64748B", lineHeight: 1.7, marginBottom: 28 }}>
@@ -122,6 +122,10 @@ function ContactInner() {
           <a href="mailto:investors@eegbase.com" style={{ color: "#2563EB" }}>investors@</a>
         </p>
       </main>
+
+      <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
+        © 2026 EEGBase &middot; <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> &middot; <Link href="/demo" style={{ color: "#9CA3AF" }}>Demo</Link> &middot; <Link href="/pricing" style={{ color: "#9CA3AF" }}>Pricing</Link> &middot; <Link href="/privacy" style={{ color: "#9CA3AF" }}>Privacy</Link> &middot; <Link href="/terms" style={{ color: "#9CA3AF" }}>Terms</Link>
+      </footer>
     </div>
   );
 }

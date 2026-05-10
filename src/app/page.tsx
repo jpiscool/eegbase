@@ -92,7 +92,9 @@ export default function LandingPage() {
             Five tools, or one.
           </h2>
           <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Most neurofeedback clinicians juggle five disconnected apps — streaming, EHR, billing, video, and notes. EEGBase replaces all of them with a single screen. <strong className="text-gray-900">Using it for yourself at home?</strong> Same software, same price (free) — just skip the parts you don&rsquo;t need.
+            Most neurofeedback clinicians juggle five disconnected apps — streaming, EHR, billing, video, and notes. EEGBase replaces all of them with a single screen.{" "}
+            <strong className="text-gray-900">Using it for yourself at home?</strong>{" "}
+            Same software, same price (free) — just skip the parts you don&rsquo;t need.
           </p>
         </div>
 
@@ -128,9 +130,9 @@ export default function LandingPage() {
             </div>
             <ul className="space-y-3.5 text-sm text-gray-700 leading-relaxed">
               {[
-                <><strong className="text-gray-900">One screen, one client record</strong> — live brain signal, HIPAA video, reward score, and AI notes side-by-side</>,
+                <><strong className="text-gray-900">One screen, one record</strong> — live brain signal, HIPAA video, reward score, and AI notes side-by-side</>,
                 <><strong className="text-gray-900">Free for clinicians and individuals</strong> · no card, no per-seat fee, no &ldquo;contact sales&rdquo; — same platform whether you&rsquo;re a clinic or one person at home</>,
-                <><strong className="text-gray-900">Hardware-agnostic</strong> — Mendi, Muse, Polar, Apple Watch, Oura, OpenBCI, Whoop · switch headsets and keep every client&rsquo;s history</>,
+                <><strong className="text-gray-900">Hardware-agnostic</strong> — Mendi, Muse, Polar, Apple Watch, Oura, OpenBCI, Whoop · switch headsets and keep every session&rsquo;s history</>,
                 <><strong className="text-gray-900">AI drafts the note in 60 seconds</strong> in your format (SOAP, DAP, BIRP, +3 more) · you review and save</>,
                 <><strong className="text-gray-900">Runs in any browser</strong> — Mac, Windows, iPad, Chromebook · zero install, zero IT ticket</>,
                 <><strong className="text-gray-900">CMS-1500 + ERA auto-posted</strong> via Stedi or Office Ally clearinghouses</>,

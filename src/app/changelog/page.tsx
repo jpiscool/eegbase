@@ -54,7 +54,7 @@ export default function ChangelogPage() {
         </div>
       </header>
 
-      <main style={{ maxWidth: 760, margin: "0 auto", padding: "48px 24px" }}>
+      <main id="main-content" style={{ maxWidth: 760, margin: "0 auto", padding: "48px 24px" }}>
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>What we shipped</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 8 }}>Changelog</h1>
         <p style={{ fontSize: 15, color: "#64748B", lineHeight: 1.7, marginBottom: 36 }}>

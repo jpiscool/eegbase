@@ -116,7 +116,7 @@ export default function GlossaryPage() {
         </div>
       </header>
 
-      <main style={{ maxWidth: 920, margin: "0 auto", padding: "48px 24px" }}>
+      <main id="main-content" style={{ maxWidth: 920, margin: "0 auto", padding: "48px 24px" }}>
         <p style={{ fontSize: 11, fontWeight: 700, color: "#7C3AED", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Glossary · {sorted.length} terms</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Plain-English definitions</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 24, maxWidth: 720 }}>

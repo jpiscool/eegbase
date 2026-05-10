@@ -28,7 +28,7 @@ export function AudienceLanding({ c }: { c: AudienceContent }) {
         </div>
       </header>
 
-      <main>
+      <main id="main-content">
         {/* Hero */}
         <section style={{ maxWidth: 1100, margin: "0 auto", padding: "64px 24px 32px" }}>
           <p style={{ fontSize: 11, fontWeight: 700, color: c.eyebrowColor, letterSpacing: "0.15em", marginBottom: 14, textTransform: "uppercase" }}>{c.eyebrow}</p>

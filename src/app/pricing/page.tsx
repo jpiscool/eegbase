@@ -20,7 +20,7 @@ export default function PricingPage() {
         </div>
       </header>
 
-      <main style={{ maxWidth: 720, margin: "0 auto", padding: "96px 24px", textAlign: "center" }}>
+      <main id="main-content" style={{ maxWidth: 720, margin: "0 auto", padding: "96px 24px", textAlign: "center" }}>
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Pricing</p>
         <h1 style={{ fontSize: 56, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.03em", lineHeight: 1.05, marginBottom: 16 }}>
           It&rsquo;s free.
