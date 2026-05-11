@@ -25,7 +25,7 @@ const QUARTERS: { quarter: string; label: Status; items: { title: string; desc: 
     items: [
       { title: "Native iOS + Android apps", desc: "React Native · same codebase as web · TestFlight beta · published to App Store + Play Store", votes: 124 },
       { title: "FHIR R4 SMART-on-FHIR write-back", desc: "Bidirectional with Epic / Athena / eClinicalWorks", votes: 89 },
-      { title: "Hyperscanning v2 (4-person)", desc: "Multi-headset dyadic + group studies · sub-ms LSL alignment", votes: 41 },
+      { title: "Hyperscanning (multi-headset)", desc: "Dyadic + 4-person group studies · ms-precision LSL alignment", votes: 41 },
       { title: "Apple Watch HRV native",     desc: "WatchOS app · pairs with EEGBase session in real-time", votes: 38 },
       { title: "Offline mode (PWA)",         desc: "Run a session without internet · sync when connection returns", votes: 27 },
       { title: "Coaching marketplace · public beta", desc: "Mendi at-home users buy clinician oversight · Stripe Connect rev-share live", votes: 53 },
@@ -40,7 +40,7 @@ const QUARTERS: { quarter: string; label: Status; items: { title: string; desc: 
       { title: "EPCS / PDMP via DrFirst",      desc: "Psychiatrist-friendly · controlled-substance e-prescribing", votes: 16 },
       { title: "42 CFR Part 2 SUD records",    desc: "Separate consent flow for substance-use treatment", votes: 11 },
       { title: "3D LORETA source localization", desc: "Web-based · Three.js brain mesh · click any moment to see source", votes: 64 },
-      { title: "Group therapy v2",             desc: "Up to 30 participants · CPT 90849 reimbursable · screen-share protocol controls", votes: 19 },
+      { title: "Group therapy mode",           desc: "Up to 30 participants · CPT 90849 reimbursable · screen-share protocol controls", votes: 19 },
     ],
   },
   {
@@ -90,7 +90,7 @@ export default function RoadmapPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Public roadmap · updated weekly</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>What ships next</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
-          Vote-counts are illustrative for the demo. Real votes will come from clinicians once the public account flow is live. Also see what we're explicitly NOT doing on <Link href="/" style={{ color: "#2563EB" }}>the honest-gaps section</Link>.
+          What we're shipping next, organised by quarter. Vote counts shown are pre-launch placeholders until the public account flow is live — real votes will come from clinicians once they sign up.
         </p>
 
         <div className="roadmap-grid">
