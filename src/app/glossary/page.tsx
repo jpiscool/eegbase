@@ -152,7 +152,7 @@ export default function GlossaryPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/research" style={{ color: "#9CA3AF" }}>Research</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/faq" style={{ color: "#9CA3AF" }}>FAQ</Link>
       </footer>
     </div>
   );

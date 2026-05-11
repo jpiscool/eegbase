@@ -26,7 +26,7 @@ const C: AudienceContent = {
     "Cancel anytime · your data stays yours",
   ],
   cta: { label: "Find a clinic near you →", href: "/clinic-finder" },
-  secondaryCta: { label: "Read the science", href: "/research" },
+  secondaryCta: { label: "See the FAQ", href: "/faq" },
   proofPoints: [
     { val: "20 min", lbl: "Per session" },
     { val: "2-3×",  lbl: "Per week" },

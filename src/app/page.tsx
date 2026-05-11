@@ -406,7 +406,7 @@ export default function LandingPage() {
               <ul className="space-y-3 text-sm">
                 <li><Link href="/faq" className="hover:text-white transition-colors">FAQ</Link></li>
                 <li><Link href="/docs/getting-started" className="hover:text-white transition-colors">Documentation</Link></li>
-                <li><Link href="/research" className="hover:text-white transition-colors">Research</Link></li>
+                <li><Link href="/api-docs" className="hover:text-white transition-colors">API</Link></li>
                 <li><Link href="/security" className="hover:text-white transition-colors">Security</Link></li>
               </ul>
             </div>

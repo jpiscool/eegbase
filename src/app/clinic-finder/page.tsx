@@ -8,7 +8,7 @@ export const metadata = {
 export const dynamic = "force-static";
 
 // Waitlist counts are illustrative pre-launch — kept distinct from the
-// 412-clinic naturalistic registry referenced on /research and /reports.
+// 412-clinic naturalistic registry referenced on /reports.
 const REGIONS = [
   { name: "United States", clinics: 168, cities: ["Portland · OR", "Austin · TX", "Boston · MA", "San Diego · CA", "Minneapolis · MN", "San Antonio · TX"], color: "#2563EB" },
   { name: "Canada",        clinics: 22,  cities: ["Toronto · ON", "Vancouver · BC", "Montreal · QC"],                                            color: "#DC2626" },

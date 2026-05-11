@@ -7,7 +7,6 @@ export const metadata = {
 
 const SECTIONS = [
   { title: "Blog",          desc: "Field notes, opinions, post-mortems",            href: "/blog",          color: "#7C3AED", icon: "✍" },
-  { title: "Research",       desc: "Pre-prints, citations, RCT, registry",          href: "/research",      color: "#06B6D4", icon: "🔬" },
   { title: "Case studies",   desc: "Real outcomes from clinics using Mendi + EEGBase", href: "/case-studies", color: "#10B981", icon: "📊" },
   { title: "Conditions",     desc: "Protocols + outcomes by condition (ADHD, anxiety, sleep…)", href: "/conditions", color: "#2563EB", icon: "🧠" },
   { title: "Glossary",       desc: "Plain-English definitions for 45+ terms",       href: "/glossary",      color: "#F59E0B", icon: "📖" },

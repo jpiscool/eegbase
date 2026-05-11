@@ -34,7 +34,6 @@ export function GlobalCommandK() {
       { kind: "Page",  label: "Mendi Clinical preview (white-label)", sub: "/mendi-clinical-preview", action: nav("/mendi-clinical-preview"), keywords: "white label brand" },
       { kind: "Page",  label: "Pricing",              sub: "/#pricing", action: nav("/#pricing"), keywords: "cost solo practice enterprise" },
       // Resource pages
-      { kind: "Pages", label: "Research",             action: nav("/research"),                   keywords: "publication preprint paper" },
       { kind: "Pages", label: "Case studies",         action: nav("/case-studies"),               keywords: "outcomes" },
       { kind: "Pages", label: "Roadmap",              action: nav("/roadmap"),                    keywords: "future quarters" },
       { kind: "Pages", label: "Status",               action: nav("/status"),                     keywords: "uptime incident" },

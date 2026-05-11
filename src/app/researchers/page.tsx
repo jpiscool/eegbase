@@ -25,8 +25,8 @@ const C: AudienceContent = {
     "Cross-session pattern detector for hypothesis generation",
     "Open-data publishing path · CC-BY-4.0 sidecar metadata",
   ],
-  cta: { label: "Browse research artifacts →", href: "/research" },
-  secondaryCta: { label: "Download IRB packet", href: "/downloads" },
+  cta: { label: "Download IRB packet →", href: "/downloads" },
+  secondaryCta: { label: "Talk to us", href: "/contact" },
   proofPoints: [
     { val: "2,840", lbl: "Cohort size · pre-print" },
     { val: "412",  lbl: "Contributing clinics" },
