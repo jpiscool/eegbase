@@ -23,7 +23,7 @@ export default function LandingPage() {
           </Link>
           <div className="flex items-center gap-3">
             <Link
-              href="/demo"
+              href="/demo?tab=dashboard"
               className="text-sm font-medium px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               Try Demo
@@ -287,7 +287,7 @@ export default function LandingPage() {
           ))}
         </div>
         <div className="text-center mt-10">
-          <Link href="/demo" className="inline-flex items-center gap-2 px-7 py-3.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors">
+          <Link href="/demo?tab=dashboard" className="inline-flex items-center gap-2 px-7 py-3.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors">
             Start with step 1 — open the demo
             <ArrowRight size={16} />
           </Link>
@@ -327,7 +327,7 @@ export default function LandingPage() {
           <p className="text-base text-gray-600 leading-relaxed max-w-lg mx-auto mb-6">
             Every feature. Every device. Whether you&rsquo;re a clinic with 50 clients or one person with one headset. No card, no trial limit, no &ldquo;contact sales&rdquo;.
           </p>
-          <Link href="/demo" className="inline-block px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors">
+          <Link href="/demo?tab=dashboard" className="inline-block px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors">
             Open the demo →
           </Link>
         </div>
@@ -360,7 +360,7 @@ export default function LandingPage() {
           </p>
           <div className="flex items-center justify-center gap-3 flex-wrap">
             <Link
-              href="/demo"
+              href="/demo?tab=dashboard"
               className="px-7 py-4 bg-white text-blue-700 text-sm font-bold rounded-xl hover:bg-blue-50 transition-colors shadow-lg"
             >
               Open the live demo →
@@ -393,7 +393,7 @@ export default function LandingPage() {
             <div>
               <h3 className="text-xs font-semibold text-white uppercase tracking-wider mb-4">Product</h3>
               <ul className="space-y-3 text-sm">
-                <li><Link href="/demo" className="hover:text-white transition-colors">Live demo</Link></li>
+                <li><Link href="/demo?tab=dashboard" className="hover:text-white transition-colors">Live demo</Link></li>
                 <li><Link href="/integrations" className="hover:text-white transition-colors">Integrations</Link></li>
                 <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
                 <li><Link href="/roadmap" className="hover:text-white transition-colors">Roadmap</Link></li>
