@@ -54,9 +54,9 @@ export default function LandingPage() {
         <div aria-hidden className="hero-orb" style={{ position: "absolute", top: "-40px", left: "50%", width: 600, height: 600, transform: "translateX(-50%)", borderRadius: "50%", background: "radial-gradient(closest-side, rgba(6,182,212,0.08), transparent 70%)", filter: "blur(60px)", pointerEvents: "none", zIndex: 0 }} />
 
         <div style={{ position: "relative", zIndex: 1 }}>
-          <h1 className="font-extrabold text-gray-900 mb-5" style={{ fontSize: "clamp(2rem, 7vw, 4rem)", letterSpacing: "-0.035em", lineHeight: 1.18 }}>
+          <h1 className="font-extrabold text-gray-900 mb-5" style={{ fontSize: "clamp(2.25rem, 8vw, 4rem)", letterSpacing: "-0.035em", lineHeight: 1.18 }}>
             Control all your neurofeedback devices with{" "}
-            <span style={{ background: "linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #06B6D4 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>one tool</span>
+            <span className="whitespace-nowrap" style={{ background: "linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #06B6D4 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>one tool</span>
           </h1>
           <p className="text-gray-500 max-w-2xl mx-auto mb-7" style={{ fontSize: "1.075rem", lineHeight: 1.65, letterSpacing: "-0.005em" }}>
             Plug in Mendi, Muse, Polar, Apple Watch, Oura, OpenBCI — any neurofeedback or wearable. <strong className="text-gray-900">All your data in one place.</strong>
