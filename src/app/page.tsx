@@ -80,7 +80,7 @@ export default function LandingPage() {
       <section className="max-w-5xl mx-auto px-6 pb-20">
         <div className="text-center mb-10">
           <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3">Without vs with</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight tracking-tight">
             Five tools in one
           </h2>
           <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
@@ -194,7 +194,7 @@ export default function LandingPage() {
       <section className="max-w-5xl mx-auto px-6 pb-20">
         <div className="text-center mb-10">
           <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3">How it works</p>
-          <h2 className="text-3xl font-bold text-gray-900 mb-3 leading-tight">One screen. One record. One AI that does the boring stuff.</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3 leading-tight">One screen. One record. One AI that does the boring stuff.</h2>
           <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
             EEGBase plugs into the headsets, watches, and rings you already use. Every session feeds the same record — yours, or your client&rsquo;s. The AI watches everything and (if you&rsquo;re running clinical sessions) writes the notes for you.
           </p>
@@ -232,7 +232,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 gap-10 items-center">
             <div>
               <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Why us</p>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4 leading-tight">We&rsquo;ve sat in your chair.</h2>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">We&rsquo;ve sat in your chair.</h2>
               <p className="text-base text-gray-600 leading-relaxed mb-4">
                 EEGBase was built with neurofeedback clinicians, not at them. We watched too many smart people give up on the field because the software made every session feel like a fight.
               </p>
@@ -266,7 +266,7 @@ export default function LandingPage() {
       <section className="max-w-5xl mx-auto px-6 pb-20">
         <div className="text-center mb-12">
           <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3">The plan</p>
-          <h2 className="text-3xl font-bold text-gray-900 mb-3 leading-tight">Get up and running in 3 steps.</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3 leading-tight">Get up and running in 3 steps.</h2>
           <p className="text-base text-gray-600 max-w-xl mx-auto leading-relaxed">
             No demo call. No sales rep. No quote. Just open the app and start.
           </p>
@@ -299,7 +299,7 @@ export default function LandingPage() {
           ════════════════════════════════════════════════════════════════ */}
       <section className="max-w-3xl mx-auto px-6 pb-20">
         <div className="bg-white border border-gray-100 rounded-3xl p-10">
-          <h2 className="text-2xl font-bold text-gray-900 mb-5">What EEGBase actually is</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-5">What EEGBase actually is</h2>
           <div className="space-y-4 text-base text-gray-700 leading-relaxed">
             <p>
               EEGBase is the simplest neurofeedback platform on the market. It plugs into Mendi fNIRS headbands, Muse EEG headsets, Polar heart-rate straps, Apple Watch, Oura rings, OpenBCI hardware, Whoop bands, and other BLE neurofeedback devices. Every reading lands in one record on one screen.
@@ -339,7 +339,7 @@ export default function LandingPage() {
       <section className="max-w-3xl mx-auto px-6 pb-20" id="faq">
         <div className="text-center mb-10">
           <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3">Common questions</p>
-          <h2 className="text-3xl font-bold text-gray-900 mb-3 leading-tight">What people ask before using EEGBase</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3 leading-tight">What people ask before using EEGBase</h2>
           <p className="text-base text-gray-600 max-w-xl mx-auto leading-relaxed">
             Plain answers, no jargon. Search if you don&rsquo;t see what you need.
           </p>
@@ -352,7 +352,7 @@ export default function LandingPage() {
           ════════════════════════════════════════════════════════════════ */}
       <section className="bg-gradient-to-br from-blue-600 to-violet-700 py-20">
         <div className="max-w-2xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight leading-tight">
             See for yourself how simple it is.
           </h2>
           <p className="text-blue-100 text-base leading-relaxed mb-8 max-w-lg mx-auto">
