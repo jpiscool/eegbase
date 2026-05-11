@@ -97,9 +97,7 @@ export default function RootLayout({
                   logo: `${SITE_URL}/og-image.svg`,
                   description: SITE_DESC,
                   contactPoint: [
-                    { "@type": "ContactPoint", email: "hello@eegbase.com",    contactType: "customer support" },
-                    { "@type": "ContactPoint", email: "security@eegbase.com",  contactType: "security disclosure" },
-                    { "@type": "ContactPoint", email: "research@eegbase.com",  contactType: "research collaboration" },
+                    { "@type": "ContactPoint", email: "hello@eegbase.com", contactType: "customer support" },
                   ],
                 },
                 {

@@ -5,14 +5,10 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 const ROUTING: Record<string, { email: string; eyebrow: string }> = {
-  clinician: { email: "hello@eegbase.com",   eyebrow: "Clinician inquiries" },
-  partner:   { email: "partners@eegbase.com", eyebrow: "Partnership inquiries" },
-  press:     { email: "press@eegbase.com",    eyebrow: "Press inquiries" },
-  investor:  { email: "investors@eegbase.com", eyebrow: "Investor inquiries" },
-  patient:   { email: "hello@eegbase.com",    eyebrow: "Patient + family inquiries" },
-  security:  { email: "security@eegbase.com", eyebrow: "Security disclosure" },
-  research:  { email: "research@eegbase.com", eyebrow: "Research collaboration" },
-  other:     { email: "hello@eegbase.com",    eyebrow: "General inquiries" },
+  clinician: { email: "hello@eegbase.com", eyebrow: "Clinician inquiries" },
+  press:     { email: "press@eegbase.com", eyebrow: "Press inquiries" },
+  patient:   { email: "hello@eegbase.com", eyebrow: "Patient + family inquiries" },
+  other:     { email: "hello@eegbase.com", eyebrow: "General inquiries" },
 };
 
 function ContactInner() {
@@ -76,7 +72,7 @@ function ContactInner() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>{routing?.eyebrow || "Contact"}</p>
         <h1 style={{ fontSize: 36, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Talk to us</h1>
         <p style={{ fontSize: 15, color: "#64748B", lineHeight: 1.7, marginBottom: 28 }}>
-          Real humans answer. Most inquiries get a response within 24 hours, security disclosures within 4. Pick the right inbox below — your message gets routed to a person, not a queue.
+          Real humans answer. Most inquiries get a response within 24 hours. Tell us who you are and we&rsquo;ll route your message to the right person.
         </p>
 
         {submitted ? (
@@ -120,12 +116,8 @@ function ContactInner() {
               <select required value={role} onChange={(e) => setRole(e.target.value)} style={{ ...input, color: role ? "#111" : "#9CA3AF" }}>
                 <option value="">Select your role…</option>
                 <option value="clinician">Clinician (BCN / LPC / MD / PsyD)</option>
-                <option value="partner">Partnership / hardware vendor</option>
                 <option value="press">Press / journalist</option>
-                <option value="investor">Investor</option>
-                <option value="research">Researcher / IRB / academic</option>
                 <option value="patient">Patient / family member</option>
-                <option value="security">Security researcher</option>
                 <option value="other">Other</option>
               </select>
             </Field>
@@ -143,12 +135,8 @@ function ContactInner() {
         )}
 
         <p style={{ fontSize: 11, color: "#94A3B8", textAlign: "center", marginTop: 24, lineHeight: 1.7 }}>
-          Prefer email? Direct routes:{" "}
-          <a href="mailto:hello@eegbase.com" style={{ color: "#2563EB" }}>hello@</a>{" · "}
-          <a href="mailto:security@eegbase.com" style={{ color: "#2563EB" }}>security@</a>{" · "}
-          <a href="mailto:research@eegbase.com" style={{ color: "#2563EB" }}>research@</a>{" · "}
-          <a href="mailto:partners@eegbase.com" style={{ color: "#2563EB" }}>partners@</a>{" · "}
-          <a href="mailto:investors@eegbase.com" style={{ color: "#2563EB" }}>investors@</a>
+          Prefer email?{" "}
+          <a href="mailto:hello@eegbase.com" style={{ color: "#2563EB" }}>hello@eegbase.com</a>
         </p>
       </main>
 
