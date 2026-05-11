@@ -939,7 +939,10 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
           .demo-grid-4 { grid-template-columns: 1fr 1fr !important; }
           .demo-sidebar { display: none !important; }
           .demo-content { padding: 16px !important; }
-          .demo-mobile-nav { display: block !important; }
+          /* Mobile section nav docks to the very top of the viewport.
+             top: 52 was set for the desktop toolbar above it; on mobile
+             that toolbar isn't sticky, so the offset would create a gap. */
+          .demo-mobile-nav { display: block !important; top: 0 !important; }
           .demo-topbar-hide-mobile { display: none !important; }
           .demo-topbar { padding: 0 12px !important; gap: 8px !important; }
           /* Tighten the right-side action group on mobile so the
