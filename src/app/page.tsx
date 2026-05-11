@@ -332,7 +332,7 @@ export default function LandingPage() {
       <section className="max-w-3xl mx-auto px-6 pb-20" id="faq">
         <div className="text-center mb-10">
           <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3">Common questions</p>
-          <h2 className="text-3xl font-bold text-gray-900 mb-3 leading-tight">What people ask before they sign up.</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-3 leading-tight">What people ask before using EEGBase</h2>
           <p className="text-base text-gray-600 max-w-xl mx-auto leading-relaxed">
             Plain answers, no jargon. Search if you don&rsquo;t see what you need.
           </p>
