@@ -30,7 +30,7 @@ export default function SecurityPage() {
         {/* Posture pills */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 28 }}>
           {[
-            { tag: "🛡 HIPAA",       desc: "BAA available · 7-year audit log retention" },
+            { tag: "🛡 HIPAA",       desc: "BAA available · audit log retention policy: 7 years (begins on launch)" },
             { tag: "🔒 SOC 2",        desc: "Type I scoping with Coalfire (Type II to follow) · Q3 2026 target · report NDA-gated on completion" },
             { tag: "🎯 Pen-test",    desc: "Independent web pentest · Q3 2026 target · vendor selection in progress" },
             { tag: "🇪🇺 Schrems II", desc: "EU SCCs (2021/914) · Frankfurt eu-west-3" },
@@ -54,18 +54,18 @@ export default function SecurityPage() {
             <li><strong>Data exfiltration via supply chain</strong> — addressed via dependency pinning, automated SBOM (CycloneDX), Renovate auto-updates with security review, GitHub branch protection.</li>
             <li><strong>Compromised clinician device</strong> — auto-logout after 15 minutes idle, session token rotation, device-fingerprinted re-auth, suspicious-login email alerts.</li>
             <li><strong>Webhook tampering</strong> — HMAC-SHA256 signed bodies, timestamp window enforcement, IP allowlist available per webhook destination.</li>
-            <li><strong>Cross-tenant data leakage</strong> — postgres row-level security on every table, contract tests in CI, quarterly red-team exercises.</li>
+            <li><strong>Cross-tenant data leakage</strong> — postgres row-level security on every table, contract tests in CI; internal red-team exercises planned to start once the team is staffed for them.</li>
           </ul>
         </Section>
 
         <Section title="Vulnerability disclosure">
-          <p>We welcome responsible vulnerability disclosure from security researchers. Email <a href="mailto:security@eegbase.com" style={{ color: "#2563EB" }}>security@eegbase.com</a> or use the <a href="/.well-known/security.txt" style={{ color: "#2563EB" }}>security.txt</a> contact.</p>
-          <p style={{ marginTop: 12 }}><strong>Our commitment:</strong></p>
+          <p>We welcome responsible vulnerability disclosure from security researchers. Email <a href="mailto:hello@eegbase.com?subject=Security%20disclosure" style={{ color: "#2563EB" }}>hello@eegbase.com</a> (subject: Security disclosure) or use the <a href="/.well-known/security.txt" style={{ color: "#2563EB" }}>security.txt</a> contact.</p>
+          <p style={{ marginTop: 12 }}><strong>Our commitment (target SLA):</strong></p>
           <ul style={{ listStyle: "disc", paddingLeft: 20, marginTop: 6, lineHeight: 1.8 }}>
-            <li>We respond to confirmed reports within 24 hours.</li>
-            <li>Critical issues triaged and patched within 7 days; we'll keep you informed.</li>
-            <li>We disclose publicly via the <Link href="/status" style={{ color: "#2563EB" }}>status page</Link> after coordinated disclosure with affected clinics.</li>
-            <li>We credit researchers in advisories unless you prefer anonymity.</li>
+            <li>Acknowledge confirmed reports within 24 hours.</li>
+            <li>Triage and patch critical issues within 7 days; we'll keep you informed throughout.</li>
+            <li>Disclose publicly via the <Link href="/status" style={{ color: "#2563EB" }}>status page</Link> after coordinated disclosure with affected clinics.</li>
+            <li>Credit researchers in advisories unless you prefer anonymity.</li>
           </ul>
           <p style={{ marginTop: 12 }}><strong>Safe harbor:</strong> We will not pursue legal action against researchers acting in good faith. Don't access more data than necessary, don't exfiltrate or share data, don't test in ways that disrupt service.</p>
           <p style={{ marginTop: 12, fontSize: 12, color: "#94A3B8" }}>Bug bounty program launching in a future update. Out of scope today: third-party services (Stripe, AWS, Daily.co), self-hosted deployments outside our control.</p>
@@ -79,19 +79,19 @@ export default function SecurityPage() {
             <Stat val="≤ 5 days" label="Public RCA"      color="#7C3AED" />
           </div>
           <p style={{ marginTop: 14 }}>
-            Breach notification within 72 h per GDPR Art. 33 + HIPAA Breach Notification Rule. Public incident history at <Link href="/status" style={{ color: "#2563EB" }}>status.eegbase.com</Link>. Subscribe to email updates at status-subscribe@eegbase.com.
+            Breach notification within 72 h per GDPR Art. 33 + HIPAA Breach Notification Rule. Public incident history at the <Link href="/status" style={{ color: "#2563EB" }}>status page</Link>. Subscribe to email updates at <a href="mailto:hello@eegbase.com?subject=Status%20updates%20subscribe" style={{ color: "#2563EB" }}>hello@eegbase.com</a>.
           </p>
         </Section>
 
         <Section title="Compliance documents">
-          <p>The following are NDA-gated. Sign a mutual NDA via <a href="mailto:legal@eegbase.com" style={{ color: "#2563EB" }}>legal@eegbase.com</a> to receive on completion:</p>
+          <p>The following are NDA-gated. Sign a mutual NDA via <a href="mailto:hello@eegbase.com?subject=Mutual%20NDA%20%2B%20compliance%20docs" style={{ color: "#2563EB" }}>hello@eegbase.com</a> to receive on completion:</p>
           <ul style={{ listStyle: "disc", paddingLeft: 20, marginTop: 6, lineHeight: 1.8 }}>
             <li>SOC 2 report (Coalfire) — Type I scoping in progress, Type II to follow · target Q3 2026</li>
             <li>Independent pen-test attestation + remediation log — vendor selection in progress · target Q3 2026</li>
             <li>HIPAA risk assessment + Security Rule audit (available today)</li>
             <li>GDPR Data Processing Addendum + EU SCCs (2021/914) (available today)</li>
-            <li>VPAT 2.4 (WCAG 2.2 AA · Deque audit scheduled Q3 2026)</li>
-            <li>Disaster recovery runbook + tabletop exercise notes (available today)</li>
+            <li>VPAT 2.4 (WCAG 2.2 AA · Deque audit planned Q3 2026)</li>
+            <li>Disaster recovery runbook (available today) · tabletop exercise notes once exercises are run</li>
           </ul>
         </Section>
 
@@ -101,7 +101,7 @@ export default function SecurityPage() {
             <li>Enforce 2FA for all clinical seats (default on)</li>
             <li>Configure IP allowlist for clinic-network access</li>
             <li>Enable SAML SSO via Okta or Google Workspace</li>
-            <li>Subscribe to status-subscribe@ for incident updates</li>
+            <li>Subscribe to incident updates by emailing hello@eegbase.com (subject: Status updates subscribe)</li>
             <li>Audit role assignments quarterly via Settings → Team</li>
           </ul>
         </Section>
