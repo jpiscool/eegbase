@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { ShieldCheck, Bluetooth, Brain, Sparkles, ArrowRight } from "lucide-react";
-import { StickyDemoCTA } from "@/components/StickyDemoCTA";
 import { SearchableFAQ } from "@/components/SearchableFAQ";
 
 export default function LandingPage() {
@@ -49,10 +48,6 @@ export default function LandingPage() {
         <div aria-hidden style={{ position: "absolute", top: "-40px", left: "50%", width: 600, height: 600, transform: "translateX(-50%)", borderRadius: "50%", background: "radial-gradient(closest-side, rgba(6,182,212,0.08), transparent 70%)", filter: "blur(60px)", pointerEvents: "none", zIndex: 0 }} />
 
         <div style={{ position: "relative", zIndex: 1 }}>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium text-blue-700 mb-7" style={{ background: "rgba(255,255,255,0.7)", border: "1px solid rgba(37,99,235,0.18)", backdropFilter: "blur(12px)", boxShadow: "0 1px 0 0 rgba(255,255,255,0.6) inset, 0 4px 12px -4px rgba(37,99,235,0.15)" }}>
-            <span className="w-1.5 h-1.5 bg-blue-500 rounded-full" style={{ boxShadow: "0 0 8px rgba(37,99,235,0.6)" }} />
-            Free for licensed clinicians
-          </div>
           <h1 className="font-extrabold text-gray-900 mb-5" style={{ fontSize: "clamp(2.6rem, 5.2vw, 4rem)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
             Control all your neurofeedback devices{" "}
             <br />
@@ -70,13 +65,6 @@ export default function LandingPage() {
               style={{ background: "#2563EB", animation: "pulseGlow 2.4s ease-in-out infinite", boxShadow: "0 1px 0 0 rgba(255,255,255,0.15) inset, 0 8px 24px -8px rgba(37,99,235,0.5)" }}
             >
               Try the live demo →
-            </Link>
-            <Link
-              href="/contact"
-              className="px-7 py-3.5 text-gray-700 text-sm font-medium rounded-xl transition-all"
-              style={{ background: "rgba(255,255,255,0.7)", border: "1px solid rgba(0,0,0,0.08)", backdropFilter: "blur(12px)" }}
-            >
-              Talk to us
             </Link>
           </div>
         </div>
@@ -372,12 +360,6 @@ export default function LandingPage() {
             >
               Open the live demo →
             </Link>
-            <Link
-              href="/contact"
-              className="px-7 py-4 border border-blue-300/50 text-white text-sm font-medium rounded-xl hover:bg-white/10 transition-colors inline-flex items-center gap-2"
-            >
-              Talk to us
-            </Link>
           </div>
           <p className="text-blue-200 text-xs mt-6">5 sample clients · 20-session arcs pre-loaded · No account or clinical license required</p>
         </div>
@@ -396,8 +378,6 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* Sticky demo CTA */}
-      <StickyDemoCTA />
     </div>
   );
 }
