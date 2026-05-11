@@ -13,7 +13,7 @@ const QUARTERS: { quarter: string; label: Status; items: { title: string; desc: 
     quarter: "Q2 2026",
     label: "now",
     items: [
-      { title: "Sham-controlled RCT enrollment portal", desc: "Multi-clinic registry · DSMB review · public clinic-recruitment landing page", votes: 47 },
+      { title: "Sham-controlled RCT site recruitment", desc: "Trial pre-registered Apr 2026 · recruiting independent DSMB members + signing first research sites · multi-clinic enrollment portal builds once the first 3 sites are committed", votes: 47 },
       { title: "Security audit prep",                   desc: "SOC 2 Type I scoping with Coalfire (Type II to follow); independent web pentest vendor selection in progress · target start Q3 2026", votes: 33 },
       { title: "BIDS-fNIRS validator (browser-side)",   desc: "Real-time validation against bids-validator 1.13+", votes: 18 },
       { title: "Mendi adapter (awaiting Mendi SDK)",   desc: "BLE adapter and ingestion pipeline are built; production pairing waits on Mendi releasing public SDK access", votes: 22 },
