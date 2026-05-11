@@ -81,7 +81,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
           ))}
         </article>
         <p style={{ marginTop: 36, fontSize: 12, color: "#94A3B8", textAlign: "center" }}>
-          See more in the <Link href="/changelog" style={{ color: "#2563EB" }}>changelog</Link> or <Link href="/contact" style={{ color: "#2563EB" }}>get in touch</Link>.
+          More posts in the <Link href="/blog" style={{ color: "#2563EB" }}>blog index</Link> or <Link href="/contact" style={{ color: "#2563EB" }}>get in touch</Link>.
         </p>
       </main>
 

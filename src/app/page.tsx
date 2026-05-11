@@ -396,7 +396,7 @@ export default function LandingPage() {
                 <li><Link href="/demo" className="hover:text-white transition-colors">Live demo</Link></li>
                 <li><Link href="/integrations" className="hover:text-white transition-colors">Integrations</Link></li>
                 <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
-                <li><Link href="/changelog" className="hover:text-white transition-colors">Changelog</Link></li>
+                <li><Link href="/roadmap" className="hover:text-white transition-colors">Roadmap</Link></li>
               </ul>
             </div>
 

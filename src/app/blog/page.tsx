@@ -43,7 +43,7 @@ export default function BlogIndex() {
             </div>
             <span style={{ fontWeight: 700, fontSize: 16, color: "#111" }}>EEGBase</span>
           </Link>
-          <Link href="/changelog" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none" }}>Changelog →</Link>
+          <Link href="/roadmap" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none" }}>Roadmap →</Link>
         </div>
       </header>
 
@@ -51,7 +51,7 @@ export default function BlogIndex() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#7C3AED", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Field notes from the team</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Blog</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 36 }}>
-          Opinions, explainers, and post-mortems. Different from the <Link href="/changelog" style={{ color: "#2563EB" }}>changelog</Link> (which lists shipped features) — this is where we work through ideas in public.
+          Opinions, explainers, and post-mortems. Where we work through ideas in public.
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -71,7 +71,7 @@ export default function BlogIndex() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/changelog" style={{ color: "#9CA3AF" }}>Changelog</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/roadmap" style={{ color: "#9CA3AF" }}>Roadmap</Link>
       </footer>
     </div>
   );

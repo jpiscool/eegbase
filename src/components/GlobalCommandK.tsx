@@ -37,7 +37,6 @@ export function GlobalCommandK() {
       { kind: "Pages", label: "Research",             action: nav("/research"),                   keywords: "publication preprint paper" },
       { kind: "Pages", label: "Case studies",         action: nav("/case-studies"),               keywords: "outcomes" },
       { kind: "Pages", label: "Roadmap",              action: nav("/roadmap"),                    keywords: "future quarters" },
-      { kind: "Pages", label: "Changelog",            action: nav("/changelog"),                  keywords: "shipped recent" },
       { kind: "Pages", label: "Status",               action: nav("/status"),                     keywords: "uptime incident" },
       { kind: "Pages", label: "Integrations",         action: nav("/integrations"),               keywords: "device hardware ehr" },
       { kind: "Pages", label: "API docs",             action: nav("/api-docs"),                   keywords: "rest webhook sdk" },
@@ -49,7 +48,6 @@ export function GlobalCommandK() {
       { kind: "Pages", label: "Downloads",            action: nav("/downloads"),                  keywords: "bids irb sample" },
       { kind: "Pages", label: "Community",            action: nav("/community"),                  keywords: "forum protocols" },
       // Actions
-      { kind: "Action", label: "Subscribe to changelog RSS", action: () => { window.open("/changelog/rss.xml", "_blank"); setOpen(false); } },
       { kind: "Action", label: "Open contact form",            action: nav("/contact") },
       { kind: "Action", label: "Email security@eegbase.com",   action: () => { window.location.href = "mailto:security@eegbase.com"; setOpen(false); } },
       { kind: "Action", label: "Download BIDS-fNIRS sample",  action: () => { window.location.href = "/downloads/sub-021_ses-08_task-focus_nirs.json"; setOpen(false); } },

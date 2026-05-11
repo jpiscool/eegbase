@@ -30,7 +30,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/research",                  freq: "monthly", priority: 0.75 },
     { path: "/case-studies",              freq: "monthly", priority: 0.75 },
     { path: "/blog",                      freq: "weekly",  priority: 0.7 },
-    { path: "/changelog",                 freq: "weekly",  priority: 0.7 },
     { path: "/roadmap",                   freq: "weekly",  priority: 0.7 },
     { path: "/vs",                        freq: "monthly", priority: 0.7 },
     { path: "/conditions",                freq: "monthly", priority: 0.7 },

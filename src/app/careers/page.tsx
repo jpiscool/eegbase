@@ -10,7 +10,7 @@ const ROLES = [
     title: "Senior Full-stack Engineer",
     level: "Senior · Remote · USA / EU",
     salary: "$160–210k + equity",
-    desc: "Own the cross-session pattern detector and coaching marketplace. Next.js + Postgres + WebSocket. We ship a public changelog; your work has visible impact within weeks.",
+    desc: "Own the cross-session pattern detector and coaching marketplace. Next.js + Postgres + WebSocket. We ship in public; your work has visible impact within weeks.",
     quals: ["6+ years shipping production web apps", "Strong TypeScript + React", "Postgres / SQL fluency", "Have shipped a real-time streaming feature"],
   },
   {
@@ -40,7 +40,7 @@ const VALUES = [
   { title: "Honest gaps over fake polish", desc: "We list what we can't do yet on the homepage. Anyone who pretends to be perfect is hiding something." },
   { title: "Clinicians > engineers > investors", desc: "If a clinical workflow is broken, we fix the workflow before we add a feature. Investors come third in this order on purpose." },
   { title: "Free for clinicians", desc: "We don't charge licensed clinicians during early launch. Revenue comes from clinic-scale enterprise tiers and hardware partnerships, not per-seat fees." },
-  { title: "Show your work", desc: "Public changelog, public roadmap, public RCA. Status page is real, not theatrical. We talk publicly about mistakes within 5 days." },
+  { title: "Show your work", desc: "Public roadmap, public RCA. Status page is real, not theatrical. We talk publicly about mistakes within 5 days." },
   { title: "Protect the patient", desc: "Patient data never leaves the site of care without explicit consent. Cross-site registry data is de-identified per Safe Harbor + Expert Determination." },
 ];
 

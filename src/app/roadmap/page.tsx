@@ -75,7 +75,6 @@ export default function RoadmapPage() {
             <span style={{ fontWeight: 700, fontSize: 16, color: "#111" }}>EEGBase</span>
           </Link>
           <div style={{ display: "flex", gap: 16, fontSize: 14 }}>
-            <Link href="/changelog" style={{ color: "#6B7280", textDecoration: "none" }}>Changelog →</Link>
             <Link href="/status" style={{ color: "#6B7280", textDecoration: "none" }}>Status →</Link>
           </div>
         </div>
@@ -127,7 +126,7 @@ export default function RoadmapPage() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/changelog" style={{ color: "#9CA3AF" }}>Changelog</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/status" style={{ color: "#9CA3AF" }}>Status</Link>
       </footer>
     </div>
   );
