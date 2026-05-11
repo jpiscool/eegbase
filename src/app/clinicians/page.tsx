@@ -26,7 +26,7 @@ const C: AudienceContent = {
     "Free for every clinic · no card · 38-min migration from BrainPaint/EEGer",
   ],
   cta: { label: "Try the live demo →", href: "/demo" },
-  secondaryCta: { label: "Read the docs", href: "/api-docs" },
+  secondaryCta: { label: "Read the docs", href: "/docs/getting-started" },
   proofPoints: [
     { val: "11",     lbl: "Tabs in the live demo" },
     { val: "6 min",  lbl: "Avg time to first session" },

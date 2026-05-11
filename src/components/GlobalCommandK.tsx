@@ -38,7 +38,6 @@ export function GlobalCommandK() {
       { kind: "Pages", label: "Roadmap",              action: nav("/roadmap"),                    keywords: "future quarters" },
       { kind: "Pages", label: "Status",               action: nav("/status"),                     keywords: "uptime incident" },
       { kind: "Pages", label: "Integrations",         action: nav("/integrations"),               keywords: "device hardware ehr" },
-      { kind: "Pages", label: "API docs",             action: nav("/api-docs"),                   keywords: "rest webhook sdk" },
       { kind: "Pages", label: "Security",             action: nav("/security"),                   keywords: "soc2 schrems threat" },
       { kind: "Pages", label: "Privacy",              action: nav("/privacy"),                    keywords: "hipaa gdpr" },
       { kind: "Pages", label: "Terms",                action: nav("/terms"),                      keywords: "tos legal" },

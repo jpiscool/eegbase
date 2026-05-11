@@ -25,7 +25,7 @@ const C: AudienceContent = {
     "Sandbox API keys for partners — no production data required",
     "Stable v1 API contract guarantee from Q1 2027 GA",
   ],
-  cta: { label: "Read API docs →", href: "/api-docs" },
+  cta: { label: "Talk to us about early API access →", href: "/contact" },
   secondaryCta: { label: "Talk to us", href: "/contact" },
   proofPoints: [
     { val: "11",      lbl: "REST endpoints in v1" },

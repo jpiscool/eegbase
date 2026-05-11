@@ -107,7 +107,7 @@ export default function IntegrationsPage() {
             </div>
             <span style={{ fontWeight: 700, fontSize: 16, color: "#111" }}>EEGBase</span>
           </Link>
-          <Link href="/api-docs" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none" }}>API →</Link>
+          <Link href="/contact" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none" }}>Contact →</Link>
         </div>
       </header>
 
@@ -139,18 +139,18 @@ export default function IntegrationsPage() {
         ))}
 
         <div style={{ marginTop: 36, padding: 20, background: "white", border: "1px solid #E5E7EB", borderRadius: 14, textAlign: "center" }}>
-          <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 8 }}>Build your own adapter</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 8 }}>Want a device added?</h2>
           <p style={{ fontSize: 14, color: "#64748B", lineHeight: 1.6, marginBottom: 16, maxWidth: 560, margin: "0 auto 16px" }}>
-            Public TypeScript adapter SDK ships with the API beta. ~200 lines of code to add a new BLE device.
+            Public adapter SDK ships with the API GA in Q1 2027. Until then, tell us what device you&rsquo;re using and we&rsquo;ll prioritise it.
           </p>
-          <Link href="/api-docs" style={{ display: "inline-block", padding: "10px 18px", background: "#2563EB", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
-            See API docs →
+          <Link href="/contact" style={{ display: "inline-block", padding: "10px 18px", background: "#2563EB", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
+            Request a device →
           </Link>
         </div>
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/api-docs" style={{ color: "#9CA3AF" }}>API</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/contact" style={{ color: "#9CA3AF" }}>Contact</Link>
       </footer>
     </div>
   );

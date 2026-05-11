@@ -34,7 +34,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/conditions",                freq: "monthly", priority: 0.7 },
     { path: "/clinic-finder",             freq: "monthly", priority: 0.7 },
     { path: "/glossary",                  freq: "monthly", priority: 0.6 },
-    { path: "/api-docs",                  freq: "monthly", priority: 0.7 },
     { path: "/security",                  freq: "monthly", priority: 0.7 },
     { path: "/trust-center",              freq: "monthly", priority: 0.7 },
     { path: "/privacy",                   freq: "yearly",  priority: 0.5 },
