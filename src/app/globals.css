@@ -192,9 +192,8 @@ a, button, [role="button"] {
 }
 
 /* ── Premium section dividers ────────────────────────────────────────────────
-   Subtle full-width gradient hairline between consecutive <section>s in <main>.
-   Fades to transparent at the edges — keeps the layout calm without hard rules.
-   Plus alternating background tint and consistent vertical breathing room. */
+   Clear, full-bleed hairline between every consecutive <section>, plus
+   alternating background wash for visual rhythm. */
 .landing-main > section {
   position: relative;
 }
@@ -206,17 +205,12 @@ a, button, [role="button"] {
   transform: translateX(-50%);
   width: 100vw;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(15, 23, 42, 0.08) 25%,
-    rgba(15, 23, 42, 0.08) 75%,
-    transparent 100%
-  );
+  background: #e5e7eb; /* gray-200 — solid, clearly visible */
   pointer-events: none;
+  z-index: 1;
 }
-/* Alternating subtle background tint on the section's full-width strip.
-   Achieved via another pseudo-layer behind the content so it spans 100vw. */
+/* Alternating background — even sections get a soft slate wash so the
+   boundaries between sections read as distinct cards on the page. */
 .landing-main > section:nth-of-type(even)::after {
   content: "";
   position: absolute;
@@ -224,11 +218,10 @@ a, button, [role="button"] {
   left: 50%;
   transform: translateX(-50%);
   width: 100vw;
-  background: rgba(248, 250, 252, 0.7); /* slate-50 @ 70% */
+  background: #f8fafc; /* slate-50 — solid, no transparency */
   z-index: -1;
   pointer-events: none;
 }
-/* Standardise vertical padding so dividers land at consistent gaps */
 .landing-main > section + section {
   padding-top: 5rem;
 }
