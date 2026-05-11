@@ -365,13 +365,64 @@ export default function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-100 px-6 py-10">
-        <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-gray-400 flex-wrap gap-4">
-          <span>© 2026 EEGBase — neurofeedback platform for clinics and individuals</span>
-          <div className="flex items-center gap-6">
-            <Link href="/demo" className="hover:text-gray-600 transition-colors">Demo</Link>
-            <Link href="/login" className="hover:text-gray-600 transition-colors">Login</Link>
-            <Link href="/contact" className="hover:text-gray-600 transition-colors">Contact</Link>
+      <footer className="bg-gray-950 text-gray-400">
+        <div className="max-w-5xl mx-auto px-6 pt-16 pb-10">
+          {/* Brand row */}
+          <div className="grid md:grid-cols-[1.5fr_1fr_1fr_1fr] gap-10 pb-12 border-b border-white/10">
+            {/* Brand + tagline */}
+            <div>
+              <Link href="/" className="flex items-center gap-2.5 mb-4" style={{ textDecoration: "none" }}>
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/></svg>
+                </div>
+                <span className="text-base font-bold text-white">EEGBase</span>
+              </Link>
+              <p className="text-sm leading-relaxed text-gray-500 max-w-xs">
+                The clinical layer for any neurofeedback hardware. Free for clinicians and individuals.
+              </p>
+            </div>
+
+            {/* Product */}
+            <div>
+              <h3 className="text-xs font-semibold text-white uppercase tracking-wider mb-4">Product</h3>
+              <ul className="space-y-3 text-sm">
+                <li><Link href="/demo" className="hover:text-white transition-colors">Live demo</Link></li>
+                <li><Link href="/integrations" className="hover:text-white transition-colors">Integrations</Link></li>
+                <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
+                <li><Link href="/changelog" className="hover:text-white transition-colors">Changelog</Link></li>
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <h3 className="text-xs font-semibold text-white uppercase tracking-wider mb-4">Resources</h3>
+              <ul className="space-y-3 text-sm">
+                <li><Link href="/faq" className="hover:text-white transition-colors">FAQ</Link></li>
+                <li><Link href="/docs/getting-started" className="hover:text-white transition-colors">Documentation</Link></li>
+                <li><Link href="/research" className="hover:text-white transition-colors">Research</Link></li>
+                <li><Link href="/security" className="hover:text-white transition-colors">Security</Link></li>
+              </ul>
+            </div>
+
+            {/* Company */}
+            <div>
+              <h3 className="text-xs font-semibold text-white uppercase tracking-wider mb-4">Company</h3>
+              <ul className="space-y-3 text-sm">
+                <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+                <li><Link href="/careers" className="hover:text-white transition-colors">Careers</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">Terms</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom row */}
+          <div className="flex items-center justify-between pt-8 text-xs text-gray-500 flex-wrap gap-4">
+            <span>© 2026 EEGBase. All rights reserved.</span>
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" style={{ boxShadow: "0 0 6px rgba(16,185,129,0.6)" }} />
+              <Link href="/status" className="hover:text-white transition-colors">All systems operational</Link>
+            </div>
           </div>
         </div>
       </footer>
