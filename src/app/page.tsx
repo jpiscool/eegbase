@@ -167,7 +167,7 @@ export default function LandingPage() {
                 backgroundClip: "text",
               }}
             >
-              EEGBase is an all in one solution!
+              EEGBase is your all in one solution!
             </p>
 
             <p className="text-base md:text-lg text-gray-700 mt-6 leading-relaxed">
