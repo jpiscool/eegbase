@@ -93,7 +93,7 @@ await session.start();`}</pre>
           <pre style={{ margin: 0, fontSize: 12, color: "#CBD5E1", fontFamily: "ui-monospace, monospace", lineHeight: 1.7 }}>{`curl https://api.eegbase.com/v1/sessions \\
   -H "Authorization: Bearer $EEGBASE_KEY" \\
   -H "Content-Type: application/json" \\
-  -d '{"clientId":"cl_021","protocol":"smr-cz","device":"mendi-v3"}'`}</pre>
+  -d '{"clientId":"cl_021","protocol":"smr-cz","device":"mendi"}'`}</pre>
         </div>
 
         {/* Endpoint table */}

@@ -11,7 +11,7 @@ type Tile = { name: string; cat: string; status: Status; sub?: string };
 
 const TILES: Tile[] = [
   // Hardware — fNIRS
-  { name: "Mendi v3",         cat: "fNIRS hardware", status: "live",    sub: "Flagship · 10 Hz · Fp1/Fp2" },
+  { name: "Mendi",            cat: "fNIRS hardware", status: "beta",    sub: "Flagship · adapter built · awaiting Mendi pairing details" },
   { name: "NIRx NIRScout",    cat: "fNIRS hardware", status: "beta",    sub: "Research · 8–48 channels" },
   { name: "Artinis Brite",    cat: "fNIRS hardware", status: "beta",    sub: "Wearable Brite MKIII" },
   { name: "Kernel Flow",      cat: "fNIRS hardware", status: "planned", sub: "Q4 2026" },

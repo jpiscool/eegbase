@@ -15,7 +15,7 @@ const QUARTERS: { quarter: string; label: Status; items: { title: string; desc: 
     items: [
       { title: "Sham-controlled RCT enrollment portal", desc: "Multi-clinic registry · DSMB review · public clinic-recruitment landing page", votes: 47 },
       { title: "Spanish + French i18n",                  desc: "Full UI translation · client-facing portal first, then clinician-facing", votes: 31 },
-      { title: "Mendi v3 native driver",                  desc: "Q4 2025 firmware compatibility · pinned-version validation", votes: 22 },
+      { title: "Mendi native driver",                  desc: "Initial release · BLE pairing · pinned-firmware validation once Mendi shares pairing details", votes: 22 },
       { title: "BIDS-fNIRS validator (browser-side)",     desc: "Real-time validation against bids-validator 1.13+", votes: 18 },
     ],
   },
