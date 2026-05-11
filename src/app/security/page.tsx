@@ -72,14 +72,14 @@ export default function SecurityPage() {
         </Section>
 
         <Section title="Incident response">
-          <p>P0 incident SLA:</p>
+          <p><strong>P0 incident SLA · target on launch:</strong></p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginTop: 12 }}>
             <Stat val="≤ 15 min" label="Acknowledgment" color="#10B981" />
             <Stat val="≤ 4 h"    label="Mitigation"      color="#3B82F6" />
             <Stat val="≤ 5 days" label="Public RCA"      color="#7C3AED" />
           </div>
           <p style={{ marginTop: 14 }}>
-            Breach notification within 72 h per GDPR Art. 33 + HIPAA Breach Notification Rule. Public incident history at the <Link href="/status" style={{ color: "#2563EB" }}>status page</Link>. Subscribe to email updates at <a href="mailto:hello@eegbase.com?subject=Status%20updates%20subscribe" style={{ color: "#2563EB" }}>hello@eegbase.com</a>.
+            Targets above kick in once a clinic onboards. Breach notification within 72 h per GDPR Art. 33 + HIPAA Breach Notification Rule applies regardless of platform stage. Public incident history will appear on the <Link href="/status" style={{ color: "#2563EB" }}>status page</Link>. Subscribe to email updates at <a href="mailto:hello@eegbase.com?subject=Status%20updates%20subscribe" style={{ color: "#2563EB" }}>hello@eegbase.com</a>.
           </p>
         </Section>
 
