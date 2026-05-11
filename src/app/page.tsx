@@ -169,7 +169,7 @@ export default function LandingPage() {
                 backgroundClip: "text",
               }}
             >
-              EEGBase is the solution!
+              EEGBase is an all in one solution!
             </p>
 
             <p className="text-base md:text-lg text-gray-700 mt-6 leading-relaxed">
