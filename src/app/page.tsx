@@ -32,7 +32,7 @@ export default function LandingPage() {
         </div>
       </header>
 
-      <main id="main-content">
+      <main id="main-content" className="landing-main">
       {/* ════════════════════════════════════════════════════════════════
           1. HERO  ·  StoryBrand: Character + What they want
           UNCHANGED per user direction
