@@ -75,7 +75,7 @@ export default function LandingPage() {
         <div className="text-center mb-10">
           <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3">Without vs with</p>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight tracking-tight">
-            Five tools, or one.
+            Five tools in one
           </h2>
           <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Most neurofeedback clinicians juggle five disconnected apps — streaming, EHR, billing, video, and notes. EEGBase replaces all of them with a single screen.{" "}
