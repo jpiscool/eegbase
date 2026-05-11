@@ -49,9 +49,7 @@ export default function LandingPage() {
 
         <div style={{ position: "relative", zIndex: 1 }}>
           <h1 className="font-extrabold text-gray-900 mb-5" style={{ fontSize: "clamp(2.6rem, 5.2vw, 4rem)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
-            Control all your neurofeedback devices{" "}
-            <br />
-            with{" "}
+            Control all your neurofeedback devices with{" "}
             <span style={{ background: "linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #06B6D4 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>one tool</span>
           </h1>
           <p className="text-gray-500 max-w-2xl mx-auto mb-7" style={{ fontSize: "1.075rem", lineHeight: 1.65, letterSpacing: "-0.005em" }}>
