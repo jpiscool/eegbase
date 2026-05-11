@@ -247,8 +247,8 @@ export default function LandingPage() {
               {[
                 { num: "10+",    label: "Devices supported" },
                 { num: "Free",   label: "Clinicians + individuals" },
-                { num: "SOC 2",  label: "Q3 2026 audit · Coalfire" },
-                { num: "WCAG",   label: "2.2 AA · Q3 2026 · Deque" },
+                { num: "SOC 2",  label: "Audit planned Q3 2026" },
+                { num: "WCAG",   label: "2.2 AA audit planned Q3 2026" },
               ].map((s) => (
                 <div key={s.label} className="bg-white border border-gray-200 rounded-xl p-5 text-center">
                   <p className="text-2xl font-extrabold text-gray-900 tracking-tight mb-1">{s.num}</p>
@@ -311,7 +311,7 @@ export default function LandingPage() {
               <strong>For individuals:</strong> bring your own headset, pair it, run a session, see your own progress over time. No client record to fill out, no insurance forms to file, no clinical license required. You get the same dashboard a clinician uses — just without the bits that don&rsquo;t apply to one person.
             </p>
             <p>
-              Everything exports as BIDS, SNIRF, EDF+, CSV, or PDF — your data stays yours, forever. EEGBase is free for licensed clinicians and free for individuals. Hosted on a HIPAA-friendly U.S. infrastructure (AWS us-east-1; EU clinics on eu-west-3). Bishop Fox pen-test, Coalfire SOC 2 Type II, and Deque WCAG 2.2 AA audits scheduled for Q3 2026.
+              Everything exports as BIDS, SNIRF, EDF+, CSV, or PDF — your data stays yours, forever. EEGBase is free for licensed clinicians and free for individuals. Hosted on a HIPAA-friendly U.S. infrastructure (AWS us-east-1; EU clinics on eu-west-3). Bishop Fox pen-test, Coalfire SOC 2, and Deque WCAG 2.2 AA audits are planned for Q3 2026 (vendor selection in progress).
             </p>
           </div>
         </div>

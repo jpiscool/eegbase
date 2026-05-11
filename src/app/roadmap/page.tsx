@@ -14,7 +14,7 @@ const QUARTERS: { quarter: string; label: Status; items: { title: string; desc: 
     label: "now",
     items: [
       { title: "Sham-controlled RCT enrollment portal", desc: "Multi-clinic registry · DSMB review · public clinic-recruitment landing page", votes: 47 },
-      { title: "SOC 2 Type II + Bishop Fox kickoff",    desc: "Coalfire SOC 2 Type II audit and Bishop Fox penetration test both scheduled to start Q3 2026", votes: 33 },
+      { title: "Security audit prep",                   desc: "SOC 2 Type I scoping with Coalfire (Type II to follow); Bishop Fox web pentest engagement out for quote · target start Q3 2026", votes: 33 },
       { title: "BIDS-fNIRS validator (browser-side)",   desc: "Real-time validation against bids-validator 1.13+", votes: 18 },
       { title: "Mendi adapter (awaiting Mendi SDK)",   desc: "BLE adapter and ingestion pipeline are built; production pairing waits on Mendi releasing public SDK access", votes: 22 },
     ],

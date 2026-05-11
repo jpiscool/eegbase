@@ -31,10 +31,10 @@ export default function SecurityPage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 28 }}>
           {[
             { tag: "🛡 HIPAA",       desc: "BAA available · 7-year audit log retention" },
-            { tag: "🔒 SOC 2 Type II", desc: "Coalfire audit scheduled Q3 2026 · report NDA-gated on completion" },
-            { tag: "🎯 Pen-test",    desc: "Bishop Fox engagement scheduled Q3 2026" },
+            { tag: "🔒 SOC 2",        desc: "Type I scoping with Coalfire (Type II to follow) · Q3 2026 target · report NDA-gated on completion" },
+            { tag: "🎯 Pen-test",    desc: "Bishop Fox web pentest engagement out for quote · Q3 2026 target" },
             { tag: "🇪🇺 Schrems II", desc: "EU SCCs (2021/914) · Frankfurt eu-west-3" },
-            { tag: "♿ WCAG 2.2 AA", desc: "Deque audit scheduled Q3 2026 · VPAT 2.4 to follow" },
+            { tag: "♿ WCAG 2.2 AA", desc: "Deque audit planned Q3 2026 · VPAT 2.4 to follow" },
             { tag: "🔑 SSO",         desc: "SAML · Okta · Google · Microsoft Entra" },
             { tag: "🔐 At rest",     desc: "AES-256-GCM · keys rotated quarterly" },
             { tag: "🌐 In transit",  desc: "TLS 1.3 · forward secrecy · HSTS preload" },
@@ -86,8 +86,8 @@ export default function SecurityPage() {
         <Section title="Compliance documents">
           <p>The following are NDA-gated. Sign a mutual NDA via <a href="mailto:legal@eegbase.com" style={{ color: "#2563EB" }}>legal@eegbase.com</a> to receive on completion:</p>
           <ul style={{ listStyle: "disc", paddingLeft: 20, marginTop: 6, lineHeight: 1.8 }}>
-            <li>SOC 2 Type II report (Coalfire) — audit scheduled Q3 2026</li>
-            <li>Bishop Fox pen-test attestation + remediation log — engagement scheduled Q3 2026</li>
+            <li>SOC 2 report (Coalfire) — Type I scoping in progress, Type II to follow · target Q3 2026</li>
+            <li>Bishop Fox pen-test attestation + remediation log — engagement out for quote · target Q3 2026</li>
             <li>HIPAA risk assessment + Security Rule audit (available today)</li>
             <li>GDPR Data Processing Addendum + EU SCCs (2021/914) (available today)</li>
             <li>VPAT 2.4 (WCAG 2.2 AA · Deque audit scheduled Q3 2026)</li>

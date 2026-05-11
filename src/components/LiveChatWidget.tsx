@@ -10,7 +10,7 @@ const STORAGE_KEY = "eegbase-chat";
 const QUICK = [
   { label: "What does EEGBase do?",    answer: "Control all your neurofeedback devices with one tool. Mendi at home, Muse in clinic, Polar, Apple Watch — every device feeds one client record. Free and ." },
   { label: "Pricing?",                 answer: "It's free. Every feature, every device, every clinician on your team. No card, no trial limit." },
-  { label: "Is it HIPAA compliant?",   answer: "Yes. Encrypted, audited by Bishop Fox and Coalfire in 2026, signed BAA. EU clinics covered by EU privacy law (Schrems II). Full details at /security." },
+  { label: "Is it HIPAA compliant?",   answer: "Yes. Encrypted (TLS 1.3 + AES-256-GCM), HIPAA-friendly architecture, BAA signed on enrollment. SOC 2 + Bishop Fox audits planned for Q3 2026 (vendor selection in progress). EU clinics covered by EU privacy law (Schrems II). Full details at /security." },
   { label: "Does it work with Mendi?", answer: "Yes. Mendi is the flagship device. Brain data streams live from both forehead sensors, reconnects instantly, and stays in sync. See /devices for the full breakdown." },
   { label: "Talk to a human",          answer: "Email hello@eegbase.com or fill out /contact. We answer within 24 hours. Or book a 30-min call directly at /mendi#book-meeting." },
 ];
