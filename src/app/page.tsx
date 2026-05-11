@@ -120,7 +120,7 @@ export default function LandingPage() {
                 <><strong className="text-gray-900">Free for clinicians and individuals</strong> · no card, no per-seat fee, no &ldquo;contact sales&rdquo; — same platform whether you&rsquo;re a clinic or one person at home</>,
                 <><strong className="text-gray-900">Hardware-agnostic</strong> — Mendi, Muse, Polar, Apple Watch, Oura, OpenBCI, Whoop · switch headsets and keep every session&rsquo;s history</>,
                 <><strong className="text-gray-900">AI drafts the note in 60 seconds</strong> in your format (SOAP, DAP, BIRP, +3 more) · you review and save</>,
-                <><strong className="text-gray-900">Runs in any browser</strong> — Mac, Windows, iPad, Chromebook · zero install, zero IT ticket</>,
+                <><strong className="text-gray-900">Runs in any browser — or fully local on your desktop</strong> — Mac, Windows, iPad, Chromebook · zero install web, downloadable local build coming soon</>,
                 <><strong className="text-gray-900">CMS-1500 + ERA auto-posted</strong> via Stedi or Office Ally clearinghouses</>,
               ].map((item, i) => (
                 <li key={i} className="flex gap-2.5">

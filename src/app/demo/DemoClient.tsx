@@ -4187,7 +4187,7 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
                 { label: "fNIRS + EEG + HRV in one app", sub: "Most platforms cover one modality; we unify all three with native Mendi support", color: "#06B6D4" },
                 { label: "AI cross-session pattern detector", sub: "Correlates Mendi data with sleep · mood · HRV · adherence — flags drivers", color: "#A855F7" },
                 { label: "Free for licensed clinicians", sub: "No card · no per-seat fees · no \u201ccontact sales\u201d · hosted on HIPAA-friendly U.S. infra", color: "#10B981" },
-                { label: "Browser-based · No install", sub: "Cloud-native — no Windows-only requirement, no per-machine licenses", color: "#F59E0B" },
+                { label: "Browser-based now · Local desktop build coming", sub: "Run in any modern browser today — Mac, Windows, iPad, Chromebook · downloadable local build for fully on-device data is on the way", color: "#F59E0B" },
               ].map(({ label, sub, color }) => (
                 <div key={label} style={{ background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)", border: "1px solid #1E293B", borderRadius: 14, padding: "16px 18px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 24px -16px rgba(0,0,0,0.5)" }}>
                   <div style={{ width: 8, height: 8, borderRadius: "50%", background: color, marginBottom: 10, boxShadow: `0 0 12px ${color}` }} />

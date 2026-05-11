@@ -46,10 +46,46 @@ export default function DownloadsPage() {
       <main id="main-content" style={{ maxWidth: 880, margin: "0 auto", padding: "48px 24px" }}>
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Public artifacts</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Downloads</h1>
-        <p style={{ fontSize: 15, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
+        <p style={{ fontSize: 15, color: "#64748B", lineHeight: 1.7, marginBottom: 24, maxWidth: 720 }}>
           Concrete artifacts for evaluating the platform. SOC 2 + Bishop Fox + DPA documents are NDA-gated —{" "}
           <Link href="/contact" style={{ color: "#2563EB" }}>request access</Link>.
         </p>
+
+        {/* Local desktop build · coming-soon notice */}
+        <article
+          style={{
+            display: "grid",
+            gridTemplateColumns: "60px 1fr auto",
+            gap: 20,
+            padding: 20,
+            background: "linear-gradient(135deg, #EFF6FF 0%, #FAF5FF 100%)",
+            border: "1px solid #BFDBFE",
+            borderRadius: 14,
+            marginBottom: 36,
+          }}
+        >
+          <div style={{ width: 60, height: 60, borderRadius: 12, background: "#2563EB15", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28 }}>💻</div>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+              <h2 style={{ fontSize: 17, fontWeight: 700, color: "#0F172A", letterSpacing: "-0.01em" }}>EEGBase Desktop (local build)</h2>
+              <span style={{ fontSize: 9, fontWeight: 700, color: "#2563EB", padding: "2px 7px", background: "#2563EB15", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Coming soon</span>
+            </div>
+            <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6, marginBottom: 8 }}>
+              The full EEGBase clinical layer, packaged as a downloadable Mac / Windows / Linux app. Runs fully on-device — sessions, client records, and brain data never leave your machine. Same UI as the web version. For clinics and individuals who require everything to stay local.
+            </p>
+            <p style={{ fontSize: 11, color: "#94A3B8" }}>
+              <strong style={{ color: "#475569" }}>For:</strong> air-gapped clinics · privacy-first individuals · countries with stricter residency rules
+            </p>
+          </div>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Link
+              href="/contact"
+              style={{ padding: "10px 16px", background: "white", color: "#2563EB", border: "1px solid #BFDBFE", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none", whiteSpace: "nowrap" }}
+            >
+              Notify me →
+            </Link>
+          </div>
+        </article>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {FILES.map((f) => (
