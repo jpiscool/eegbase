@@ -204,12 +204,12 @@ a, button, [role="button"] {
   left: 50%;
   transform: translateX(-50%);
   width: 100vw;
-  height: 1px;
-  background: #e5e7eb; /* gray-200 — solid, clearly visible */
+  height: 2px;
+  background: #94a3b8; /* slate-400 — clearly visible */
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
 }
-/* Alternating background — even sections get a soft slate wash so the
+/* Alternating background — even sections get a slate wash so the
    boundaries between sections read as distinct cards on the page. */
 .landing-main > section:nth-of-type(even)::after {
   content: "";
@@ -218,7 +218,7 @@ a, button, [role="button"] {
   left: 50%;
   transform: translateX(-50%);
   width: 100vw;
-  background: #f8fafc; /* slate-50 — solid, no transparency */
+  background: #e2e8f0; /* slate-200 — clear contrast against white */
   z-index: -1;
   pointer-events: none;
 }
