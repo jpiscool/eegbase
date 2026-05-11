@@ -37,6 +37,19 @@ export default function ApiDocsPage() {
       </header>
 
       <main id="main-content" style={{ maxWidth: 1000, margin: "0 auto", padding: "48px 24px" }}>
+        <style>{`
+          .api-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+          .api-endpoint-row { display: grid; grid-template-columns: 70px 320px 1fr; gap: 16px; padding: 14px 20px; align-items: center; }
+          .api-endpoint-row + .api-endpoint-row { border-top: 1px solid #F3F4F6; }
+          .api-resources { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
+          @media (max-width: 720px) {
+            .api-stats { grid-template-columns: 1fr 1fr; }
+            .api-endpoint-row { grid-template-columns: auto 1fr; gap: 10px; padding: 14px 16px; align-items: flex-start; }
+            .api-endpoint-row > code { grid-column: 2; word-break: break-all; }
+            .api-endpoint-row > span:last-child { grid-column: 1 / -1; }
+            .api-resources { grid-template-columns: 1fr; }
+          }
+        `}</style>
         <p style={{ fontSize: 11, fontWeight: 700, color: "#06B6D4", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>API · v1 beta</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>REST + WebSocket API</h1>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
@@ -44,7 +57,7 @@ export default function ApiDocsPage() {
         </p>
 
         {/* Quick stats */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 28 }}>
+        <div className="api-stats">
           {[
             { val: "50k/min", lbl: "Rate limit · flagship" },
             { val: "250k",    lbl: "Concurrent WS streams" },
@@ -87,7 +100,7 @@ await session.start();`}</pre>
         <h2 style={{ fontSize: 20, fontWeight: 800, color: "#0F172A", marginBottom: 12 }}>Endpoints</h2>
         <div style={{ background: "white", border: "1px solid #E5E7EB", borderRadius: 14, overflow: "hidden", marginBottom: 28 }}>
           {ENDPOINTS.map((e, i) => (
-            <div key={e.path + i} style={{ display: "grid", gridTemplateColumns: "70px 320px 1fr", gap: 16, padding: "14px 20px", borderTop: i === 0 ? "none" : "1px solid #F3F4F6", alignItems: "center" }}>
+            <div key={e.path + i} className="api-endpoint-row">
               <span style={{ fontSize: 10, fontWeight: 800, color: METHOD_COLOR[e.method] || "#64748B", padding: "3px 8px", background: `${METHOD_COLOR[e.method] || "#64748B"}1A`, borderRadius: 6, textAlign: "center", letterSpacing: "0.06em" }}>{e.method}</span>
               <code style={{ fontSize: 12, color: "#0F172A", fontFamily: "ui-monospace, monospace", fontWeight: 600 }}>{e.path}</code>
               <span style={{ fontSize: 12, color: "#64748B", lineHeight: 1.5 }}>{e.desc}</span>
@@ -123,7 +136,7 @@ await session.start();`}</pre>
 
         {/* Resources */}
         <h2 style={{ fontSize: 20, fontWeight: 800, color: "#0F172A", marginBottom: 12 }}>Resources</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 28 }}>
+        <div className="api-resources">
           {[
             { title: "Postman collection", desc: "Import all endpoints + auth into Postman or Insomnia.", action: "Download .json" },
             { title: "OpenAPI 3.1 spec",    desc: "Machine-readable API description for codegen.",        action: "View spec" },
@@ -142,7 +155,7 @@ await session.start();`}</pre>
           <p style={{ fontSize: 13, color: "#0E7490", lineHeight: 1.6, marginBottom: 12 }}>
             Enterprise customers + Mendi partners get v1 beta keys today. Public beta opens in a future update.
           </p>
-          <a href="mailto:api@eegbase.com?subject=API%20beta%20access" style={{ display: "inline-block", padding: "10px 18px", background: "#06B6D4", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
+          <a href="mailto:hello@eegbase.com?subject=API%20beta%20access" style={{ display: "inline-block", padding: "10px 18px", background: "#06B6D4", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
             Request beta key →
           </a>
         </div>
