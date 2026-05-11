@@ -227,7 +227,18 @@ a, button, [role="button"] {
 }
 @media (max-width: 768px) {
   .landing-main > section + section {
-    padding-top: 3.5rem;
+    padding-top: 3rem;
+  }
+  /* Tighten the universal pb-20 on every section on mobile so sections
+     have a tighter rhythm without losing breathing room. */
+  .landing-main > section.pb-20 {
+    padding-bottom: 3rem;
+  }
+  /* Trim section side padding on narrow phones for a few extra px of
+     breathing room around inner cards. */
+  .landing-main > section {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
 }
 

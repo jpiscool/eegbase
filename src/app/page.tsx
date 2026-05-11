@@ -37,7 +37,7 @@ export default function LandingPage() {
           1. HERO  ·  StoryBrand: Character + What they want
           UNCHANGED per user direction
           ════════════════════════════════════════════════════════════════ */}
-      <section className="relative max-w-5xl mx-auto px-6 pt-24 pb-20 text-center" style={{ overflow: "visible" }}>
+      <section className="relative max-w-5xl mx-auto px-5 sm:px-6 pt-14 sm:pt-24 pb-14 sm:pb-20 text-center" style={{ overflow: "visible" }}>
         <style>{`
           @keyframes orbDrift1 { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(40px, -30px) scale(1.1); } 66% { transform: translate(-30px, 20px) scale(0.95); } }
           @keyframes orbDrift2 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-50px, 40px) scale(1.15); } }
@@ -48,7 +48,7 @@ export default function LandingPage() {
         <div aria-hidden style={{ position: "absolute", top: "-40px", left: "50%", width: 600, height: 600, transform: "translateX(-50%)", borderRadius: "50%", background: "radial-gradient(closest-side, rgba(6,182,212,0.08), transparent 70%)", filter: "blur(60px)", pointerEvents: "none", zIndex: 0 }} />
 
         <div style={{ position: "relative", zIndex: 1 }}>
-          <h1 className="font-extrabold text-gray-900 mb-5" style={{ fontSize: "clamp(2.6rem, 5.2vw, 4rem)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+          <h1 className="font-extrabold text-gray-900 mb-5" style={{ fontSize: "clamp(2rem, 7vw, 4rem)", letterSpacing: "-0.035em", lineHeight: 1.08 }}>
             Control all your neurofeedback devices with{" "}
             <span style={{ background: "linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #06B6D4 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>one tool</span>
           </h1>
@@ -143,24 +143,25 @@ export default function LandingPage() {
              weight, then one quiet credibility line. Stark visual
              contrast to every surrounding card-heavy section.
           ════════════════════════════════════════════════════════════════ */}
-      <section className="max-w-3xl mx-auto px-6 pb-20">
-        <div className="relative text-center py-20 md:py-28 overflow-hidden">
+      <section className="max-w-3xl mx-auto px-5 sm:px-6 pb-14 sm:pb-20">
+        <div className="relative text-center py-12 sm:py-20 md:py-28 overflow-hidden">
           {/* Soft ambient glow — same palette as the hero, dialed way down */}
           <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(60% 60% at 50% 40%, rgba(124,58,237,0.06), transparent 70%)" }} />
 
           <div className="relative">
-            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.22em] mb-12">Our thesis</p>
+            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.22em] mb-8 sm:mb-12">Our thesis</p>
 
-            <p className="text-2xl md:text-3xl font-medium text-gray-500 leading-snug mb-5 tracking-tight">
+            <p className="text-xl sm:text-2xl md:text-3xl font-medium text-gray-500 leading-snug mb-4 sm:mb-5 tracking-tight">
               Neurofeedback isn&rsquo;t broken.
             </p>
-            <p className="text-3xl md:text-4xl font-semibold text-gray-900 leading-snug mb-10 tracking-tight">
+            <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 leading-snug mb-8 sm:mb-10 tracking-tight">
               The software around it is just lagging behind.
             </p>
 
             <p
-              className="text-5xl md:text-7xl font-extrabold leading-[1.02] tracking-[-0.035em]"
+              className="font-extrabold leading-[1.05] tracking-[-0.035em]"
               style={{
+                fontSize: "clamp(2.25rem, 9vw, 4.5rem)",
                 background: "linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #06B6D4 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
@@ -170,11 +171,11 @@ export default function LandingPage() {
               EEGBase is your all in one solution!
             </p>
 
-            <p className="text-base md:text-lg text-gray-700 mt-6 leading-relaxed">
+            <p className="text-base md:text-lg text-gray-700 mt-5 sm:mt-6 leading-relaxed">
               For the clinic. For the home. For free.
             </p>
 
-            <p className="text-xs text-gray-400 mt-14 max-w-md mx-auto leading-relaxed">
+            <p className="text-xs text-gray-400 mt-10 sm:mt-14 max-w-md mx-auto leading-relaxed">
               Neurofeedback has been clinically studied since the 1970s. Consumer fNIRS became affordable in the 2010s. We built the dashboard the field has been waiting on.
             </p>
           </div>
