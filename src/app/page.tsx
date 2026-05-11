@@ -64,7 +64,7 @@ export default function LandingPage() {
 
           <div className="flex items-center justify-center gap-4">
             <Link
-              href="/demo"
+              href="/demo?tab=dashboard"
               className="px-7 py-3.5 text-white text-sm font-semibold rounded-xl transition-all"
               style={{ background: "#2563EB", animation: "pulseGlow 2.4s ease-in-out infinite", boxShadow: "0 1px 0 0 rgba(255,255,255,0.15) inset, 0 8px 24px -8px rgba(37,99,235,0.5)" }}
             >
