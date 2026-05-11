@@ -11,8 +11,8 @@ const PILLARS = [
     href: "/security",
     desc: "Threat model, vulnerability disclosure, incident SLA",
     items: [
-      "SOC 2 Type II · Coalfire audit scheduled Q3 2026",
-      "Bishop Fox pen-test · engagement scheduled Q3 2026",
+      "SOC 2 · Coalfire audit planned Q3 2026 (vendor selection in progress)",
+      "Independent pen-test · planned Q3 2026 (vendor selection in progress)",
       "AES-256-GCM at rest · TLS 1.3 in transit",
       "Quarterly internal red-team",
       "Bug bounty (planned future update)",
@@ -61,8 +61,8 @@ const PILLARS = [
 ];
 
 const DOCS = [
-  { name: "SOC 2 Type II report",        sub: "Coalfire · audit scheduled Q3 2026",     gated: true },
-  { name: "Bishop Fox pen-test attestation", sub: "engagement scheduled Q3 2026",       gated: true },
+  { name: "SOC 2 report",                sub: "Coalfire · audit planned Q3 2026",       gated: true },
+  { name: "Independent pen-test attestation", sub: "planned Q3 2026",                  gated: true },
   { name: "HIPAA BAA template",          sub: "Standard form",          gated: false },
   { name: "GDPR DPA + EU SCCs",          sub: "Module 2 (controller-to-processor)", gated: false },
   { name: "VPAT 2.4 (WCAG 2.2 AA)",       sub: "Deque audit scheduled Q3 2026",     gated: true },

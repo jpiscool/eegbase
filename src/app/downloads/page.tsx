@@ -47,7 +47,7 @@ export default function DownloadsPage() {
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Public artifacts</p>
         <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Downloads</h1>
         <p style={{ fontSize: 15, color: "#64748B", lineHeight: 1.7, marginBottom: 24, maxWidth: 720 }}>
-          Concrete artifacts for evaluating the platform. SOC 2 + Bishop Fox + DPA documents are NDA-gated —{" "}
+          Concrete artifacts for evaluating the platform. SOC 2 + pen-test + DPA documents are NDA-gated —{" "}
           <Link href="/contact" style={{ color: "#2563EB" }}>request access</Link>.
         </p>
 
@@ -119,7 +119,7 @@ export default function DownloadsPage() {
           <p style={{ fontSize: 11, fontWeight: 700, color: "#92400E", letterSpacing: "0.1em", marginBottom: 8, textTransform: "uppercase" }}>NDA-gated</p>
           <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0F172A", marginBottom: 8 }}>Compliance documents available on request</h2>
           <p style={{ fontSize: 13, color: "#78350F", lineHeight: 1.6, marginBottom: 12 }}>
-            SOC 2 Type II report (Coalfire, Q3 2026) · Bishop Fox pen-test attestation · HIPAA risk assessment · GDPR DPA + EU SCCs · Master Service Agreement template. Mutual NDA prerequisite.
+            SOC 2 report (Coalfire, planned Q3 2026) · Independent pen-test attestation (planned Q3 2026) · HIPAA risk assessment · GDPR DPA + EU SCCs · Master Service Agreement template. Mutual NDA prerequisite.
           </p>
           <a href="mailto:legal@eegbase.com?subject=Mutual%20NDA%20%2B%20compliance%20docs%20request" style={{ display: "inline-block", padding: "10px 16px", background: "#92400E", color: "white", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
             Request NDA + docs →

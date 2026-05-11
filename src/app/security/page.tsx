@@ -32,7 +32,7 @@ export default function SecurityPage() {
           {[
             { tag: "🛡 HIPAA",       desc: "BAA available · 7-year audit log retention" },
             { tag: "🔒 SOC 2",        desc: "Type I scoping with Coalfire (Type II to follow) · Q3 2026 target · report NDA-gated on completion" },
-            { tag: "🎯 Pen-test",    desc: "Bishop Fox web pentest engagement out for quote · Q3 2026 target" },
+            { tag: "🎯 Pen-test",    desc: "Independent web pentest · Q3 2026 target · vendor selection in progress" },
             { tag: "🇪🇺 Schrems II", desc: "EU SCCs (2021/914) · Frankfurt eu-west-3" },
             { tag: "♿ WCAG 2.2 AA", desc: "Deque audit planned Q3 2026 · VPAT 2.4 to follow" },
             { tag: "🔑 SSO",         desc: "SAML · Okta · Google · Microsoft Entra" },
@@ -87,7 +87,7 @@ export default function SecurityPage() {
           <p>The following are NDA-gated. Sign a mutual NDA via <a href="mailto:legal@eegbase.com" style={{ color: "#2563EB" }}>legal@eegbase.com</a> to receive on completion:</p>
           <ul style={{ listStyle: "disc", paddingLeft: 20, marginTop: 6, lineHeight: 1.8 }}>
             <li>SOC 2 report (Coalfire) — Type I scoping in progress, Type II to follow · target Q3 2026</li>
-            <li>Bishop Fox pen-test attestation + remediation log — engagement out for quote · target Q3 2026</li>
+            <li>Independent pen-test attestation + remediation log — vendor selection in progress · target Q3 2026</li>
             <li>HIPAA risk assessment + Security Rule audit (available today)</li>
             <li>GDPR Data Processing Addendum + EU SCCs (2021/914) (available today)</li>
             <li>VPAT 2.4 (WCAG 2.2 AA · Deque audit scheduled Q3 2026)</li>

@@ -53,7 +53,7 @@ export default function InvestorsPage() {
             <li>Pre-print under review at Frontiers in Human Neuroscience (n=2,840)</li>
             <li>Sham-controlled RCT pre-registered · NCT06912xxx · IRB approved Apr 2026</li>
             <li>Mendi partnership proposal submitted Q2 2026 · 3 partnership tiers under review</li>
-            <li>SOC 2 Type II + Bishop Fox pen-test scheduled Q3 2026</li>
+            <li>SOC 2 + independent pen-test scheduled Q3 2026</li>
             <li>Hosted SaaS · free for licensed clinicians during early launch</li>
             <li>Demo deployed at <Link href="/demo" style={{ color: "#2563EB" }}>eegbase.com/demo</Link> · 11 tabs · pre-loaded clients + sessions</li>
           </ul>
@@ -100,7 +100,7 @@ export default function InvestorsPage() {
           <ul style={{ paddingLeft: 20, listStyle: "disc", color: "#374151", fontSize: 13, lineHeight: 1.8 }}>
             <li>Full pitch deck + financial model</li>
             <li>SOC 2 Type II report (Coalfire)</li>
-            <li>Bishop Fox pen-test attestation</li>
+            <li>Independent pen-test attestation</li>
             <li>Cap table + ownership history</li>
             <li>Customer pipeline + Mendi correspondence</li>
             <li>Hiring plan + compensation philosophy</li>
