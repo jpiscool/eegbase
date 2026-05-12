@@ -82,7 +82,7 @@ export default function SecurityPage() {
           </ul>
           <p style={{ marginTop: 12 }}><strong>Right to erasure (Art. 17) vs clinical retention.</strong> EU member states require clinical records to be retained 10–30 years (e.g. France 20y, Germany 10y, Sweden 10y). When an erasure request conflicts with retention, the clinical retention obligation wins for the regulated record; non-essential personal data is removed within 30 days and the user is informed of what was retained and why.</p>
           <p style={{ marginTop: 12 }}><strong>Cross-border transfer.</strong> EU clinic data lives in Frankfurt (eu-west-3). When transfer outside the EEA is necessary (e.g. a US clinician credentialed at an EU clinic), EU SCCs (2021/914 Module 2) plus supplementary measures per Schrems II apply.</p>
-          <p style={{ marginTop: 12, fontSize: 12, color: "#94A3B8" }}>None of the Mendi-EU pieces are live yet — they gate EU clinic onboarding and the Coaching marketplace, both planned Q4 2026. Status updates appear on the <Link href="/roadmap" style={{ color: "#2563EB" }}>roadmap</Link>.</p>
+          <p style={{ marginTop: 12, fontSize: 12, color: "#94A3B8" }}>None of the Mendi-EU pieces are live yet — they gate EU clinic onboarding and the Coaching marketplace, both planned Q4 2026.</p>
         </Section>
 
         <Section title="Incident response">

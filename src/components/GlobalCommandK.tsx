@@ -35,7 +35,6 @@ export function GlobalCommandK() {
       { kind: "Page",  label: "Pricing",              sub: "/#pricing", action: nav("/#pricing"), keywords: "cost solo practice enterprise" },
       // Resource pages
       { kind: "Pages", label: "Case studies",         action: nav("/case-studies"),               keywords: "outcomes" },
-      { kind: "Pages", label: "Roadmap",              action: nav("/roadmap"),                    keywords: "future quarters" },
       { kind: "Pages", label: "Status",               action: nav("/status"),                     keywords: "uptime incident" },
       { kind: "Pages", label: "Integrations",         action: nav("/integrations"),               keywords: "device hardware ehr" },
       { kind: "Pages", label: "Security",             action: nav("/security"),                   keywords: "soc2 schrems threat" },

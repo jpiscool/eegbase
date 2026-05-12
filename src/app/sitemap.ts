@@ -29,7 +29,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/careers",                   freq: "monthly", priority: 0.7 },
     { path: "/case-studies",              freq: "monthly", priority: 0.75 },
     { path: "/blog",                      freq: "weekly",  priority: 0.7 },
-    { path: "/roadmap",                   freq: "weekly",  priority: 0.7 },
     { path: "/vs",                        freq: "monthly", priority: 0.7 },
     { path: "/conditions",                freq: "monthly", priority: 0.7 },
     { path: "/clinic-finder",             freq: "monthly", priority: 0.7 },

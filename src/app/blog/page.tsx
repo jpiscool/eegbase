@@ -43,7 +43,7 @@ export default function BlogIndex() {
             </div>
             <span style={{ fontWeight: 700, fontSize: 16, color: "#111" }}>EEGBase</span>
           </Link>
-          <Link href="/roadmap" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none" }}>Roadmap →</Link>
+          <Link href="/contact" style={{ fontSize: 14, color: "#6B7280", textDecoration: "none" }}>Contact →</Link>
         </div>
       </header>
 
@@ -71,7 +71,7 @@ export default function BlogIndex() {
       </main>
 
       <footer style={{ borderTop: "1px solid #E5E7EB", padding: "24px", textAlign: "center", fontSize: 12, color: "#9CA3AF" }}>
-        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/roadmap" style={{ color: "#9CA3AF" }}>Roadmap</Link>
+        © 2026 EEGBase · <Link href="/" style={{ color: "#9CA3AF" }}>Home</Link> · <Link href="/contact" style={{ color: "#9CA3AF" }}>Contact</Link>
       </footer>
     </div>
   );

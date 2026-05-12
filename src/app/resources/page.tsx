@@ -12,7 +12,6 @@ const SECTIONS = [
   { title: "Glossary",       desc: "Plain-English definitions for 45+ terms",       href: "/glossary",      color: "#F59E0B", icon: "📖" },
   { title: "Comparisons",    desc: "Honest side-by-sides vs SimplePractice, TherapyNotes, Myndlift, NeuroGuide…", href: "/vs", color: "#E11D48", icon: "⚖" },
   { title: "Downloads",      desc: "BIDS-fNIRS sample, IRB packet, brand assets",   href: "/downloads",     color: "#84CC16", icon: "↓" },
-  { title: "Roadmap",        desc: "What ships next + clinician-vote rankings",      href: "/roadmap",        color: "#A855F7", icon: "🗺" },
   { title: "Calculators",     desc: "Insurance estimator + CPT-code lookup",        href: "/calculators",    color: "#0EA5E9", icon: "🧮" },
 ];
 
