@@ -218,10 +218,10 @@ export default function MendiPartnershipPage() {
                 badgeBg: violetLight,
                 description: "Mendi sends session data to EEGBase automatically. Clinicians see every client's sessions in one dashboard — even when the client trains alone at home.",
                 bullets: [
-                  "Mendi API pushes to EEGBase webhook",
+                  "Mendi BLE SDK streams session data into EEGBase",
                   "Clinician dashboard pulls live session data",
                   "Clients authorize data sharing in Mendi app",
-                  "~1–2 weeks engineering (Mendi side)",
+                  "Engineering effort split between Mendi (SDK build) and EEGBase (adapter wiring)",
                 ],
                 accent: violet,
                 accentBg: violetLight,

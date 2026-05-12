@@ -15,7 +15,7 @@ const QUARTERS: { quarter: string; label: Status; items: { title: string; desc: 
     items: [
       { title: "Security audit prep",                   desc: "SOC 2 Type I scoping with Coalfire (Type II to follow); independent web pentest vendor selection in progress · target start Q3 2026", votes: 33 },
       { title: "BIDS-fNIRS validator (browser-side)",   desc: "Real-time validation against bids-validator 1.13+", votes: 18 },
-      { title: "Mendi adapter (awaiting Mendi SDK)",   desc: "BLE adapter and ingestion pipeline are built; production pairing waits on Mendi releasing public SDK access", votes: 22 },
+      { title: "Mendi adapter (awaiting Mendi SDK)",   desc: "Our BLE adapter and ingestion pipeline are built. Mendi is building their public SDK on their side; production pairing wires up once that SDK ships", votes: 22 },
     ],
   },
   {
