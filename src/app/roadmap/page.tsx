@@ -23,6 +23,7 @@ const QUARTERS: { quarter: string; label: Status; items: { title: string; desc: 
     label: "next",
     items: [
       { title: "Native iOS + Android apps",            desc: "React Native build (separate codebase from the web app, shared design tokens) · TestFlight beta · App Store + Play Store submission", votes: 124 },
+      { title: "EU Joint Controller Agreement with Mendi", desc: "Drafts a JCA + DPIA + GDPR Art. 9 explicit-consent flow before any EU at-home Mendi user enters a clinical view. Gates Q4 EU onboarding + Coaching alpha", votes: 47 },
       { title: "Hyperscanning (multi-headset)",        desc: "Dyadic + 4-person group studies · ms-precision LSL alignment", votes: 41 },
       { title: "Apple Watch HRV native",               desc: "WatchOS app · pairs with EEGBase session in real-time", votes: 38 },
       { title: "Offline mode (PWA)",                   desc: "Run a session without internet · sync when connection returns", votes: 27 },

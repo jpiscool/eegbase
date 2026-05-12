@@ -220,7 +220,8 @@ export default function MendiPartnershipPage() {
                 bullets: [
                   "Mendi BLE SDK streams session data into EEGBase",
                   "Clinician dashboard pulls live session data",
-                  "Clients authorize data sharing in Mendi app",
+                  "Per-clinician explicit consent in the Mendi app — revocable at any time (GDPR Art. 9 / HIPAA authorization)",
+                  "Joint Controller Agreement signed with Mendi before any EU at-home data lands in a clinical view",
                   "Engineering effort split between Mendi (SDK build) and EEGBase (adapter wiring)",
                 ],
                 accent: violet,

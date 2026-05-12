@@ -71,6 +71,20 @@ export default function SecurityPage() {
           <p style={{ marginTop: 12, fontSize: 12, color: "#94A3B8" }}>Bug bounty program launching in a future update. Out of scope today: third-party services (Stripe, AWS, Daily.co), self-hosted deployments outside our control.</p>
         </Section>
 
+        <Section title="EU data sharing">
+          <p>When a Mendi at-home user&rsquo;s session data flows into an EU clinician&rsquo;s EEGBase view, EEGBase and Mendi are <strong>joint controllers</strong> of that personal data under GDPR Art. 26. We treat that as a real legal artifact, not a checkbox.</p>
+          <p style={{ marginTop: 12 }}><strong>Before any EU at-home Mendi data lands in a clinical EEGBase view, we will have in place:</strong></p>
+          <ul style={{ listStyle: "disc", paddingLeft: 20, marginTop: 6, lineHeight: 1.8 }}>
+            <li><strong>Joint Controller Agreement (JCA)</strong> signed with Mendi — defines who responds to access requests, who notifies on breach, who&rsquo;s liable for what</li>
+            <li><strong>Data Protection Impact Assessment (DPIA)</strong> on file — required for high-risk processing of health + AI under GDPR Art. 35</li>
+            <li><strong>GDPR Art. 9 explicit, purpose-specific consent</strong> in the Mendi consumer app — separate consent per clinician, revocable at any time, never a single generic toggle</li>
+            <li><strong>Lawful basis</strong> documented per processing activity (consent for at-home sharing, legitimate interest for clinical record-keeping, legal obligation for retention)</li>
+          </ul>
+          <p style={{ marginTop: 12 }}><strong>Right to erasure (Art. 17) vs clinical retention.</strong> EU member states require clinical records to be retained 10–30 years (e.g. France 20y, Germany 10y, Sweden 10y). When an erasure request conflicts with retention, the clinical retention obligation wins for the regulated record; non-essential personal data is removed within 30 days and the user is informed of what was retained and why.</p>
+          <p style={{ marginTop: 12 }}><strong>Cross-border transfer.</strong> EU clinic data lives in Frankfurt (eu-west-3). When transfer outside the EEA is necessary (e.g. a US clinician credentialed at an EU clinic), EU SCCs (2021/914 Module 2) plus supplementary measures per Schrems II apply.</p>
+          <p style={{ marginTop: 12, fontSize: 12, color: "#94A3B8" }}>None of the Mendi-EU pieces are live yet — they gate EU clinic onboarding and the Coaching marketplace, both planned Q4 2026. Status updates appear on the <Link href="/roadmap" style={{ color: "#2563EB" }}>roadmap</Link>.</p>
+        </Section>
+
         <Section title="Incident response">
           <p><strong>P0 incident SLA · target on launch:</strong></p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginTop: 12 }}>
