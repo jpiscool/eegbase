@@ -1130,13 +1130,16 @@ export default function DemoClient({
         </a>
       </header>
 
-      {/* Demo-mode disclosure banner */}
-      <div role="status" style={{ background: "#FEF3C7", borderBottom: "1px solid #FCD34D", color: "#78350F", padding: "8px 24px", fontSize: 12, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap", textAlign: "center" }}>
-        <span style={{ fontSize: 14 }}>⚠️</span>
-        <span>
-          <strong style={{ fontWeight: 700 }}>Live demo</strong> · all client data is illustrative · email/SMS/calendar actions are simulated · Mendi BLE integration is in progress (independent reverse-engineered protocol — no Mendi SDK exists) and runs on simulator until hardware capture completes · click <strong style={{ fontWeight: 700 }}>“Run with live Claude Haiku”</strong> in AI Insights for a real model call
-        </span>
-      </div>
+      {/* Demo-mode disclosure banner — hidden in the authenticated
+          'strip' view since clinicians are using real data, not the demo. */}
+      {appMode !== "strip" && (
+        <div role="status" style={{ background: "#FEF3C7", borderBottom: "1px solid #FCD34D", color: "#78350F", padding: "8px 24px", fontSize: 12, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap", textAlign: "center" }}>
+          <span style={{ fontSize: 14 }}>⚠️</span>
+          <span>
+            <strong style={{ fontWeight: 700 }}>Live demo</strong> · all client data is illustrative · email/SMS/calendar actions are simulated · Mendi BLE integration is in progress (independent reverse-engineered protocol — no Mendi SDK exists) and runs on simulator until hardware capture completes · click <strong style={{ fontWeight: 700 }}>“Run with live Claude Haiku”</strong> in AI Insights for a real model call
+          </span>
+        </div>
+      )}
 
       {/* Skip-to-content link — appears on keyboard focus only.
           WCAG 2.4.1 'Bypass Blocks' compliance. */}
@@ -1235,20 +1238,22 @@ export default function DemoClient({
             <Bell size={14} strokeWidth={1.75} />
             <span style={{ position: "absolute", top: -3, right: -3, background: "#EF4444", color: "white", fontSize: 9, fontWeight: 700, borderRadius: 99, padding: "1px 5px", border: "1.5px solid #0F172A" }}>3</span>
           </button>
-          <div className="demo-topbar-client-wrap" style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
-            <span className="demo-topbar-client-label" style={{ fontSize: "0.72rem", color: "#94A3B8", fontWeight: 600 }}>Client:</span>
-            <select
-              aria-label="Select demo client"
-              value={demoClientIdx}
-              onChange={(e) => setDemoClientIdx(Number(e.target.value))}
-              className="demo-topbar-client-select"
-              style={{ fontSize: "0.78rem", fontWeight: 600, color: "white", border: "1px solid #334155", borderRadius: 6, padding: "4px 8px", background: "#1E293B", cursor: "pointer", outline: "none", maxWidth: "100%", textOverflow: "ellipsis" }}
-            >
-              {DEMO_CLIENTS.map((c, i) => (
-                <option key={c.name} value={i}>{c.name}</option>
-              ))}
-            </select>
-          </div>
+          {appMode !== "strip" && (
+            <div className="demo-topbar-client-wrap" style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
+              <span className="demo-topbar-client-label" style={{ fontSize: "0.72rem", color: "#94A3B8", fontWeight: 600 }}>Client:</span>
+              <select
+                aria-label="Select demo client"
+                value={demoClientIdx}
+                onChange={(e) => setDemoClientIdx(Number(e.target.value))}
+                className="demo-topbar-client-select"
+                style={{ fontSize: "0.78rem", fontWeight: 600, color: "white", border: "1px solid #334155", borderRadius: 6, padding: "4px 8px", background: "#1E293B", cursor: "pointer", outline: "none", maxWidth: "100%", textOverflow: "ellipsis" }}
+              >
+                {DEMO_CLIENTS.map((c, i) => (
+                  <option key={c.name} value={i}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
           {running && (
             <span className="demo-topbar-hide-mobile" style={{ fontSize: "0.78rem", color: "#34D399", fontWeight: 700, display: "flex", alignItems: "center", gap: 6, letterSpacing: "0.04em" }}>
               <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#34D399", display: "inline-block", animation: "pulse 1.5s infinite", boxShadow: "0 0 8px #34D39988" }} />
@@ -1264,9 +1269,11 @@ export default function DemoClient({
             <span style={{ color: "#475569" }}>·</span>
             <span>SOC 2</span>
           </span>
-          <a href="/login" style={{ fontSize: "0.82rem", fontWeight: 700, padding: "7px 16px", background: "#2563EB", color: "white", borderRadius: 8, textDecoration: "none", letterSpacing: "0.01em", whiteSpace: "nowrap", flexShrink: 0 }}>
-            Get Access <span aria-hidden>→</span>
-          </a>
+          {appMode !== "strip" && (
+            <a href="/login" style={{ fontSize: "0.82rem", fontWeight: 700, padding: "7px 16px", background: "#2563EB", color: "white", borderRadius: 8, textDecoration: "none", letterSpacing: "0.01em", whiteSpace: "nowrap", flexShrink: 0 }}>
+              Get Access <span aria-hidden>→</span>
+            </a>
+          )}
         </div>
       </div>
 
@@ -1685,12 +1692,19 @@ export default function DemoClient({
           <>
             {/* Context strip + Add Widget */}
             <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #60A5FA", borderRadius: 12, padding: "12px 18px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
-              <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(96,165,250,0.15)", color: "#60A5FA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <LayoutDashboard size={14} />
-              </div>
-              <span style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.5, flex: 1, minWidth: 0 }}>
-                <strong style={{ color: "#F1F5F9" }}>Your dashboard</strong> &mdash; pick widgets that pull live from any connected device. Layout saves to this browser. Hardware-agnostic by design.
-              </span>
+              {appMode !== "strip" && (
+                <>
+                  <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(96,165,250,0.15)", color: "#60A5FA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <LayoutDashboard size={14} />
+                  </div>
+                  <span style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.5, flex: 1, minWidth: 0 }}>
+                    <strong style={{ color: "#F1F5F9" }}>Your dashboard</strong> &mdash; pick widgets that pull live from any connected device. Layout saves to this browser. Hardware-agnostic by design.
+                  </span>
+                </>
+              )}
+              {/* In strip mode, push the buttons to the right with a spacer so
+                  the row still reads as a header. */}
+              {appMode === "strip" && <div style={{ flex: 1, minWidth: 0 }} />}
               {/* Live Mendi connect / disconnect — talks to the localhost
                   Python bridge (scripts/mendi-bridge.py). When connected,
                   the Mendi widgets (Mendi · 4 channels, Live focus score,
@@ -1730,27 +1744,28 @@ export default function DemoClient({
                   {mendiStatus === "error" ? "Connect device · Mendi bridge offline" : "Connect device"}
                 </button>
               )}
-              <select
-                value=""
-                onChange={(e) => {
-                  const presetId = e.target.value;
-                  if (!presetId) return;
-                  const preset = DASHBOARD_PRESETS.find((p) => p.id === presetId);
-                  if (!preset) return;
-                  dashboard.setWidgets(preset.ids);
-                  showToast(preset.id === "empty" ? "Cleared dashboard" : `Loaded layout: ${preset.label}`);
-                  // Reset select to placeholder so it can re-fire for the same value
-                  e.target.value = "";
-                }}
-                aria-label="Load dashboard preset"
-                style={{ display: "inline-flex", alignItems: "center", padding: "8px 12px", background: "rgba(15,23,42,0.7)", color: "#F1F5F9", border: "1px solid #334155", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
-                title="Load a curated dashboard layout"
-              >
-                <option value="" disabled hidden>Load layout…</option>
-                {DASHBOARD_PRESETS.map((p) => (
-                  <option key={p.id} value={p.id}>{p.label}</option>
-                ))}
-              </select>
+              {appMode !== "strip" && (
+                <select
+                  value=""
+                  onChange={(e) => {
+                    const presetId = e.target.value;
+                    if (!presetId) return;
+                    const preset = DASHBOARD_PRESETS.find((p) => p.id === presetId);
+                    if (!preset) return;
+                    dashboard.setWidgets(preset.ids);
+                    showToast(preset.id === "empty" ? "Cleared dashboard" : `Loaded layout: ${preset.label}`);
+                    e.target.value = "";
+                  }}
+                  aria-label="Load dashboard preset"
+                  style={{ display: "inline-flex", alignItems: "center", padding: "8px 12px", background: "rgba(15,23,42,0.7)", color: "#F1F5F9", border: "1px solid #334155", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
+                  title="Load a curated dashboard layout"
+                >
+                  <option value="" disabled hidden>Load layout…</option>
+                  {DASHBOARD_PRESETS.map((p) => (
+                    <option key={p.id} value={p.id}>{p.label}</option>
+                  ))}
+                </select>
+              )}
               <button
                 onClick={() => setDashboardPickerOpen(true)}
                 style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: "#2563EB", color: "white", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer" }}
@@ -1760,16 +1775,20 @@ export default function DemoClient({
             </div>
 
             {/* My Devices — sits above widgets so the operator can manage
-                what's paired before composing the dashboard around it. */}
-            <MyDevicesSection
-              pairedIds={devices.pairedIds}
-              onUnpair={(id) => {
-                devices.setPairedIds((prev) => prev.filter((x) => x !== id));
-                const d = DEVICE_REGISTRY.find((x) => x.id === id);
-                if (d) showToast(`Unpaired: ${d.name}`);
-              }}
-              onOpenConnect={() => setConnectDeviceOpen(true)}
-            />
+                what's paired before composing the dashboard around it.
+                Hidden in 'strip' mode — clinicians pair via the Connect
+                device button and won't see the management list yet. */}
+            {appMode !== "strip" && (
+              <MyDevicesSection
+                pairedIds={devices.pairedIds}
+                onUnpair={(id) => {
+                  devices.setPairedIds((prev) => prev.filter((x) => x !== id));
+                  const d = DEVICE_REGISTRY.find((x) => x.id === id);
+                  if (d) showToast(`Unpaired: ${d.name}`);
+                }}
+                onOpenConnect={() => setConnectDeviceOpen(true)}
+              />
+            )}
 
             {dashboard.hydrated && dashboard.widgets.length === 0 && (
               <DashboardEmptyState onAdd={() => setDashboardPickerOpen(true)} />
