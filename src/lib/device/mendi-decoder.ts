@@ -1,30 +1,29 @@
 /**
  * Pure Mendi packet decoder — no I/O, no BLE, just bytes → DeviceSample.
  *
- * Reverse-engineered from a real Mendi V4 (firmware 1.0.2) on 2026-05-13.
- * See AUDIT-2026-MENDI-BLE-PROTOCOL.md for full capture details.
+ * Reverse-engineered from a real Mendi V4 (firmware 1.0.2) on 2026-05-13
+ * and cross-validated against the public `eugenehp/mendi` Rust crate's
+ * `device_v4.proto` schema. See AUDIT-2026-MENDI-BLE-PROTOCOL.md for full
+ * capture + schema-lock details.
  *
- * Mendi sends fNIRS data over the streaming characteristic
- * `f55a451c-556e-2a92-e649-c4c6b1ab3efc` at ~31.2 Hz, encoded as
+ * Mendi sends fNIRS data over the Frame characteristic
+ * `fc3eabb1-c6c4-49e6-922a-6e551c455af5` at ~31.2 Hz, encoded as
  * Google Protocol Buffers wire-format messages of ~105 bytes.
  *
- * Each message carries 16+ fields: a sample counter, raw photodiode
- * intensities at multiple wavelengths, pre-computed ΔHb deltas,
- * a temperature float, and rolling counters / timestamps.
+ * The protobuf is the `mendi.Frame` message — 16 optional fields carrying:
+ *   - 3-axis accelerometer (fields 1-3, int16 LSB at ±2g)
+ *   - 3-axis gyroscope     (fields 4-6, int16 LSB at ±125 dps)
+ *   - scalp temperature    (field 7,  float32 °C)
+ *   - 3 raw photodiode triplets — left / right / pulse optodes (fields
+ *     8-16) for IR (940 nm), RED (660 nm), and AMBIENT (LED off) channels
  *
- * Field-to-channel mapping was derived empirically by diffing a quiet
- * baseline session against a serial-sevens cognitive-load session and
- * picking the fields with the largest, statistically-significant shifts
- * in the expected fNIRS direction (raw intensity DOWN, ΔHbO UP).
- *
- * Initial mappings — subject to refinement after first live session:
- *   field 10 → oxyHbLeft   (signed varint, units TBD ~ μM × 100)
- *   field 16 → oxyHbRight  (signed varint)
- *   field 11 → raw intensity left  (used to derive deoxyHbLeft heuristic)
- *   field 12 → raw intensity right (used to derive deoxyHbRight heuristic)
- *   field 7  → temperature (float32 °C)
- *   field 13 → reward / quality score (varint, scaled to 0-100)
- *   field 1  → sample sequence counter (for packet-loss detection)
+ * Mendi sends ONLY raw photodiode counts. There is no pre-computed ΔHb in
+ * the wire format — Beer-Lambert (or in our case, a simplified ratio
+ * proxy) runs client-side. Output ΔHbO/ΔHHb values are unitless relative
+ * changes scaled by an empirical SCALE constant; they are monotonic with
+ * true μM but NOT actually in μM. True μM calibration would need molar
+ * extinction coefficients, DPF, optode geometry, and the Calibration
+ * characteristic (0xABB6) — none yet wired.
  */
 
 import type { DeviceSample } from "./adapter";
@@ -105,9 +104,15 @@ export class MendiPacketDecoder {
     // of a wavelength, the photodiode count drops, so we negate.
     //   HbO ↑  ⇒  red intensity drops  ⇒  oxyHb proxy =  -(red - baseline)/baseline
     //   HHb ↑  ⇒  IR intensity drops   ⇒  deoxyHb proxy = -(ir  - baseline)/baseline
-    // The result is unitless (relative change). Scale to typical fNIRS μM
-    // range by multiplying by ~10 — empirical until we calibrate against
-    // the Mendi app's own reported values.
+    //
+    // IMPORTANT: this is a unitless relative-change ratio, NOT modified
+    // Beer-Lambert. Real μM calibration would need per-wavelength molar
+    // extinction coefficients, differential pathlength factor (DPF), and
+    // source-detector separation — none of which are wired yet. The output
+    // is monotonic with true ΔHbO/ΔHHb so direction is meaningful, but the
+    // magnitude is on an empirical scale, not μM. See AUDIT-2026-MENDI-BLE-
+    // PROTOCOL.md and scripts/mendi-capture/validation-runbook.md (Note on
+    // units) for the full caveats.
     const SCALE = 10;
     const oxyHbLeft =
       redLcor != null && this._baselineRedL && this._baselineRedL !== 0

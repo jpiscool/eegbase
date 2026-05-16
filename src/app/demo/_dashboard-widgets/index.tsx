@@ -1030,6 +1030,24 @@ export const WIDGET_CATALOG: WidgetDef[] = [
   },
 
   {
+    id: "mendi-reward-histogram",
+    title: "Reward distribution",
+    device: "Mendi headband",
+    icon: BarChart3,
+    blurb: "% of session time spent in each 20-point reward band.",
+    render: ({ sample }) => <MendiRewardHistogram rewardScore={sample?.rewardScore} />,
+  },
+
+  {
+    id: "mendi-trial-blocks",
+    title: "Trial-by-trial",
+    device: "Mendi headband",
+    icon: ClipboardList,
+    blurb: "Mean reward per 30-second trial — classic neurofeedback block view.",
+    render: ({ sample }) => <MendiTrialBlocks rewardScore={sample?.rewardScore} />,
+  },
+
+  {
     id: "mendi-pulse-hrv",
     title: "Mendi pulse · HRV",
     device: "Mendi headband",
@@ -1154,6 +1172,121 @@ function MendiPulseWaveform({ value }: { value: number | undefined }) {
       <div style={{ display: "flex", gap: 10, marginTop: 6, fontSize: 9.5, color: COLORS.muted, fontFamily: NUM }}>
         <span>pulse PPG · ir_p − amb_p · AC</span>
         <span style={{ marginLeft: "auto" }}>{data.length} samples</span>
+      </div>
+    </div>
+  );
+}
+
+// Reward distribution histogram — bins the entire session-lifetime reward
+// stream into 5 quintile buckets (0-20, 20-40, 40-60, 60-80, 80-100) and
+// shows the share of session time spent in each. Self-buffered.
+function MendiRewardHistogram({ rewardScore }: { rewardScore: number | undefined }) {
+  const bucketsRef = useRef<number[]>([0, 0, 0, 0, 0]);
+  const totalRef = useRef(0);
+  const [, force] = useState(0);
+  useEffect(() => {
+    if (rewardScore == null) return;
+    const idx = Math.min(4, Math.max(0, Math.floor(rewardScore / 20)));
+    bucketsRef.current[idx] += 1;
+    totalRef.current += 1;
+    if (totalRef.current % 10 === 0) force((t) => (t + 1) & 0xffff);
+  }, [rewardScore]);
+
+  const total = totalRef.current;
+  if (total < 10) return <Waiting label="≥ 10 samples"/>;
+
+  const buckets = bucketsRef.current;
+  const max = Math.max(...buckets);
+  const labels = ["0–20", "20–40", "40–60", "60–80", "80–100"];
+  const colors = [COLORS.alert, COLORS.alert, COLORS.warn, COLORS.ok, COLORS.violet];
+  const peakIdx = buckets.indexOf(max);
+
+  return (
+    <div style={{ padding: "8px 4px" }}>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 90 }}>
+        {buckets.map((v, i) => {
+          const h = max > 0 ? (v / max) * 80 : 0;
+          const pct = total > 0 ? (v / total) * 100 : 0;
+          return (
+            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+              <div style={{ fontSize: 9, color: colors[i], fontFamily: NUM, fontWeight: 700 }}>{pct.toFixed(0)}%</div>
+              <div style={{ width: "100%", height: h, background: colors[i], borderRadius: 3, transition: "height 0.3s ease" }} />
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
+        {labels.map((l, i) => (
+          <div key={l} style={{ flex: 1, textAlign: "center", fontSize: 9, color: i === peakIdx ? colors[i] : COLORS.muted, fontFamily: NUM, fontWeight: i === peakIdx ? 700 : 500 }}>
+            {l}
+          </div>
+        ))}
+      </div>
+      <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 8, lineHeight: 1.4 }}>
+        Peak time in <span style={{ color: colors[peakIdx], fontWeight: 700 }}>{labels[peakIdx]}</span> band over {Math.round(total / 10)}s.
+      </div>
+    </div>
+  );
+}
+
+// Trial-by-trial blocks — classic neurofeedback view. Aggregates reward into
+// fixed-size blocks (~30s each) and shows the most recent 6 as horizontal
+// bars coloured by their mean reward. Self-buffered.
+function MendiTrialBlocks({ rewardScore }: { rewardScore: number | undefined }) {
+  const currentBlockRef = useRef<number[]>([]);
+  const blocksRef = useRef<{ mean: number }[]>([]);
+  const totalRef = useRef(0);
+  const [, force] = useState(0);
+  const BLOCK_SIZE = 300; // ~30 s at 10 Hz
+
+  useEffect(() => {
+    if (rewardScore == null) return;
+    totalRef.current += 1;
+    currentBlockRef.current.push(rewardScore);
+    if (currentBlockRef.current.length >= BLOCK_SIZE) {
+      const arr = currentBlockRef.current;
+      const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
+      blocksRef.current.push({ mean });
+      if (blocksRef.current.length > 6) blocksRef.current.shift();
+      currentBlockRef.current = [];
+    }
+    if (totalRef.current % 10 === 0) force((t) => (t + 1) & 0xffff);
+  }, [rewardScore]);
+
+  const closed = blocksRef.current;
+  const partial = currentBlockRef.current;
+  const partialMean = partial.length > 0 ? partial.reduce((a, b) => a + b, 0) / partial.length : null;
+
+  const list: { mean: number; partial: boolean; label: string }[] = [];
+  closed.forEach((b, i) => list.push({ mean: b.mean, partial: false, label: `T-${closed.length - i}` }));
+  if (partialMean != null) list.push({ mean: partialMean, partial: true, label: "now" });
+
+  if (list.length === 0) {
+    const sec = Math.round(totalRef.current / 10);
+    return <Waiting label={`first 30s trial (${sec}s)`} />;
+  }
+
+  const colorFor = (v: number) =>
+    v >= 70 ? COLORS.ok : v >= 50 ? COLORS.cyan : v >= 30 ? COLORS.warn : COLORS.alert;
+
+  return (
+    <div style={{ padding: "8px 4px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        {list.map((b, i) => {
+          const col = colorFor(b.mean);
+          return (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ width: 36, fontSize: 9.5, color: COLORS.muted, fontFamily: NUM, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em" }}>{b.label}</span>
+              <div style={{ flex: 1, height: 14, background: "rgba(15,23,42,0.6)", border: "1px solid #1E293B", borderRadius: 3, overflow: "hidden" }}>
+                <div style={{ height: "100%", width: `${Math.max(2, Math.min(100, b.mean))}%`, background: col, opacity: b.partial ? 0.55 : 1, transition: "width 0.3s ease" }} />
+              </div>
+              <span style={{ width: 30, textAlign: "right", fontSize: 11, color: col, fontFamily: NUM, fontWeight: 700 }}>{b.mean.toFixed(0)}</span>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 8, lineHeight: 1.4 }}>
+        Each trial = {Math.round(BLOCK_SIZE / 10)}s · {closed.length} closed{partialMean != null ? " + 1 in progress" : ""}.
       </div>
     </div>
   );
@@ -1610,6 +1743,8 @@ export const DEFAULT_WIDGETS = [
   "mendi-head-pose",
   "mendi-workload",
   "mendi-session-arc",
+  "mendi-reward-histogram",
+  "mendi-trial-blocks",
   "mendi-ambient-light",
 ];
 
