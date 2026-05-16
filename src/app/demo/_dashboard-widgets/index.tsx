@@ -1590,6 +1590,47 @@ export function WidgetCard({ def, ctx, onRemove }: { def: WidgetDef; ctx: Widget
 
 // ── widget picker modal ──────────────────────────────────────────────────
 
+// Group the catalog into sections so the picker is scannable when the
+// total widget count is large. Order within each section matters.
+// Anything missing from these lists is shown under "Other" at the end.
+const WIDGET_SECTIONS: { name: string; blurb: string; ids: string[] }[] = [
+  {
+    name: "Mendi · Real-time fNIRS",
+    blurb: "Live oxy/deoxy traces, channels, asymmetry, brain heatmap.",
+    ids: ["mendi-channels", "hbo-trace", "hhb-trace", "tsi-gauge", "total-hbo", "brain-mini", "asymmetry"],
+  },
+  {
+    name: "Mendi · Pulse + HRV",
+    blurb: "Heart rate and HRV derived from the forehead pulse optode.",
+    ids: ["mendi-pulse-hr", "mendi-pulse-hrv", "mendi-pulse-waveform"],
+  },
+  {
+    name: "Mendi · Diagnostics",
+    blurb: "Signal rate, optode coupling, temp, motion, ambient.",
+    ids: ["mendi-fps", "mendi-signal-quality", "mendi-temperature", "mendi-stillness", "mendi-head-pose", "mendi-ambient-light"],
+  },
+  {
+    name: "Mendi · Clinical metrics",
+    blurb: "Derived indices: laterality, coherence, workload, vasomotor.",
+    ids: ["mendi-laterality", "mendi-coherence", "mendi-workload", "mendi-mayer-wave"],
+  },
+  {
+    name: "Mendi · Session analytics",
+    blurb: "How is the whole session trending?",
+    ids: ["mendi-session-arc", "mendi-reward-histogram", "mendi-trial-blocks", "mendi-engagement-time"],
+  },
+  {
+    name: "Cross-device",
+    blurb: "Reward score, EEG bands, HR/HRV — works with any paired device.",
+    ids: ["live-score", "reward-trace", "eeg-bands", "heart-rate", "hrv-live"],
+  },
+  {
+    name: "Personal",
+    blurb: "Session timer, devices list, sleep, check-in, quick note, breathing.",
+    ids: ["session-timer", "connected-devices", "sleep-last-night", "todays-checkin", "breathing-pacer", "reward-histogram", "quick-note"],
+  },
+];
+
 export function WidgetPicker({
   open,
   onClose,
@@ -1602,6 +1643,57 @@ export function WidgetPicker({
   onAdd: (id: string) => void;
 }) {
   if (!open) return null;
+
+  // Build the section -> defs map; collect anything missing into "Other".
+  const claimedIds = new Set(WIDGET_SECTIONS.flatMap((s) => s.ids));
+  const orphans = WIDGET_CATALOG.filter((d) => !claimedIds.has(d.id));
+  const sections = WIDGET_SECTIONS.map((s) => ({
+    ...s,
+    defs: s.ids
+      .map((id) => WIDGET_CATALOG.find((d) => d.id === id))
+      .filter((d): d is WidgetDef => !!d),
+  })).filter((s) => s.defs.length > 0);
+  if (orphans.length > 0) {
+    sections.push({ name: "Other", blurb: "Widgets without a section.", ids: orphans.map((o) => o.id), defs: orphans });
+  }
+
+  const renderCard = (def: WidgetDef) => {
+    const already = currentIds.includes(def.id);
+    const Icon = def.icon;
+    return (
+      <button
+        key={def.id}
+        onClick={() => { if (!already) onAdd(def.id); }}
+        disabled={already}
+        style={{
+          textAlign: "left",
+          background: already ? "rgba(15,23,42,0.4)" : "rgba(15,23,42,0.7)",
+          border: `1px solid ${already ? "#1E293B" : "#334155"}`,
+          borderRadius: 12,
+          padding: 14,
+          cursor: already ? "default" : "pointer",
+          opacity: already ? 0.5 : 1,
+          transition: "all 0.15s ease",
+          display: "flex",
+          flexDirection: "column",
+          gap: 6,
+          fontFamily: "inherit",
+          color: COLORS.ink,
+        }}
+        onMouseEnter={(e) => { if (!already) (e.currentTarget as HTMLButtonElement).style.borderColor = COLORS.blue; }}
+        onMouseLeave={(e) => { if (!already) (e.currentTarget as HTMLButtonElement).style.borderColor = "#334155"; }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Icon size={14} />
+          <span style={{ fontSize: 13, fontWeight: 700 }}>{def.title}</span>
+          {already && <span style={{ marginLeft: "auto", fontSize: 9, color: COLORS.ok, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>added</span>}
+        </div>
+        <div style={{ fontSize: 11, color: COLORS.muted, lineHeight: 1.4 }}>{def.blurb}</div>
+        <div style={{ fontSize: 10, color: "#64748B", marginTop: "auto", fontFamily: NUM, letterSpacing: "0.04em" }}>{def.device}</div>
+      </button>
+    );
+  };
+
   return (
     <div
       onClick={onClose}
@@ -1624,7 +1716,7 @@ export function WidgetPicker({
             <p style={{ fontSize: 11, fontWeight: 700, color: COLORS.blue, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Add widget</p>
             <h2 style={{ fontSize: 18, fontWeight: 800, color: COLORS.ink, margin: 0 }}>Pick what to show</h2>
             <p style={{ fontSize: 12, color: COLORS.muted, marginTop: 4 }}>
-              Each widget pulls from a connected device. Already-added widgets are dimmed.
+              {WIDGET_CATALOG.length} widgets across {sections.length} sections. Each pulls from a connected device. Already-added widgets are dimmed.
             </p>
           </div>
           <button
@@ -1636,44 +1728,18 @@ export function WidgetPicker({
           </button>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
-          {WIDGET_CATALOG.map((def) => {
-            const already = currentIds.includes(def.id);
-            const Icon = def.icon;
-            return (
-              <button
-                key={def.id}
-                onClick={() => { if (!already) onAdd(def.id); }}
-                disabled={already}
-                style={{
-                  textAlign: "left",
-                  background: already ? "rgba(15,23,42,0.4)" : "rgba(15,23,42,0.7)",
-                  border: `1px solid ${already ? "#1E293B" : "#334155"}`,
-                  borderRadius: 12,
-                  padding: 14,
-                  cursor: already ? "default" : "pointer",
-                  opacity: already ? 0.5 : 1,
-                  transition: "all 0.15s ease",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 6,
-                  fontFamily: "inherit",
-                  color: COLORS.ink,
-                }}
-                onMouseEnter={(e) => { if (!already) (e.currentTarget as HTMLButtonElement).style.borderColor = COLORS.blue; }}
-                onMouseLeave={(e) => { if (!already) (e.currentTarget as HTMLButtonElement).style.borderColor = "#334155"; }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <Icon size={14} />
-                  <span style={{ fontSize: 13, fontWeight: 700 }}>{def.title}</span>
-                  {already && <span style={{ marginLeft: "auto", fontSize: 9, color: COLORS.ok, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>added</span>}
-                </div>
-                <div style={{ fontSize: 11, color: COLORS.muted, lineHeight: 1.4 }}>{def.blurb}</div>
-                <div style={{ fontSize: 10, color: "#64748B", marginTop: "auto", fontFamily: NUM, letterSpacing: "0.04em" }}>{def.device}</div>
-              </button>
-            );
-          })}
-        </div>
+        {sections.map((section) => (
+          <div key={section.name} style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #1E293B" }}>
+              <h3 style={{ fontSize: 12, fontWeight: 800, color: COLORS.ink, margin: 0, textTransform: "uppercase", letterSpacing: "0.08em" }}>{section.name}</h3>
+              <span style={{ fontSize: 10, color: COLORS.muted, fontFamily: NUM }}>{section.defs.length} widget{section.defs.length === 1 ? "" : "s"}</span>
+            </div>
+            <p style={{ fontSize: 11, color: COLORS.muted, margin: 0, marginBottom: 10, lineHeight: 1.4 }}>{section.blurb}</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
+              {section.defs.map(renderCard)}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
