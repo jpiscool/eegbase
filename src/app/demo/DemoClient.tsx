@@ -154,7 +154,7 @@ const VALID_TABS: MainTab[] = [
 const isMainTab = (v: string): v is MainTab => (VALID_TABS as string[]).includes(v);
 
 export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: MainTab }) {
-  const adapterRef = useRef<SimulatorAdapter | null>(null);
+  const adapterRef = useRef<DeviceAdapter | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // URL + localStorage hybrid tab state.
