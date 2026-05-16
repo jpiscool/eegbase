@@ -65,7 +65,10 @@ const securityHeaders = [
       "img-src 'self' data: blob:",
       "font-src 'self' data:",
       "connect-src 'self' https://api.anthropic.com https://plausible.io ws://127.0.0.1:8765 ws://localhost:8765",
-      "upgrade-insecure-requests",
+      // Intentionally NOT setting `upgrade-insecure-requests` — it would
+      // upgrade our localhost-bridge ws:// → wss:// and break the Mendi flow.
+      // The bridge runs on the user's own machine over plaintext loopback;
+      // no real network exposure to upgrade.
     ].join("; "),
   },
 ];
