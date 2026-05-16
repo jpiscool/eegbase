@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import { LayoutDashboard, Activity, Settings, UserCircle, ChevronRight } from "lucide-react";
+import { LayoutDashboard, UserCircle, ChevronRight } from "lucide-react";
 import { clsx } from "clsx";
 import { SignOutButton } from "./SignOutButton";
 
@@ -12,10 +12,8 @@ import { SignOutButton } from "./SignOutButton";
 // minimum surface needed to validate Tier 0–1 against real Mendi hardware.
 // As each tier ships, add its routes back to NAV.
 const NAV: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/sessions",  label: "Sessions",  icon: Activity },
-  { href: "/profile",   label: "Profile",   icon: UserCircle },
-  { href: "/settings",  label: "Settings",  icon: Settings },
+  { href: "/dashboard", label: "My Dashboard", icon: LayoutDashboard },
+  { href: "/profile",   label: "Profile",      icon: UserCircle },
 ];
 
 export function Sidebar({
