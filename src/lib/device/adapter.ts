@@ -17,6 +17,19 @@ export interface DeviceSample {
   rewardScore?: number;
   heartRate?: number;   // BPM
   hrvRmssd?: number;    // RMSSD in ms
+
+  // Mendi-derived auxiliaries (also populated by the simulator so dashboard
+  // widgets keyed to these fields render in demo mode without hardware).
+  temperatureC?: number;        // Scalp temperature from Mendi temp sensor
+  accelMag?: number;            // Acceleration magnitude in g (1.0 = at rest)
+  stillness?: number;           // 0-100 derived stillness score (100 = motionless)
+  pulsePpg?: number;            // AC-component of forehead PPG (unitless, centred at 0)
+  pulseHrBpm?: number;          // BPM derived from the pulse optode
+  signalQualityL?: number;      // 0-100 left optode coupling quality
+  signalQualityR?: number;      // 0-100 right optode coupling quality
+  signalQualityP?: number;      // 0-100 pulse optode coupling quality
+  ambientLevel?: number;        // 0-100 ambient-light interference (lower = better)
+
   raw?: Record<string, unknown>;
 }
 

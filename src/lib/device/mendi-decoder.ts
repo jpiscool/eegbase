@@ -135,6 +135,114 @@ export class MendiPacketDecoder {
         ? Math.min(100, Math.max(0, 50 + (meanOxy.reduce((a, b) => a + b, 0) / meanOxy.length) * 50))
         : undefined;
 
+    // ── Mendi auxiliary derivations ──────────────────────────────────────
+    // Everything below uses raw protobuf fields that the original decoder
+    // discarded. None of it affects oxyHb*/deoxyHb*/rewardScore above.
+
+    // Scalp temperature — float32 °C, straight passthrough.
+    const tempRaw = numericField(fields, MENDI_FIELDS.TEMPERATURE);
+    const temperatureC =
+      tempRaw != null && tempRaw > 0 && tempRaw < 60 ? tempRaw : undefined;
+
+    // Accelerometer magnitude in g. Mendi V4 IMU is int16 LSB at ±2g
+    // (16384 LSB = 1g). At rest the headband sits on a head with gravity
+    // primarily on one axis, so |a| ≈ 1.0.
+    const ax = numericField(fields, MENDI_FIELDS.ACC_X);
+    const ay = numericField(fields, MENDI_FIELDS.ACC_Y);
+    const az = numericField(fields, MENDI_FIELDS.ACC_Z);
+    let accelMag: number | undefined;
+    if (ax != null && ay != null && az != null) {
+      accelMag = Math.sqrt(ax * ax + ay * ay + az * az) / 16384;
+    }
+
+    // Stillness 0–100. We track the deviation of |a| from the per-session
+    // resting magnitude over a rolling window of ~3 s (≈100 samples at 31 Hz)
+    // and map small deviations to high stillness scores. A motion spike
+    // drops the score; sustained calm rises it back.
+    let stillness: number | undefined;
+    if (accelMag != null) {
+      this._accelHistory.push(accelMag);
+      if (this._accelHistory.length > 100) this._accelHistory.shift();
+      if (this._accelRest == null) this._accelRest = accelMag;
+      // Exponentially track resting magnitude (slow). Motion deviates from it.
+      this._accelRest = this._accelRest * 0.98 + accelMag * 0.02;
+      const dev = Math.abs(accelMag - this._accelRest);
+      // 0.02 g (~typical micro-tremor) → 100, 0.30 g (head shake) → 0.
+      stillness = Math.max(0, Math.min(100, 100 - (dev / 0.30) * 100));
+    }
+
+    // Pulse photoplethysmogram (PPG): the forehead pulse optode picks up
+    // cardiac-driven blood-volume oscillation. ir_p minus amb_p removes
+    // ambient DC. We then high-pass via subtraction of a slow EMA so the
+    // output is centred near 0 and only the AC component survives.
+    const irP = numericField(fields, MENDI_FIELDS.IR_P);
+    const ambP = numericField(fields, MENDI_FIELDS.AMB_P);
+    let pulsePpg: number | undefined;
+    if (irP != null && ambP != null) {
+      const corrected = irP - ambP;
+      if (this._pulseDc == null) this._pulseDc = corrected;
+      this._pulseDc = this._pulseDc * 0.95 + corrected * 0.05; // slow EMA
+      pulsePpg = corrected - this._pulseDc;
+    }
+
+    // Heart rate from PPG: simple zero-crossing peak detector on the AC
+    // signal. We track time between successive upward crossings; the
+    // rolling average of inter-beat intervals → BPM. Bounded to 35–180 BPM
+    // physiological range. Stays undefined until ≥ 3 beats have arrived.
+    let pulseHrBpm: number | undefined;
+    if (pulsePpg != null) {
+      const nowMs = Date.now();
+      const prev = this._pulsePrev;
+      this._pulsePrev = pulsePpg;
+      if (prev != null && prev <= 0 && pulsePpg > 0) {
+        const last = this._lastBeatMs;
+        if (last != null) {
+          const ibi = nowMs - last;
+          if (ibi >= 333 && ibi <= 1714) { // 180–35 BPM
+            this._ibiHistory.push(ibi);
+            if (this._ibiHistory.length > 8) this._ibiHistory.shift();
+          }
+        }
+        this._lastBeatMs = nowMs;
+      }
+      if (this._ibiHistory.length >= 3) {
+        const meanIbi =
+          this._ibiHistory.reduce((a, b) => a + b, 0) / this._ibiHistory.length;
+        pulseHrBpm = Math.round(60000 / meanIbi);
+      }
+    }
+
+    // Per-optode signal quality: fraction of red - amb that sits above the
+    // ambient noise floor, scaled 0–100. A well-coupled optode produces
+    // large positive (red − amb) compared to |amb|. A loose optode → ratio
+    // collapses.
+    const computeQuality = (red?: number, amb?: number): number | undefined => {
+      if (red == null || amb == null) return undefined;
+      const signal = red - amb;
+      const noise = Math.abs(amb) + 50; // floor avoids div-by-zero
+      const ratio = Math.max(0, signal) / noise;
+      // Empirical: ratio > 5 maps to ~100, ratio < 0.2 maps to ~0.
+      return Math.max(0, Math.min(100, Math.log(1 + ratio) * 40));
+    };
+    const signalQualityL = computeQuality(redL, ambL);
+    const signalQualityR = computeQuality(redR, ambR);
+    const signalQualityP = computeQuality(
+      numericField(fields, MENDI_FIELDS.RED_P),
+      ambP
+    );
+
+    // Ambient light interference 0–100. We compare the absolute amb
+    // readings across the three optodes — bright rooms drive amb upward.
+    let ambientLevel: number | undefined;
+    const ambVals = [ambL, numericField(fields, MENDI_FIELDS.AMB_R), ambP]
+      .filter((v): v is number => v != null)
+      .map(Math.abs);
+    if (ambVals.length > 0) {
+      const meanAbs = ambVals.reduce((a, b) => a + b, 0) / ambVals.length;
+      // Empirical: 1k = clean, 8k = bright. Map 0..8000 → 0..100.
+      ambientLevel = Math.max(0, Math.min(100, (meanAbs / 8000) * 100));
+    }
+
     return {
       timestampMs: Date.now(),
       oxyHbLeft,
@@ -142,6 +250,15 @@ export class MendiPacketDecoder {
       deoxyHbLeft,
       deoxyHbRight,
       rewardScore,
+      temperatureC,
+      accelMag,
+      stillness,
+      pulsePpg,
+      pulseHrBpm,
+      signalQualityL,
+      signalQualityR,
+      signalQualityP,
+      ambientLevel,
     };
   }
 
@@ -151,6 +268,12 @@ export class MendiPacketDecoder {
     this._baselineRedL = null;
     this._baselineIrR = null;
     this._baselineRedR = null;
+    this._accelHistory = [];
+    this._accelRest = null;
+    this._pulseDc = null;
+    this._pulsePrev = null;
+    this._lastBeatMs = null;
+    this._ibiHistory = [];
     this.lastSeq = null;
     this.droppedPackets = 0;
   }
@@ -161,6 +284,14 @@ export class MendiPacketDecoder {
   private _baselineRedL: number | null = null;
   private _baselineIrR: number | null = null;
   private _baselineRedR: number | null = null;
+
+  // Auxiliary state for derived fields (accel/stillness, pulse PPG, HR).
+  private _accelHistory: number[] = [];
+  private _accelRest: number | null = null;
+  private _pulseDc: number | null = null;
+  private _pulsePrev: number | null = null;
+  private _lastBeatMs: number | null = null;
+  private _ibiHistory: number[] = [];
 
   /**
    * Decode protobuf wire-format into a {fieldNumber: value} map.

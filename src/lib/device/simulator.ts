@@ -49,6 +49,19 @@ export class SimulatorAdapter implements DeviceAdapter {
   private _hr = 68.0;     // BPM
   private _rmssd = 45.0;  // ms
 
+  // Mendi-auxiliary state (temperature, motion, pulse PPG, signal quality,
+  // ambient). All gently random-walked so the new dashboard widgets render
+  // plausible motion on the demo.
+  private _temperatureC = 33.4;        // typical scalp temp ~33–35 °C
+  private _accelMag = 1.001;           // ~1.0 g at rest
+  private _stillness = 92.0;
+  private _ppgPhase = 0;               // radians, for sinusoidal pulse
+  private _pulseBpm = 66.0;
+  private _sigQL = 87.0;
+  private _sigQR = 84.0;
+  private _sigQP = 91.0;
+  private _ambient = 18.0;             // % ambient interference
+
   async connect(): Promise<void> {
     this._connected = true;
     this._startMs = Date.now();
@@ -78,6 +91,22 @@ export class SimulatorAdapter implements DeviceAdapter {
       this._hr = randWalk(this._hr, 52, 95, 0.5);
       this._rmssd = randWalk(this._rmssd, 18, 90, 1.2);
 
+      // ── Mendi-auxiliary fields ─────────────────────────────────────────
+      this._temperatureC = randWalk(this._temperatureC, 32.5, 34.8, 0.04);
+      // Resting accel hovers around 1g with small jitter
+      this._accelMag = randWalk(this._accelMag, 0.96, 1.06, 0.012);
+      const accelDev = Math.abs(this._accelMag - 1.0);
+      this._stillness = Math.max(0, Math.min(100, 100 - accelDev * 800));
+      // Synthetic PPG: ~1 Hz sine plus tiny noise, modulated by pulseBpm
+      this._pulseBpm = randWalk(this._pulseBpm, 55, 78, 0.2);
+      this._ppgPhase += (this._pulseBpm / 60) * 2 * Math.PI * 0.1; // 10 Hz tick
+      const ppg = Math.sin(this._ppgPhase) * 0.85 + (Math.random() - 0.5) * 0.1;
+      // Signal quality drifts with optode coupling
+      this._sigQL = randWalk(this._sigQL, 70, 96, 0.6);
+      this._sigQR = randWalk(this._sigQR, 70, 96, 0.6);
+      this._sigQP = randWalk(this._sigQP, 75, 98, 0.5);
+      this._ambient = randWalk(this._ambient, 8, 45, 0.4);
+
       // Reward: prefrontal oxygenation-based (0–100)
       const oxyAvg = (this._oxyL + this._oxyR) / 2;
       const reward = Math.max(0, Math.min(100, 50 + oxyAvg * 80 + trend * 15));
@@ -96,6 +125,15 @@ export class SimulatorAdapter implements DeviceAdapter {
         rewardScore: Math.round(reward * 10) / 10,
         heartRate: Math.round(this._hr * 10) / 10,
         hrvRmssd: Math.round(this._rmssd * 10) / 10,
+        temperatureC: Math.round(this._temperatureC * 100) / 100,
+        accelMag: Math.round(this._accelMag * 1000) / 1000,
+        stillness: Math.round(this._stillness),
+        pulsePpg: Math.round(ppg * 1000) / 1000,
+        pulseHrBpm: Math.round(this._pulseBpm),
+        signalQualityL: Math.round(this._sigQL),
+        signalQualityR: Math.round(this._sigQR),
+        signalQualityP: Math.round(this._sigQP),
+        ambientLevel: Math.round(this._ambient),
       };
 
       this._callbacks.forEach((cb) => cb(sample));

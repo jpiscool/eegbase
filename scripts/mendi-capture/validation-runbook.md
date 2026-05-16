@@ -42,7 +42,7 @@ When all four checks below pass, Phase 6 of the build plan (site copy: flip "in 
 - [ ] Row in `sessions` table with `device_type='mendi'`.
 - [ ] ≥ 2,500 rows in `session_data_points` for that session_id (5 min × 60 s × 10 Hz × 0.85 floor).
 - [ ] Reload `/sessions/[id]` → the saved chart re-renders.
-- [ ] Mean HbO over the session is in physiological range (~ ±0.2 μM).
+- [ ] Mean ΔHbO proxy over the session is in the **±2 (unitless, scaled ×10)** range produced by `MendiPacketDecoder`. Values are not in μM — see note at the bottom of this runbook.
 
 Save the session id as `BASELINE_SESSION_ID`.
 
@@ -54,7 +54,7 @@ Save the session id as `BASELINE_SESSION_ID`.
 
 **Pass criteria:**
 - [ ] Same data-quality metrics as Test 2.
-- [ ] Mean HbO during minute 3 of this session is **at least 0.05 μM higher** than mean HbO during minute 3 of `BASELINE_SESSION_ID`. This is a loose physiological floor — real activations are usually 0.1–0.3 μM.
+- [ ] Mean ΔHbO proxy during minute 3 of this session is **at least 0.05 higher (in the decoder's unitless ×10 scale)** than mean during minute 3 of `BASELINE_SESSION_ID`. The proxy is monotonic with true ΔHbO so direction is meaningful; the threshold is empirical, not physiological.
 
 Save as `TASK_SESSION_ID`.
 
@@ -110,3 +110,18 @@ Commit message convention:
 ```
 mendi: validated with hardware (session id <id>) — flip "live" across site
 ```
+
+---
+
+## Note on units
+
+The current `MendiPacketDecoder` outputs a **unitless ΔHbO/ΔHHb proxy** scaled by an empirical `SCALE = 10`, not real μM. The formula is `-((red_cor - baseline_red_cor) / baseline_red_cor) × 10`, a simplified ratio against the first-packet baseline of `red - amb` (ambient-corrected red intensity).
+
+This proxy is monotonic with true ΔHbO — when prefrontal HbO rises, the proxy rises — so direction-based pass criteria above are valid. However, the *magnitude* is arbitrary. True μM calibration requires:
+
+1. Per-wavelength molar extinction coefficients (ε_HbO and ε_HHb at 660 nm and 940 nm)
+2. Differential pathlength factor (DPF) for the forehead at adult age
+3. Source-detector separation (Mendi V4 optode geometry)
+4. The `Calibration` characteristic (`fc3eabb6-...`) for per-channel offsets
+
+None of those are wired in yet. Treat the proxy as a relative activation signal until full mBLL is implemented.

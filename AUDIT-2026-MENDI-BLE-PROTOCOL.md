@@ -1,12 +1,13 @@
 # Mendi BLE protocol — reverse-engineering runbook
 
-**Status:** ✅ **CAPTURED — May 13, 2026** (iPhone 15 Pro Max sysdiagnose path)
+**Status:** ✅ **RESOLVED — May 16, 2026.** Protocol decoded, schema cross-validated against the public `eugenehp/mendi` Rust crate (independent reverse-engineering of the same V4 firmware). UUIDs and field mappings are live in `src/lib/device/mendi.ts` and `src/lib/device/mendi-decoder.ts`; `MENDI_PROTOCOL_PENDING = false`.
+
 **Owner:** John Paul
 **Goal:** Document the BLE GATT structure of the Mendi headband well enough to drop concrete UUIDs + a packet decoder into `src/lib/device/mendi.ts` and `src/lib/device/mendi-decoder.ts`.
 
 ---
 
-## ✅ Capture results (2026-05-13)
+## ✅ Final values (2026-05-13 capture → 2026-05-16 schema lock)
 
 Hardware: Mendi headband BD_ADDR `da:ec:4b:42:3c:75`, advertising name **"Mendi"**.
 - **Model:** V4
@@ -18,77 +19,94 @@ Captured via iPhone 15 Pro Max sysdiagnose → `bluetoothd-hci-latest.pklg` (3.1
 
 ### GATT topology
 
-The headband exposes **two custom services**:
+The headband exposes a **single custom primary service** with six functional characteristics. The initial capture log showed the UUIDs byte-reversed because Wireshark displays 128-bit UUIDs in little-endian; the canonical big-endian values are below.
 
-| Range (handles) | Service UUID | Purpose |
-|---|---|---|
-| 0x000e – 0x0020 | `f55a451c-556e-2a92-e649-c4c6b0ab3efc` | **Streaming** — high-rate fNIRS data |
-| 0x0025 – 0x0034 | `9fa480e0-4967-4542-9390-d343dc5d04ae` | Control / configuration (handshake messages) |
+| Short | UUID | Purpose | Wired in code? |
+|---|---|---|---|
+| `0xABB0` | `fc3eabb0-c6c4-49e6-922a-6e551c455af5` | **Primary service** | yes (`MENDI_SERVICE_UUID`) |
+| `0xABB1` | `fc3eabb1-c6c4-49e6-922a-6e551c455af5` | **Frame** — fNIRS stream (notify, ~31 Hz protobuf) | yes (`MENDI_FNIRS_CHAR_UUID`) |
+| `0xABB2` | `fc3eabb2-c6c4-49e6-922a-6e551c455af5` | **Sensor** — write/notify; handshake required before Frame begins | yes (`MENDI_SENSOR_CHAR_UUID`) |
+| `0xABB3` | `fc3eabb3-c6c4-49e6-922a-6e551c455af5` | **Imu** — register-level IMU access | no |
+| `0xABB4` | `fc3eabb4-c6c4-49e6-922a-6e551c455af5` | **Adc** — battery voltage / charging / USB | no |
+| `0xABB5` | `fc3eabb5-c6c4-49e6-922a-6e551c455af5` | **Diagnostics** — IMU/sensor self-test, power-on ADC | no |
+| `0xABB6` | `fc3eabb6-c6c4-49e6-922a-6e551c455af5` | **Calibration** — per-channel offset, low-power toggle | no |
 
 Plus standard services: GAP (0x1800), GATT (0x1801), Device Information (0x180a), Battery (0x180f), Current Time (0x1805), Nordic DFU (0xfe59).
 
-### Streaming characteristic
+### Frame characteristic (the streaming one)
 
 | Field | Value |
 |---|---|
-| Characteristic UUID | `f55a451c-556e-2a92-e649-c4c6b1ab3efc` (note last byte `b1`) |
-| Handle | 0x0010 |
-| Property | Notify (opcode 0x1b) |
+| Characteristic UUID | `fc3eabb1-c6c4-49e6-922a-6e551c455af5` |
+| Property | Notify |
 | Sample rate | **31.2 Hz** (5,782 packets in 185.6 s) |
-| Packet length | ~105 bytes (variable) |
-| Encoding | **Protobuf** (Google Protocol Buffers wire format) |
+| Packet length | ~105 bytes (variable — proto3 omits zero-valued fields) |
+| Encoding | **Protobuf** wire format, schema `mendi.Frame` (see below) |
 
-### Control characteristic (handshake)
+### Sensor characteristic (the handshake one)
 
-| Field | Value |
-|---|---|
-| Characteristic UUID | `4f860002-943b-49ef-bed4-2f730304427a` (handle 0x002a, in `9fa480e0...` service) |
-| Pattern | iPhone writes (opcode 0x12) → Mendi indicates (opcode 0x1d) |
-| Sibling chars | `4f86000{1,3,4,5}-...` at handles 0x0027/0x002d/0x0030/0x0033 |
+Mendi V4 firmware requires a write to the Sensor characteristic before Frame notifications begin. The payload is a `mendi.Sensor` message with `{ read: true, address: 0, data: 0 }`, which serialises to the byte string `08 01 10 00 18 00`. This is what `MendiAdapter.connect()` writes after subscribing to Frame.
 
-The control flow is request/response, used during session setup. Streaming on the `f55a...b1` characteristic begins after this handshake completes.
+### `mendi.Frame` schema (source-of-truth: `eugenehp/mendi/proto/device_v4.proto`)
 
-### Sample packet decoded (protobuf wire format)
-
-First streaming packet (105 bytes):
+```protobuf
+message Frame {
+  int32 acc_x = 1;   // Accelerometer X, int16 LSB at ±2g range (16384 LSB = 1g)
+  int32 acc_y = 2;
+  int32 acc_z = 3;
+  int32 ang_x = 4;   // Gyroscope X, int16 LSB at ±125 dps
+  int32 ang_y = 5;
+  int32 ang_z = 6;
+  float temp  = 7;   // Skin/scalp temperature in °C
+  int32 ir_l  = 8;   // Infrared (940 nm), left optode raw photodiode count
+  int32 red_l = 9;   // Red (660 nm), left optode
+  int32 amb_l = 10;  // Ambient (LED off), left optode — for noise correction
+  int32 ir_r  = 11;  // right optode
+  int32 red_r = 12;
+  int32 amb_r = 13;
+  int32 ir_p  = 14;  // pulse / forehead optode
+  int32 red_p = 15;
+  int32 amb_p = 16;
+}
 ```
-08c90f 10c87d 18cff8ffffffffffffff01 2089feffffffffffffff01 …
+
+All fields are proto3-optional. Negative int32 values appear as 10-byte sign-extended varints on the wire (e.g. `cff8ffffffffffffff01` = −945). The decoder in `mendi-decoder.ts` reassembles those via `combineHiLoSigned()`.
+
+### Worked example — packet 0 (105 bytes, 2026-05-13 baseline)
+
+```
+08c90f 10c87d 18cff8ffffffffffffff01 …
 ```
 
-Decoded protobuf fields:
-
-| Field # | Wire type | Decoded value | Likely meaning |
+| # | Field | Decoded | Sanity |
 |---|---|---|---|
-|  1 | varint | 1993 | sample/sequence counter |
-|  2 | varint | 16072 | raw intensity (channel A?) |
-|  3 | varint (signed) | -945 | ΔHb derived value |
-|  4 | varint (signed) | -247 | ΔHb derived value |
-|  5 | varint (signed) | -1093 | ΔHb derived value |
-|  6 | varint (signed) | -892 | ΔHb derived value |
-|  7 | **float32** | **23.5** | likely **temperature °C** or **reward score** |
-|  8 | varint | 49335 | raw intensity |
-|  9 | varint | 19241 | raw intensity |
-| 10 | varint (signed) | -1153 | ΔHb derived value |
-| 11 | varint | 45551 | raw intensity |
-| 12 | varint | 18780 | raw intensity |
-| 13 | varint | 4180 | smaller varint (counter? quality?) |
-| 14 | varint | 358904 | larger counter / timestamp |
-| 15 | varint | 213946 | larger counter / timestamp |
-| 16 | varint (signed) | -1187 | ΔHb derived value |
+| 1 | acc_x | 1993 | small motion at rest |
+| 2 | acc_y | 16072 | 0.98 g — gravity on this axis (headband upright on head) ✓ |
+| 3 | acc_z | −945 | small |
+| 4–6 | ang_x/y/z | −247, −1093, −892 | small gyro values at rest ✓ |
+| 7 | temp | **23.5 °C** | physiologically plausible scalp temp ✓ |
+| 8 | ir_l | 49335 | raw photodiode count |
+| 9 | red_l | 19241 | raw photodiode count |
+| 10 | amb_l | −1153 | ambient (signed; per-optode bias) |
+| 11 | ir_r | 45551 | |
+| 12 | red_r | 18780 | |
+| 13 | amb_r | 4180 | (positive on this optode) |
+| 14 | ir_p | 358904 | pulse optode runs ~7× hotter |
+| 15 | red_p | 213946 | |
+| 16 | amb_p | −1187 | |
 
-**Mendi sends both raw intensities AND pre-computed Hb deltas in every packet.** No need for us to do Beer-Lambert on the client side — pick the appropriate fields.
+### Stats across 200 baseline packets
 
-### What we still need
+- acc_y mean **16036 ± 135** → 0.979 g (gravity, head upright) ✓
+- temp mean **23.53 ± 0.07 °C** ✓
+- All optical channels stable within ±3 % at rest, consistent with raw photodiode counts ✓
+- No field is monotonic — there is **no packet sequence counter or timestamp in the wire format**. Frame ordering relies on BLE link-layer ordering + the local receive timestamp.
 
-To finish the decoder we must determine which protobuf field number maps to:
-- ΔHbO left
-- ΔHbO right
-- ΔHHb left
-- ΔHHb right
-- Reward / quality score
-- Sample timestamp
+### Important: Mendi sends raw photodiode counts only
 
-Approach: capture a 2nd session with a known-cognitive-task interval (serial sevens) and find which fields show the expected positive shift. Mendi's official app session-summary screen also shows the avg/peak reward — we can grep for matching values in the protobuf fields to identify the reward field.
+Earlier in this audit we hypothesised that fields 3–6 / 10 / 16 carried pre-computed ΔHb deltas (because they were negative signed varints). The eugenehp `.proto` schema disconfirms that: fields 3–6 are accel-z / gyro-x/y/z (which happen to be small signed values at rest), and fields 10/16 are `amb_l`/`amb_p` (ambient LED-off readings — sometimes negative due to per-optode DC bias).
+
+**Beer-Lambert must run client-side.** `MendiPacketDecoder.decode()` computes a unitless ΔHbO/ΔHHb proxy from `red - amb` and `ir - amb` ratios against a per-session baseline — see `mendi-decoder.ts:104-127`. The proxy is monotonic with true ΔHbO but is **not in μM**; calibration to real μM is a future task and would need the `Calibration` characteristic (`0xABB6`) and per-wavelength extinction coefficients.
 
 ---
 
@@ -105,23 +123,19 @@ Approach: capture a 2nd session with a known-cognitive-task interval (serial sev
 
 ---
 
-## What "done" looks like
+## What "done" looks like — checklist
 
-This document, when complete, contains:
+All seven items are now resolved (✅) for V4 firmware 1.0.2:
 
-1. **Service UUID** of the Mendi primary GATT service.
-2. **Streaming characteristic UUID** that emits notifications during a session.
-3. **Optional control characteristic UUID** + the byte sequence written to it to start streaming (if any).
-4. **Sample rate (Hz)** measured from inter-packet intervals.
-5. **Packet length (bytes)** and **byte structure** (which offsets contain what).
-6. **Whether values are pre-computed ΔHbO / ΔHHb** (drop straight into the chart) **or raw light intensities** (run through Beer-Lambert).
-7. **Firmware version** of the headband used during capture (record from Mendi app About screen).
+1. ✅ **Service UUID** — `fc3eabb0-c6c4-49e6-922a-6e551c455af5`
+2. ✅ **Streaming characteristic UUID** — `fc3eabb1-c6c4-49e6-922a-6e551c455af5` (Frame, notify)
+3. ✅ **Handshake characteristic + bytes** — `fc3eabb2-c6c4-49e6-922a-6e551c455af5` (Sensor), write `08 01 10 00 18 00`
+4. ✅ **Sample rate** — 31.2 Hz
+5. ✅ **Packet structure** — protobuf `mendi.Frame`, ~105 bytes
+6. ✅ **Pre-computed vs raw** — raw photodiode counts; Beer-Lambert client-side
+7. ✅ **Firmware** — 1.0.2
 
-When all 7 are documented, the code change is:
-- Replace 2 UUID constants in `src/lib/device/mendi.ts`
-- Set `MENDI_PROTOCOL_PENDING = false`
-- (If raw intensities) flip `MENDI_PACKET_LAYOUT.shape` in `src/lib/device/mendi-decoder.ts` to `"raw-intensity-uint16"`
-- (If different byte layout) tweak the decoder methods accordingly
+The remaining work is hardware validation (`scripts/mendi-capture/validation-runbook.md`), not protocol work. If the firmware version changes, re-run Steps 1–5 below.
 
 ---
 

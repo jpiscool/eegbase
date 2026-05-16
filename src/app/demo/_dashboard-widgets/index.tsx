@@ -739,7 +739,289 @@ export const WIDGET_CATALOG: WidgetDef[] = [
     blurb: "Frames/sec — should sit at ~31 Hz when streaming cleanly.",
     render: ({ sample }) => <MendiFpsWidget timestampMs={sample?.timestampMs} />,
   },
+
+  // ── Mendi auxiliary widgets ──────────────────────────────────────────────
+  // Surface fields that the Mendi protobuf carries but the original widget
+  // catalog ignored: temp, accel, raw pulse-optode PPG, per-optode coupling
+  // quality, ambient-light interference. Plus two derived metrics (laterality
+  // index, bilateral coherence) computed from the existing HbO buffers.
+
+  {
+    id: "mendi-pulse-hr",
+    title: "Mendi pulse · BPM",
+    device: "Mendi headband",
+    icon: HeartPulse,
+    blurb: "Heart rate from the forehead pulse optode (no chest strap needed).",
+    render: ({ sample }) => {
+      const v = sample?.pulseHrBpm ?? null;
+      if (v == null) return <Waiting label="pulse-optode PPG" />;
+      const zone =
+        v < 50 ? { c: COLORS.blue, l: "low" }
+        : v < 80 ? { c: COLORS.ok, l: "resting" }
+        : v < 110 ? { c: COLORS.warn, l: "elevated" }
+        : { c: COLORS.alert, l: "high" };
+      return (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", padding: "10px 0" }}>
+          <div style={{ fontFamily: NUM, fontSize: 48, fontWeight: 800, color: zone.c, letterSpacing: "-0.03em", lineHeight: 1 }}>{v}</div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 4, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>BPM · forehead PPG</div>
+          <div style={{ fontSize: 11, color: zone.c, marginTop: 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>· {zone.l}</div>
+          <div style={{ fontSize: 9.5, color: COLORS.muted, marginTop: 6, lineHeight: 1.4, textAlign: "center", padding: "0 6px" }}>
+            Pulse optode IR channel ÷ ambient. No chest strap.
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "mendi-pulse-waveform",
+    title: "Pulse waveform · PPG",
+    device: "Mendi headband",
+    icon: Activity,
+    blurb: "Live AC component of the forehead pulse photoplethysmogram.",
+    render: ({ sample }) => <MendiPulseWaveform value={sample?.pulsePpg} />,
+  },
+
+  {
+    id: "mendi-temperature",
+    title: "Scalp temperature",
+    device: "Mendi headband",
+    icon: Droplets,
+    blurb: "Skin-surface temperature under the headband (typical 32–35 °C).",
+    render: ({ sample }) => {
+      const v = sample?.temperatureC ?? null;
+      if (v == null) return <Waiting label="Mendi temp sensor" />;
+      const inRange = v >= 31 && v <= 36;
+      const tooLow = v < 31;
+      const color = inRange ? COLORS.ok : tooLow ? COLORS.blue : COLORS.warn;
+      const pct = Math.max(0, Math.min(100, ((v - 28) / 10) * 100));
+      return (
+        <div style={{ padding: "8px 4px" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 10 }}>
+            <span style={{ fontFamily: NUM, fontSize: 38, fontWeight: 800, color, lineHeight: 1, letterSpacing: "-0.02em" }}>{v.toFixed(2)}</span>
+            <span style={{ fontSize: 13, color: COLORS.muted, fontWeight: 600 }}>°C</span>
+          </div>
+          <MiniBar pct={pct} color={color} />
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: COLORS.muted, fontFamily: NUM, marginTop: 4 }}>
+            <span>28 °C</span><span>typical 32–35 °C</span><span>38 °C</span>
+          </div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 10, lineHeight: 1.4 }}>
+            A small upward drift during a session is normal and correlates with PFC activation. A drop usually means the band has shifted.
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "mendi-stillness",
+    title: "Stillness · motion",
+    device: "Mendi headband",
+    icon: Target,
+    blurb: "0-100 stillness score from the on-board IMU — high = clean fNIRS.",
+    render: ({ sample }) => {
+      const v = sample?.stillness ?? null;
+      if (v == null) return <Waiting label="IMU" />;
+      const accel = sample?.accelMag ?? null;
+      const color = v >= 80 ? COLORS.ok : v >= 50 ? COLORS.warn : COLORS.alert;
+      const label = v >= 80 ? "still" : v >= 50 ? "minor motion" : "moving · signal degraded";
+      return (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", padding: "10px 0" }}>
+          <div style={{ fontFamily: NUM, fontSize: 52, fontWeight: 800, color, letterSpacing: "-0.03em", lineHeight: 1 }}>{Math.round(v)}</div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 4, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>stillness · 0–100</div>
+          <div style={{ fontSize: 11, color, marginTop: 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>· {label}</div>
+          {accel != null && (
+            <div style={{ fontSize: 9.5, color: COLORS.muted, marginTop: 6, fontFamily: NUM }}>
+              |a| {accel.toFixed(3)} g
+            </div>
+          )}
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "mendi-signal-quality",
+    title: "Optode coupling",
+    device: "Mendi headband",
+    icon: Sigma,
+    blurb: "Per-optode signal quality (L, R, Pulse) — green = good skin contact.",
+    render: ({ sample }) => {
+      const L = sample?.signalQualityL;
+      const R = sample?.signalQualityR;
+      const P = sample?.signalQualityP;
+      if (L == null && R == null && P == null) return <Waiting label="Mendi optodes" />;
+      const row = (label: string, v: number | undefined) => {
+        if (v == null) return null;
+        const color = v >= 70 ? COLORS.ok : v >= 40 ? COLORS.warn : COLORS.alert;
+        return (
+          <div key={label} style={{ marginBottom: 8 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+              <span style={{ fontSize: 10, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</span>
+              <span style={{ fontFamily: NUM, fontSize: 12, fontWeight: 700, color }}>{Math.round(v)}</span>
+            </div>
+            <MiniBar pct={v} color={color} />
+          </div>
+        );
+      };
+      return (
+        <div style={{ padding: "4px 0" }}>
+          {row("Left optode",  L)}
+          {row("Right optode", R)}
+          {row("Pulse optode", P)}
+          <div style={{ fontSize: 9.5, color: COLORS.muted, marginTop: 8, lineHeight: 1.4 }}>
+            Derived from each optode&apos;s (red − amb) over noise floor. ≥ 70 is clinical-grade.
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "mendi-ambient-light",
+    title: "Ambient interference",
+    device: "Mendi headband",
+    icon: Search,
+    blurb: "Room-light noise picked up by the LED-off channel. Lower = better.",
+    render: ({ sample }) => {
+      const v = sample?.ambientLevel ?? null;
+      if (v == null) return <Waiting label="amb channels" />;
+      const color = v <= 25 ? COLORS.ok : v <= 55 ? COLORS.warn : COLORS.alert;
+      const label = v <= 25 ? "clean" : v <= 55 ? "moderate" : "high · dim the lights";
+      return (
+        <div style={{ padding: "8px 4px" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 10 }}>
+            <span style={{ fontFamily: NUM, fontSize: 38, fontWeight: 800, color, lineHeight: 1, letterSpacing: "-0.02em" }}>{Math.round(v)}</span>
+            <span style={{ fontSize: 12, color: COLORS.muted, fontWeight: 600 }}>%</span>
+          </div>
+          <MiniBar pct={v} color={color} />
+          <div style={{ fontSize: 11, color, marginTop: 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>· {label}</div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 8, lineHeight: 1.4 }}>
+            From amb_l/amb_r/amb_p. Sunlight near a window can swamp the optical signal.
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "mendi-laterality",
+    title: "Laterality index",
+    device: "Mendi headband",
+    icon: Scale,
+    blurb: "Normalized (L−R)/(|L|+|R|) — independent of overall HbO magnitude.",
+    render: ({ sample }) => {
+      const L = sample?.oxyHbLeft;
+      const R = sample?.oxyHbRight;
+      if (L == null || R == null) return <Waiting label="Mendi feed" />;
+      const denom = Math.abs(L) + Math.abs(R);
+      if (denom < 1e-6) return <Waiting label="non-zero HbO" />;
+      const li = (L - R) / denom;
+      const pct = ((li + 1) / 2) * 100;
+      const dominant = li > 0.15 ? "left" : li < -0.15 ? "right" : "balanced";
+      const color = Math.abs(li) > 0.35 ? COLORS.warn : COLORS.ok;
+      return (
+        <div style={{ padding: "8px 4px" }}>
+          <div style={{ fontFamily: NUM, fontSize: 36, fontWeight: 800, color, letterSpacing: "-0.02em", lineHeight: 1 }}>{li >= 0 ? "+" : ""}{li.toFixed(2)}</div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 2, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>laterality · −1…+1</div>
+          <div style={{ marginTop: 10, position: "relative", height: 10 }}>
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, " + COLORS.pink + "55, " + COLORS.muted + "33 50%, " + COLORS.cyan + "55)", borderRadius: 5 }} />
+            <div style={{ position: "absolute", top: -3, bottom: -3, left: `calc(${pct}% - 2px)`, width: 4, background: color, borderRadius: 2, boxShadow: `0 0 6px ${color}` }} />
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: COLORS.muted, fontFamily: NUM, marginTop: 4 }}>
+            <span>RIGHT</span><span>BALANCED</span><span>LEFT</span>
+          </div>
+          <div style={{ fontSize: 11, color, marginTop: 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            · {dominant}-dominant
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "mendi-coherence",
+    title: "Bilateral coherence",
+    device: "Mendi headband",
+    icon: Waves,
+    blurb: "Sliding-window Pearson correlation between L and R HbO traces.",
+    render: ({ oxyL, oxyR }) => {
+      const N = Math.min(oxyL.length, oxyR.length, 100);
+      if (N < 20) return <Waiting label="≥ 20 samples" />;
+      const xs = oxyL.slice(oxyL.length - N);
+      const ys = oxyR.slice(oxyR.length - N);
+      const mx = xs.reduce((a, b) => a + b, 0) / N;
+      const my = ys.reduce((a, b) => a + b, 0) / N;
+      let num = 0, dx = 0, dy = 0;
+      for (let i = 0; i < N; i++) {
+        const ex = xs[i] - mx;
+        const ey = ys[i] - my;
+        num += ex * ey;
+        dx += ex * ex;
+        dy += ey * ey;
+      }
+      const denom = Math.sqrt(dx * dy);
+      if (denom < 1e-9) return <Waiting label="signal variance" />;
+      const r = num / denom;
+      const pct = ((r + 1) / 2) * 100;
+      const color = r > 0.6 ? COLORS.ok : r > 0.2 ? COLORS.warn : COLORS.alert;
+      const label = r > 0.6 ? "highly coupled" : r > 0.2 ? "weakly coupled" : "decoupled";
+      return (
+        <div style={{ padding: "8px 4px" }}>
+          <div style={{ fontFamily: NUM, fontSize: 36, fontWeight: 800, color, letterSpacing: "-0.02em", lineHeight: 1 }}>{r >= 0 ? "+" : ""}{r.toFixed(2)}</div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 2, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>r · 10-second window</div>
+          <div style={{ marginTop: 10 }}>
+            <MiniBar pct={pct} color={color} />
+          </div>
+          <div style={{ fontSize: 11, color, marginTop: 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            · {label}
+          </div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 6, lineHeight: 1.4 }}>
+            Bilateral PFC HbO normally co-varies. Low coherence can signal lateralised effort or motion in one optode.
+          </div>
+        </div>
+      );
+    },
+  },
 ];
+
+// Live PPG waveform component for the pulse-waveform widget. Keeps a rolling
+// 200-sample buffer of pulsePpg and renders it as an inline SVG sparkline.
+// Mendi streams at ~31 Hz so 200 samples ≈ 6.4 seconds of waveform.
+function MendiPulseWaveform({ value }: { value: number | undefined }) {
+  const buf = useRef<number[]>([]);
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    if (value == null) return;
+    buf.current.push(value);
+    if (buf.current.length > 200) buf.current.shift();
+    setTick((t) => (t + 1) & 0xffff);
+  }, [value]);
+  const data = buf.current;
+  if (data.length < 4) return <Waiting label="pulse PPG" />;
+  const W = 300, H = 110, pad = 6;
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  const step = W / (data.length - 1);
+  const points = data.map((v, i) => {
+    const x = i * step;
+    const y = H - pad - ((v - min) / range) * (H - pad * 2);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(" ");
+  return (
+    <div style={{ padding: "4px 0" }} data-tick={tick}>
+      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ width: "100%", height: H, background: "#0F172A", borderRadius: 6, display: "block", border: "1px solid #1E293B" }}>
+        <line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke="#1E293B" strokeWidth={1} strokeDasharray="3 4" />
+        <polyline points={points} fill="none" stroke={COLORS.pink} strokeWidth={1.8} strokeLinejoin="round" />
+      </svg>
+      <div style={{ display: "flex", gap: 10, marginTop: 6, fontSize: 9.5, color: COLORS.muted, fontFamily: NUM }}>
+        <span>pulse PPG · ir_p − amb_p · AC</span>
+        <span style={{ marginLeft: "auto" }}>{data.length} samples</span>
+      </div>
+    </div>
+  );
+}
 
 // Frame-rate tracker for the Mendi signal-rate widget. Records a sliding
 // window of recent frame arrival times and reports Hz averaged over the
@@ -1015,6 +1297,17 @@ export const DEFAULT_WIDGETS = [
   "asymmetry",
   "mendi-fps",
   "reward-trace",
+  // Auxiliary Mendi widgets — surface temp/IMU/pulse/signal-quality fields
+  // that the protobuf carries but the original catalog ignored. Added to the
+  // default set so the live dashboard demonstrates the full surface area.
+  "mendi-pulse-hr",
+  "mendi-pulse-waveform",
+  "mendi-temperature",
+  "mendi-stillness",
+  "mendi-signal-quality",
+  "mendi-laterality",
+  "mendi-coherence",
+  "mendi-ambient-light",
 ];
 
 // ── localStorage helpers ──────────────────────────────────────────────────
