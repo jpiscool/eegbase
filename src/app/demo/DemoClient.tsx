@@ -1117,23 +1117,27 @@ export default function DemoClient({
           marketing site. Sits above the dark app topbar. Nav collapses to
           "Back to home" on mobile (≤640 px) so the dark app topbar gets
           full width for its own controls. */}
-      <header className="demo-site-header" style={{ background: "#fff", borderBottom: "1px solid #E5E7EB", padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
-        <a href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none", minHeight: 40, paddingRight: 4 }}>
-          <span style={{ width: 32, height: 32, background: "#2563EB", borderRadius: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/></svg>
-          </span>
-          <span style={{ fontWeight: 700, fontSize: 16, color: "#0F172A", letterSpacing: "-0.01em" }}>EEGBase</span>
-        </a>
-        <nav aria-label="Site" className="demo-site-header-nav" style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 13 }}>
-          <a href="/" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Home</a>
-          <a href="/mendi" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Mendi partnership</a>
-          <a href="/pricing" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Pricing</a>
-          <a href="/contact" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Contact</a>
-        </nav>
-        <a href="/" className="demo-site-header-back" style={{ display: "none", color: "#2563EB", textDecoration: "none", fontSize: 13, fontWeight: 600, padding: "10px 4px", minHeight: 44, alignItems: "center" }}>
-          ← Home
-        </a>
-      </header>
+      {/* Public-site white header — hidden in 'strip' mode (the authenticated
+          /dashboard has the clinician sidebar instead). */}
+      {appMode !== "strip" && (
+        <header className="demo-site-header" style={{ background: "#fff", borderBottom: "1px solid #E5E7EB", padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+          <a href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none", minHeight: 40, paddingRight: 4 }}>
+            <span style={{ width: 32, height: 32, background: "#2563EB", borderRadius: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/></svg>
+            </span>
+            <span style={{ fontWeight: 700, fontSize: 16, color: "#0F172A", letterSpacing: "-0.01em" }}>EEGBase</span>
+          </a>
+          <nav aria-label="Site" className="demo-site-header-nav" style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 13 }}>
+            <a href="/" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Home</a>
+            <a href="/mendi" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Mendi partnership</a>
+            <a href="/pricing" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Pricing</a>
+            <a href="/contact" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Contact</a>
+          </nav>
+          <a href="/" className="demo-site-header-back" style={{ display: "none", color: "#2563EB", textDecoration: "none", fontSize: 13, fontWeight: 600, padding: "10px 4px", minHeight: 44, alignItems: "center" }}>
+            ← Home
+          </a>
+        </header>
+      )}
 
       {/* Demo-mode disclosure banner — hidden in the authenticated
           'strip' view since clinicians are using real data, not the demo. */}
@@ -1162,7 +1166,11 @@ export default function DemoClient({
         Skip to main content
       </a>
 
-      {/* Top bar */}
+      {/* Top bar — dark strip with logo, Search ⌘K, Share view, LIVE timer,
+          Replay, Notifications, Client selector, Get Access. Hidden in
+          'strip' mode (the authenticated /dashboard relies on the clinician
+          sidebar instead of this bar). */}
+      {appMode !== "strip" && (
       <div className="demo-topbar" style={{ background: "#0F172A", borderBottom: "1px solid #1E293B", padding: "0 24px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <a href="/" className="demo-topbar-logo-text" style={{ fontSize: "1.05rem", fontWeight: 800, letterSpacing: "-0.03em", color: "white", textDecoration: "none" }}>
@@ -1243,22 +1251,20 @@ export default function DemoClient({
             <Bell size={14} strokeWidth={1.75} />
             <span style={{ position: "absolute", top: -3, right: -3, background: "#EF4444", color: "white", fontSize: 9, fontWeight: 700, borderRadius: 99, padding: "1px 5px", border: "1.5px solid #0F172A" }}>3</span>
           </button>
-          {appMode !== "strip" && (
-            <div className="demo-topbar-client-wrap" style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
-              <span className="demo-topbar-client-label" style={{ fontSize: "0.72rem", color: "#94A3B8", fontWeight: 600 }}>Client:</span>
-              <select
-                aria-label="Select demo client"
-                value={demoClientIdx}
-                onChange={(e) => setDemoClientIdx(Number(e.target.value))}
-                className="demo-topbar-client-select"
-                style={{ fontSize: "0.78rem", fontWeight: 600, color: "white", border: "1px solid #334155", borderRadius: 6, padding: "4px 8px", background: "#1E293B", cursor: "pointer", outline: "none", maxWidth: "100%", textOverflow: "ellipsis" }}
-              >
-                {DEMO_CLIENTS.map((c, i) => (
-                  <option key={c.name} value={i}>{c.name}</option>
-                ))}
-              </select>
-            </div>
-          )}
+          <div className="demo-topbar-client-wrap" style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
+            <span className="demo-topbar-client-label" style={{ fontSize: "0.72rem", color: "#94A3B8", fontWeight: 600 }}>Client:</span>
+            <select
+              aria-label="Select demo client"
+              value={demoClientIdx}
+              onChange={(e) => setDemoClientIdx(Number(e.target.value))}
+              className="demo-topbar-client-select"
+              style={{ fontSize: "0.78rem", fontWeight: 600, color: "white", border: "1px solid #334155", borderRadius: 6, padding: "4px 8px", background: "#1E293B", cursor: "pointer", outline: "none", maxWidth: "100%", textOverflow: "ellipsis" }}
+            >
+              {DEMO_CLIENTS.map((c, i) => (
+                <option key={c.name} value={i}>{c.name}</option>
+              ))}
+            </select>
+          </div>
           {running && (
             <span className="demo-topbar-hide-mobile" style={{ fontSize: "0.78rem", color: "#34D399", fontWeight: 700, display: "flex", alignItems: "center", gap: 6, letterSpacing: "0.04em" }}>
               <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#34D399", display: "inline-block", animation: "pulse 1.5s infinite", boxShadow: "0 0 8px #34D39988" }} />
@@ -1274,18 +1280,19 @@ export default function DemoClient({
             <span style={{ color: "#475569" }}>·</span>
             <span>SOC 2</span>
           </span>
-          {appMode !== "strip" && (
-            <a href="/login" style={{ fontSize: "0.82rem", fontWeight: 700, padding: "7px 16px", background: "#2563EB", color: "white", borderRadius: 8, textDecoration: "none", letterSpacing: "0.01em", whiteSpace: "nowrap", flexShrink: 0 }}>
-              Get Access <span aria-hidden>→</span>
-            </a>
-          )}
+          <a href="/login" style={{ fontSize: "0.82rem", fontWeight: 700, padding: "7px 16px", background: "#2563EB", color: "white", borderRadius: 8, textDecoration: "none", letterSpacing: "0.01em", whiteSpace: "nowrap", flexShrink: 0 }}>
+            Get Access <span aria-hidden>→</span>
+          </a>
         </div>
       </div>
+      )}
 
-      {/* Progress bar */}
-      <div role="progressbar" aria-label={`Session time: ${Math.floor(elapsed / 60)} of 30 minutes`} aria-valuenow={Math.min(100, Math.round((elapsed / 1800) * 100))} aria-valuemin={0} aria-valuemax={100} title={`Session progress · ${Math.floor(elapsed / 60)} of 30 min`} style={{ height: 4, background: "#1E293B" }}>
-        <div style={{ height: "100%", background: "linear-gradient(90deg, #2563EB, #8B5CF6, #EC4899)", width: `${Math.min(100, (elapsed / 1800) * 100)}%`, transition: "width 1s linear" }} />
-      </div>
+      {/* Progress bar — hidden in strip mode along with the dark topbar. */}
+      {appMode !== "strip" && (
+        <div role="progressbar" aria-label={`Session time: ${Math.floor(elapsed / 60)} of 30 minutes`} aria-valuenow={Math.min(100, Math.round((elapsed / 1800) * 100))} aria-valuemin={0} aria-valuemax={100} title={`Session progress · ${Math.floor(elapsed / 60)} of 30 min`} style={{ height: 4, background: "#1E293B" }}>
+          <div style={{ height: "100%", background: "linear-gradient(90deg, #2563EB, #8B5CF6, #EC4899)", width: `${Math.min(100, (elapsed / 1800) * 100)}%`, transition: "width 1s linear" }} />
+        </div>
+      )}
 
       {/* Universal Detail Modal */}
       {detailModal && (
@@ -4487,32 +4494,38 @@ export default function DemoClient({
         )}
       </main>
 
-      {/* Footer CTA */}
-      <div style={{ background: "linear-gradient(135deg, #1E1B4B 0%, #1E3A5F 100%)", borderTop: "1px solid #334155", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
-        <span style={{ fontSize: 14, color: "#C4B5FD", fontWeight: 600 }}>Ready to use with real clients?</span>
-        <a href="/login" style={{ fontSize: 14, fontWeight: 700, padding: "8px 20px", background: "#7C3AED", color: "#fff", borderRadius: 8, textDecoration: "none" }}>
-          Get Access →
-        </a>
-        <a href="/contact" style={{ fontSize: 13, color: "#A78BFA", textDecoration: "none", fontWeight: 600 }}>
-          Talk to us →
-        </a>
-      </div>
+      {/* Footer CTA + site footer — hidden in 'strip' mode (the
+          authenticated /dashboard doesn't need the public-marketing
+          conversion bar or the bottom nav). */}
+      {appMode !== "strip" && (
+        <>
+          <div style={{ background: "linear-gradient(135deg, #1E1B4B 0%, #1E3A5F 100%)", borderTop: "1px solid #334155", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 14, color: "#C4B5FD", fontWeight: 600 }}>Ready to use with real clients?</span>
+            <a href="/login" style={{ fontSize: 14, fontWeight: 700, padding: "8px 20px", background: "#7C3AED", color: "#fff", borderRadius: 8, textDecoration: "none" }}>
+              Get Access →
+            </a>
+            <a href="/contact" style={{ fontSize: 13, color: "#A78BFA", textDecoration: "none", fontWeight: 600 }}>
+              Talk to us →
+            </a>
+          </div>
 
-      {/* Site footer — mirrors the simplified homepage footer for cross-page
-          chrome consistency. */}
-      <footer style={{ background: "#fff", borderTop: "1px solid #E5E7EB", padding: "24px", color: "#9CA3AF", fontSize: 12 }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
-          <span>© 2026 EEGBase &mdash; neurofeedback platform for clinics</span>
-          <nav aria-label="Footer" style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap", fontSize: 12 }}>
-            <a href="/" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Home</a>
-            <a href="/mendi" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Mendi</a>
-            <a href="/pricing" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Pricing</a>
-            <a href="/privacy" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Privacy</a>
-            <a href="/terms" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Terms</a>
-            <a href="/contact" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Contact</a>
-          </nav>
-        </div>
-      </footer>
+          {/* Site footer — mirrors the simplified homepage footer for cross-page
+              chrome consistency. */}
+          <footer style={{ background: "#fff", borderTop: "1px solid #E5E7EB", padding: "24px", color: "#9CA3AF", fontSize: 12 }}>
+            <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+              <span>© 2026 EEGBase &mdash; neurofeedback platform for clinics</span>
+              <nav aria-label="Footer" style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap", fontSize: 12 }}>
+                <a href="/" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Home</a>
+                <a href="/mendi" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Mendi</a>
+                <a href="/pricing" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Pricing</a>
+                <a href="/privacy" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Privacy</a>
+                <a href="/terms" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Terms</a>
+                <a href="/contact" style={{ color: "#6B7280", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Contact</a>
+              </nav>
+            </div>
+          </footer>
+        </>
+      )}
         </div>
       </div>
     </div>
