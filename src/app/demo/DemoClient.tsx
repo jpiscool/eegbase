@@ -221,6 +221,17 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
   const alphaW  = useSlidingWindow(MAX_POINTS);
   const betaW   = useSlidingWindow(MAX_POINTS);
 
+  // Live source — which adapter is feeding samples right now.
+  //   'simulator' → synthetic data (default; also fallback when bridge unreachable)
+  //   'mendi'     → real BLE frames via the localhost Python bridge
+  // `mendiStatus` tracks the WebSocket → Python bridge channel.
+  // `mendiBle` tracks the BLE link from the bridge to the headband itself,
+  // so the Connect button can distinguish "bridge reachable but headband
+  // is off / sleeping" from "fully streaming."
+  const [liveSource, setLiveSource] = useState<"simulator" | "mendi">("simulator");
+  const [mendiStatus, setMendiStatus] = useState<"idle" | "connecting" | "connected" | "error">("idle");
+  const [mendiBle, setMendiBle] = useState(false);
+
   const stop = useCallback(async () => {
     if (timerRef.current) clearInterval(timerRef.current);
     await adapterRef.current?.disconnect();
@@ -228,23 +239,10 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
     setRunning(false);
   }, []);
 
-  const start = useCallback(async () => {
-    reward.reset(); oxyL.reset(); oxyR.reset(); deoxyL.reset(); deoxyR.reset();
-    thetaW.reset(); alphaW.reset(); betaW.reset();
-    setSample(null); setSampleCount(0); setElapsed(0);
-
-    // Pick adapter — live Mendi via ?live=mendi, otherwise the simulator.
-    // The live path connects to the localhost Python bridge running on the
-    // user's own machine (scripts/mendi-bridge.py) which forwards real
-    // 31 Hz fNIRS frames from the headband.
-    const liveDevice =
-      typeof window !== "undefined"
-        ? new URLSearchParams(window.location.search).get("live")
-        : null;
-    const adapter: DeviceAdapter =
-      liveDevice === "mendi"
-        ? new MendiBridgeAdapter()
-        : new SimulatorAdapter({ noiseLevel: 0.35, trendStrength: 0.7 });
+  // Attach the sample callback to whichever adapter is current. Pulled out
+  // so both the primary start path and the simulator-fallback path stay in
+  // sync without duplicating the push-into-sliding-window logic.
+  const attachAdapter = useCallback((adapter: DeviceAdapter) => {
     adapterRef.current = adapter;
     adapter.onSample((s) => {
       setSample(s); setSampleCount((n) => n + 1);
@@ -257,12 +255,80 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
       if (s.alpha != null) alphaW.push(s.alpha);
       if (s.beta != null)  betaW.push(s.beta);
     });
-    await adapter.connect();
-    setRunning(true);
-    timerRef.current = setInterval(() => setElapsed((e) => e + 1), 1000);
   }, [reward, oxyL, oxyR, deoxyL, deoxyR, thetaW, alphaW, betaW]);
 
+  const start = useCallback(async (sourceOverride?: "simulator" | "mendi") => {
+    reward.reset(); oxyL.reset(); oxyR.reset(); deoxyL.reset(); deoxyR.reset();
+    thetaW.reset(); alphaW.reset(); betaW.reset();
+    setSample(null); setSampleCount(0); setElapsed(0);
+
+    // Source priority: explicit override > URL ?live= > simulator default.
+    const urlSource =
+      typeof window !== "undefined" && new URLSearchParams(window.location.search).get("live") === "mendi"
+        ? "mendi"
+        : null;
+    const source: "simulator" | "mendi" = sourceOverride ?? urlSource ?? "simulator";
+    setLiveSource(source);
+
+    if (source === "mendi") {
+      setMendiStatus("connecting");
+      const bridge = new MendiBridgeAdapter();
+      attachAdapter(bridge);
+      try {
+        await bridge.connect();
+        setMendiStatus("connected");
+      } catch (e) {
+        // Bridge unreachable — fall back to simulator so the dashboard
+        // keeps moving, and surface a clear toast with the start command.
+        setMendiStatus("error");
+        const msg = e instanceof Error ? e.message : "Failed to connect to Mendi bridge.";
+        // Truncate multi-line errors for the toast; full text is in the console.
+        console.warn("[Mendi] bridge connect failed:", msg);
+        const sim = new SimulatorAdapter({ noiseLevel: 0.35, trendStrength: 0.7 });
+        attachAdapter(sim);
+        await sim.connect();
+        setLiveSource("simulator");
+      }
+    } else {
+      const sim = new SimulatorAdapter({ noiseLevel: 0.35, trendStrength: 0.7 });
+      attachAdapter(sim);
+      await sim.connect();
+    }
+
+    setRunning(true);
+    timerRef.current = setInterval(() => setElapsed((e) => e + 1), 1000);
+  }, [reward, oxyL, oxyR, deoxyL, deoxyR, thetaW, alphaW, betaW, attachAdapter]);
+
+  // Restart the pipeline with a different live source. Updates the URL so
+  // refreshing the page keeps the user on the chosen source.
+  const switchLiveSource = useCallback(async (next: "simulator" | "mendi") => {
+    await stop();
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (next === "mendi") url.searchParams.set("live", "mendi");
+      else url.searchParams.delete("live");
+      window.history.replaceState({}, "", url.toString());
+    }
+    if (next === "simulator") { setMendiStatus("idle"); setMendiBle(false); }
+    await start(next);
+  }, [stop, start]);
+
   useEffect(() => { start(); return () => { stop(); }; }, []);
+
+  // While in Mendi mode, poll the adapter's BLE state every 500 ms so the
+  // status badge reflects the actual link to the headband (the Python
+  // bridge emits ble_connected / ble_disconnected messages → adapter
+  // tracks them → we surface them here without a callback API change).
+  useEffect(() => {
+    if (liveSource !== "mendi") return;
+    const tick = () => {
+      const a = adapterRef.current;
+      if (a && a instanceof MendiBridgeAdapter) setMendiBle(a.isBleConnected());
+    };
+    tick();
+    const iv = setInterval(tick, 500);
+    return () => clearInterval(iv);
+  }, [liveSource, mendiStatus]);
 
   const rewardVal = sample?.rewardScore;
   const rewardColor = rewardVal == null ? "#CBD5E1" : rewardVal >= 70 ? "#10B981" : rewardVal >= 40 ? "#F59E0B" : "#EF4444";
@@ -1588,6 +1654,51 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
               <span style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.5, flex: 1, minWidth: 0 }}>
                 <strong style={{ color: "#F1F5F9" }}>Your dashboard</strong> &mdash; pick widgets that pull live from any connected device. Layout saves to this browser. Hardware-agnostic by design.
               </span>
+              {/* Live Mendi connect / disconnect — talks to the localhost
+                  Python bridge (scripts/mendi-bridge.py). When connected,
+                  the Mendi widgets (Mendi · 4 channels, Live focus score,
+                  Reward score trace) receive real BLE frames in place of
+                  the simulator's synthetic data. */}
+              {liveSource === "mendi" && mendiStatus === "connected" ? (
+                <button
+                  onClick={async () => {
+                    await switchLiveSource("simulator");
+                    showToast("Switched to simulator");
+                  }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: mendiBle ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)", color: mendiBle ? "#34D399" : "#FBBF24", border: `1px solid ${mendiBle ? "#065F46" : "#92400E"}`, borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+                  title={mendiBle
+                    ? "Bridge → BLE link OK. Click to switch back to the simulator."
+                    : "Bridge reachable, but BLE link to the headband is down. Turn the Mendi on and place it on the head — frames will start arriving automatically. Click to switch back to the simulator."}
+                >
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: mendiBle ? "#10B981" : "#F59E0B", boxShadow: `0 0 8px ${mendiBle ? "#10B981" : "#F59E0B"}` }} />
+                  {mendiBle ? "Mendi live · disconnect" : "Bridge up · waiting for headband"}
+                </button>
+              ) : mendiStatus === "connecting" ? (
+                <button
+                  disabled
+                  style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: "rgba(96,165,250,0.12)", color: "#93C5FD", border: "1px solid #1E40AF", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "wait" }}
+                >
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#60A5FA", animation: "pulse 1s infinite" }} />
+                  Connecting to Mendi…
+                </button>
+              ) : (
+                <button
+                  onClick={async () => {
+                    showToast("Starting Mendi bridge connection…");
+                    await switchLiveSource("mendi");
+                    // After switchLiveSource resolves, mendiStatus is either
+                    // 'connected' (success) or 'error' (bridge unreachable
+                    // → fell back to simulator). Confirm via current state.
+                  }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: mendiStatus === "error" ? "#7F1D1D" : "#7C3AED", color: "white", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+                  title={mendiStatus === "error"
+                    ? "Bridge unreachable last time. Start it: python3 scripts/mendi-bridge.py — then click to retry."
+                    : "Stream real fNIRS frames from a paired Mendi V4 (requires scripts/mendi-bridge.py running locally)"}
+                >
+                  <Activity size={12} />
+                  {mendiStatus === "error" ? "Retry Mendi · bridge offline" : "Connect Live Mendi"}
+                </button>
+              )}
               <button
                 onClick={() => setDashboardPickerOpen(true)}
                 style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: "#2563EB", color: "white", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer" }}
