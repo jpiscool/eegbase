@@ -292,6 +292,173 @@ export const WIDGET_CATALOG: WidgetDef[] = [
   },
 
   {
+    id: "eeg-theta-beta",
+    title: "Theta / Beta ratio",
+    device: "Muse / OpenBCI / BrainBit / Neurosity",
+    icon: Sigma,
+    blurb: "Classic ADHD signature — high theta-over-beta suggests reduced attention.",
+    render: ({ sample }) => {
+      const t = sample?.theta;
+      const b = sample?.beta;
+      if (t == null || b == null) return <Waiting label="EEG feed" />;
+      const ratio = t / Math.max(0.01, b);
+      // Clinical convention: >3 elevated, 1.5-3 typical, <1.5 low.
+      const tier =
+        ratio >= 3 ? { c: COLORS.alert, l: "elevated · attention risk" }
+        : ratio >= 2 ? { c: COLORS.warn,  l: "borderline" }
+        : ratio >= 1.2 ? { c: COLORS.ok,   l: "typical" }
+        : { c: COLORS.cyan, l: "low" };
+      // Map to a 0..100 bar by clipping ratio to 0..5.
+      const pct = Math.min(100, (ratio / 5) * 100);
+      return (
+        <div style={{ padding: "8px 4px" }}>
+          <div style={{ fontFamily: NUM, fontSize: 38, fontWeight: 800, color: tier.c, letterSpacing: "-0.02em", lineHeight: 1 }}>{ratio.toFixed(2)}</div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 2, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>θ / β · ratio</div>
+          <div style={{ marginTop: 10 }}><MiniBar pct={pct} color={tier.c} /></div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: COLORS.muted, fontFamily: NUM, marginTop: 4 }}>
+            <span>0</span><span>typical 1.5–3</span><span>5+</span>
+          </div>
+          <div style={{ fontSize: 11, color: tier.c, marginTop: 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>· {tier.l}</div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "eeg-alpha-theta",
+    title: "Alpha / Theta ratio",
+    device: "Muse / OpenBCI / BrainBit / Neurosity",
+    icon: Waves,
+    blurb: "Used in meditation + addiction protocols. Theta-dominant suggests deep relaxation.",
+    render: ({ sample }) => {
+      const a = sample?.alpha;
+      const t = sample?.theta;
+      if (a == null || t == null) return <Waiting label="EEG feed" />;
+      const ratio = a / Math.max(0.01, t);
+      // <1 = theta-dominant (deep meditation crossover); 1-2 = alpha-dominant relaxed;
+      // >2 = alpha-only (relaxed but not yet meditative).
+      const tier =
+        ratio < 1 ? { c: COLORS.violet, l: "θ-dominant · deep state" }
+        : ratio < 1.5 ? { c: COLORS.ok, l: "alpha–theta crossover" }
+        : ratio < 2.5 ? { c: COLORS.cyan, l: "relaxed alpha" }
+        : { c: COLORS.muted, l: "low theta" };
+      const pct = Math.min(100, (ratio / 4) * 100);
+      return (
+        <div style={{ padding: "8px 4px" }}>
+          <div style={{ fontFamily: NUM, fontSize: 38, fontWeight: 800, color: tier.c, letterSpacing: "-0.02em", lineHeight: 1 }}>{ratio.toFixed(2)}</div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 2, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>α / θ · ratio</div>
+          <div style={{ marginTop: 10 }}><MiniBar pct={pct} color={tier.c} /></div>
+          <div style={{ fontSize: 11, color: tier.c, marginTop: 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>· {tier.l}</div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 6, lineHeight: 1.4 }}>
+            Peniston-Kulkowsky α/θ training targets the crossover — meditation and trauma protocols.
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "eeg-band-overlay",
+    title: "EEG bands · 60s trace",
+    device: "Muse / OpenBCI / BrainBit / Neurosity",
+    icon: Activity,
+    blurb: "Theta / Alpha / Beta as overlaid 60-second sparklines.",
+    render: ({ thetaW, alphaW, betaW }) => {
+      if (thetaW.length < 2 && alphaW.length < 2 && betaW.length < 2) return <Waiting label="EEG feed" />;
+      return (
+        <OverlaySpark
+          series={[
+            { data: thetaW, color: COLORS.warn,  label: "Theta" },
+            { data: alphaW, color: COLORS.alert, label: "Alpha" },
+            { data: betaW,  color: COLORS.pink,  label: "Beta"  },
+          ]}
+          height={80}
+        />
+      );
+    },
+  },
+
+  {
+    id: "eeg-engagement",
+    title: "Cognitive engagement",
+    device: "Muse / OpenBCI / BrainBit / Neurosity",
+    icon: Brain,
+    blurb: "Berka engagement index — β / (α + θ). Rises with active mental work.",
+    render: ({ sample }) => {
+      const a = sample?.alpha;
+      const t = sample?.theta;
+      const b = sample?.beta;
+      if (a == null || t == null || b == null) return <Waiting label="EEG feed" />;
+      const idx = b / Math.max(0.01, a + t);
+      // Berka et al: 0.2 baseline, 0.6 alert, > 0.8 high cognitive load.
+      const tier =
+        idx >= 0.8 ? { c: COLORS.violet, l: "high engagement" }
+        : idx >= 0.5 ? { c: COLORS.ok, l: "alert" }
+        : idx >= 0.3 ? { c: COLORS.warn, l: "neutral" }
+        : { c: COLORS.muted, l: "disengaged" };
+      const pct = Math.min(100, idx * 100);
+      return (
+        <div style={{ padding: "8px 4px" }}>
+          <div style={{ fontFamily: NUM, fontSize: 38, fontWeight: 800, color: tier.c, letterSpacing: "-0.02em", lineHeight: 1 }}>{idx.toFixed(2)}</div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 2, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>β / (α + θ)</div>
+          <div style={{ marginTop: 10 }}><MiniBar pct={pct} color={tier.c} /></div>
+          <div style={{ fontSize: 11, color: tier.c, marginTop: 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>· {tier.l}</div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "hr-zone",
+    title: "Heart rate zone",
+    device: "Polar / Apple Watch / Whoop",
+    icon: HeartPulse,
+    blurb: "Live HR mapped to training zones (recovery → max). Assumes 220 − 30 = HRmax.",
+    render: ({ sample }) => {
+      const hr = sample?.heartRate;
+      if (hr == null) return <Waiting label="HR feed" />;
+      // Generic HRmax ≈ 190 (30-year-old). Real implementation would store age per client.
+      const HR_MAX = 190;
+      const pctMax = (hr / HR_MAX) * 100;
+      const zone =
+        pctMax < 50 ? { n: 1, c: COLORS.muted, l: "recovery (Z1)" }
+        : pctMax < 60 ? { n: 2, c: COLORS.cyan, l: "easy (Z2)" }
+        : pctMax < 70 ? { n: 3, c: COLORS.ok,    l: "aerobic (Z3)" }
+        : pctMax < 80 ? { n: 4, c: COLORS.warn,  l: "tempo (Z4)" }
+        : { n: 5, c: COLORS.alert, l: "threshold/max (Z5)" };
+      return (
+        <div style={{ padding: "8px 4px" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
+            <span style={{ fontFamily: NUM, fontSize: 38, fontWeight: 800, color: zone.c, letterSpacing: "-0.02em", lineHeight: 1 }}>{Math.round(hr)}</span>
+            <span style={{ fontSize: 12, color: COLORS.muted, fontWeight: 600 }}>bpm</span>
+          </div>
+          <div style={{ display: "flex", gap: 3, marginTop: 8 }}>
+            {[1, 2, 3, 4, 5].map((n) => (
+              <div key={n} style={{ flex: 1, height: 8, borderRadius: 2, background: n <= zone.n ? zone.c : "rgba(15,23,42,0.5)", border: "1px solid #1E293B" }} />
+            ))}
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: COLORS.muted, fontFamily: NUM, marginTop: 4 }}>
+            <span>Z1</span><span>Z2</span><span>Z3</span><span>Z4</span><span>Z5</span>
+          </div>
+          <div style={{ fontSize: 11, color: zone.c, marginTop: 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>· {zone.l}</div>
+          <div style={{ fontSize: 9.5, color: COLORS.muted, marginTop: 4, fontFamily: NUM }}>
+            {pctMax.toFixed(0)}% of est. HRmax {HR_MAX}
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "hr-sdnn",
+    title: "HR variance · SDNN-like",
+    device: "Polar / Apple Watch / Whoop",
+    icon: Activity,
+    blurb: "Std-dev of recent HR samples. Higher variance → more autonomic flexibility.",
+    render: ({ sample }) => <HrSdnnWidget hr={sample?.heartRate} />,
+  },
+
+  {
     id: "reward-trace",
     title: "Reward score trace",
     device: "Any device",
@@ -1360,6 +1527,48 @@ function MendiSessionArc({ rewardScore }: { rewardScore: number | undefined }) {
   );
 }
 
+// HR variance widget — keeps a rolling 60-sample HR buffer (≈ 1 min at 1 Hz
+// or 6 s at 10 Hz) and reports the standard deviation. True clinical SDNN
+// is computed from RR intervals; this is a HR-domain proxy that moves in
+// the same direction. Works for any device that reports heartRate.
+function HrSdnnWidget({ hr }: { hr: number | undefined }) {
+  const buf = useRef<number[]>([]);
+  const [, force] = useState(0);
+  useEffect(() => {
+    if (hr == null) return;
+    buf.current.push(hr);
+    if (buf.current.length > 60) buf.current.shift();
+    if (buf.current.length % 5 === 0) force((t) => (t + 1) & 0xffff);
+  }, [hr]);
+  const data = buf.current;
+  if (data.length < 5) return <Waiting label={`${data.length}/5 HR samples`} />;
+  const mean = data.reduce((a, b) => a + b, 0) / data.length;
+  const variance = data.reduce((a, b) => a + (b - mean) * (b - mean), 0) / data.length;
+  const sd = Math.sqrt(variance);
+  // Map clinical-ish SDNN-on-HR bins. Real SDNN ranges from ~20 (low HRV)
+  // to ~80+ ms; HR-stddev tends to be ~2-12 bpm for the same individuals.
+  const tier =
+    sd >= 8 ? { c: COLORS.ok, l: "highly variable · resilient" }
+    : sd >= 4 ? { c: COLORS.cyan, l: "moderate variability" }
+    : sd >= 2 ? { c: COLORS.warn, l: "low variability" }
+    : { c: COLORS.alert, l: "very flat · stressed/tired" };
+  return (
+    <div style={{ padding: "8px 4px" }}>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
+        <span style={{ fontFamily: NUM, fontSize: 36, fontWeight: 800, color: tier.c, letterSpacing: "-0.02em", lineHeight: 1 }}>{sd.toFixed(2)}</span>
+        <span style={{ fontSize: 12, color: COLORS.muted, fontWeight: 600 }}>bpm σ</span>
+      </div>
+      <div style={{ fontSize: 11, color: tier.c, marginTop: 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>· {tier.l}</div>
+      <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 6, fontFamily: NUM }}>
+        n={data.length} · mean {Math.round(mean)} bpm
+      </div>
+      <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 6, lineHeight: 1.4 }}>
+        Proxy for SDNN — higher is better. For clinical-grade SDNN use a beat-level chest-strap stream.
+      </div>
+    </div>
+  );
+}
+
 // Engagement-zone time: rolling internal counter of % time above a reward
 // threshold over the lifetime of the widget mount. Resets when widget
 // remounts. Self-buffered because the existing reward window is only 60
@@ -1620,9 +1829,19 @@ const WIDGET_SECTIONS: { name: string; blurb: string; ids: string[] }[] = [
     ids: ["mendi-session-arc", "mendi-reward-histogram", "mendi-trial-blocks", "mendi-engagement-time"],
   },
   {
+    name: "EEG · Muse / OpenBCI / BrainBit / Neurosity",
+    blurb: "Band-power ratios + engagement indices for any 4–8 channel EEG headset.",
+    ids: ["eeg-bands", "eeg-band-overlay", "eeg-theta-beta", "eeg-alpha-theta", "eeg-engagement"],
+  },
+  {
+    name: "HR / HRV · Polar / Apple Watch / Whoop",
+    blurb: "Cardiovascular metrics for any chest strap, watch, or strap that streams HR / HRV.",
+    ids: ["heart-rate", "hrv-live", "hr-zone", "hr-sdnn"],
+  },
+  {
     name: "Cross-device",
-    blurb: "Reward score, EEG bands, HR/HRV — works with any paired device.",
-    ids: ["live-score", "reward-trace", "eeg-bands", "heart-rate", "hrv-live"],
+    blurb: "Reward score and live focus — works with any paired device.",
+    ids: ["live-score", "reward-trace"],
   },
   {
     name: "Personal",
@@ -1872,6 +2091,29 @@ export const DASHBOARD_PRESETS: { id: string; label: string; blurb: string; ids:
       "mendi-mayer-wave", "mendi-coherence", "mendi-laterality",
       "mendi-signal-quality", "mendi-ambient-light", "mendi-head-pose",
       "mendi-fps", "mendi-pulse-waveform",
+      // EEG spectral ratios for Muse / OpenBCI / Neurosity / BrainBit
+      "eeg-band-overlay", "eeg-theta-beta", "eeg-alpha-theta", "eeg-engagement",
+    ],
+  },
+  {
+    id: "eeg-focus",
+    label: "EEG-focused",
+    blurb: "For Muse / OpenBCI / BrainBit / Neurosity sessions — band ratios up front.",
+    ids: [
+      "live-score", "eeg-bands", "eeg-band-overlay",
+      "eeg-theta-beta", "eeg-alpha-theta", "eeg-engagement",
+      "heart-rate", "hrv-live",
+      "reward-trace", "session-timer",
+    ],
+  },
+  {
+    id: "hr-hrv",
+    label: "HR / HRV",
+    blurb: "For Polar / Apple Watch / Whoop sessions — autonomic focus.",
+    ids: [
+      "heart-rate", "hr-zone", "hrv-live", "hr-sdnn",
+      "breathing-pacer", "live-score",
+      "todays-checkin", "session-timer", "sleep-last-night",
     ],
   },
   {
