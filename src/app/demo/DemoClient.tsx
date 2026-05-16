@@ -12,7 +12,7 @@ import { ClinicalQuestionnaire } from "@/components/ClinicalQuestionnaire";
 import {
   Activity, Gamepad2, Brain, HeartPulse, TrendingUp,
   Sparkles, Target, Calendar, FileText, BarChart3,
-  Search, Bell,
+  Search, Bell, Bluetooth as BluetoothIcon,
   Pause, Play, RotateCcw, Plus, Volume2, VolumeX, Smartphone,
   Mail, Building2, Download, UploadCloud,
   LayoutDashboard,
@@ -1683,20 +1683,14 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
                 </button>
               ) : (
                 <button
-                  onClick={async () => {
-                    showToast("Starting Mendi bridge connection…");
-                    await switchLiveSource("mendi");
-                    // After switchLiveSource resolves, mendiStatus is either
-                    // 'connected' (success) or 'error' (bridge unreachable
-                    // → fell back to simulator). Confirm via current state.
-                  }}
+                  onClick={() => setConnectDeviceOpen(true)}
                   style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: mendiStatus === "error" ? "#7F1D1D" : "#7C3AED", color: "white", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer" }}
                   title={mendiStatus === "error"
-                    ? "Bridge unreachable last time. Start it: python3 scripts/mendi-bridge.py — then click to retry."
-                    : "Stream real fNIRS frames from a paired Mendi V4 (requires scripts/mendi-bridge.py running locally)"}
+                    ? "Mendi bridge unreachable last time. Open the connect-device list to retry."
+                    : "Pair any supported headband, chest strap, or wearable. Mendi launches the live BLE bridge; others register as paired devices."}
                 >
-                  <Activity size={12} />
-                  {mendiStatus === "error" ? "Retry Mendi · bridge offline" : "Connect Live Mendi"}
+                  <BluetoothIcon size={12} />
+                  {mendiStatus === "error" ? "Connect device · Mendi bridge offline" : "Connect device"}
                 </button>
               )}
               <button
@@ -1778,6 +1772,14 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
                 const d = DEVICE_REGISTRY.find((x) => x.id === id);
                 if (d) showToast(`Paired: ${d.name}`);
                 setConnectDeviceOpen(false);
+                // For Mendi specifically, also kick the live BLE-bridge
+                // connection so the dashboard switches from simulator data to
+                // real fNIRS frames. Other devices stay simulator-fed for
+                // now — their adapter wiring will follow.
+                if (id === "mendi") {
+                  showToast("Starting Mendi bridge connection…");
+                  void switchLiveSource("mendi");
+                }
               }}
             />
           </>
