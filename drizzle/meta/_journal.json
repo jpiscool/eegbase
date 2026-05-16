@@ -99,6 +99,13 @@
       "when": 1778962117391,
       "tag": "0013_cold_nitro",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1778962800000,
+      "tag": "0014_audit_logs_backfill",
+      "breakpoints": true
     }
   ]
 }

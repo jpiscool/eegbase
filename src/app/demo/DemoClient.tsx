@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useTabState } from "@/hooks/useTabState";
 import { SimulatorAdapter } from "@/lib/device/simulator";
 import { MendiBridgeAdapter } from "@/lib/device/mendi-bridge";
+import { MuseAdapter } from "@/lib/device/muse";
 import type { DeviceAdapter, DeviceSample } from "@/lib/device/adapter";
 import { LiveChart } from "@/components/LiveChart";
 import { GameFeedback } from "@/components/GameFeedback";
@@ -223,13 +224,17 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
   const betaW   = useSlidingWindow(MAX_POINTS);
 
   // Live source — which adapter is feeding samples right now.
-  //   'simulator' → synthetic data (default; also fallback when bridge unreachable)
+  //   'simulator' → synthetic data (default; also fallback when adapter fails)
   //   'mendi'     → real BLE frames via the localhost Python bridge
+  //   'muse'      → real EEG band powers via Web Bluetooth direct to a Muse 2 / S
   // `mendiStatus` tracks the WebSocket → Python bridge channel.
   // `mendiBle` tracks the BLE link from the bridge to the headband itself,
   // so the Connect button can distinguish "bridge reachable but headband
   // is off / sleeping" from "fully streaming."
-  const [liveSource, setLiveSource] = useState<"simulator" | "mendi">("simulator");
+  // Muse uses Web Bluetooth directly so we don't need a bridge status — the
+  // adapter's isConnected() suffices.
+  type LiveSource = "simulator" | "mendi" | "muse";
+  const [liveSource, setLiveSource] = useState<LiveSource>("simulator");
   const [mendiStatus, setMendiStatus] = useState<"idle" | "connecting" | "connected" | "error">("idle");
   const [mendiBle, setMendiBle] = useState(false);
 
@@ -258,18 +263,27 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
     });
   }, [reward, oxyL, oxyR, deoxyL, deoxyR, thetaW, alphaW, betaW]);
 
-  const start = useCallback(async (sourceOverride?: "simulator" | "mendi") => {
+  const start = useCallback(async (sourceOverride?: LiveSource) => {
     reward.reset(); oxyL.reset(); oxyR.reset(); deoxyL.reset(); deoxyR.reset();
     thetaW.reset(); alphaW.reset(); betaW.reset();
     setSample(null); setSampleCount(0); setElapsed(0);
 
     // Source priority: explicit override > URL ?live= > simulator default.
-    const urlSource =
-      typeof window !== "undefined" && new URLSearchParams(window.location.search).get("live") === "mendi"
-        ? "mendi"
+    const urlLive =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("live")
         : null;
-    const source: "simulator" | "mendi" = sourceOverride ?? urlSource ?? "simulator";
+    const urlSource: LiveSource | null =
+      urlLive === "mendi" ? "mendi" : urlLive === "muse" ? "muse" : null;
+    const source: LiveSource = sourceOverride ?? urlSource ?? "simulator";
     setLiveSource(source);
+
+    const fallbackToSimulator = async () => {
+      const sim = new SimulatorAdapter({ noiseLevel: 0.35, trendStrength: 0.7 });
+      attachAdapter(sim);
+      await sim.connect();
+      setLiveSource("simulator");
+    };
 
     if (source === "mendi") {
       setMendiStatus("connecting");
@@ -283,17 +297,24 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
         // keeps moving, and surface a clear toast with the start command.
         setMendiStatus("error");
         const msg = e instanceof Error ? e.message : "Failed to connect to Mendi bridge.";
-        // Truncate multi-line errors for the toast; full text is in the console.
         console.warn("[Mendi] bridge connect failed:", msg);
-        const sim = new SimulatorAdapter({ noiseLevel: 0.35, trendStrength: 0.7 });
-        attachAdapter(sim);
-        await sim.connect();
-        setLiveSource("simulator");
+        await fallbackToSimulator();
+      }
+    } else if (source === "muse") {
+      // Muse uses Web Bluetooth directly — no bridge. The first call will
+      // open the browser pairing chooser; if the user dismisses it or the
+      // platform doesn't support Web Bluetooth we fall back to simulator.
+      const muse = new MuseAdapter();
+      attachAdapter(muse);
+      try {
+        await muse.connect();
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "Failed to connect to Muse.";
+        console.warn("[Muse] connect failed:", msg);
+        await fallbackToSimulator();
       }
     } else {
-      const sim = new SimulatorAdapter({ noiseLevel: 0.35, trendStrength: 0.7 });
-      attachAdapter(sim);
-      await sim.connect();
+      await fallbackToSimulator();
     }
 
     setRunning(true);
@@ -302,15 +323,15 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
 
   // Restart the pipeline with a different live source. Updates the URL so
   // refreshing the page keeps the user on the chosen source.
-  const switchLiveSource = useCallback(async (next: "simulator" | "mendi") => {
+  const switchLiveSource = useCallback(async (next: LiveSource) => {
     await stop();
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
-      if (next === "mendi") url.searchParams.set("live", "mendi");
+      if (next === "mendi" || next === "muse") url.searchParams.set("live", next);
       else url.searchParams.delete("live");
       window.history.replaceState({}, "", url.toString());
     }
-    if (next === "simulator") { setMendiStatus("idle"); setMendiBle(false); }
+    if (next !== "mendi") { setMendiStatus("idle"); setMendiBle(false); }
     await start(next);
   }, [stop, start]);
 
@@ -1794,13 +1815,17 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
                 const d = DEVICE_REGISTRY.find((x) => x.id === id);
                 if (d) showToast(`Paired: ${d.name}`);
                 setConnectDeviceOpen(false);
-                // For Mendi specifically, also kick the live BLE-bridge
-                // connection so the dashboard switches from simulator data to
-                // real fNIRS frames. Other devices stay simulator-fed for
-                // now — their adapter wiring will follow.
+                // For Mendi specifically, kick the live BLE-bridge connection
+                // so the dashboard switches from simulator data to real fNIRS
+                // frames. For Muse, open the Web Bluetooth chooser via the
+                // direct MuseAdapter.connect() path. Other devices stay
+                // simulator-fed until their adapters land.
                 if (id === "mendi") {
                   showToast("Starting Mendi bridge connection…");
                   void switchLiveSource("mendi");
+                } else if (id === "muse2" || id === "muse-s") {
+                  showToast("Opening Muse pairing chooser…");
+                  void switchLiveSource("muse");
                 }
               }}
             />
