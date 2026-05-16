@@ -130,3 +130,117 @@ describe("MendiPacketDecoder · field constants", () => {
     assert.equal(MENDI_FIELDS.AMB_R, 13);
   });
 });
+
+// ── Auxiliary-field coverage ────────────────────────────────────────────────
+// Tests for the 13 fields surfaced after the original decoder shipped:
+//   temperatureC, accelMag, accelX, accelY, accelZ, stillness,
+//   pulsePpg, pulseHrBpm, pulseHrvRmssd,
+//   signalQualityL, signalQualityR, signalQualityP, ambientLevel.
+// All assertions are against the real captured baseline packets so the
+// values reflect actual hardware behaviour, not synthetic input.
+
+describe("MendiPacketDecoder · scalp temperature", () => {
+  it("decodes temperatureC from field 7 (float32 °C)", () => {
+    const decoder = new MendiPacketDecoder();
+    const sample = decoder.decode(hexToView(REAL_BASELINE_PACKETS[0]));
+    // Packet 0 carries 23.5 °C in field 7 (worked example from AUDIT doc).
+    closeTo(sample!.temperatureC, 23.5, 1e-3);
+  });
+
+  it("only exposes physiologically-plausible temps (0–60 °C)", () => {
+    const decoder = new MendiPacketDecoder();
+    const sample = decoder.decode(hexToView(REAL_BASELINE_PACKETS[0]));
+    assert.ok(sample!.temperatureC! > 0 && sample!.temperatureC! < 60);
+  });
+});
+
+describe("MendiPacketDecoder · accelerometer", () => {
+  it("derives accelMag / accelX / accelY / accelZ from fields 1–3", () => {
+    const decoder = new MendiPacketDecoder();
+    const sample = decoder.decode(hexToView(REAL_BASELINE_PACKETS[0]));
+    // acc_x=1993, acc_y=16072, acc_z=-945 (from AUDIT doc). int16 LSB at ±2g
+    // → divide by 16384 to get g units.
+    closeTo(sample!.accelX, 1993 / 16384, 1e-4);
+    closeTo(sample!.accelY, 16072 / 16384, 1e-4);
+    closeTo(sample!.accelZ, -945 / 16384, 1e-4);
+    // |a| ≈ 0.99g at rest with gravity primarily on Y axis.
+    closeTo(sample!.accelMag, 0.99, 0.05);
+  });
+
+  it("computes a stillness score in [0, 100]", () => {
+    const decoder = new MendiPacketDecoder();
+    const sample = decoder.decode(hexToView(REAL_BASELINE_PACKETS[0]));
+    assert.ok(typeof sample!.stillness === "number");
+    assert.ok(sample!.stillness! >= 0 && sample!.stillness! <= 100);
+    // First packet establishes the resting baseline → stillness should be high
+    assert.ok(sample!.stillness! >= 95, "first packet should read near-perfect stillness");
+  });
+});
+
+describe("MendiPacketDecoder · pulse PPG + HR + HRV", () => {
+  it("derives pulsePpg from ir_p − amb_p (AC-coupled)", () => {
+    const decoder = new MendiPacketDecoder();
+    const sample = decoder.decode(hexToView(REAL_BASELINE_PACKETS[0]));
+    // pulsePpg is the corrected signal minus the slow EMA. On the first
+    // packet the EMA gets seeded to the corrected value, so pulsePpg = 0.
+    closeTo(sample!.pulsePpg, 0, 1e-9);
+  });
+
+  it("does not emit pulseHrBpm before ≥ 3 beats have been detected", () => {
+    const decoder = new MendiPacketDecoder();
+    // 3 packets is not enough to observe 3 zero-crossings.
+    REAL_BASELINE_PACKETS.forEach((hex) => decoder.decode(hexToView(hex)));
+    // pulseHrBpm comes from the rolling IBI mean, which needs ≥ 3 IBIs.
+    // After 3 packets only a single zero-crossing is possible at most.
+    const last = decoder.decode(hexToView(REAL_BASELINE_PACKETS[0]));
+    assert.equal(last!.pulseHrBpm, undefined);
+    assert.equal(last!.pulseHrvRmssd, undefined);
+  });
+});
+
+describe("MendiPacketDecoder · per-optode signal quality", () => {
+  it("computes signalQualityL/R/P each in [0, 100]", () => {
+    const decoder = new MendiPacketDecoder();
+    const sample = decoder.decode(hexToView(REAL_BASELINE_PACKETS[0]));
+    for (const v of [sample!.signalQualityL, sample!.signalQualityR, sample!.signalQualityP]) {
+      assert.ok(typeof v === "number");
+      assert.ok(v! >= 0 && v! <= 100);
+    }
+  });
+
+  it("good-coupling baseline packets land ≥ 50 on all three optodes", () => {
+    // Per the AUDIT-doc stats, baseline raw counts give a healthy (red - amb)
+    // / |amb| ratio. The log-mapped score should sit comfortably mid-range.
+    const decoder = new MendiPacketDecoder();
+    const sample = decoder.decode(hexToView(REAL_BASELINE_PACKETS[0]));
+    assert.ok(sample!.signalQualityL! >= 50, `L was ${sample!.signalQualityL}`);
+    assert.ok(sample!.signalQualityR! >= 50, `R was ${sample!.signalQualityR}`);
+    assert.ok(sample!.signalQualityP! >= 50, `P was ${sample!.signalQualityP}`);
+  });
+});
+
+describe("MendiPacketDecoder · ambient light", () => {
+  it("derives ambientLevel in [0, 100] from amb_l/r/p magnitudes", () => {
+    const decoder = new MendiPacketDecoder();
+    const sample = decoder.decode(hexToView(REAL_BASELINE_PACKETS[0]));
+    assert.ok(typeof sample!.ambientLevel === "number");
+    assert.ok(sample!.ambientLevel! >= 0 && sample!.ambientLevel! <= 100);
+    // Baseline indoor capture should be in the "clean" or "moderate" zones.
+    assert.ok(sample!.ambientLevel! < 50, `ambientLevel was ${sample!.ambientLevel}`);
+  });
+});
+
+describe("MendiPacketDecoder · resetBaseline clears auxiliary state", () => {
+  it("zeroes accel/pulse/IBI history so a new session re-baselines cleanly", () => {
+    const decoder = new MendiPacketDecoder();
+    REAL_BASELINE_PACKETS.forEach((hex) => decoder.decode(hexToView(hex)));
+    decoder.resetBaseline();
+    const sample = decoder.decode(hexToView(REAL_BASELINE_PACKETS[0]));
+    // Post-reset: PPG re-seeds to 0, stillness re-baselines to ~100.
+    closeTo(sample!.pulsePpg, 0, 1e-9);
+    assert.ok(sample!.stillness! >= 95);
+    // Pulse HR / HRV require a fresh IBI history → undefined after reset.
+    assert.equal(sample!.pulseHrBpm, undefined);
+    assert.equal(sample!.pulseHrvRmssd, undefined);
+  });
+});
