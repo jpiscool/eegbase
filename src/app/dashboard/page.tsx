@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import DemoClient from "../demo/DemoClient";
 
 // The clinician home renders the polished DemoClient (same component as
@@ -18,35 +17,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const VALID_TABS = [
-  "dashboard", "session", "game", "brain", "hrv", "progress", "ai", "protocols",
-  "schedule", "reports", "compare",
-] as const;
-type MainTab = (typeof VALID_TABS)[number];
-
-type SearchParamsRaw = { [key: string]: string | string[] | undefined };
-
-function pickTab(candidate: string | undefined | null): MainTab | null {
-  return candidate && (VALID_TABS as readonly string[]).includes(candidate)
-    ? (candidate as MainTab)
-    : null;
-}
-
-export default async function DashboardPage({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParamsRaw>;
-}) {
-  const params = await searchParams;
-  const raw = params.tab;
-  const fromUrl = pickTab(Array.isArray(raw) ? raw[0] : raw);
-
-  let fromCookie: MainTab | null = null;
-  if (!fromUrl) {
-    const store = await cookies();
-    fromCookie = pickTab(store.get("demo_tab")?.value);
-  }
-
-  const initialTab: MainTab = fromUrl ?? fromCookie ?? "dashboard";
-  return <DemoClient initialTab={initialTab} />;
+export default async function DashboardPage() {
+  // Logged-in clinician path is stripped to the Dashboard tab only while
+  // we validate each tier against real Mendi hardware. See
+  // scripts/mendi-capture/live-site-test-priorities.md.
+  // The public /demo route keeps the full tab surface.
+  // ?tab=...  + the demo_tab cookie are intentionally ignored here — once
+  // we restore additional tabs we'll re-enable the URL-driven routing.
+  return <DemoClient initialTab="dashboard" appMode="strip" />;
 }

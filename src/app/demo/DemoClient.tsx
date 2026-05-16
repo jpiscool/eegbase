@@ -155,7 +155,14 @@ const VALID_TABS: MainTab[] = [
 ];
 const isMainTab = (v: string): v is MainTab => (VALID_TABS as string[]).includes(v);
 
-export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: MainTab }) {
+export default function DemoClient({
+  initialTab = "dashboard",
+  // 'demo'   → public /demo surface, all tabs visible
+  // 'strip'  → authenticated /dashboard, hide every tab except 'dashboard'.
+  //            Used to enforce the Tier 0 / Tier 1 cut-down of the logged-in
+  //            app per scripts/mendi-capture/live-site-test-priorities.md.
+  appMode = "demo",
+}: { initialTab?: MainTab; appMode?: "demo" | "strip" }) {
   const adapterRef = useRef<DeviceAdapter | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -417,7 +424,7 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
     return { icon: "◌", text: "Starting up — takes a moment for brainwave patterns to stabilize. Breathe naturally.", color: "#CBD5E1", accent: "#64748B", bg: "#0F172A", border: "#1E293B" };
   })();
 
-  const TABS: { id: MainTab; label: string; icon: React.ComponentType<{ size?: number; strokeWidth?: number }>; groupStart?: string; badge?: string }[] = [
+  const ALL_TABS: { id: MainTab; label: string; icon: React.ComponentType<{ size?: number; strokeWidth?: number }>; groupStart?: string; badge?: string }[] = [
     { id: "dashboard", label: "My Dashboard",       icon: LayoutDashboard, groupStart: "My Workspace" },
     { id: "session",   label: "Live Session",       icon: Activity,       groupStart: "During a Session", badge: "FOR MENDI" },
     { id: "game",      label: "Game Mode",          icon: Gamepad2 },
@@ -430,6 +437,14 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
     { id: "reports",   label: "Reports",            icon: FileText,       badge: "FOR MENDI" },
     { id: "compare",   label: "Compare",            icon: BarChart3 },
   ];
+
+  // When the authenticated app passes appMode="strip" we hide every tab
+  // except the dashboard. The route handlers remain mounted so we can
+  // restore tabs by simply expanding this filter as each tier passes the
+  // hardware-validation runbook.
+  const TABS = appMode === "strip"
+    ? ALL_TABS.filter((t) => t.id === "dashboard")
+    : ALL_TABS;
 
   // Each protocol carries the hardware it requires. Priya is the
   // demo's flagship Mendi-only client (pure fNIRS, no EEG cap needed) so
