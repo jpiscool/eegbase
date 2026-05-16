@@ -999,7 +999,23 @@ export function DashboardEmptyState({ onAdd }: { onAdd: () => void }) {
 // devices list, so the connected-devices widget would be redundant in the
 // defaults. Replaced with reward-trace so the default set has more visual
 // variety (big number + bilateral bars + ms gauge + sparkline).
-export const DEFAULT_WIDGETS = ["live-score", "mendi-channels", "hrv-live", "reward-trace"];
+// Default widget set for new visitors — showcases the full Mendi-native
+// surface (HbO/HHb channels, overlay traces, TSI, total HbO, asymmetry,
+// brain heatmap, signal rate) plus the cross-device focus score and
+// reward sparkline so the dashboard looks alive on first paint even
+// when only one device is paired.
+export const DEFAULT_WIDGETS = [
+  "live-score",
+  "mendi-channels",
+  "hbo-trace",
+  "hhb-trace",
+  "tsi-gauge",
+  "total-hbo",
+  "brain-mini",
+  "asymmetry",
+  "mendi-fps",
+  "reward-trace",
+];
 
 // ── localStorage helpers ──────────────────────────────────────────────────
 
