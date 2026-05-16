@@ -12,25 +12,29 @@ type Tile = { name: string; cat: string; status: Status; sub?: string };
 const TILES: Tile[] = [
   // Hardware — fNIRS
   { name: "Mendi",            cat: "fNIRS hardware", status: "live",    sub: "Independent BLE adapter · 31 Hz fNIRS · talks to headband directly (no Mendi app or cloud in loop)" },
-  { name: "NIRx NIRScout",    cat: "fNIRS hardware", status: "beta",    sub: "Research · 8–48 channels" },
-  { name: "Artinis Brite",    cat: "fNIRS hardware", status: "beta",    sub: "Wearable Brite MKIII" },
+  { name: "NIRx NIRScout",    cat: "fNIRS hardware", status: "planned", sub: "Research · 8–48 channels" },
+  { name: "Artinis Brite",    cat: "fNIRS hardware", status: "planned", sub: "Wearable Brite MKIII" },
   { name: "Kernel Flow",      cat: "fNIRS hardware", status: "planned", sub: "Q4 2026" },
 
   // Hardware — EEG
-  { name: "Muse 2 / S Athena", cat: "EEG hardware", status: "live",    sub: "4-ch · 256 Hz" },
-  { name: "OpenBCI Cyton",    cat: "EEG hardware", status: "live",    sub: "8-ch · 250 Hz" },
-  { name: "Neurosity Crown",  cat: "EEG hardware", status: "beta",    sub: "8-ch · developer" },
+  // Active focus list (May 2026): Muse only. OpenBCI / Neurosity remain on
+  // the roadmap as community-contributable, not internally developed.
+  { name: "Muse 2 / S Athena", cat: "EEG hardware", status: "live",    sub: "4-ch · 256 Hz · Web Bluetooth direct" },
+  { name: "OpenBCI Cyton",    cat: "EEG hardware", status: "planned", sub: "Community-contributable · 8-ch · 250 Hz" },
+  { name: "Neurosity Crown",  cat: "EEG hardware", status: "planned", sub: "Community-contributable · 8-ch developer headset" },
   { name: "Sens.ai",          cat: "EEG hardware", status: "planned", sub: "Q4 2026 · EEG + HRV + PBM" },
   { name: "Bittium Faros",    cat: "EEG hardware", status: "planned", sub: "Research-grade ECG/EEG" },
 
   // HRV / Wearables
-  { name: "Polar H10",        cat: "HRV / wearables", status: "live", sub: "Chest strap · 1000 Hz RR" },
-  { name: "Polar OH1",        cat: "HRV / wearables", status: "live", sub: "Optical forearm" },
-  { name: "Apple HealthKit",  cat: "HRV / wearables", status: "live", sub: "iOS · sleep + HRV + mindful" },
-  { name: "Oura Ring",        cat: "HRV / wearables", status: "live", sub: "Sleep · body temp · HRV" },
-  { name: "Whoop 4.0",        cat: "HRV / wearables", status: "live", sub: "Recovery · strain · sleep" },
-  { name: "Garmin",           cat: "HRV / wearables", status: "beta", sub: "Stress · Body Battery" },
-  { name: "Fitbit",           cat: "HRV / wearables", status: "beta", sub: "Sleep stages · SpO₂" },
+  // Active focus list: Apple HealthKit + Oura. Polar / Whoop / Garmin /
+  // Fitbit remain on the roadmap as community-contributable.
+  { name: "Apple HealthKit",  cat: "HRV / wearables", status: "live",    sub: "iOS companion app · sleep + HRV + mindful" },
+  { name: "Oura Ring",        cat: "HRV / wearables", status: "live",    sub: "Gen 4 · Oura Cloud REST · 0.99 HRV-accuracy concordance with Polar H10" },
+  { name: "Polar H10",        cat: "HRV / wearables", status: "planned", sub: "Community-contributable · chest strap 1000 Hz RR" },
+  { name: "Polar OH1",        cat: "HRV / wearables", status: "planned", sub: "Community-contributable · optical forearm" },
+  { name: "Whoop 4.0",        cat: "HRV / wearables", status: "planned", sub: "Community-contributable · recovery + strain" },
+  { name: "Garmin",           cat: "HRV / wearables", status: "planned", sub: "Community-contributable · stress + Body Battery" },
+  { name: "Fitbit",           cat: "HRV / wearables", status: "planned", sub: "Community-contributable · sleep + SpO₂" },
   { name: "Empatica EmbracePlus", cat: "HRV / wearables", status: "planned", sub: "EDA · GSR" },
 
   // EHR / practice management
