@@ -140,11 +140,6 @@ export default async function ProfilePage() {
       {/* Main column — same #F0F4F8 surface DemoClient uses on /dashboard. */}
       <main style={{ flex: 1, minWidth: 0, padding: "24px 20px", minHeight: "100vh" }}>
         <div style={{ maxWidth: 640, margin: "0 auto" }}>
-          <h1 style={{ color: "#0F172A", fontSize: 26, fontWeight: 800, marginBottom: 4, letterSpacing: -0.3 }}>Profile</h1>
-          <p style={{ color: "#64748B", fontSize: 13, marginBottom: 28 }}>
-            Update your login email, display name, and password.
-          </p>
-
           <div style={cardStyle}>
             <h2 style={headingStyle}>Account</h2>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
