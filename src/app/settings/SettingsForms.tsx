@@ -51,7 +51,11 @@ export function ClinicNameForm({ currentName }: { currentName: string }) {
   );
 }
 
-export function ProfileForm({ name, email }: { name: string; email: string }) {
+export function ProfileForm({
+  name,
+  email,
+  editableEmail = false,
+}: { name: string; email: string; editableEmail?: boolean }) {
   const [pending, startTransition] = useTransition();
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [msg, setMsg] = useState("");
@@ -80,13 +84,26 @@ export function ProfileForm({ name, email }: { name: string; email: string }) {
       </div>
       <div>
         <label className="block text-sm font-medium mb-1" style={labelStyle}>Email</label>
-        <input
-          value={email}
-          readOnly
-          className={inputCls + " cursor-not-allowed"}
-          style={{ background: "var(--surface-sunken)", borderColor: "var(--border-subtle)", color: "var(--text-tertiary)" }}
-        />
-        <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>Email cannot be changed here.</p>
+        {editableEmail ? (
+          <input
+            type="email"
+            name="email"
+            defaultValue={email}
+            required
+            className={inputCls}
+            style={inputStyle}
+          />
+        ) : (
+          <>
+            <input
+              value={email}
+              readOnly
+              className={inputCls + " cursor-not-allowed"}
+              style={{ background: "var(--surface-sunken)", borderColor: "var(--border-subtle)", color: "var(--text-tertiary)" }}
+            />
+            <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>Email cannot be changed here.</p>
+          </>
+        )}
       </div>
       {status !== "idle" && (
         <p className="text-sm" style={{ color: status === "success" ? "var(--success)" : "var(--danger)" }}>

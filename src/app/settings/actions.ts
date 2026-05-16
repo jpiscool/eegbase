@@ -28,14 +28,38 @@ export async function updateProfile(formData: FormData) {
   if (!session?.user?.id) throw new Error("Unauthorized");
 
   const name = (formData.get("name") as string).trim();
+  const emailRaw = formData.get("email");
   if (!name) return { error: "Name is required" };
+
+  const updates: { name: string; email?: string } = { name };
+
+  // Email is optional — if absent we leave it as-is (matches old behaviour).
+  // When provided, validate format + uniqueness so a user editing their
+  // own login on /profile can change their sign-in address.
+  if (typeof emailRaw === "string") {
+    const email = emailRaw.trim().toLowerCase();
+    if (!email) return { error: "Email is required" };
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return { error: "Enter a valid email address" };
+    }
+    const [existing] = await db
+      .select({ id: clinicians.id })
+      .from(clinicians)
+      .where(eq(clinicians.email, email))
+      .limit(1);
+    if (existing && existing.id !== session.user.id) {
+      return { error: "That email is already in use" };
+    }
+    updates.email = email;
+  }
 
   await db
     .update(clinicians)
-    .set({ name })
+    .set(updates)
     .where(eq(clinicians.id, session.user.id));
 
   revalidatePath("/settings");
+  revalidatePath("/profile");
   return { success: true };
 }
 

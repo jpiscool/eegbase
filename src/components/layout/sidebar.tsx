@@ -11,6 +11,7 @@ import {
   Search,
   Bell,
   ChevronRight,
+  UserCircle,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { SignOutButton } from "./SignOutButton";
@@ -64,6 +65,7 @@ const nav: { href: string; label: string; icon: LucideIcon; badge?: string; tier
 // Bottom nav also trimmed — keep only Settings. Audit Log is hidden until
 // the audit_logs table migration ships in prod (drizzle/0014).
 const bottomNav = [
+  { href: "/profile",  label: "Profile",  icon: UserCircle },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 // Hidden bottom-nav re-enable queue:

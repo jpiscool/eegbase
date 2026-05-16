@@ -1,18 +1,11 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/config";
 import { Sidebar } from "@/components/layout/sidebar";
+import { CommandMenu } from "@/components/CommandMenu";
 import { getReviewQueueCount } from "@/lib/reviewQueueCount";
+import { TrustStrip } from "@/components/shared/TrustStrip";
 
-// Auth-gate + wrap the dashboard home in the clinician sidebar so logged-in
-// users have a place to click into Profile / Settings / Sessions. The
-// DemoClient that renders inside still owns its own widget/tab chrome; we
-// intentionally skip TrustStrip + CommandMenu here to keep the strip-mode
-// landing free of marketing copy.
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function ProfileLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   if (!session) redirect("/login");
 
@@ -26,7 +19,11 @@ export default async function DashboardLayout({
         userEmail={session.user?.email ?? undefined}
         reviewQueueCount={reviewQueueCount}
       />
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main className="flex-1 overflow-auto">
+        <TrustStrip />
+        <div className="p-8">{children}</div>
+      </main>
+      <CommandMenu />
     </div>
   );
 }
