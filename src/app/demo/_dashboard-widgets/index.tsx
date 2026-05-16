@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Activity, Brain, HeartPulse, BarChart3, LineChart,
   Timer, Bluetooth, Moon, NotebookPen, Plus, X, Gauge, Wifi, Search,
-  Scale, Wind, Target, ClipboardList,
+  Scale, Wind, Target, ClipboardList, Droplets, Waves, Sigma,
 } from "lucide-react";
 import { LiveChart } from "@/components/LiveChart";
 import type { DeviceSample } from "@/lib/device/adapter";
@@ -85,6 +85,59 @@ function MiniBar({ pct, color }: { pct: number; color: string }) {
       <div style={{ height: "100%", width: `${Math.max(2, Math.min(100, pct))}%`, background: color, transition: "width 0.3s ease" }} />
     </div>
   );
+}
+
+// Inline SVG sparkline that overlays multiple series on a shared Y-scale.
+// Used for Mendi widgets that compare L vs R (HbO trace, HHb trace) — both
+// channels share the same min/max so spatial relationships are honest.
+// LiveChart canvas assumes 0–1 normalized values and only takes one series,
+// so we draw our own simple SVG path for overlay views.
+function OverlaySpark({ series, height = 70 }: { series: { data: number[]; color: string; label: string }[]; height?: number }) {
+  const all = series.flatMap((s) => s.data);
+  if (all.length === 0) return <div style={{ height, background: "#1E293B", borderRadius: 6 }} />;
+  const min = Math.min(...all);
+  const max = Math.max(...all);
+  const range = max - min || 1;
+  const W = 300;
+  const H = height;
+  const pad = 4;
+  return (
+    <div style={{ position: "relative" }}>
+      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ width: "100%", height, background: "#1E293B", borderRadius: 6, display: "block" }}>
+        {/* Mid grid line */}
+        <line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke="#334155" strokeWidth={1} strokeDasharray="4 4" />
+        {series.map((s) => {
+          if (s.data.length < 2) return null;
+          const step = W / (s.data.length - 1);
+          const points = s.data.map((v, i) => {
+            const x = i * step;
+            const y = H - pad - ((v - min) / range) * (H - pad * 2);
+            return `${x},${y}`;
+          }).join(" ");
+          return <polyline key={s.label} points={points} fill="none" stroke={s.color} strokeWidth={1.6} strokeLinejoin="round" />;
+        })}
+      </svg>
+      <div style={{ display: "flex", gap: 10, justifyContent: "flex-start", marginTop: 4, fontSize: 9.5, color: COLORS.muted, textTransform: "uppercase", letterSpacing: "0.04em", fontWeight: 600 }}>
+        {series.map((s) => (
+          <span key={s.label} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+            <span style={{ width: 10, height: 2, background: s.color, borderRadius: 1 }} />
+            {s.label}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Tissue Saturation Index — proportion of oxygenated to total hemoglobin
+// per side. Clinically TSI typically sits 55–75 %. Outside this band over
+// time can suggest reduced perfusion or vasoconstriction. Returns null if
+// either component is missing or the denominator is unusable.
+function tsiPct(hbo?: number, hhb?: number): number | null {
+  if (hbo == null || hhb == null) return null;
+  const total = Math.abs(hbo) + Math.abs(hhb);
+  if (total < 1e-6) return null;
+  return (Math.abs(hbo) / total) * 100;
 }
 
 // ── widget catalog ────────────────────────────────────────────────────────
@@ -500,7 +553,243 @@ export const WIDGET_CATALOG: WidgetDef[] = [
       );
     },
   },
+
+  // ── Mendi-native widgets ─────────────────────────────────────────────
+  // These widgets read fields the Mendi decoder emits (oxyHbLeft/Right,
+  // deoxyHbLeft/Right, rewardScore, timestampMs). Each guards on the
+  // expected field being present so it gracefully shows "Waiting for
+  // Mendi feed…" when on the simulator (which doesn't emit fNIRS data)
+  // or when the bridge BLE link is down.
+
+  {
+    id: "hbo-trace",
+    title: "HbO · L vs R trace",
+    device: "Mendi headband",
+    icon: Droplets,
+    blurb: "60 s overlay of oxygenated-hemoglobin L and R prefrontal channels.",
+    render: ({ oxyL, oxyR }) => {
+      if (oxyL.length === 0 && oxyR.length === 0) return <Waiting label="Mendi feed" />;
+      return (
+        <div style={{ padding: "6px 0" }}>
+          <OverlaySpark
+            series={[
+              { data: oxyL, color: COLORS.cyan, label: "HbO · L" },
+              { data: oxyR, color: COLORS.blue, label: "HbO · R" },
+            ]}
+            height={80}
+          />
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 8, lineHeight: 1.45 }}>
+            Rising line = more oxygen-rich blood reaching that prefrontal site.
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "hhb-trace",
+    title: "HHb · L vs R trace",
+    device: "Mendi headband",
+    icon: Waves,
+    blurb: "60 s overlay of deoxygenated-hemoglobin L and R channels.",
+    render: ({ deoxyL, deoxyR }) => {
+      if (deoxyL.length === 0 && deoxyR.length === 0) return <Waiting label="Mendi feed" />;
+      return (
+        <div style={{ padding: "6px 0" }}>
+          <OverlaySpark
+            series={[
+              { data: deoxyL, color: COLORS.violet, label: "HHb · L" },
+              { data: deoxyR, color: COLORS.pink,   label: "HHb · R" },
+            ]}
+            height={80}
+          />
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 8, lineHeight: 1.45 }}>
+            HHb usually moves opposite to HbO when neural activity rises.
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "tsi-gauge",
+    title: "Tissue saturation (TSI)",
+    device: "Mendi headband",
+    icon: Gauge,
+    blurb: "TSI % per side — HbO / (HbO+HHb). 55–75 % is typical adult range.",
+    render: ({ sample }) => {
+      const tsiL = tsiPct(sample?.oxyHbLeft,  sample?.deoxyHbLeft);
+      const tsiR = tsiPct(sample?.oxyHbRight, sample?.deoxyHbRight);
+      if (tsiL == null && tsiR == null) return <Waiting label="Mendi feed" />;
+      const tone = (v: number | null) =>
+        v == null ? COLORS.muted : v >= 55 && v <= 75 ? COLORS.ok : v < 50 || v > 80 ? COLORS.alert : COLORS.warn;
+      return (
+        <div style={{ padding: "4px 0" }}>
+          {[
+            { side: "L", v: tsiL },
+            { side: "R", v: tsiR },
+          ].map((row) => (
+            <div key={row.side} style={{ marginBottom: 10 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+                <span style={{ fontSize: 10, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  TSI · {row.side}
+                </span>
+                <span style={{ fontFamily: NUM, fontSize: 16, fontWeight: 700, color: tone(row.v) }}>
+                  {row.v == null ? "—" : `${row.v.toFixed(1)}%`}
+                </span>
+              </div>
+              <MiniBar pct={row.v ?? 0} color={tone(row.v)} />
+            </div>
+          ))}
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 6, lineHeight: 1.4 }}>
+            Outside 50–80 % over a long stretch can suggest reduced perfusion.
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "total-hbo",
+    title: "Total cerebral HbO",
+    device: "Mendi headband",
+    icon: Sigma,
+    blurb: "Sum of L + R HbO with 12 s trend arrow.",
+    render: ({ sample, oxyL, oxyR }) => {
+      const l = sample?.oxyHbLeft;
+      const r = sample?.oxyHbRight;
+      if (l == null || r == null) return <Waiting label="Mendi feed" />;
+      const total = l + r;
+      const past12L = oxyL.length >= 12 ? oxyL[oxyL.length - 12] : null;
+      const past12R = oxyR.length >= 12 ? oxyR[oxyR.length - 12] : null;
+      const past = past12L != null && past12R != null ? past12L + past12R : null;
+      const delta = past != null ? total - past : 0;
+      const arrow = past == null ? "·" : Math.abs(delta) < 0.005 ? "→" : delta > 0 ? "↗" : "↘";
+      const color = past == null ? COLORS.muted : delta > 0 ? COLORS.ok : delta < 0 ? COLORS.warn : COLORS.ink;
+      return (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", padding: "14px 0" }}>
+          <div style={{ fontFamily: NUM, fontSize: 36, fontWeight: 800, color: COLORS.cyan, letterSpacing: "-0.03em", lineHeight: 1 }}>
+            {fmtSigned(total)}
+          </div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 6, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>
+            HbO · L+R
+          </div>
+          <div style={{ fontSize: 12, color, marginTop: 10, fontFamily: NUM, fontWeight: 600 }}>
+            {arrow} {fmtSigned(delta)} <span style={{ color: COLORS.muted, fontWeight: 500 }}>vs 12 s ago</span>
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "brain-mini",
+    title: "Prefrontal heatmap",
+    device: "Mendi headband",
+    icon: Brain,
+    blurb: "Live L/R prefrontal HbO as a two-zone heatmap.",
+    render: ({ sample }) => {
+      const l = sample?.oxyHbLeft;
+      const r = sample?.oxyHbRight;
+      if (l == null || r == null) return <Waiting label="Mendi feed" />;
+      // Map signed HbO (~ -0.2 … +0.2) to a 0..1 heat scale, then pick a
+      // colour stop between deep blue (cold) and bright red (hot). Mendi's
+      // app uses a similar warm/cool palette so the metaphor stays familiar.
+      const heat = (v: number) => Math.max(0, Math.min(1, (v + 0.2) / 0.4));
+      const colour = (v: number) => {
+        const h = heat(v);
+        // 240° (blue) → 0° (red) HSL hop, fixed saturation/lightness.
+        const hue = 240 - 240 * h;
+        return `hsl(${hue}, 80%, 50%)`;
+      };
+      const cell = (side: "L" | "R", v: number) => (
+        <div style={{
+          flex: 1,
+          height: 110,
+          background: `radial-gradient(circle at center, ${colour(v)} 0%, ${colour(v)}88 55%, #0F172A 100%)`,
+          border: `1px solid ${colour(v)}55`,
+          borderRadius: 12,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          color: COLORS.ink,
+        }}>
+          <div style={{ fontSize: 11, fontWeight: 700, opacity: 0.8, textTransform: "uppercase", letterSpacing: "0.08em" }}>{side}</div>
+          <div style={{ fontFamily: NUM, fontSize: 18, fontWeight: 800, letterSpacing: "-0.02em", marginTop: 4 }}>{fmtSigned(v)}</div>
+        </div>
+      );
+      return (
+        <div style={{ padding: "4px 0" }}>
+          <div style={{ display: "flex", gap: 10 }}>{cell("L", l)}{cell("R", r)}</div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8, fontSize: 9.5, color: COLORS.muted, fontFamily: NUM, textTransform: "uppercase", letterSpacing: "0.04em" }}>
+            <span>cool · low HbO</span>
+            <span>warm · high HbO</span>
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "mendi-fps",
+    title: "Mendi signal rate",
+    device: "Mendi headband",
+    icon: Wifi,
+    blurb: "Frames/sec — should sit at ~31 Hz when streaming cleanly.",
+    render: ({ sample }) => <MendiFpsWidget timestampMs={sample?.timestampMs} />,
+  },
 ];
+
+// Frame-rate tracker for the Mendi signal-rate widget. Records a sliding
+// window of recent frame arrival times and reports Hz averaged over the
+// last 3 s — gives a stable number that still reacts within a few seconds
+// when the BLE link degrades. Mendi V4 normal-mode streaming is 31.2 Hz.
+function MendiFpsWidget({ timestampMs }: { timestampMs: number | undefined }) {
+  const arrivals = useRef<number[]>([]);
+  const [hz, setHz] = useState<number | null>(null);
+  useEffect(() => {
+    if (timestampMs == null) return;
+    const now = Date.now();
+    arrivals.current.push(now);
+    arrivals.current = arrivals.current.filter((t) => now - t < 3000);
+    setHz(arrivals.current.length / 3);
+  }, [timestampMs]);
+  // Independently age the window even when no new frames arrive so the
+  // displayed rate falls to 0 visibly if streaming stops.
+  useEffect(() => {
+    const iv = setInterval(() => {
+      const now = Date.now();
+      const fresh = arrivals.current.filter((t) => now - t < 3000);
+      arrivals.current = fresh;
+      setHz(fresh.length / 3);
+    }, 500);
+    return () => clearInterval(iv);
+  }, []);
+
+  if (hz == null) return <Waiting label="Mendi feed" />;
+  const status =
+    hz >= 25 ? { label: "clean", color: COLORS.ok }
+    : hz >= 10 ? { label: "degraded", color: COLORS.warn }
+    : hz > 0 ? { label: "weak", color: COLORS.alert }
+    : { label: "no frames", color: COLORS.alert };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", padding: "14px 0" }}>
+      <div style={{ fontFamily: NUM, fontSize: 44, fontWeight: 800, color: status.color, letterSpacing: "-0.03em", lineHeight: 1 }}>
+        {hz.toFixed(1)}
+      </div>
+      <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 6, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>
+        Hz · frames/sec
+      </div>
+      <div style={{ fontSize: 11, color: status.color, marginTop: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+        · {status.label}
+      </div>
+      <div style={{ fontSize: 9.5, color: COLORS.muted, marginTop: 4, fontFamily: NUM }}>
+        target 31 Hz · normal mode
+      </div>
+    </div>
+  );
+}
 
 // ── breathing pacer (interactive) ─────────────────────────────────────────
 //
