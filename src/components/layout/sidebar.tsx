@@ -5,53 +5,69 @@ import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard,
-  Users,
   Activity,
-  BookOpen,
   Settings,
   Play,
   Search,
-  BarChart3,
-  Bluetooth,
-  FileText,
-  UsersRound,
-  CalendarDays,
-  Receipt,
   Bell,
   ChevronRight,
-  Package,
-  MessageSquare,
-  ClipboardCheck,
-  ShoppingBag,
-  Shield,
-  Code2,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { SignOutButton } from "./SignOutButton";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 
-const nav: { href: string; label: string; icon: LucideIcon; badge?: string }[] = [
-  { href: "/dashboard",              label: "Dashboard",    icon: LayoutDashboard },
-  { href: "/clients",                label: "Clients",      icon: Users },
-  { href: "/sessions",               label: "Sessions",     icon: Activity },
-  { href: "/sessions/review",        label: "Review Queue", icon: ClipboardCheck },
-  { href: "/messages",               label: "Messages",     icon: MessageSquare },
-  { href: "/analytics",              label: "Analytics",    icon: BarChart3 },
-  { href: "/protocols",              label: "Protocols",    icon: BookOpen },
-  { href: "/protocols/marketplace",  label: "Marketplace",  icon: ShoppingBag },
-  { href: "/schedule",               label: "Schedule",     icon: CalendarDays },
-  { href: "/billing",                label: "Billing",      icon: Receipt },
-  { href: "/devices",                label: "Devices",      icon: Bluetooth },
-  { href: "/community",              label: "Community",    icon: UsersRound },
-  { href: "/docs",                   label: "API Docs",     icon: FileText },
-  { href: "/docs/mendi-sdk",         label: "Mendi BLE",    icon: Code2 },
-  { href: "/settings/inventory",     label: "Inventory",    icon: Package },
+// ── STRIPPED MAIN NAV ──────────────────────────────────────────────────────
+// Per scripts/mendi-capture/live-site-test-priorities.md, the authenticated
+// app is stripped to the minimum surface needed to validate Tier 0 (pair
+// Mendi + see live frames) and Tier 1 (save a session) against real
+// hardware. Everything else is hidden from the sidebar until its tier
+// passes hardware validation against eegbase.com with a Mendi V4 on.
+//
+// Routes themselves are still mounted under src/app/ — the link is just
+// removed from the nav. Restoring an item is one line: move it from the
+// HIDDEN_NAV list back into `nav`.
+const nav: { href: string; label: string; icon: LucideIcon; badge?: string; tier?: number }[] = [
+  // Tier 0 — smoke test
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, tier: 0 },
+  // Tier 1 — save a session end-to-end
+  { href: "/sessions",  label: "Sessions",  icon: Activity, tier: 1 },
 ];
 
+// Hidden until their tier is green on real hardware. Don't delete — this
+// list is the re-enable queue. As you validate each item against the
+// runbook, move it into `nav` above.
+//
+//   Tier 2 — Multi-session + client context:
+//     { href: "/clients",                label: "Clients",      icon: Users },
+//
+//   Tier 3 — Exports + AI:
+//     (no nav entries — exports happen from the session detail page)
+//
+//   Tier 4 — Clinical workflow:
+//     { href: "/protocols",              label: "Protocols",    icon: BookOpen },
+//     { href: "/protocols/marketplace",  label: "Marketplace",  icon: ShoppingBag },
+//
+//   Tier 5 — Communications + admin:
+//     { href: "/sessions/review",        label: "Review Queue", icon: ClipboardCheck },
+//     { href: "/messages",               label: "Messages",     icon: MessageSquare },
+//     { href: "/schedule",               label: "Schedule",     icon: CalendarDays },
+//
+//   Tier 6 — Operations:
+//     { href: "/analytics",              label: "Analytics",    icon: BarChart3 },
+//     { href: "/billing",                label: "Billing",      icon: Receipt },
+//     { href: "/community",              label: "Community",    icon: UsersRound },
+//     { href: "/docs",                   label: "API Docs",     icon: FileText },
+//     { href: "/docs/mendi-sdk",         label: "Mendi BLE",    icon: Code2 },
+//     { href: "/devices",                label: "Devices",      icon: Bluetooth },
+//     { href: "/settings/inventory",     label: "Inventory",    icon: Package },
+
+// Bottom nav also trimmed — keep only Settings. Audit Log is hidden until
+// the audit_logs table migration ships in prod (drizzle/0014).
 const bottomNav = [
-  { href: "/settings/audit-log", label: "Audit Log", icon: Shield },
-  { href: "/settings",          label: "Settings",   icon: Settings },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
+// Hidden bottom-nav re-enable queue:
+//   { href: "/settings/audit-log", label: "Audit Log", icon: Shield },
 
 export function Sidebar({
   userName,
