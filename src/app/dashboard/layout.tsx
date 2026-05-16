@@ -1,11 +1,13 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/config";
+import { Sidebar } from "@/components/layout/sidebar";
+import { getReviewQueueCount } from "@/lib/reviewQueueCount";
 
-// Auth-gate only — the dashboard home renders the polished DemoClient
-// (its own sidebar + tab chrome), so we intentionally do NOT wrap it in
-// the clinician-app Sidebar / TrustStrip / CommandMenu. Other authenticated
-// sections (clients, sessions, protocols, …) live at their own top-level
-// routes with their own layouts and are unaffected.
+// Auth-gate + wrap the dashboard in the clinician Sidebar so logged-in users
+// have a consistent nav across every authenticated surface. DemoClient's
+// internal nav is suppressed in appMode='strip' so the two sidebars don't
+// stack. TrustStrip + CommandMenu are intentionally skipped here to keep
+// the strip-mode landing free of marketing chrome.
 export default async function DashboardLayout({
   children,
 }: {
@@ -13,5 +15,18 @@ export default async function DashboardLayout({
 }) {
   const session = await auth();
   if (!session) redirect("/login");
-  return <>{children}</>;
+
+  const clinicId = (session.user as { clinicId?: string })?.clinicId ?? "";
+  const reviewQueueCount = await getReviewQueueCount(clinicId);
+
+  return (
+    <div className="flex h-full min-h-screen">
+      <Sidebar
+        userName={session.user?.name ?? undefined}
+        userEmail={session.user?.email ?? undefined}
+        reviewQueueCount={reviewQueueCount}
+      />
+      <main className="flex-1 overflow-auto">{children}</main>
+    </div>
+  );
 }

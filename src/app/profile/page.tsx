@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
@@ -11,8 +10,8 @@ import { ProfileForm, PasswordForm } from "../settings/SettingsForms";
 // clinic-wide config (webhook, API key, billing); Profile is just the bits
 // a clinician changes about themselves.
 //
-// Styled to match the strip-mode dashboard's dark aesthetic — same slate
-// surfaces, no marketing chrome, just the editable bits and a back link.
+// Visual style: white page background with dark slate cards — matching the
+// authenticated dashboard aesthetic.
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -68,49 +67,36 @@ export default async function ProfilePage() {
     .limit(1);
 
   return (
-    <div className="profile-dark" style={{ minHeight: "100vh", background: "#020617", padding: "32px 24px" }}>
-      {/* Override the shared form inputs (which use CSS vars defaulting to
-          light) so they read correctly on this strip-mode dark surface. */}
+    <div className="profile-page" style={{ minHeight: "100vh", background: "#FFFFFF", padding: "32px 24px" }}>
+      {/* Scoped overrides so the shared form inputs read correctly on
+          the dark slate cards. */}
       <style>{`
-        .profile-dark input {
+        .profile-page input {
           background: #0B1220 !important;
           border-color: #1E293B !important;
           color: #F1F5F9 !important;
         }
-        .profile-dark input:focus {
-          outline: 2px solid #2563EB;
-          outline-offset: 1px;
+        .profile-page input:focus {
+          outline: 2px solid #60A5FA !important;
+          outline-offset: 1px !important;
         }
-        .profile-dark label {
+        .profile-page input[readonly] {
+          color: #64748B !important;
+        }
+        .profile-page label {
           color: #CBD5E1 !important;
         }
-        .profile-dark button[type="submit"] {
+        .profile-page button[type="submit"] {
           background: #2563EB !important;
           color: white !important;
         }
-        .profile-dark p {
-          color: #94A3B8;
+        .profile-page form > div > p {
+          color: #94A3B8 !important;
         }
       `}</style>
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
-        {/* Back link + heading */}
-        <Link
-          href="/dashboard"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            color: "#60A5FA",
-            fontSize: 13,
-            fontWeight: 600,
-            textDecoration: "none",
-            marginBottom: 16,
-          }}
-        >
-          ← Back to dashboard
-        </Link>
-        <h1 style={{ color: "#F1F5F9", fontSize: 26, fontWeight: 800, marginBottom: 4, letterSpacing: -0.3 }}>Profile</h1>
-        <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 28 }}>
+        <h1 style={{ color: "#0F172A", fontSize: 26, fontWeight: 800, marginBottom: 4, letterSpacing: -0.3 }}>Profile</h1>
+        <p style={{ color: "#64748B", fontSize: 13, marginBottom: 28 }}>
           Update your login email, display name, and password.
         </p>
 

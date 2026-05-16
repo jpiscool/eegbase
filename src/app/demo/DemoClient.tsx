@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import Link from "next/link";
 import { useTabState } from "@/hooks/useTabState";
 import { SimulatorAdapter } from "@/lib/device/simulator";
 import { MendiBridgeAdapter } from "@/lib/device/mendi-bridge";
@@ -17,7 +16,7 @@ import {
   Search, Bell, Bluetooth as BluetoothIcon,
   Pause, Play, RotateCcw, Plus, Volume2, VolumeX, Smartphone,
   Mail, Building2, Download, UploadCloud,
-  LayoutDashboard, UserCircle,
+  LayoutDashboard,
 } from "lucide-react";
 import { generateDemoInsight } from "./ai-insight-action";
 import {
@@ -1624,7 +1623,10 @@ export default function DemoClient({
       {/* Sidebar + Content layout */}
       <div style={{ display: "flex", alignItems: "flex-start", background: "#F0F4F8", minHeight: "calc(100vh - 60px)" }}>
 
-        {/* Left sidebar nav */}
+        {/* Left sidebar nav — hidden in 'strip' mode since the clinician
+            Sidebar wraps the page externally and provides Dashboard/Profile/
+            Settings/Sessions nav. */}
+        {appMode !== "strip" && (
         <nav aria-label="Demo sections" className="demo-sidebar" style={{ width: 216, background: "#0F172A", flexShrink: 0, position: "sticky", top: 56, height: "calc(100vh - 60px)", overflowY: "auto", zIndex: 10, borderRight: "1px solid #1E293B" }}>
           <div style={{ padding: "14px 0 28px" }}>
             {TABS.map((t, i) => {
@@ -1663,6 +1665,7 @@ export default function DemoClient({
             })}
           </div>
         </nav>
+        )}
 
         {/* Right column */}
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -1791,18 +1794,6 @@ export default function DemoClient({
               >
                 <Plus size={14} /> Add widget
               </button>
-              {/* Strip-mode-only Profile link — the only nav affordance on the
-                  authenticated dashboard. Other auth surfaces have the full
-                  sidebar; here we keep things minimal until Tier 0 is green. */}
-              {appMode === "strip" && (
-                <Link
-                  href="/profile"
-                  style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: "rgba(15,23,42,0.7)", color: "#F1F5F9", border: "1px solid #334155", borderRadius: 8, fontSize: 12, fontWeight: 700, textDecoration: "none" }}
-                  title="Edit your login email, name, and password"
-                >
-                  <UserCircle size={14} /> Profile
-                </Link>
-              )}
             </div>
 
             {/* My Devices — sits above widgets so the operator can manage
