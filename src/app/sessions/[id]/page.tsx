@@ -80,6 +80,17 @@ export default async function SessionDetailPage({
         oxyHbRight: sessionDataPoints.oxyHbRight,
         deoxyHbLeft: sessionDataPoints.deoxyHbLeft,
         deoxyHbRight: sessionDataPoints.deoxyHbRight,
+        // Mendi auxiliary fields (present only on Mendi sessions). Used by
+        // the "Mendi Sensor Diagnostics" summary card below.
+        temperatureC: sessionDataPoints.temperatureC,
+        accelMag: sessionDataPoints.accelMag,
+        stillness: sessionDataPoints.stillness,
+        pulseHrBpm: sessionDataPoints.pulseHrBpm,
+        pulseHrvRmssd: sessionDataPoints.pulseHrvRmssd,
+        signalQualityL: sessionDataPoints.signalQualityL,
+        signalQualityR: sessionDataPoints.signalQualityR,
+        signalQualityP: sessionDataPoints.signalQualityP,
+        ambientLevel: sessionDataPoints.ambientLevel,
       })
       .from(sessionDataPoints)
       .where(eq(sessionDataPoints.sessionId, id))
@@ -122,6 +133,74 @@ export default async function SessionDetailPage({
       timestampMs: dp.timestampMs,
       rewardScore: dp.rewardScore as number,
     }));
+
+  // ── Mendi sensor diagnostics ─────────────────────────────────────────────
+  // Aggregate stats from the auxiliary fields persisted in 0013. Only
+  // surfaced when the session was Mendi AND at least one auxiliary field
+  // is populated, so non-Mendi sessions and legacy rows don't see a
+  // half-empty card.
+  function pickNumbers(getter: (p: typeof dataPoints[number]) => number | null | undefined): number[] {
+    return dataPoints.map(getter).filter((v): v is number => typeof v === "number" && isFinite(v));
+  }
+  const mean = (arr: number[]) => (arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null);
+  const min = (arr: number[]) => (arr.length ? Math.min(...arr) : null);
+  const max = (arr: number[]) => (arr.length ? Math.max(...arr) : null);
+
+  const tempVals = pickNumbers((p) => p.temperatureC);
+  const accelVals = pickNumbers((p) => p.accelMag);
+  const stillVals = pickNumbers((p) => p.stillness);
+  const pulseHrVals = pickNumbers((p) => p.pulseHrBpm);
+  const pulseHrvVals = pickNumbers((p) => p.pulseHrvRmssd);
+  const sqLVals = pickNumbers((p) => p.signalQualityL);
+  const sqRVals = pickNumbers((p) => p.signalQualityR);
+  const sqPVals = pickNumbers((p) => p.signalQualityP);
+  const ambVals = pickNumbers((p) => p.ambientLevel);
+
+  const hasMendiDiagnostics =
+    s.deviceType === "mendi" &&
+    (tempVals.length > 0 ||
+      accelVals.length > 0 ||
+      pulseHrVals.length > 0 ||
+      sqLVals.length > 0 ||
+      ambVals.length > 0);
+
+  type DiagRow = { label: string; value: string; note?: string };
+  const diagRows: DiagRow[] = [];
+  if (tempVals.length > 0) {
+    const m = mean(tempVals)!;
+    const drift = (max(tempVals)! - min(tempVals)!).toFixed(2);
+    diagRows.push({ label: "Scalp temperature", value: `${m.toFixed(2)} °C`, note: `range Δ ${drift} °C` });
+  }
+  if (accelVals.length > 0) {
+    diagRows.push({
+      label: "Motion (|a| max)",
+      value: `${max(accelVals)!.toFixed(2)} g`,
+      note: stillVals.length > 0 ? `avg stillness ${Math.round(mean(stillVals)!)}/100` : undefined,
+    });
+  }
+  if (pulseHrVals.length > 0) {
+    diagRows.push({
+      label: "Pulse HR (forehead PPG)",
+      value: `${Math.round(mean(pulseHrVals)!)} bpm`,
+      note: pulseHrvVals.length > 0 ? `RMSSD ${Math.round(mean(pulseHrvVals)!)} ms` : undefined,
+    });
+  }
+  if (sqLVals.length > 0 || sqRVals.length > 0 || sqPVals.length > 0) {
+    const parts = [
+      sqLVals.length > 0 ? `L ${Math.round(mean(sqLVals)!)}` : null,
+      sqRVals.length > 0 ? `R ${Math.round(mean(sqRVals)!)}` : null,
+      sqPVals.length > 0 ? `P ${Math.round(mean(sqPVals)!)}` : null,
+    ].filter(Boolean).join(" · ");
+    diagRows.push({ label: "Optode coupling (avg)", value: parts, note: "0–100 SNR per optode" });
+  }
+  if (ambVals.length > 0) {
+    const m = mean(ambVals)!;
+    diagRows.push({
+      label: "Ambient interference",
+      value: `${Math.round(m)} %`,
+      note: m < 25 ? "clean" : m < 55 ? "moderate" : "high — consider dimming",
+    });
+  }
 
   // Compute session insights
   const rewardValues = rewardTrend.map((d) => d.rewardScore);
@@ -459,6 +538,34 @@ export default async function SessionDetailPage({
             </span>
           </div>
           <FNIRSChart data={fnirsData} />
+        </div>
+      )}
+
+      {/* Mendi sensor diagnostics — temperature, motion, pulse, optode SNR,
+          ambient interference. Only renders for Mendi sessions with at
+          least one persisted auxiliary field (post-0013 schema). */}
+      {hasMendiDiagnostics && diagRows.length > 0 && (
+        <div className="rounded-xl border p-6 mb-5" style={{ background: "var(--surface-raised)", borderColor: "var(--border-subtle)" }}>
+          <div className="flex items-center gap-2 mb-4">
+            <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+              Mendi Sensor Diagnostics
+            </h2>
+            <span className="px-2 py-0.5 text-xs font-medium rounded-full border" style={{ background: "#f5f3ff", color: "#7c3aed", borderColor: "#ddd6fe" }}>
+              Mendi
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {diagRows.map((row) => (
+              <div key={row.label} className="rounded-lg p-3" style={{ background: "var(--surface-sunken)", border: "1px solid var(--border-subtle)" }}>
+                <div className="text-xs uppercase tracking-wide mb-1" style={{ color: "var(--text-tertiary)" }}>{row.label}</div>
+                <div className="text-base font-semibold" style={{ color: "var(--text-primary)", fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>{row.value}</div>
+                {row.note && <div className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>{row.note}</div>}
+              </div>
+            ))}
+          </div>
+          <p className="text-xs mt-4" style={{ color: "var(--text-tertiary)" }}>
+            Derived from the V4 Frame protobuf — surfaced as of migration 0013. Older sessions show only what was captured at the time.
+          </p>
         </div>
       )}
 
