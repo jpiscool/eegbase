@@ -57,6 +57,19 @@ export async function GET(
       rewardScore: sessionDataPoints.rewardScore,
       heartRate: sessionDataPoints.heartRate,
       hrvRmssd: sessionDataPoints.hrvRmssd,
+      temperatureC: sessionDataPoints.temperatureC,
+      accelMag: sessionDataPoints.accelMag,
+      accelX: sessionDataPoints.accelX,
+      accelY: sessionDataPoints.accelY,
+      accelZ: sessionDataPoints.accelZ,
+      stillness: sessionDataPoints.stillness,
+      pulsePpg: sessionDataPoints.pulsePpg,
+      pulseHrBpm: sessionDataPoints.pulseHrBpm,
+      pulseHrvRmssd: sessionDataPoints.pulseHrvRmssd,
+      signalQualityL: sessionDataPoints.signalQualityL,
+      signalQualityR: sessionDataPoints.signalQualityR,
+      signalQualityP: sessionDataPoints.signalQualityP,
+      ambientLevel: sessionDataPoints.ambientLevel,
     })
     .from(sessionDataPoints)
     .where(eq(sessionDataPoints.sessionId, sessionId))
@@ -76,6 +89,20 @@ export async function GET(
     "reward_score",
     "heart_rate_bpm",
     "hrv_rmssd_ms",
+    // Mendi auxiliary columns. Empty for non-Mendi / legacy sessions.
+    "temperature_c",
+    "accel_mag_g",
+    "accel_x_g",
+    "accel_y_g",
+    "accel_z_g",
+    "stillness",
+    "pulse_ppg",
+    "pulse_hr_bpm",
+    "pulse_hrv_rmssd_ms",
+    "signal_quality_l",
+    "signal_quality_r",
+    "signal_quality_p",
+    "ambient_level",
   ];
 
   const cell = (v: number | null | undefined): string =>
@@ -98,6 +125,19 @@ export async function GET(
         cell(p.rewardScore),
         cell(p.heartRate),
         cell(p.hrvRmssd),
+        cell(p.temperatureC),
+        cell(p.accelMag),
+        cell(p.accelX),
+        cell(p.accelY),
+        cell(p.accelZ),
+        cell(p.stillness),
+        cell(p.pulsePpg),
+        cell(p.pulseHrBpm),
+        cell(p.pulseHrvRmssd),
+        cell(p.signalQualityL),
+        cell(p.signalQualityR),
+        cell(p.signalQualityP),
+        cell(p.ambientLevel),
       ].join(",")
     );
   }

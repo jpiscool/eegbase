@@ -75,6 +75,22 @@ export async function GET(
         beta: dp.beta,
         gamma: dp.gamma,
       },
+      // Mendi auxiliary fields. All-null for non-Mendi / legacy sessions.
+      mendi: {
+        temperatureC: dp.temperatureC,
+        accelMag: dp.accelMag,
+        accelX: dp.accelX,
+        accelY: dp.accelY,
+        accelZ: dp.accelZ,
+        stillness: dp.stillness,
+        pulsePpg: dp.pulsePpg,
+        pulseHrBpm: dp.pulseHrBpm,
+        pulseHrvRmssd: dp.pulseHrvRmssd,
+        signalQualityL: dp.signalQualityL,
+        signalQualityR: dp.signalQualityR,
+        signalQualityP: dp.signalQualityP,
+        ambientLevel: dp.ambientLevel,
+      },
     })),
   };
 

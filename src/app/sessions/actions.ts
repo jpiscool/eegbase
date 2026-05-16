@@ -35,6 +35,20 @@ export interface SamplePayload {
   rewardScore?: number;
   heartRate?: number;
   hrvRmssd?: number;
+  // Mendi auxiliary fields — optional, persisted when present.
+  temperatureC?: number;
+  accelMag?: number;
+  accelX?: number;
+  accelY?: number;
+  accelZ?: number;
+  stillness?: number;
+  pulsePpg?: number;
+  pulseHrBpm?: number;
+  pulseHrvRmssd?: number;
+  signalQualityL?: number;
+  signalQualityR?: number;
+  signalQualityP?: number;
+  ambientLevel?: number;
 }
 
 export interface Questionnaire {
@@ -105,6 +119,19 @@ export async function saveSession(data: {
       rewardScore: s.rewardScore,
       heartRate: s.heartRate,
       hrvRmssd: s.hrvRmssd,
+      temperatureC: s.temperatureC,
+      accelMag: s.accelMag,
+      accelX: s.accelX,
+      accelY: s.accelY,
+      accelZ: s.accelZ,
+      stillness: s.stillness,
+      pulsePpg: s.pulsePpg,
+      pulseHrBpm: s.pulseHrBpm,
+      pulseHrvRmssd: s.pulseHrvRmssd,
+      signalQualityL: s.signalQualityL,
+      signalQualityR: s.signalQualityR,
+      signalQualityP: s.signalQualityP,
+      ambientLevel: s.ambientLevel,
     }));
     const BATCH = 1000;
     for (let i = 0; i < rows.length; i += BATCH) {

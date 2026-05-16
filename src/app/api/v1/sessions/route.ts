@@ -66,6 +66,20 @@ interface SampleInput {
   beta?: number;
   gamma?: number;
   rewardScore?: number;
+  // Mendi auxiliary fields (V4 Frame protobuf). All optional.
+  temperatureC?: number;
+  accelMag?: number;
+  accelX?: number;
+  accelY?: number;
+  accelZ?: number;
+  stillness?: number;
+  pulsePpg?: number;
+  pulseHrBpm?: number;
+  pulseHrvRmssd?: number;
+  signalQualityL?: number;
+  signalQualityR?: number;
+  signalQualityP?: number;
+  ambientLevel?: number;
 }
 
 interface QuestionnaireInput {
@@ -207,7 +221,20 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       alpha:  s.alpha  ?? undefined,
       beta:   s.beta   ?? undefined,
       gamma:  s.gamma  ?? undefined,
-      rewardScore: s.rewardScore ?? undefined,
+      rewardScore:    s.rewardScore    ?? undefined,
+      temperatureC:   s.temperatureC   ?? undefined,
+      accelMag:       s.accelMag       ?? undefined,
+      accelX:         s.accelX         ?? undefined,
+      accelY:         s.accelY         ?? undefined,
+      accelZ:         s.accelZ         ?? undefined,
+      stillness:      s.stillness      ?? undefined,
+      pulsePpg:       s.pulsePpg       ?? undefined,
+      pulseHrBpm:     s.pulseHrBpm     ?? undefined,
+      pulseHrvRmssd:  s.pulseHrvRmssd  ?? undefined,
+      signalQualityL: s.signalQualityL ?? undefined,
+      signalQualityR: s.signalQualityR ?? undefined,
+      signalQualityP: s.signalQualityP ?? undefined,
+      ambientLevel:   s.ambientLevel   ?? undefined,
     }));
 
     // Insert in 1000-row batches to avoid DB parameter limits

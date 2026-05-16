@@ -92,6 +92,13 @@
       "when": 1777848704159,
       "tag": "0012_old_paibok",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1778962117391,
+      "tag": "0013_cold_nitro",
+      "breakpoints": true
     }
   ]
 }

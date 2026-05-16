@@ -128,6 +128,21 @@ export const sessionDataPoints = pgTable("session_data_points", {
   rewardScore: real("reward_score"),
   heartRate: real("heart_rate"),   // BPM (HRV source)
   hrvRmssd: real("hrv_rmssd"),     // RMSSD ms — HRV coherence metric
+  // ── Mendi auxiliary fields (decoded from V4 Frame protobuf) ──────────────
+  // All optional so legacy rows and non-Mendi devices stay null.
+  temperatureC: real("temperature_c"),       // scalp temperature °C
+  accelMag: real("accel_mag"),               // |a| in g (1.0 at rest)
+  accelX: real("accel_x"),                   // accelerometer X axis, g
+  accelY: real("accel_y"),                   // accelerometer Y axis, g
+  accelZ: real("accel_z"),                   // accelerometer Z axis, g
+  stillness: real("stillness"),              // 0-100 derived
+  pulsePpg: real("pulse_ppg"),               // AC-coupled forehead PPG
+  pulseHrBpm: real("pulse_hr_bpm"),          // BPM from pulse optode
+  pulseHrvRmssd: real("pulse_hrv_rmssd"),    // RMSSD ms from pulse-optode IBIs
+  signalQualityL: real("signal_quality_l"),  // 0-100 left optode SNR
+  signalQualityR: real("signal_quality_r"),  // 0-100 right optode SNR
+  signalQualityP: real("signal_quality_p"),  // 0-100 pulse optode SNR
+  ambientLevel: real("ambient_level"),       // 0-100 ambient light interference
   raw: jsonb("raw"),
 });
 
