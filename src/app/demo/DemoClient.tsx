@@ -16,7 +16,7 @@ import {
   Search, Bell, Bluetooth as BluetoothIcon,
   Pause, Play, RotateCcw, Plus, Volume2, VolumeX, Smartphone,
   Mail, Building2, Download, UploadCloud,
-  LayoutDashboard,
+  LayoutDashboard, UserCircle as ProfileIcon,
 } from "lucide-react";
 import { generateDemoInsight } from "./ai-insight-action";
 import {
@@ -1623,10 +1623,9 @@ export default function DemoClient({
       {/* Sidebar + Content layout */}
       <div style={{ display: "flex", alignItems: "flex-start", background: "#F0F4F8", minHeight: "calc(100vh - 60px)" }}>
 
-        {/* Left sidebar nav — hidden in 'strip' mode since the clinician
-            Sidebar wraps the page externally and provides Dashboard/Profile/
-            Settings/Sessions nav. */}
-        {appMode !== "strip" && (
+        {/* Left sidebar nav. In strip mode this is the ONLY sidebar —
+            it renders the stripped TABS array (just My Dashboard) plus a
+            Profile link below as a real route navigation. */}
         <nav aria-label="Demo sections" className="demo-sidebar" style={{ width: 216, background: "#0F172A", flexShrink: 0, position: "sticky", top: 56, height: "calc(100vh - 60px)", overflowY: "auto", zIndex: 10, borderRight: "1px solid #1E293B" }}>
           <div style={{ padding: "14px 0 28px" }}>
             {TABS.map((t, i) => {
@@ -1663,9 +1662,29 @@ export default function DemoClient({
                 </div>
               );
             })}
+            {/* Profile link — only in the stripped authenticated app.
+                Navigates to /profile (real route), not a tab switch. */}
+            {appMode === "strip" && (
+              <a
+                href="/profile"
+                style={{
+                  display: "flex", alignItems: "center", gap: 10, lineHeight: 1.3,
+                  width: "100%", textAlign: "left",
+                  padding: "8px 18px", fontSize: 13, fontWeight: 500,
+                  color: "#94A3B8", textDecoration: "none",
+                  background: "transparent",
+                  borderLeft: "2px solid transparent",
+                  transition: "background 0.18s ease, color 0.18s ease",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "#CBD5E1"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#94A3B8"; }}
+              >
+                <ProfileIcon size={16} strokeWidth={1.75} />
+                <span>Profile</span>
+              </a>
+            )}
           </div>
         </nav>
-        )}
 
         {/* Right column */}
         <div style={{ flex: 1, minWidth: 0 }}>
