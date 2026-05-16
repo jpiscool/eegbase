@@ -36,6 +36,11 @@ interface WidgetDef {
   icon: React.ComponentType<{ size?: number }>;
   blurb: string;
   render: (ctx: WidgetCtx) => React.ReactNode;
+  // Set to true once a widget has been validated end-to-end against the
+  // intended hardware per scripts/mendi-capture/live-site-test-priorities.md.
+  // Untested widgets render a DEMO badge so clinicians know the value is
+  // simulator-derived. Flip per widget as each tier passes hardware QA.
+  verified?: boolean;
 }
 
 // ── shared style helpers ──────────────────────────────────────────────────
@@ -1775,6 +1780,25 @@ export function WidgetCard({ def, ctx, onRemove }: { def: WidgetDef; ctx: Widget
         <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
           <Icon size={14} />
           <span style={{ fontSize: 11, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: "0.06em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{def.title}</span>
+          {!def.verified && (
+            <span
+              title="This widget has not yet been verified against live hardware. Values shown may be simulated."
+              style={{
+                fontSize: 9,
+                fontWeight: 800,
+                color: "#FBBF24",
+                background: "rgba(245,158,11,0.12)",
+                border: "1px solid rgba(245,158,11,0.4)",
+                borderRadius: 4,
+                padding: "1px 5px",
+                letterSpacing: "0.06em",
+                flexShrink: 0,
+                textTransform: "uppercase",
+              }}
+            >
+              Demo
+            </span>
+          )}
         </div>
         <button
           onClick={onRemove}
