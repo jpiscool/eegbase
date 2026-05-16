@@ -940,6 +940,52 @@ export const WIDGET_CATALOG: WidgetDef[] = [
   },
 
   {
+    id: "mendi-pulse-hrv",
+    title: "Mendi pulse · HRV",
+    device: "Mendi headband",
+    icon: HeartPulse,
+    blurb: "RMSSD heart-rate variability from the forehead pulse optode.",
+    render: ({ sample }) => {
+      const v = sample?.pulseHrvRmssd ?? null;
+      if (v == null) return <Waiting label="≥ 4 pulse-optode beats" />;
+      const onTarget = v >= 50;
+      const color = v >= 50 ? COLORS.ok : v >= 25 ? COLORS.warn : COLORS.alert;
+      return (
+        <div style={{ padding: "6px 0" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 4 }}>
+            <span style={{ fontFamily: NUM, fontSize: 36, fontWeight: 800, color, lineHeight: 1, letterSpacing: "-0.02em" }}>{v}</span>
+            <span style={{ fontSize: 12, color: COLORS.muted, fontWeight: 600 }}>ms</span>
+          </div>
+          <div style={{ fontSize: 10, color, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            {onTarget ? "✓ above 50 ms target" : "below 50 ms target"}
+          </div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 8, lineHeight: 1.4 }}>
+            Higher RMSSD = calmer autonomic state. Derived from successive IBIs detected in the Mendi pulse-optode PPG — no chest strap.
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "mendi-engagement-time",
+    title: "Engagement zone time",
+    device: "Mendi headband",
+    icon: Timer,
+    blurb: "% of session spent above reward threshold — flow-state proxy.",
+    render: ({ sample }) => <MendiEngagementTime rewardScore={sample?.rewardScore} />,
+  },
+
+  {
+    id: "mendi-mayer-wave",
+    title: "Mayer-wave power",
+    device: "Mendi headband",
+    icon: Sigma,
+    blurb: "0.07–0.13 Hz HbO band power — vasomotor / sympathetic tone proxy.",
+    render: ({ sample }) => <MendiMayerWave value={sample?.oxyHbLeft} />,
+  },
+
+  {
     id: "mendi-coherence",
     title: "Bilateral coherence",
     device: "Mendi headband",
@@ -1018,6 +1064,99 @@ function MendiPulseWaveform({ value }: { value: number | undefined }) {
       <div style={{ display: "flex", gap: 10, marginTop: 6, fontSize: 9.5, color: COLORS.muted, fontFamily: NUM }}>
         <span>pulse PPG · ir_p − amb_p · AC</span>
         <span style={{ marginLeft: "auto" }}>{data.length} samples</span>
+      </div>
+    </div>
+  );
+}
+
+// Engagement-zone time: rolling internal counter of % time above a reward
+// threshold over the lifetime of the widget mount. Resets when widget
+// remounts. Self-buffered because the existing reward window is only 60
+// samples but engagement is a session-level metric.
+function MendiEngagementTime({ rewardScore }: { rewardScore: number | undefined }) {
+  const totalRef = useRef(0);
+  const aboveRef = useRef(0);
+  const [, force] = useState(0);
+  const THRESHOLD = 60;
+  useEffect(() => {
+    if (rewardScore == null) return;
+    totalRef.current += 1;
+    if (rewardScore >= THRESHOLD) aboveRef.current += 1;
+    if (totalRef.current % 5 === 0) force((t) => (t + 1) & 0xffff);
+  }, [rewardScore]);
+  const total = totalRef.current;
+  const above = aboveRef.current;
+  if (total < 5) return <Waiting label="reward signal" />;
+  const pct = (above / total) * 100;
+  const color = pct >= 60 ? COLORS.ok : pct >= 30 ? COLORS.warn : COLORS.alert;
+  const label = pct >= 60 ? "deeply engaged" : pct >= 30 ? "warming up" : "low engagement";
+  const seconds = Math.round(total / 10); // ~10 Hz
+  return (
+    <div style={{ padding: "8px 4px" }}>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 10 }}>
+        <span style={{ fontFamily: NUM, fontSize: 38, fontWeight: 800, color, lineHeight: 1, letterSpacing: "-0.02em" }}>{pct.toFixed(0)}</span>
+        <span style={{ fontSize: 12, color: COLORS.muted, fontWeight: 600 }}>%</span>
+      </div>
+      <MiniBar pct={pct} color={color} />
+      <div style={{ fontSize: 11, color, marginTop: 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>· {label}</div>
+      <div style={{ fontSize: 9.5, color: COLORS.muted, marginTop: 6, fontFamily: NUM }}>
+        time in flow · reward ≥ {THRESHOLD} over {seconds}s
+      </div>
+    </div>
+  );
+}
+
+// Mayer-wave power widget. Computes a small DFT in the 0.07–0.13 Hz band
+// (canonical sympathetic / vasomotor frequency) on an internal 300-sample
+// HbO buffer (~30 s at 10 Hz). Plain DFT instead of FFT because N=300 is
+// small and we only score a handful of bins. Output is band power
+// normalised to 0–100 against a typical resting envelope.
+function MendiMayerWave({ value }: { value: number | undefined }) {
+  const buf = useRef<number[]>([]);
+  const [, force] = useState(0);
+  useEffect(() => {
+    if (value == null) return;
+    buf.current.push(value);
+    if (buf.current.length > 300) buf.current.shift();
+    if (buf.current.length % 10 === 0) force((t) => (t + 1) & 0xffff);
+  }, [value]);
+
+  const x = buf.current;
+  const N = x.length;
+  if (N < 80) return <Waiting label={`${N}/80 samples (~8 s)`} />;
+
+  const fs = 10;
+  const mean = x.reduce((a, b) => a + b, 0) / N;
+
+  let power = 0;
+  for (let k = 0; k < 30; k++) {
+    const f = (k / N) * fs;
+    if (f < 0.07 || f > 0.13) continue;
+    let re = 0, im = 0;
+    for (let n = 0; n < N; n++) {
+      const w = 0.5 * (1 - Math.cos((2 * Math.PI * n) / (N - 1))); // Hann
+      const v = (x[n] - mean) * w;
+      const ang = (2 * Math.PI * k * n) / N;
+      re += v * Math.cos(ang);
+      im -= v * Math.sin(ang);
+    }
+    power += (re * re + im * im) / (N * N);
+  }
+  const score = Math.max(0, Math.min(100, Math.round(power * 5e5)));
+  const color = score >= 60 ? COLORS.violet : score >= 30 ? COLORS.cyan : COLORS.muted;
+  const label = score >= 60 ? "strong vasomotor" : score >= 30 ? "moderate" : "quiet";
+  return (
+    <div style={{ padding: "8px 4px" }}>
+      <div style={{ fontFamily: NUM, fontSize: 36, fontWeight: 800, color, letterSpacing: "-0.02em", lineHeight: 1 }}>{score}</div>
+      <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 2, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>0.07–0.13 Hz power</div>
+      <div style={{ marginTop: 10 }}>
+        <MiniBar pct={score} color={color} />
+      </div>
+      <div style={{ fontSize: 11, color, marginTop: 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+        · {label}
+      </div>
+      <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 6, lineHeight: 1.4 }}>
+        Mayer waves are ~0.1 Hz oscillations in cerebral blood volume linked to baroreflex / sympathetic tone — a research-grade fNIRS metric.
       </div>
     </div>
   );
@@ -1301,12 +1440,15 @@ export const DEFAULT_WIDGETS = [
   // that the protobuf carries but the original catalog ignored. Added to the
   // default set so the live dashboard demonstrates the full surface area.
   "mendi-pulse-hr",
+  "mendi-pulse-hrv",
   "mendi-pulse-waveform",
   "mendi-temperature",
   "mendi-stillness",
   "mendi-signal-quality",
   "mendi-laterality",
   "mendi-coherence",
+  "mendi-mayer-wave",
+  "mendi-engagement-time",
   "mendi-ambient-light",
 ];
 

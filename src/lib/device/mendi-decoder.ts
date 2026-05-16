@@ -212,6 +212,22 @@ export class MendiPacketDecoder {
       }
     }
 
+    // HRV — RMSSD of successive inter-beat-interval differences. Standard
+    // short-term HRV metric used in autonomic-state monitoring. Higher
+    // RMSSD = more parasympathetic activity = calmer state. Needs at
+    // least 4 IBIs to compute 3 successive differences.
+    let pulseHrvRmssd: number | undefined;
+    if (this._ibiHistory.length >= 4) {
+      let sumSq = 0;
+      for (let i = 1; i < this._ibiHistory.length; i++) {
+        const d = this._ibiHistory[i] - this._ibiHistory[i - 1];
+        sumSq += d * d;
+      }
+      pulseHrvRmssd = Math.round(
+        Math.sqrt(sumSq / (this._ibiHistory.length - 1))
+      );
+    }
+
     // Per-optode signal quality: fraction of red - amb that sits above the
     // ambient noise floor, scaled 0–100. A well-coupled optode produces
     // large positive (red − amb) compared to |amb|. A loose optode → ratio
@@ -255,6 +271,7 @@ export class MendiPacketDecoder {
       stillness,
       pulsePpg,
       pulseHrBpm,
+      pulseHrvRmssd,
       signalQualityL,
       signalQualityR,
       signalQualityP,

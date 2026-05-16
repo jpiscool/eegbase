@@ -25,6 +25,7 @@ export interface DeviceSample {
   stillness?: number;           // 0-100 derived stillness score (100 = motionless)
   pulsePpg?: number;            // AC-component of forehead PPG (unitless, centred at 0)
   pulseHrBpm?: number;          // BPM derived from the pulse optode
+  pulseHrvRmssd?: number;       // HRV (RMSSD ms) from the pulse-optode IBIs
   signalQualityL?: number;      // 0-100 left optode coupling quality
   signalQualityR?: number;      // 0-100 right optode coupling quality
   signalQualityP?: number;      // 0-100 pulse optode coupling quality

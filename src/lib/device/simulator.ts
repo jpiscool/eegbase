@@ -57,6 +57,7 @@ export class SimulatorAdapter implements DeviceAdapter {
   private _stillness = 92.0;
   private _ppgPhase = 0;               // radians, for sinusoidal pulse
   private _pulseBpm = 66.0;
+  private _pulseRmssd = 42.0;          // ms — typical resting RMSSD
   private _sigQL = 87.0;
   private _sigQR = 84.0;
   private _sigQP = 91.0;
@@ -99,6 +100,7 @@ export class SimulatorAdapter implements DeviceAdapter {
       this._stillness = Math.max(0, Math.min(100, 100 - accelDev * 800));
       // Synthetic PPG: ~1 Hz sine plus tiny noise, modulated by pulseBpm
       this._pulseBpm = randWalk(this._pulseBpm, 55, 78, 0.2);
+      this._pulseRmssd = randWalk(this._pulseRmssd, 22, 75, 0.8);
       this._ppgPhase += (this._pulseBpm / 60) * 2 * Math.PI * 0.1; // 10 Hz tick
       const ppg = Math.sin(this._ppgPhase) * 0.85 + (Math.random() - 0.5) * 0.1;
       // Signal quality drifts with optode coupling
@@ -130,6 +132,7 @@ export class SimulatorAdapter implements DeviceAdapter {
         stillness: Math.round(this._stillness),
         pulsePpg: Math.round(ppg * 1000) / 1000,
         pulseHrBpm: Math.round(this._pulseBpm),
+        pulseHrvRmssd: Math.round(this._pulseRmssd),
         signalQualityL: Math.round(this._sigQL),
         signalQualityR: Math.round(this._sigQR),
         signalQualityP: Math.round(this._sigQP),
