@@ -21,6 +21,7 @@ import { generateDemoInsight } from "./ai-insight-action";
 import {
   WIDGET_CATALOG, WidgetCard, WidgetPicker, DashboardEmptyState, useDashboardState,
   MyDevicesSection, ConnectDeviceModal, usePairedDevices, DEVICE_REGISTRY,
+  DASHBOARD_PRESETS,
 } from "./_dashboard-widgets";
 
 const MAX_POINTS = 60;
@@ -1693,6 +1694,27 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
                   {mendiStatus === "error" ? "Connect device · Mendi bridge offline" : "Connect device"}
                 </button>
               )}
+              <select
+                value=""
+                onChange={(e) => {
+                  const presetId = e.target.value;
+                  if (!presetId) return;
+                  const preset = DASHBOARD_PRESETS.find((p) => p.id === presetId);
+                  if (!preset) return;
+                  dashboard.setWidgets(preset.ids);
+                  showToast(preset.id === "empty" ? "Cleared dashboard" : `Loaded layout: ${preset.label}`);
+                  // Reset select to placeholder so it can re-fire for the same value
+                  e.target.value = "";
+                }}
+                aria-label="Load dashboard preset"
+                style={{ display: "inline-flex", alignItems: "center", padding: "8px 12px", background: "rgba(15,23,42,0.7)", color: "#F1F5F9", border: "1px solid #334155", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
+                title="Load a curated dashboard layout"
+              >
+                <option value="" disabled hidden>Load layout…</option>
+                {DASHBOARD_PRESETS.map((p) => (
+                  <option key={p.id} value={p.id}>{p.label}</option>
+                ))}
+              </select>
               <button
                 onClick={() => setDashboardPickerOpen(true)}
                 style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: "#2563EB", color: "white", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer" }}

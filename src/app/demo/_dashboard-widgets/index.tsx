@@ -1642,20 +1642,44 @@ export function WidgetPicker({
   currentIds: string[];
   onAdd: (id: string) => void;
 }) {
+  const [query, setQuery] = useState("");
+
+  // Reset the search box every time the picker closes.
+  useEffect(() => {
+    if (!open) setQuery("");
+  }, [open]);
+
   if (!open) return null;
 
   // Build the section -> defs map; collect anything missing into "Other".
   const claimedIds = new Set(WIDGET_SECTIONS.flatMap((s) => s.ids));
   const orphans = WIDGET_CATALOG.filter((d) => !claimedIds.has(d.id));
-  const sections = WIDGET_SECTIONS.map((s) => ({
+  const allSections = WIDGET_SECTIONS.map((s) => ({
     ...s,
     defs: s.ids
       .map((id) => WIDGET_CATALOG.find((d) => d.id === id))
       .filter((d): d is WidgetDef => !!d),
   })).filter((s) => s.defs.length > 0);
   if (orphans.length > 0) {
-    sections.push({ name: "Other", blurb: "Widgets without a section.", ids: orphans.map((o) => o.id), defs: orphans });
+    allSections.push({ name: "Other", blurb: "Widgets without a section.", ids: orphans.map((o) => o.id), defs: orphans });
   }
+
+  // Apply text filter across title + blurb + device + id. Empty query = show all.
+  const q = query.trim().toLowerCase();
+  const sections = q.length === 0
+    ? allSections
+    : allSections
+        .map((s) => ({
+          ...s,
+          defs: s.defs.filter((d) =>
+            d.title.toLowerCase().includes(q) ||
+            d.blurb.toLowerCase().includes(q) ||
+            d.device.toLowerCase().includes(q) ||
+            d.id.toLowerCase().includes(q)
+          ),
+        }))
+        .filter((s) => s.defs.length > 0);
+  const totalMatching = sections.reduce((acc, s) => acc + s.defs.length, 0);
 
   const renderCard = (def: WidgetDef) => {
     const already = currentIds.includes(def.id);
@@ -1716,7 +1740,9 @@ export function WidgetPicker({
             <p style={{ fontSize: 11, fontWeight: 700, color: COLORS.blue, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Add widget</p>
             <h2 style={{ fontSize: 18, fontWeight: 800, color: COLORS.ink, margin: 0 }}>Pick what to show</h2>
             <p style={{ fontSize: 12, color: COLORS.muted, marginTop: 4 }}>
-              {WIDGET_CATALOG.length} widgets across {sections.length} sections. Each pulls from a connected device. Already-added widgets are dimmed.
+              {q.length > 0
+                ? `${totalMatching} of ${WIDGET_CATALOG.length} match "${query}".`
+                : `${WIDGET_CATALOG.length} widgets across ${allSections.length} sections. Already-added widgets are dimmed.`}
             </p>
           </div>
           <button
@@ -1727,6 +1753,45 @@ export function WidgetPicker({
             <X size={18} />
           </button>
         </div>
+
+        {/* Search filter */}
+        <div style={{ position: "relative", marginBottom: 18 }}>
+          <Search size={14} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: COLORS.muted, pointerEvents: "none" }} />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search widgets — try 'pulse', 'temp', or 'asymmetry'…"
+            autoFocus
+            style={{
+              width: "100%",
+              padding: "10px 36px",
+              background: "rgba(15,23,42,0.7)",
+              border: "1px solid #334155",
+              borderRadius: 10,
+              color: COLORS.ink,
+              fontSize: 13,
+              fontFamily: "inherit",
+              outline: "none",
+              boxSizing: "border-box",
+            }}
+          />
+          {q.length > 0 && (
+            <button
+              onClick={() => setQuery("")}
+              aria-label="Clear search"
+              style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", background: "transparent", border: "none", color: COLORS.muted, cursor: "pointer", padding: 6, lineHeight: 0 }}
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
+
+        {totalMatching === 0 && (
+          <div style={{ padding: 24, textAlign: "center", color: COLORS.muted, fontSize: 13, border: "1px dashed #1E293B", borderRadius: 10 }}>
+            No widgets match <strong style={{ color: COLORS.ink }}>"{query}"</strong>. Try a different term or clear the search.
+          </div>
+        )}
 
         {sections.map((section) => (
           <div key={section.name} style={{ marginBottom: 24 }}>
@@ -1782,6 +1847,58 @@ export function DashboardEmptyState({ onAdd }: { onAdd: () => void }) {
 // brain heatmap, signal rate) plus the cross-device focus score and
 // reward sparkline so the dashboard looks alive on first paint even
 // when only one device is paired.
+// Dashboard presets — curated widget sets that the operator can swap to
+// with one click. The keys are stable so localStorage layouts survive a
+// preset rename. DEFAULT_WIDGETS below is referenced by 'demo' for the
+// first-time visitor; the other presets give narrower, audience-specific
+// views.
+export const DASHBOARD_PRESETS: { id: string; label: string; blurb: string; ids: string[] }[] = [
+  {
+    id: "clinician",
+    label: "Clinician",
+    blurb: "Focused on what a clinician needs during a session — clinical metrics first.",
+    ids: [
+      "live-score", "mendi-channels", "asymmetry", "tsi-gauge",
+      "mendi-laterality", "mendi-coherence", "mendi-workload",
+      "mendi-signal-quality", "mendi-stillness", "mendi-fps",
+    ],
+  },
+  {
+    id: "research",
+    label: "Research",
+    blurb: "Spectral + diagnostic widgets for protocol research and signal-quality work.",
+    ids: [
+      "hbo-trace", "hhb-trace", "mendi-channels", "brain-mini",
+      "mendi-mayer-wave", "mendi-coherence", "mendi-laterality",
+      "mendi-signal-quality", "mendi-ambient-light", "mendi-head-pose",
+      "mendi-fps", "mendi-pulse-waveform",
+    ],
+  },
+  {
+    id: "self-train",
+    label: "Self-train",
+    blurb: "Lightweight at-home view — score, breathing pacer, streaks.",
+    ids: [
+      "live-score", "reward-trace", "mendi-pulse-hr", "mendi-pulse-hrv",
+      "mendi-engagement-time", "mendi-session-arc",
+      "session-timer", "breathing-pacer", "todays-checkin",
+    ],
+  },
+  {
+    id: "demo",
+    label: "Demo (everything)",
+    blurb: "Full Mendi surface area — every widget on by default.",
+    // Filled in below by reference to DEFAULT_WIDGETS.
+    ids: [],
+  },
+  {
+    id: "empty",
+    label: "Empty",
+    blurb: "Clear the dashboard and start from scratch.",
+    ids: [],
+  },
+];
+
 export const DEFAULT_WIDGETS = [
   "live-score",
   "mendi-channels",
@@ -1813,6 +1930,12 @@ export const DEFAULT_WIDGETS = [
   "mendi-trial-blocks",
   "mendi-ambient-light",
 ];
+
+// Wire the 'demo' preset to the same list (avoid duplication).
+(() => {
+  const demo = DASHBOARD_PRESETS.find((p) => p.id === "demo");
+  if (demo) demo.ids = [...DEFAULT_WIDGETS];
+})();
 
 // ── localStorage helpers ──────────────────────────────────────────────────
 
