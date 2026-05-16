@@ -7,15 +7,11 @@ import {
   LayoutDashboard,
   Activity,
   Settings,
-  Play,
-  Search,
-  Bell,
   ChevronRight,
   UserCircle,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { SignOutButton } from "./SignOutButton";
-import { DarkModeToggle } from "@/components/DarkModeToggle";
 
 // ── STRIPPED MAIN NAV ──────────────────────────────────────────────────────
 // Per scripts/mendi-capture/live-site-test-priorities.md, the authenticated
@@ -116,41 +112,11 @@ export function Sidebar({
         </span>
       </div>
 
-      {/* Start Session CTA */}
-      <div className="px-3 pt-4 pb-2">
-        <Link
-          href="/sessions/live"
-          className="flex items-center justify-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm font-semibold transition-all"
-          style={{
-            background: "var(--brand)",
-            color: "var(--text-inverse)",
-            boxShadow: "0 2px 8px rgb(37 99 235 / 0.35)",
-          }}
-        >
-          <Play size={14} strokeWidth={2.5} />
-          Start Session
-        </Link>
-      </div>
-
-      {/* Search */}
-      <div className="px-3 pb-2">
-        <button
-          onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true }))}
-          className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm transition-colors"
-          style={{
-            background: "var(--sidebar-surface)",
-            color: "var(--sidebar-text-muted)",
-            border: "1px solid var(--sidebar-border)",
-          }}
-        >
-          <Search size={13} />
-          <span className="flex-1 text-left text-xs">Search…</span>
-          <kbd className="text-[10px] px-1.5 py-0.5 rounded font-mono" style={{ background: "var(--sidebar-bg)", color: "var(--sidebar-text-muted)" }}>⌘K</kbd>
-        </button>
-      </div>
+      {/* Stripped: Start Session CTA + Search are intentionally omitted
+          while we validate Tier 0 — see live-site-test-priorities.md. */}
 
       {/* Main Nav */}
-      <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto pb-4">
+      <nav className="flex-1 px-3 pt-3 space-y-0.5 overflow-y-auto pb-4">
         {nav.map(({ href, label, icon: Icon, badge: staticBadge }) => {
           const active = pathname.startsWith(href);
           const badge =
@@ -246,36 +212,9 @@ export function Sidebar({
         })}
       </nav>
 
-      {/* Bottom: Notifications + User + Actions */}
+      {/* Bottom: User + Sign Out (Notifications + DarkMode toggle hidden
+          until their tiers are validated). */}
       <div className="px-3 py-4 space-y-1" style={{ borderTop: "1px solid var(--sidebar-border)" }}>
-        {/* Notification row */}
-        <Link
-          href="/notifications"
-          className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-sm transition-colors"
-          style={{ color: "var(--sidebar-text)" }}
-        >
-          <span className="relative shrink-0">
-            <Bell size={15} style={{ color: "var(--sidebar-text-muted)" }} />
-            {notificationCount > 0 && (
-              <span
-                className="absolute -top-1 -right-1 min-w-[13px] h-[13px] px-0.5 text-[9px] font-bold rounded-full flex items-center justify-center leading-none"
-                style={{ background: "var(--danger)", color: "var(--text-inverse)" }}
-              >
-                {notificationCount > 99 ? "99+" : notificationCount}
-              </span>
-            )}
-          </span>
-          <span className="flex-1 text-xs">Notifications</span>
-          {notificationCount > 0 && (
-            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={{ background: "var(--danger-subtle)", color: "var(--danger)" }}>
-              {notificationCount}
-            </span>
-          )}
-        </Link>
-
-        {/* DarkMode toggle */}
-        <DarkModeToggle />
-
         {/* User row */}
         {userName && (
           <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg mt-1">
