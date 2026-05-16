@@ -204,7 +204,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
   {
     id: "hrv-live",
     title: "HRV (RMSSD)",
-    device: "Polar / Apple Watch",
+    device: "Apple Watch / Oura",
     icon: HeartPulse,
     blurb: "RMSSD ms + sparkline + above/below 50 ms target.",
     render: ({ sample }) => {
@@ -227,7 +227,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
             {onTarget ? "✓ above 50 ms target" : "below 50 ms target"}
           </div>
           <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 8, lineHeight: 1.4 }}>
-            Higher RMSSD = calmer nervous system. Polar H10 chest strap delivers the cleanest signal; Apple Watch HRV is OK with averaging.
+            Higher RMSSD = calmer nervous system. Oura Ring Gen 4 leads consumer HRV accuracy; Apple Watch HRV is OK with averaging.
           </div>
         </div>
       );
@@ -237,7 +237,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
   {
     id: "heart-rate",
     title: "Heart rate",
-    device: "Polar / Apple Watch",
+    device: "Apple Watch / Oura",
     icon: Activity,
     blurb: "Live BPM with min/max over the last minute.",
     render: ({ sample }) => {
@@ -294,7 +294,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
   {
     id: "eeg-theta-beta",
     title: "Theta / Beta ratio",
-    device: "Muse / OpenBCI / BrainBit / Neurosity",
+    device: "Muse 2 / Muse S",
     icon: Sigma,
     blurb: "Classic ADHD signature — high theta-over-beta suggests reduced attention.",
     render: ({ sample }) => {
@@ -327,7 +327,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
   {
     id: "eeg-alpha-theta",
     title: "Alpha / Theta ratio",
-    device: "Muse / OpenBCI / BrainBit / Neurosity",
+    device: "Muse 2 / Muse S",
     icon: Waves,
     blurb: "Used in meditation + addiction protocols. Theta-dominant suggests deep relaxation.",
     render: ({ sample }) => {
@@ -360,7 +360,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
   {
     id: "eeg-band-overlay",
     title: "EEG bands · 60s trace",
-    device: "Muse / OpenBCI / BrainBit / Neurosity",
+    device: "Muse 2 / Muse S",
     icon: Activity,
     blurb: "Theta / Alpha / Beta as overlaid 60-second sparklines.",
     render: ({ thetaW, alphaW, betaW }) => {
@@ -381,7 +381,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
   {
     id: "eeg-engagement",
     title: "Cognitive engagement",
-    device: "Muse / OpenBCI / BrainBit / Neurosity",
+    device: "Muse 2 / Muse S",
     icon: Brain,
     blurb: "Berka engagement index — β / (α + θ). Rises with active mental work.",
     render: ({ sample }) => {
@@ -411,7 +411,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
   {
     id: "hr-zone",
     title: "Heart rate zone",
-    device: "Polar / Apple Watch / Whoop",
+    device: "Apple Watch / Oura",
     icon: HeartPulse,
     blurb: "Live HR mapped to training zones (recovery → max). Assumes 220 − 30 = HRmax.",
     render: ({ sample }) => {
@@ -452,7 +452,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
   {
     id: "hr-sdnn",
     title: "HR variance · SDNN-like",
-    device: "Polar / Apple Watch / Whoop",
+    device: "Apple Watch / Oura",
     icon: Activity,
     blurb: "Std-dev of recent HR samples. Higher variance → more autonomic flexibility.",
     render: ({ sample }) => <HrSdnnWidget hr={sample?.heartRate} />,
@@ -1829,13 +1829,13 @@ const WIDGET_SECTIONS: { name: string; blurb: string; ids: string[] }[] = [
     ids: ["mendi-session-arc", "mendi-reward-histogram", "mendi-trial-blocks", "mendi-engagement-time"],
   },
   {
-    name: "EEG · Muse / OpenBCI / BrainBit / Neurosity",
-    blurb: "Band-power ratios + engagement indices for any 4–8 channel EEG headset.",
+    name: "EEG · Muse 2 / Muse S",
+    blurb: "Band-power ratios and engagement indices for either Muse headband.",
     ids: ["eeg-bands", "eeg-band-overlay", "eeg-theta-beta", "eeg-alpha-theta", "eeg-engagement"],
   },
   {
-    name: "HR / HRV · Polar / Apple Watch / Whoop",
-    blurb: "Cardiovascular metrics for any chest strap, watch, or strap that streams HR / HRV.",
+    name: "HR / HRV · Apple Watch / Oura",
+    blurb: "Cardiovascular metrics from any wearable streaming HR + HRV.",
     ids: ["heart-rate", "hrv-live", "hr-zone", "hr-sdnn"],
   },
   {
@@ -2098,7 +2098,7 @@ export const DASHBOARD_PRESETS: { id: string; label: string; blurb: string; ids:
   {
     id: "eeg-focus",
     label: "EEG-focused",
-    blurb: "For Muse / OpenBCI / BrainBit / Neurosity sessions — band ratios up front.",
+    blurb: "For Muse 2 / Muse S sessions — band-power ratios and engagement up front.",
     ids: [
       "live-score", "eeg-bands", "eeg-band-overlay",
       "eeg-theta-beta", "eeg-alpha-theta", "eeg-engagement",
@@ -2109,7 +2109,7 @@ export const DASHBOARD_PRESETS: { id: string; label: string; blurb: string; ids:
   {
     id: "hr-hrv",
     label: "HR / HRV",
-    blurb: "For Polar / Apple Watch / Whoop sessions — autonomic focus.",
+    blurb: "For Apple Watch / Oura Ring sessions — autonomic focus.",
     ids: [
       "heart-rate", "hr-zone", "hrv-live", "hr-sdnn",
       "breathing-pacer", "live-score",
@@ -2263,19 +2263,19 @@ export interface DeviceMeta {
 }
 
 // The platform's full device catalog. Mendi sits at the top.
+// Focus list (May 2026) — the 5 devices we're actively investing in.
+// Other vendors (Polar H10, Whoop, BrainBit, OpenBCI, Neurosity) were
+// removed from the picker so users see a sharper supported set; their
+// adapters can come back via community contribution.
 // Specs verified against vendor public docs (Mendi: Boere/Krigolson 2023;
-// Muse: choosemuse.com tech sheet; Polar: H10 product spec).
+// Muse: choosemuse.com tech sheet; Oura: Oura Cloud API docs; Apple:
+// HealthKit reference).
 export const DEVICE_REGISTRY: DeviceMeta[] = [
-  { id: "mendi",     name: "Mendi headband",       vendor: "Mendi",    modality: "fNIRS · 2 ch",   spec: "31 Hz · 660+805 nm · BA10",     signal: 96, defaultPaired: true,  blurb: "2-channel functional NIRS over bilateral prefrontal cortex. Pairs over BLE. Independent integration in progress — adapter scaffolded, awaiting hardware capture of the BLE protocol." },
-  { id: "muse2",     name: "Muse 2",                vendor: "Interaxon", modality: "EEG · 4 ch",     spec: "256 Hz · TP9/AF7/AF8/TP10",      signal: 88, defaultPaired: true,  blurb: "4-electrode dry-contact EEG headband. Forehead + behind-ear placement. Real-time band power for theta/alpha/beta/gamma." },
-  { id: "polar-h10", name: "Polar H10",             vendor: "Polar",    modality: "ECG / HRV",      spec: "1000 Hz ECG · BLE · gold-std",   signal: 99, defaultPaired: true,  blurb: "Gold-standard chest strap for HRV. 1000 Hz ECG signal, RMSSD/SDNN computed onboard, BLE streaming." },
-  { id: "apple-watch", name: "Apple Watch",         vendor: "Apple",    modality: "HR · sleep",     spec: "5-min sync via HealthKit",       signal: 84, defaultPaired: true,  blurb: "Reads heart rate, HRV, sleep stages, steps from HealthKit. 5-minute sync interval. Best for passive context, not session-grade." },
-  { id: "oura",      name: "Oura Ring (Gen 3+)",    vendor: "Oura",     modality: "Sleep · readiness", spec: "Cloud sync · daily summary",  signal: 0,  defaultPaired: false, blurb: "Overnight sleep + readiness + body temperature. One-way pull from Oura Cloud, refreshed each morning." },
-  { id: "whoop",     name: "Whoop 4.0",             vendor: "Whoop",    modality: "HRV · recovery", spec: "Continuous · cloud sync",        signal: 0,  defaultPaired: false, blurb: "Strain + recovery + sleep across 24 hours. Cloud sync; pulls into the daily check-in for trend analysis." },
-  { id: "brainbit",  name: "BrainBit",              vendor: "BrainBit", modality: "EEG · 4 ch",     spec: "250 Hz · O1/O2/T3/T4",            signal: 0,  defaultPaired: false, blurb: "Dry-contact 4-channel EEG headband. Posterior placement (O1/O2) — useful for alpha-theta protocols." },
-  { id: "openbci",   name: "OpenBCI Cyton",         vendor: "OpenBCI",  modality: "EEG · 8 ch",     spec: "250 Hz · 10-20 montage",          signal: 0,  defaultPaired: false, blurb: " 8-channel EEG board. Researchers configure their own electrode layout. Full raw signal access." },
-  { id: "neurosity", name: "Neurosity Crown",       vendor: "Neurosity", modality: "EEG · 8 ch",    spec: "256 Hz · 10-20 montage",          signal: 0,  defaultPaired: false, blurb: "8-channel headset with onboard ML for focus/calm states. Streams cleaned signals over WiFi." },
-  { id: "muse-s",    name: "Muse S (Athena)",       vendor: "Interaxon", modality: "EEG + fNIRS",    spec: "256 Hz EEG + 4-ch fNIRS",        signal: 0,  defaultPaired: false, blurb: "Sleep-band form factor with EEG + photoplethysmography. Multi-night use; sleep staging built-in." },
+  { id: "mendi",       name: "Mendi headband",        vendor: "Mendi",     modality: "fNIRS · 2 ch",         spec: "31 Hz · 660+940 nm · BA10",  signal: 96, defaultPaired: true,  blurb: "2-channel functional NIRS over bilateral prefrontal cortex. BLE protocol decoded May 2026; full live integration via the Mendi bridge. Richest widget surface — 25+ Mendi-specific cards in the dashboard catalog." },
+  { id: "muse2",       name: "Muse 2",                vendor: "Interaxon", modality: "EEG · 4 ch",           spec: "256 Hz · TP9/AF7/AF8/TP10",  signal: 88, defaultPaired: true,  blurb: "4-electrode dry-contact EEG headband. Forehead + behind-ear placement. Real-time band power for theta/alpha/beta/gamma. Pairs over Web Bluetooth directly — no bridge required." },
+  { id: "muse-s",      name: "Muse S (Athena)",       vendor: "Interaxon", modality: "EEG + fNIRS",          spec: "256 Hz EEG + 4-ch fNIRS",    signal: 86, defaultPaired: false, blurb: "Sleep-band form factor with EEG + PPG + fNIRS (Athena edition, March 2025). Multi-night use; sleep staging built-in. Shares the Muse adapter so all EEG widgets light up automatically." },
+  { id: "oura",        name: "Oura Ring (Gen 4)",     vendor: "Oura",      modality: "Sleep · readiness · HRV", spec: "Oura Cloud REST · daily sync", signal: 92, defaultPaired: true,  blurb: "Highest-accuracy wearable HRV (0.99 concordance with Polar H10 ECG over 536 nights). Sleep stages + readiness score pulled from Oura Cloud each morning." },
+  { id: "apple-watch", name: "Apple Watch",           vendor: "Apple",     modality: "HR · sleep · HRV",     spec: "HealthKit sync via iOS app", signal: 84, defaultPaired: true,  blurb: "Most popular wearable in the world. Reads heart rate, HRV, sleep stages, and steps from HealthKit. Pairs via the EEGBase iOS companion app (forthcoming) — not directly from the browser." },
 ];
 
 const LS_KEY_DEVICES = "eegbase-demo-paired-devices";
