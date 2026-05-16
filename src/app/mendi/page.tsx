@@ -1,9 +1,9 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "EEGBase × Mendi — Clinical Partnership",
+  title: "EEGBase for Mendi — independent clinical layer for Mendi headbands",
   description:
-    "The clinical layer Mendi has been waiting for. EEGBase gives licensed neurofeedback clinicians the dashboard, analytics, and reporting tools the Mendi app can't provide.",
+    "EEGBase is an independent clinical platform that talks to Mendi headbands over Bluetooth. Built the same way Myndlift built on Muse — hardware-only, no Mendi app or cloud in the loop. Free for licensed clinicians.",
 };
 
 const violet = "#7C3AED";
@@ -54,14 +54,17 @@ export default function MendiPartnershipPage() {
             color: "#DDD6FE", marginBottom: 24, border: "1px solid rgba(196,181,253,0.3)",
           }}>
             <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#A78BFA" }} />
-            Partnership Proposal — May 2026
+            Independent integration · Mendi-compatible
           </div>
           <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.25rem)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.03em", marginBottom: 20 }}>
-            The clinical layer{" "}<br />
-            <span style={{ color: "#A78BFA" }}>Mendi has been waiting for</span>
+            A clinical layer{" "}<br />
+            <span style={{ color: "#A78BFA" }}>for Mendi headbands</span>
           </h1>
           <p style={{ fontSize: 18, color: "#C4B5FD", lineHeight: 1.7, maxWidth: 580, margin: "0 auto 32px" }}>
-            Mendi's headband is exceptional consumer hardware. But licensed neurofeedback clinicians need more than a progress graph — they need clinical oversight, session documentation, and outcome reporting. That's EEGBase.
+            Mendi's headband is exceptional consumer hardware. EEGBase is an independent clinical platform that talks to it directly over Bluetooth — the same model Myndlift took with Muse. No Mendi app or cloud in the loop. Bring your own headband, plug it into a clinic.
+          </p>
+          <p style={{ fontSize: 12, color: "#A5B4FC", marginTop: -16, marginBottom: 32, fontStyle: "italic", maxWidth: 540, margin: "-8px auto 32px" }}>
+            EEGBase is not a Mendi product. We are not affiliated with, endorsed by, or licensed by Mendi AB. &ldquo;Mendi&rdquo; is a trademark of its owner.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             <Link
@@ -179,17 +182,17 @@ export default function MendiPartnershipPage() {
         </div>
       </section>
 
-      {/* Section 2: Three ways to partner */}
+      {/* Section 2: Future collaboration ideas */}
       <section style={{ background: "#fff", borderTop: "1px solid #E5E7EB", borderBottom: "1px solid #E5E7EB" }}>
         <div style={{ maxWidth: 960, margin: "0 auto", padding: "72px 24px" }}>
           <p style={{ fontSize: 12, fontWeight: 700, color: violet, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12, textAlign: "center" }}>
-            Partnership models
+            Open to collaboration · none active today
           </p>
           <h2 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#111", marginBottom: 8, textAlign: "center" }}>
-            Three ways to partner
+            If Mendi ever wants to formalise a relationship
           </h2>
-          <p style={{ fontSize: 15, color: "#6B7280", textAlign: "center", marginBottom: 48, maxWidth: 560, margin: "0 auto 48px" }}>
-            From a lightweight referral arrangement to a fully white-labeled B2B product — we can structure this however creates the most value for Mendi.
+          <p style={{ fontSize: 15, color: "#6B7280", textAlign: "center", marginBottom: 48, maxWidth: 620, margin: "0 auto 48px" }}>
+            EEGBase will work with any Mendi headband regardless of whether Mendi wants a formal relationship — the integration is independent. The three structures below are options we&rsquo;d be open to <em>if</em> Mendi ever wants to formalise something. Today, none of these are active.
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
             {[
@@ -216,13 +219,13 @@ export default function MendiPartnershipPage() {
                 badge: "Recommended",
                 badgeColor: violet,
                 badgeBg: violetLight,
-                description: "Mendi sends session data to EEGBase automatically. Clinicians see every client's sessions in one dashboard — even when the client trains alone at home.",
+                description: "EEGBase talks to the Mendi headband directly over Bluetooth — independent of Mendi's app or cloud. Clinicians see every client's sessions in one dashboard — even when the client trains alone at home.",
                 bullets: [
-                  "Mendi BLE SDK streams session data into EEGBase",
-                  "Clinician dashboard pulls live session data",
-                  "Per-clinician explicit consent in the Mendi app — revocable at any time (GDPR Art. 9 / HIPAA authorization)",
-                  "Joint Controller Agreement signed with Mendi before any EU at-home data lands in a clinical view",
-                  "Engineering effort split between Mendi (SDK build) and EEGBase (adapter wiring)",
+                  "EEGBase consumer mobile app pairs with the Mendi headband over BLE",
+                  "Sessions sync to the clinician's EEGBase dashboard",
+                  "Per-clinician explicit consent in the EEGBase mobile app (GDPR Art. 9 / HIPAA authorization, revocable any time)",
+                  "EEGBase is sole data controller — no joint-controller agreement needed because Mendi's cloud is not in the loop",
+                  "Engineering owned end-to-end by EEGBase — no Mendi engineering required",
                 ],
                 accent: violet,
                 accentBg: violetLight,
@@ -351,54 +354,47 @@ export default function MendiPartnershipPage() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
             <div>
               <p style={{ fontSize: 12, fontWeight: 700, color: "#A78BFA", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12 }}>
-                Integration requirements
+                How the integration works
               </p>
               <h2 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: 16, lineHeight: 1.2 }}>
-                One afternoon of<br />engineering time
+                Independent BLE,<br />no Mendi engineering required
               </h2>
               <p style={{ fontSize: 15, color: "#C4B5FD", lineHeight: 1.7, marginBottom: 24 }}>
-                Deep integration requires only three values from Mendi's firmware team. Once we have them, EEGBase can connect directly to the Mendi headband via Web Bluetooth — no Mendi app required for clinical sessions.
+                EEGBase reads the Mendi headband&rsquo;s BLE GATT stream directly — the same approach Myndlift took with Muse. Mendi confirmed (May 2026) this is the supported model: no SDK, no licensing, no engineering effort on their side.
               </p>
               <p style={{ fontSize: 14, color: "#8B5CF6", lineHeight: 1.7 }}>
-                We've already reverse-engineered the BLE advertisement and connection flow. The values below are the only missing pieces. This is one afternoon of work for a firmware engineer.
+                The adapter, decoder, Beer-Lambert helper, and unit tests are already built. The remaining work — capturing the GATT protocol from a physical Mendi via Wireshark — is being done in-house against the founder&rsquo;s own headband.
               </p>
             </div>
             <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(196,181,253,0.2)", borderRadius: 20, padding: 28 }}>
               <p style={{ fontSize: 12, fontWeight: 700, color: "#A78BFA", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 20 }}>
-                The 3 values we need
+                Build status
               </p>
               {[
-                {
-                  label: "BLE Service UUID",
-                  desc: "The primary GATT service UUID for the Mendi data stream",
-                  example: 'e.g. "6e400001-b5a3-f393-..."',
-                },
-                {
-                  label: "Characteristic UUID",
-                  desc: "The notify characteristic that broadcasts fNIRS packet data",
-                  example: 'e.g. "6e400003-b5a3-f393-..."',
-                },
-                {
-                  label: "Packet format",
-                  desc: "Byte layout of each packet: offsets for OxyHb L/R, DeoxyHb L/R, reward score, timestamp",
-                  example: 'e.g. [0-3]=OxyHb_L float32, [4-7]=OxyHb_R...',
-                },
-              ].map(({ label, desc, example }) => (
-                <div key={label} style={{ marginBottom: 20, paddingBottom: 20, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-                  <p style={{ fontWeight: 700, fontSize: 14, color: "#fff", marginBottom: 4 }}>{label}</p>
-                  <p style={{ fontSize: 13, color: "#C4B5FD", marginBottom: 4 }}>{desc}</p>
-                  <p style={{ fontSize: 11, color: "#7C3AED", fontFamily: "monospace", background: "rgba(124,58,237,0.15)", padding: "4px 8px", borderRadius: 6 }}>{example}</p>
+                { label: "Adapter scaffold (BLE transport)", note: "MendiAdapter class — full GATT lifecycle, reconnect, control-char hook", done: true },
+                { label: "Pure packet decoder", note: "MendiPacketDecoder — separated from BLE I/O for unit-testing and mobile-app reuse", done: true },
+                { label: "Beer-Lambert helper", note: "Modified Beer-Lambert MBLL for the raw-intensity case (Wray 1988 extinction coefficients)", done: true },
+                { label: "Unit tests", note: "11 / 11 passing — preprocessed-Hb path, raw-intensity path, sequence-gap detection", done: true },
+                { label: "BLE protocol capture", note: "Wireshark + Android HCI snoop log against a physical Mendi (in progress)", done: false },
+                { label: "Hardware-in-the-loop validation", note: "Live session with real headband, baseline + serial-sevens task", done: false },
+              ].map(({ label, note, done }) => (
+                <div key={label} style={{ marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", gap: 12, alignItems: "flex-start" }}>
+                  <span style={{ flexShrink: 0, marginTop: 2, color: done ? "#34D399" : "#A78BFA", fontWeight: 700 }}>{done ? "✓" : "○"}</span>
+                  <div>
+                    <p style={{ fontWeight: 700, fontSize: 14, color: "#fff", marginBottom: 2 }}>{label}</p>
+                    <p style={{ fontSize: 12, color: "#C4B5FD" }}>{note}</p>
+                  </div>
                 </div>
               ))}
               <a
-                href="/contact?role=partner"
+                href="/contact"
                 style={{
                   display: "block", textAlign: "center", padding: "12px 20px",
                   background: violet, color: "#fff", borderRadius: 10,
                   fontSize: 14, fontWeight: 700, textDecoration: "none",
                 }}
               >
-                Send us the UUIDs →
+                Get in touch →
               </a>
             </div>
           </div>

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { SimulatorAdapter } from "@/lib/device/simulator";
 import { MendiAdapter } from "@/lib/device/mendi";
+import { MendiBridgeAdapter } from "@/lib/device/mendi-bridge";
 import { MuseAdapter } from "@/lib/device/muse";
 import type { DeviceAdapter, DeviceSample } from "@/lib/device/adapter";
 import { LiveChart } from "@/components/LiveChart";
@@ -18,7 +19,19 @@ import { FractalFeedback } from "@/components/FractalFeedback";
 import { AnnotationPanel, type Annotation } from "@/components/AnnotationPanel";
 
 function createAdapter(deviceType: string, params?: unknown): DeviceAdapter {
-  if (deviceType === "mendi") return new MendiAdapter();
+  if (deviceType === "mendi") {
+    // Default to the localhost BLE bridge on Mac because Chrome's Web
+    // Bluetooth on macOS has been flaky with the Mendi V4. The bridge
+    // (`scripts/mendi-bridge.py`) uses the same protobuf decoder and
+    // emits identical DeviceSamples, so the rest of the app sees no
+    // difference. Fall back to direct Web Bluetooth if explicitly
+    // requested via `?mendi=webble` query param.
+    if (typeof window !== "undefined") {
+      const force = new URLSearchParams(window.location.search).get("mendi");
+      if (force === "webble") return new MendiAdapter();
+    }
+    return new MendiBridgeAdapter();
+  }
   if (deviceType === "muse") return new MuseAdapter();
   const simParams = params && typeof params === "object" ? (params as Record<string, unknown>) : {};
   return new SimulatorAdapter({
@@ -27,7 +40,9 @@ function createAdapter(deviceType: string, params?: unknown): DeviceAdapter {
   });
 }
 
-const MAX_POINTS = 600; // 60 seconds at 10 Hz (Mendi/Simulator sample rate)
+// Sized for Mendi's measured 31.2 Hz stream (60 s × 32 ≈ 1920). Simulator
+// runs at 10 Hz so it fills ~600 points; either way the chart shows 60 s.
+const MAX_POINTS = 1920;
 
 interface Client { id: string; name: string }
 interface Protocol { id: string; name: string; deviceType: string; durationSeconds: number; parameters?: unknown }
@@ -238,6 +253,7 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
   const [sample, setSample] = useState<DeviceSample | null>(null);
   const [saving, setSaving] = useState(false);
   const [connectError, setConnectError] = useState<string | null>(null);
+  const [droppedPackets, setDroppedPackets] = useState(0);
 
   const [selectedClientId, setSelectedClientId] = useState(
     defaultClientId && clients.some((c) => c.id === defaultClientId)
@@ -283,7 +299,7 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
   const startStream = useCallback(async () => {
     reward.reset(); oxyL.reset(); oxyR.reset(); deoxyL.reset(); deoxyR.reset();
     theta.reset(); alpha.reset(); beta.reset();
-    setElapsed(0); setSample(null);
+    setElapsed(0); setSample(null); setDroppedPackets(0);
     allSamplesRef.current = [];
     startedAtRef.current = new Date().toISOString();
 
@@ -351,7 +367,14 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
     }
     setConnectError(null);
     setPhase("running");
-    timerRef.current = setInterval(() => setElapsed((e) => e + 1), 1000);
+    timerRef.current = setInterval(() => {
+      setElapsed((e) => e + 1);
+      // Poll dropped-packet count from adapters that expose it (Mendi today; future devices conform).
+      const a = adapterRef.current as unknown as { getDroppedPacketCount?: () => number };
+      if (a && typeof a.getDroppedPacketCount === "function") {
+        setDroppedPackets(a.getDroppedPacketCount());
+      }
+    }, 1000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProtocolId]);
 
@@ -459,6 +482,15 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
                 <Wifi size={13} className="animate-pulse" />{fmt(elapsed)}
               </span>
             )}
+            {droppedPackets > 0 && (
+              <span
+                className="flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-full border"
+                title={`${droppedPackets} BLE notification(s) lost since session start`}
+                style={{ background: "var(--warning-subtle, var(--surface-sunken))", color: "var(--warning)", borderColor: "color-mix(in srgb, var(--warning) 30%, transparent)" }}
+              >
+                ⚠ {droppedPackets} dropped
+              </span>
+            )}
             <button
               onClick={() => setAudioEnabled((v) => !v)}
               title={audioEnabled ? "Mute audio feedback" : "Enable audio feedback (plays when above threshold)"}
@@ -484,6 +516,30 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
           </span>
         )}
       </div>
+
+      {/* Consumer-wellness device disclosure (FDA framing) */}
+      {(() => {
+        const dt = selectedProtocol?.deviceType;
+        if (dt !== "mendi" && dt !== "muse") return null;
+        const vendor = dt === "mendi" ? "Mendi" : "Muse";
+        return (
+          <div
+            className="mb-4 px-4 py-2.5 rounded-lg text-xs flex items-start gap-2"
+            style={{
+              background: "var(--surface-sunken)",
+              border: "1px solid var(--border-subtle)",
+              color: "var(--text-secondary)",
+            }}
+          >
+            <span style={{ color: "var(--text-tertiary)", flexShrink: 0 }}>ⓘ</span>
+            <span>
+              <strong>{vendor}</strong> is a consumer wellness device, not FDA-cleared. EEGBase
+              records and visualises the signal it provides; clinical interpretation rests with
+              the licensed clinician.
+            </span>
+          </div>
+        );
+      })()}
 
       {/* Client / Protocol selectors */}
       <div className="rounded-xl p-5 mb-5 grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ background: "var(--surface-raised)", border: "1px solid var(--border-subtle)" }}>

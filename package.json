@@ -13,7 +13,8 @@
     "db:studio": "dotenv -e .env.local drizzle-kit studio",
     "seed": "dotenv -e .env.local tsx scripts/seed.ts",
     "seed:demo": "dotenv -e .env.local tsx scripts/seed-demo.ts",
-    "demo:api": "dotenv -e .env.local tsx scripts/demo-api-push.ts"
+    "demo:api": "dotenv -e .env.local tsx scripts/demo-api-push.ts",
+    "test": "tsx --test src/lib/**/*.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.92.0",

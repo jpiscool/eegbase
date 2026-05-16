@@ -1018,7 +1018,7 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
       <div role="status" style={{ background: "#FEF3C7", borderBottom: "1px solid #FCD34D", color: "#78350F", padding: "8px 24px", fontSize: 12, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap", textAlign: "center" }}>
         <span style={{ fontSize: 14 }}>⚠️</span>
         <span>
-          <strong style={{ fontWeight: 700 }}>Live demo</strong> · all client data is illustrative · email/SMS/calendar actions are simulated · Mendi BLE integration shown is proposed (no public Mendi SDK yet) — running on simulator · click <strong style={{ fontWeight: 700 }}>“Run with live Claude Haiku”</strong> in AI Insights for a real model call
+          <strong style={{ fontWeight: 700 }}>Live demo</strong> · all client data is illustrative · email/SMS/calendar actions are simulated · Mendi BLE integration is in progress (independent reverse-engineered protocol — no Mendi SDK exists) and runs on simulator until hardware capture completes · click <strong style={{ fontWeight: 700 }}>“Run with live Claude Haiku”</strong> in AI Insights for a real model call
         </span>
       </div>
 
@@ -3430,12 +3430,12 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
 
             {/* MENDI HOME-CONTINUITY BRIDGE */}
             <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 20, marginBottom: 16, boxShadow: "0 12px 36px -16px rgba(79,70,229,0.4)", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, color: "#FBBF24", background: "rgba(251,191,36,0.15)", padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(251,191,36,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Proposed · Pending Mendi SDK</div>
+              <div style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, color: "#FBBF24", background: "rgba(251,191,36,0.15)", padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(251,191,36,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Pending hardware capture</div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(167,139,250,0.2)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, border: "1px solid rgba(167,139,250,0.3)" }}>↔</div>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Clinic ↔ Home Practice Bridge</div>
-                  <div style={{ fontSize: 11, color: "#A5B4FC" }}>What becomes possible once Mendi&rsquo;s BLE SDK is shared with us · today: simulator data only</div>
+                  <div style={{ fontSize: 11, color: "#A5B4FC" }}>What becomes possible once we complete the independent BLE-protocol capture from a physical Mendi · today: simulator data only</div>
                 </div>
               </div>
 
@@ -3529,9 +3529,9 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
               </div>
 
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <button onClick={() => showToast("Demo: protocol PDF emailed to Sarah · 3×/week × 12 min · today, before SDK: PDF; with Mendi SDK: direct push")} style={{ ...clinicianBtnPrimary, background: "#7C3AED" }}>Send protocol → Sarah</button>
-                <button onClick={() => showToast("Demo: SMS reminder sent · with Mendi SDK this would be an in-app message")} style={clinicianBtn}>💬 SMS reminder</button>
-                <button onClick={() => showToast("Demo: home session screenshot opens — automatic sync requires Mendi SDK access")} style={clinicianBtn}>View last home session</button>
+                <button onClick={() => showToast("Demo: protocol PDF emailed to Sarah · 3×/week × 12 min · today: PDF; once the EEGBase mobile app ships: direct push")} style={{ ...clinicianBtnPrimary, background: "#7C3AED" }}>Send protocol → Sarah</button>
+                <button onClick={() => showToast("Demo: SMS reminder sent · once the EEGBase mobile app ships this would be an in-app message")} style={clinicianBtn}>💬 SMS reminder</button>
+                <button onClick={() => showToast("Demo: home session screenshot opens — automatic sync requires the EEGBase mobile app (in development)")} style={clinicianBtn}>View last home session</button>
               </div>
             </div>
 

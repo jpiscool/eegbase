@@ -510,7 +510,7 @@ a, button, [role="button"] {
 .annotation-marker:hover::after { opacity: 1; }
 
 /* ── Print stylesheet ────────────────────────────────────────────────────────
-   For /mendi, /mendi-clinical-preview, /privacy, /terms — clean print output. */
+   For /mendi, /privacy, /terms — clean print output. */
 @media print {
   header, footer, nav, .demo-modal-backdrop, .no-print { display: none !important; }
   body, html, main { background: #fff !important; color: #000 !important; }

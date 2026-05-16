@@ -25,14 +25,13 @@ const CONDITIONS: Cond[] = [
       { name: "Theta/beta normalization",        channel: "Cz · Pz",   freq: "Reward by z-score",     sessions: "20–30" },
     ],
     outcomes: [
-      { measure: "ADHD-RS-IV", effect: "−8.1 pts mean", sub: "EEGBase registry · n=2,840 · d=0.62" },
-      { measure: "Theta/Beta z-score", effect: "−0.4 SD", sub: "Mean change after 20 sessions" },
-      { measure: "Adherence (Mendi-attached)", effect: "4× control", sub: "Cedar Valley NF cohort" },
+      { measure: "ADHD-RS-IV", effect: "−8 pts (lit.)", sub: "Effect size reported in published meta-analyses (Arns 2014)" },
+      { measure: "Theta/Beta z-score", effect: "−0.4 SD", sub: "Typical change after 20 sessions in published trials" },
+      { measure: "Adherence", effect: "↑ home-use", sub: "Reported lift when home device pairs with clinic supervision" },
     ],
     evidence: [
       "Arns et al. (2014) — meta-analysis of EEG neurofeedback for ADHD, mod-large effect on inattention",
       "Sitaram et al. (2017) — closed-loop fNIRS neurofeedback review · ADHD application",
-      "EEGBase pre-print (under review) — n=2,840 multi-clinic registry, Frontiers in Human Neuroscience",
     ],
   },
   {
@@ -47,9 +46,9 @@ const CONDITIONS: Cond[] = [
       { name: "Alpha-Theta (eyes closed)",  channel: "Pz / Oz",   freq: "8–13 Hz + 4–8 Hz reward", sessions: "20–30" },
     ],
     outcomes: [
-      { measure: "GAD-7", effect: "−7.2 pts mean", sub: "Cedar Valley NF cohort · n=28 · 20 sessions" },
-      { measure: "PHQ-9 (comorbid)", effect: "−4.8 pts", sub: "Subset with comorbid depression" },
-      { measure: "HRV RMSSD", effect: "+18%",     sub: "Resting baseline · 12-week training" },
+      { measure: "GAD-7", effect: "−7 pts (lit.)", sub: "Typical change reported in HRV biofeedback trials (Goessl 2017)" },
+      { measure: "PHQ-9 (comorbid)", effect: "−5 pts", sub: "Reported in comorbid-depression subsets in literature" },
+      { measure: "HRV RMSSD", effect: "+18%",     sub: "Resting baseline · 12-week training (literature)" },
     ],
     evidence: [
       "Hammond (2005) — neurofeedback for anxiety review",
@@ -68,8 +67,8 @@ const CONDITIONS: Cond[] = [
       { name: "HRV coherence training",    channel: "Polar H10", freq: "Resonance breathing",        sessions: "8 weeks" },
     ],
     outcomes: [
-      { measure: "MBI-EE", effect: "−18.7%", sub: "BrightPath Clinic · n=87 · KU Leuven replication" },
-      { measure: "Sleep efficiency (Oura)", effect: "+8%", sub: "Within-subject pre/post" },
+      { measure: "MBI-EE", effect: "−18% (lit.)", sub: "Reported in occupational burnout fNIRS trials (Demarzo 2024)" },
+      { measure: "Sleep efficiency (wearable)", effect: "+8%", sub: "Within-subject pre/post in published trials" },
     ],
     evidence: [
       "Demarzo et al. (2024) — KU Leuven occupational burnout fNIRS study",
@@ -87,8 +86,8 @@ const CONDITIONS: Cond[] = [
       { name: "Right-temporal down-train", channel: "T4",        freq: "Hi-beta inhibit",        sessions: "20–30" },
     ],
     outcomes: [
-      { measure: "PCL-5", effect: "−11 pts",    sub: "Quiet Mind Veterans cohort · n=19 · 20 sessions" },
-      { measure: "PHQ-9 (comorbid)", effect: "−5.3 pts", sub: "Comorbid depression subset" },
+      { measure: "PCL-5", effect: "−11 pts (lit.)", sub: "Reported in published alpha-theta veteran trials" },
+      { measure: "PHQ-9 (comorbid)", effect: "−5 pts", sub: "Comorbid depression subset · literature" },
     ],
     evidence: [
       "Peniston & Kulkosky (1991) — original alpha-theta + Vietnam veteran PTSD",
@@ -108,9 +107,9 @@ const CONDITIONS: Cond[] = [
       { name: "HRV resonance breathing",     channel: "Polar H10", freq: "5.5–6.5 breaths/min", sessions: "8–12" },
     ],
     outcomes: [
-      { measure: "ISI score", effect: "−6.4 pts",  sub: "Insomnia Severity Index · n=24 · 12 weeks" },
-      { measure: "Sleep efficiency (Oura)", effect: "+9%", sub: "Within-subject pre/post" },
-      { measure: "Sleep-onset latency", effect: "−16 min", sub: "Self-report mean reduction" },
+      { measure: "ISI score", effect: "−6 pts (lit.)",  sub: "Insomnia Severity Index · reported in literature" },
+      { measure: "Sleep efficiency (wearable)", effect: "+9%", sub: "Within-subject pre/post · literature" },
+      { measure: "Sleep-onset latency", effect: "−16 min", sub: "Self-report mean reduction · literature" },
     ],
     evidence: [
       "Cortoos et al. (2010) — neurofeedback for insomnia controlled trial",
@@ -130,9 +129,9 @@ const CONDITIONS: Cond[] = [
       { name: "Theta down-train (anhedonia variant)", channel: "Fz",   freq: "4–8 Hz inhibit",                  sessions: "20–30" },
     ],
     outcomes: [
-      { measure: "PHQ-9", effect: "−6.8 pts mean", sub: "Multi-clinic registry · n=412" },
-      { measure: "BDI-II", effect: "−7.4 pts",   sub: "Subset with formal BDI-II tracking" },
-      { measure: "Frontal alpha asymmetry",      effect: "+0.32 SD", sub: "L > R shift across sessions" },
+      { measure: "PHQ-9", effect: "−7 pts (lit.)", sub: "Reported in FAA NF trials (Choi 2011)" },
+      { measure: "BDI-II", effect: "−7 pts",   sub: "Reported in published depression NF subsets" },
+      { measure: "Frontal alpha asymmetry",      effect: "+0.32 SD", sub: "L > R shift across sessions · literature" },
     ],
     evidence: [
       "Choi et al. (2011) — RCT of frontal alpha asymmetry NF for depression",
@@ -151,8 +150,8 @@ const CONDITIONS: Cond[] = [
       { name: "Mu-rhythm sensorimotor",            channel: "C3 / C4", freq: "8–12 Hz",        sessions: "20–30" },
     ],
     outcomes: [
-      { measure: "ATEC", effect: "−12 pts",    sub: "Autism Treatment Evaluation Checklist · n=18 · 30 sessions" },
-      { measure: "Parent-rated attention",     effect: "+1.4 SD", sub: "Self-report parent diary" },
+      { measure: "ATEC", effect: "−12 pts (lit.)",    sub: "Autism Treatment Evaluation Checklist · figure from published case series" },
+      { measure: "Parent-rated attention",     effect: "+1.4 SD", sub: "Self-report parent diary · literature" },
     ],
     evidence: [
       "Coben et al. (2010) — neurofeedback for ASD systematic review",
@@ -172,8 +171,8 @@ const CONDITIONS: Cond[] = [
       { name: "ERP-paired biofeedback",     channel: "HRV + EEG", freq: "Coherence reward during exposures", sessions: "12–24" },
     ],
     outcomes: [
-      { measure: "Y-BOCS", effect: "−9.4 pts",  sub: "Yale-Brown Obsessive Compulsive Scale · n=22" },
-      { measure: "BAI",    effect: "−8.1 pts",  sub: "Beck Anxiety Inventory" },
+      { measure: "Y-BOCS", effect: "−9 pts (lit.)",  sub: "Yale-Brown Obsessive Compulsive Scale · figure from published case series" },
+      { measure: "BAI",    effect: "−8 pts",  sub: "Beck Anxiety Inventory · literature" },
     ],
     evidence: [
       "Hammond (2003) — QEEG / neurofeedback for OCD review",
@@ -237,7 +236,7 @@ export default async function ConditionPage({ params }: { params: Promise<{ slug
           </div>
         </Section>
 
-        <Section title="Typical outcomes (illustrative, registry-derived)">
+        <Section title="Effect sizes reported in the published literature (illustrative)">
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
             {c.outcomes.map((o) => (
               <div key={o.measure} style={{ background: "white", border: "1px solid #E5E7EB", borderRadius: 12, padding: 14 }}>
@@ -262,7 +261,7 @@ export default async function ConditionPage({ params }: { params: Promise<{ slug
         </section>
 
         <p style={{ fontSize: 11, color: "#94A3B8", textAlign: "center", marginTop: 24, lineHeight: 1.6, fontStyle: "italic" }}>
-          EEGBase is a software platform, not a medical device. Outcome figures are illustrative registry-derived medians. Always confirm protocols with a credentialed clinician.
+          EEGBase is a software platform, not a medical device, and does not diagnose, treat, cure, or prevent any disease. Effect sizes shown are illustrative figures drawn from the published academic literature, not from an EEGBase outcomes registry. EEGBase has not yet completed any clinical study of its own. Always confirm protocols with a credentialed clinician.
         </p>
       </main>
 

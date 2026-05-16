@@ -127,7 +127,7 @@ export default function LandingPage() {
                 <><strong className="text-gray-900">Hardware-agnostic</strong> — Mendi, Muse, Polar, Apple Watch, Oura, OpenBCI, Whoop · switch headsets and keep every session&rsquo;s history</>,
                 <><strong className="text-gray-900">AI drafts the note in 60 seconds</strong> in your format (SOAP, DAP, BIRP, +3 more) · you review and save</>,
                 <><strong className="text-gray-900">Runs in any browser — or fully local on your desktop</strong> — Mac, Windows, iPad, Chromebook · zero install web, downloadable local build coming soon</>,
-                <><strong className="text-gray-900">CMS-1500 + ERA auto-posted</strong> via Stedi or Office Ally clearinghouses</>,
+                <><strong className="text-gray-900">CMS-1500 export</strong> with common neurofeedback codes pre-populated · clearinghouse integration (Stedi / Office Ally) in development</>,
               ].map((item, i) => (
                 <li key={i} className="flex gap-2.5">
                   <span aria-hidden="true" className="text-blue-600 font-bold mt-0.5">✓</span>
@@ -305,7 +305,7 @@ export default function LandingPage() {
               EEGBase is the simplest neurofeedback platform on the market. It plugs into Mendi fNIRS headbands, Muse EEG headsets, Polar heart-rate straps, Apple Watch, Oura rings, OpenBCI hardware, Whoop bands, and other BLE neurofeedback devices. Every reading lands in one record on one screen.
             </p>
             <p>
-              <strong>For clinicians:</strong> during a session, you see the live brain signal, a HIPAA-compliant video call with the client, the reward score, and the running notes — all without leaving the page. After the session, the AI drafts the clinical note in any of six standard formats (SOAP, DAP, BIRP, GIRP, PIE, SIRP). Outcome scales (PHQ-9, GAD-7, ADHD-RS-IV, MBI-EE, custom) auto-track over time. Insurance billing (CMS-1500, ERA, ICD-10) is built in.
+              <strong>For clinicians:</strong> during a session, you see the live brain signal, a video call with the client (HIPAA-friendly, BAA-covered video provider), the reward score, and the running notes — all without leaving the page. After the session, the AI drafts the clinical note in any of six standard formats (SOAP, DAP, BIRP, GIRP, PIE, SIRP). Outcome scales (PHQ-9, GAD-7, ADHD-RS-IV, MBI-EE, custom) auto-track over time. Insurance billing surface (CMS-1500 export with ICD-10 + common neurofeedback CPT codes) is built in; direct clearinghouse posting is in development. Coverage of neurofeedback varies by payer.
             </p>
             <p>
               <strong>For individuals:</strong> bring your own headset, pair it, run a session, see your own progress over time. No client record to fill out, no insurance forms to file, no clinical license required. You get the same dashboard a clinician uses — just without the bits that don&rsquo;t apply to one person.

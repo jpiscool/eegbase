@@ -11,7 +11,7 @@ type Tile = { name: string; cat: string; status: Status; sub?: string };
 
 const TILES: Tile[] = [
   // Hardware — fNIRS
-  { name: "Mendi",            cat: "fNIRS hardware", status: "beta",    sub: "Flagship · our adapter built · awaiting Mendi BLE SDK release" },
+  { name: "Mendi",            cat: "fNIRS hardware", status: "live",    sub: "Independent BLE adapter · 31 Hz fNIRS · talks to headband directly (no Mendi app or cloud in loop)" },
   { name: "NIRx NIRScout",    cat: "fNIRS hardware", status: "beta",    sub: "Research · 8–48 channels" },
   { name: "Artinis Brite",    cat: "fNIRS hardware", status: "beta",    sub: "Wearable Brite MKIII" },
   { name: "Kernel Flow",      cat: "fNIRS hardware", status: "planned", sub: "Q4 2026" },

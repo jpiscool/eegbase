@@ -8,19 +8,19 @@ export const metadata = {
 const C: AudienceContent = {
   eyebrow: "For enterprise",
   eyebrowColor: "#7C3AED",
-  hero: { line1: "Multi-clinic. Multi-region.", line2: "Mendi-attached or white-label.", line2Color: "#7C3AED" },
-  lede: "Enterprise deployment of EEGBase for health systems, multi-location practices, and corporate-wellness programs. White-label option ('Mendi Clinical' is one example), full SSO, signed BAA + DPA, dedicated CSM, 99.97% uptime SLA.",
+  hero: { line1: "Multi-clinic. Multi-region.", line2: "White-label ready.", line2Color: "#7C3AED" },
+  lede: "Enterprise deployment of EEGBase for health systems, multi-location practices, and corporate-wellness programs. White-label theme, SSO, HIPAA BAA on enrolment, multi-region architecture, and a target SLA that activates the day a clinic onboards.",
   pillars: [
-    { title: "White-label ready",          desc: "Theme switcher rebrands across all 11 tabs, patient portal, booking page, share-link viewer, outbound email. 2-week launch · 0 hrs Mendi engineering.", color: "#7C3AED" },
-    { title: "Procurement-ready compliance", desc: "SOC 2 Type II + independent pen-test + HIPAA BAA + EU SCCs + Schrems II + WCAG 2.2 AA. SIG-LITE/HECVAT questionnaires answered.",                                  color: "#10B981" },
-    { title: "Dedicated SLA + CSM",         desc: "99.97% uptime · 15-min P0 ack · 4h mitigation · 5-day public RCA · multi-region failover · cross-AZ tested monthly.",                                       color: "#06B6D4" },
+    { title: "White-label ready",          desc: "Theme switcher rebrands across all 11 tabs, patient portal, booking page, share-link viewer, outbound email. ~2-week launch.", color: "#7C3AED" },
+    { title: "Procurement-track compliance", desc: "HIPAA BAA on enrolment · EU SCCs (2021/914) · Schrems II posture documented · SOC 2 + independent pen-test + WCAG 2.2 AA audit scoping in progress, target start Q3 2026 · SIG-LITE/HECVAT questionnaire support on request.", color: "#10B981" },
+    { title: "Target SLA + CSM",            desc: "Target SLA on launch: 15-min P0 ack · 4h mitigation · 5-day public RCA · multi-region failover. Real uptime numbers will be published on /status once we carry production traffic.", color: "#06B6D4" },
   ],
   features: [
     "SAML SSO (Okta, Google Workspace, Microsoft Entra)",
     "IP allowlist + 2FA enforced for all clinical seats",
-    "Multi-region · us-east-1 · eu-west-3 · ca-central-1",
-    "RTO 15 min · RPO 5 min · cross-AZ failover tested monthly",
-    "Custom DPA · 42 CFR Part 2 · BAA on signup",
+    "Multi-region architecture · us-east-1 · eu-west-3 · ca-central-1",
+    "Cross-AZ failover · target RTO 15 min · target RPO 5 min",
+    "Custom DPA + HIPAA BAA on enrolment",
     "Volume licensing (50+ clinicians) with admin console",
     "Corporate-wellness deployment mode (cohort dashboard)",
     "Embedded analytics + custom reporting",
@@ -28,11 +28,11 @@ const C: AudienceContent = {
   cta: { label: "Talk to sales →", href: "/contact?role=partner" },
   secondaryCta: { label: "Trust center", href: "/trust-center" },
   proofPoints: [
-    { val: "99.95%", lbl: "Rolling 90-day uptime" },
-    { val: "15 min", lbl: "P0 incident ack SLA" },
-    { val: "3",      lbl: "Regions · multi-cloud failover" },
+    { val: "Pre-launch", lbl: "Real uptime publishes on /status once we carry production traffic" },
+    { val: "15 min",     lbl: "P0 incident ack · target SLA on launch" },
+    { val: "3",          lbl: "Planned regions · multi-AZ failover" },
   ],
-  footnote: "SIG-LITE and HECVAT vendor-assessment questionnaires available on request.",
+  footnote: "Pre-launch posture: no real production traffic yet. SOC 2, independent pen-test, and WCAG 2.2 AA audits are scoping with vendors and target Q3 2026. SIG-LITE and HECVAT questionnaire support available on request.",
 };
 
 export default function EnterprisePage() {

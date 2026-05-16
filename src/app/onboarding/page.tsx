@@ -381,9 +381,9 @@ function StepMendiSetup({ onContinue }: { onContinue: () => void }) {
             detail: "The characteristic used to stream fNIRS oxygenation data in real time.",
           },
           {
-            label: "JavaScript SDK",
-            detail: "Optional — if Mendi provides a web SDK, we can wrap it directly.",
-            optional: true,
+            label: "Independent BLE protocol",
+            detail: "EEGBase reverse-engineers the GATT protocol from packet captures (Myndlift-style). No Mendi SDK required — confirmed with Mendi as the supported model.",
+            optional: false,
           },
         ].map((item) => (
           <div key={item.label} className="flex items-start gap-3">

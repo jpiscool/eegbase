@@ -1,19 +1,19 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Conditions · EEGBase",
-  description: "Neurofeedback protocols, outcomes, and evidence by clinical condition.",
+  title: "Protocol references · EEGBase",
+  description: "Reference summaries of neurofeedback protocols documented in the published literature, organised by symptom focus. Not medical advice.",
 };
 
 const CONDITIONS = [
-  { slug: "adhd",       name: "ADHD",             desc: "Inattentive + hyperactive subtypes · prefrontal up-train · 30-year evidence base", color: "#2563EB" },
+  { slug: "adhd",       name: "ADHD",             desc: "Inattentive + hyperactive subtypes · prefrontal up-train · published since the 1990s", color: "#2563EB" },
   { slug: "anxiety",    name: "Anxiety",          desc: "GAD, panic, social · right-DLPFC down-train + HRV resonance",                      color: "#10B981" },
-  { slug: "burnout",    name: "Burnout",          desc: "Workplace exhaustion · DLPFC reactivation · KU Leuven replication",                color: "#7C3AED" },
-  { slug: "ptsd",       name: "PTSD",             desc: "Veterans + civilian · alpha-theta + right-temporal down-train",                    color: "#E11D48" },
-  { slug: "sleep",      name: "Sleep · insomnia", desc: "Sleep-spindle SMR + pre-sleep alpha + HRV resonance",                              color: "#06B6D4" },
-  { slug: "depression", name: "Depression",       desc: "Frontal alpha asymmetry + Mendi prefrontal HbO up-train",                          color: "#A855F7" },
+  { slug: "burnout",    name: "Burnout",          desc: "Workplace exhaustion · DLPFC reactivation literature",                             color: "#7C3AED" },
+  { slug: "ptsd",       name: "PTSD",             desc: "Veterans + civilian · alpha-theta + right-temporal down-train literature",         color: "#E11D48" },
+  { slug: "sleep",      name: "Sleep · insomnia", desc: "Sleep-spindle SMR + pre-sleep alpha + HRV resonance literature",                   color: "#06B6D4" },
+  { slug: "depression", name: "Depression",       desc: "Frontal alpha asymmetry + fNIRS prefrontal HbO up-train literature",               color: "#A855F7" },
   { slug: "autism",     name: "Autism spectrum",  desc: "SMR + mu-rhythm · neurodiversity-affirming framing",                              color: "#F59E0B" },
-  { slug: "ocd",        name: "OCD",              desc: "Beta down-train + ERP-paired biofeedback · Y-BOCS tracking",                       color: "#84CC16" },
+  { slug: "ocd",        name: "OCD",              desc: "Beta down-train + ERP-paired biofeedback literature",                              color: "#84CC16" },
 ];
 
 export default function ConditionsIndex() {
@@ -32,9 +32,12 @@ export default function ConditionsIndex() {
 
       <main id="main-content" style={{ maxWidth: 920, margin: "0 auto", padding: "48px 24px" }}>
         <p style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>Conditions</p>
-        <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Treatment focus areas</h1>
-        <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 36, maxWidth: 720 }}>
-          Each condition page lists the supported protocols, registry-derived outcomes, and primary literature. EEGBase is software — clinical judgment always rests with the licensed clinician.
+        <h1 style={{ fontSize: 40, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 12 }}>Protocol references</h1>
+        <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.7, marginBottom: 16, maxWidth: 720 }}>
+          Reference summaries of neurofeedback protocols documented in the published literature, organised by symptom focus. EEGBase is software — it does not diagnose, treat, cure, or prevent any disease. Clinical judgment always rests with the licensed clinician.
+        </p>
+        <p style={{ fontSize: 12, color: "#92400E", background: "#FEF3C7", border: "1px solid #FCD34D", borderRadius: 10, padding: "10px 14px", marginBottom: 36, maxWidth: 720, lineHeight: 1.6 }}>
+          <strong>Note:</strong> Effect sizes shown on individual pages are illustrative figures from the published academic literature, not from an EEGBase outcomes registry. EEGBase has not yet completed any clinical study of its own.
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>

@@ -44,7 +44,7 @@ const nav: { href: string; label: string; icon: LucideIcon; badge?: string }[] =
   { href: "/devices",                label: "Devices",      icon: Bluetooth },
   { href: "/community",              label: "Community",    icon: UsersRound },
   { href: "/docs",                   label: "API Docs",     icon: FileText },
-  { href: "/docs/mendi-sdk",         label: "Mendi SDK",    icon: Code2 },
+  { href: "/docs/mendi-sdk",         label: "Mendi BLE",    icon: Code2 },
   { href: "/settings/inventory",     label: "Inventory",    icon: Package },
 ];
 

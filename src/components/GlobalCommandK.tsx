@@ -31,7 +31,6 @@ export function GlobalCommandK() {
       { kind: "Demo",  label: "Demo · Brain Map",     action: nav("/demo?tab=brain"),             keywords: "normative qeeg" },
       { kind: "Demo",  label: "Demo · Reports",       action: nav("/demo?tab=reports"),           keywords: "registry irb" },
       { kind: "Page",  label: "Mendi partnership",    sub: "/mendi", action: nav("/mendi"),       keywords: "fnirs partner" },
-      { kind: "Page",  label: "Mendi Clinical preview (white-label)", sub: "/mendi-clinical-preview", action: nav("/mendi-clinical-preview"), keywords: "white label brand" },
       { kind: "Page",  label: "Pricing",              sub: "/#pricing", action: nav("/#pricing"), keywords: "cost solo practice enterprise" },
       // Resource pages
       { kind: "Pages", label: "Case studies",         action: nav("/case-studies"),               keywords: "outcomes" },

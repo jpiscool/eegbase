@@ -339,6 +339,26 @@ export default async function SessionDetailPage({
           <Download size={15} />
           Export JSON
         </a>
+        <a
+          href={`/api/sessions/${s.id}/export/csv`}
+          download={`session-${s.id.slice(0, 8)}-samples.csv`}
+          className="flex items-center gap-2 px-4 py-2 border text-sm font-medium rounded-lg transition-colors"
+          style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)", background: "var(--surface-raised)" }}
+          title="Per-sample CSV — researcher format. Importable in Python, R, MATLAB, Excel."
+        >
+          <Download size={15} />
+          Samples CSV
+        </a>
+        <a
+          href={`/api/sessions/${s.id}/export/edf`}
+          download={`session-${s.id.slice(0, 8)}.edf`}
+          className="flex items-center gap-2 px-4 py-2 border text-sm font-medium rounded-lg transition-colors"
+          style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)", background: "var(--surface-raised)" }}
+          title="EDF+ binary — opens in EEGLAB, MNE-Python, BrainVision Analyzer."
+        >
+          <Download size={15} />
+          EDF+
+        </a>
       </div>
 
       {/* Session quality banner */}

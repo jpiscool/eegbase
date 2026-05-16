@@ -64,7 +64,7 @@ const securityHeaders = [
       "object-src 'none'",
       "img-src 'self' data: blob:",
       "font-src 'self' data:",
-      "connect-src 'self' https://api.anthropic.com https://plausible.io",
+      "connect-src 'self' https://api.anthropic.com https://plausible.io ws://127.0.0.1:8765 ws://localhost:8765",
       "upgrade-insecure-requests",
     ].join("; "),
   },

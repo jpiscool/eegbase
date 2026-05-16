@@ -10,7 +10,7 @@ const GROUPS = [
     title: "Hardware",
     sub: "Devices we natively support",
     items: [
-      { name: "Mendi",         desc: "fNIRS prefrontal · co-branded clinical channel · pending Mendi SDK", status: "planned", color: "#7C3AED" },
+      { name: "Mendi",         desc: "fNIRS prefrontal · independent BLE integration (no Mendi SDK / app / cloud) · capture in progress", status: "planned", color: "#7C3AED" },
       { name: "Muse / Athena",  desc: "EEG · 4-channel · home-use friendly",          status: "live", color: "#06B6D4" },
       { name: "Polar",         desc: "HRV · chest strap + optical forearm",            status: "live", color: "#EF4444" },
       { name: "OpenBCI",       desc: "8-channel EEG · open-design hardware (theirs)",  status: "live", color: "#10B981" },

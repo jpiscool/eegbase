@@ -13,7 +13,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/",                          freq: "weekly",  priority: 1.0 },
     { path: "/demo",                      freq: "weekly",  priority: 0.95 },
     { path: "/mendi",                     freq: "monthly", priority: 0.9 },
-    { path: "/mendi-clinical-preview",    freq: "monthly", priority: 0.85 },
     { path: "/mendi-sdk",                 freq: "monthly", priority: 0.7 },
     { path: "/pricing",                   freq: "monthly", priority: 0.85 },
     { path: "/contact",                   freq: "monthly", priority: 0.85 },

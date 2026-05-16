@@ -20,7 +20,6 @@ Disallow: /onboarding
 # Public marketing + demo
 Allow: /demo
 Allow: /mendi
-Allow: /mendi-clinical-preview
 Allow: /community
 Allow: /docs
 Allow: /privacy

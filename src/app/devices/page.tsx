@@ -22,8 +22,8 @@ const devices = [
     manufacturer: "Mendi AB",
     tagline: "Functional near-infrared spectroscopy headband",
     status: "integration_ready" as const,
-    statusLabel: "Integration ready",
-    statusNote: "Adapter fully built — direct Web Bluetooth, no middleware. 3 values needed from Mendi to go live: BLE service UUID, characteristic UUID, and packet byte layout.",
+    statusLabel: "Integration in progress",
+    statusNote: "Independent BLE integration (Myndlift-style) — talks to the headband directly over Web Bluetooth, no Mendi app or cloud in the loop. Adapter scaffolded with packet decoder + Beer-Lambert + unit tests; only blocker is hardware-capture of the BLE GATT protocol from a physical Mendi (no public SDK exists). See AUDIT-2026-MENDI-BLE-PROTOCOL.md.",
     signals: ["OxyHb Left", "OxyHb Right", "DeoxyHb Left", "DeoxyHb Right", "Reward score"],
     connection: "Web Bluetooth (BLE GATT)",
     sampleRate: "~10 Hz",
@@ -31,7 +31,7 @@ const devices = [
     iconBg: "#7C3AED",
     docs: "https://mendi.io",
     adapterPath: "src/lib/device/mendi.ts",
-    showMendiBanner: true,
+    showMendiBanner: false,
   },
   {
     id: "muse",
@@ -490,9 +490,10 @@ export default function DevicesPage() {
             { done: true,  label: "AI session summary — Claude interprets fNIRS trajectory in plain English" },
             { done: true,  label: "Signal simulator — realistic fNIRS random-walk for demos without hardware" },
             { done: true,  label: "Public share reports — include fNIRS session data in clinician-to-client PDF" },
-            { done: false, label: "Real BLE UUIDs — replace placeholder UUIDs from Mendi SDK (post May 11 call)" },
-            { done: false, label: "Binary packet format — confirm float32 layout or adjust _parse() from SDK docs" },
-            { done: false, label: "Validation run — record 1 live session with real Mendi headband" },
+            { done: true,  label: "Pure decoder split — MendiPacketDecoder + Beer-Lambert helper, unit-tested (11/11 passing)" },
+            { done: false, label: "BLE protocol capture — Wireshark + Android HCI snoop log per AUDIT-2026-MENDI-BLE-PROTOCOL.md" },
+            { done: false, label: "Plug captured UUIDs + packet layout into mendi.ts / mendi-decoder.ts (5-line change)" },
+            { done: false, label: "Validation run — record 1 live session with real Mendi headband per validation-runbook.md" },
           ].map(({ done, label }, i) => (
             <div key={i} className="flex items-start gap-3 py-2 border-b last:border-0" style={{ borderColor: "var(--border-subtle)" }}>
               <div
@@ -509,8 +510,7 @@ export default function DevicesPage() {
         </div>
         <div className="mt-4 rounded-xl p-3" style={{ background: "color-mix(in srgb, var(--brand) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--brand) 18%, transparent)" }}>
           <p className="text-xs leading-relaxed" style={{ color: "var(--brand)" }}>
-            <strong>8 of 11 items complete.</strong> The only blockers are the SDK UUIDs and binary packet confirmation —
-            both resolved in the May 11 call with Mustafa. Everything else is production-ready and demo-able today using the simulator.
+            <strong>9 of 12 items complete.</strong> Mendi confirmed (May 2026) the supported model is an independent BLE integration — the same approach Myndlift took with Muse. The remaining work is hardware-capture of the BLE protocol from a physical Mendi (the founder owns one) using the runbook in <code style={{ background: "transparent" }}>AUDIT-2026-MENDI-BLE-PROTOCOL.md</code>. After capture, the only code changes are the two UUID constants and a packet-layout flip — everything else is production-ready and demo-able today via the simulator.
           </p>
         </div>
       </div>

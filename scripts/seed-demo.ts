@@ -5,7 +5,7 @@
  * Run: npm run seed:demo
  *
  * Clinic:    Pacific Neurofeedback
- * Clinician: Dr. Sarah Chen  (demo@eegbase.io / demo2026)
+ * Clinician: Dr. Sarah Chen  (john@eegbase.com / demo2026)
  * Clients:   10 (varied presentations, all Mendi fNIRS)
  */
 
@@ -183,7 +183,7 @@ async function main() {
     .values({
       clinicId:     clinic.id,
       name:         "Dr. Sarah Chen",
-      email:        "demo@eegbase.io",
+      email:        "john@eegbase.com",
       passwordHash,
       role:         "admin",
     })
@@ -1039,7 +1039,7 @@ async function main() {
 
   console.log("\n── Pacific Neurofeedback demo seeded successfully ─────────────────────\n");
   console.log(`  Clinic:       Pacific Neurofeedback`);
-  console.log(`  Clinician:    Dr. Sarah Chen  (demo@eegbase.io / demo2026)`);
+  console.log(`  Clinician:    Dr. Sarah Chen  (john@eegbase.com / demo2026)`);
   console.log(`  Protocol:     fNIRS Prefrontal Upregulation (Mendi, 20 min)`);
   console.log(`  Clients:      10`);
   console.log(`  Sessions:     ${totalSessions} total (all Mendi fNIRS)`);
@@ -1059,7 +1059,7 @@ async function main() {
   console.log(`  SOAP notes:   3+2+3+2+2 = 12 (top 5 clients)`);
   console.log(`  Outcomes:     2 GAD-7 pairs + 2 PHQ-9 + 1 ADHD-RS`);
   console.log(`  Messages:     7 across 3 client threads`);
-  console.log("\n  Login: demo@eegbase.io  /  demo2026\n");
+  console.log("\n  Login: john@eegbase.com  /  demo2026\n");
 
   await pool.end();
   process.exit(0);

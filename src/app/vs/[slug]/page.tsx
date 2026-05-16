@@ -136,12 +136,12 @@ const COMPARISONS: Comp[] = [
     rows: [
       { feature: "Cloud-native",                          us: true,  them: true,  sub: "Both" },
       { feature: "Hardware-agnostic",                      us: true,  them: true,  sub: "Both — but they treat all vendors equally" },
-      { feature: "Mendi flagship / preferred status",     us: true,  them: false, sub: "We can offer Mendi flagship; Divergence keeps multi-vendor parity" },
+      { feature: "Independent Mendi BLE integration",      us: true,  them: false, sub: "We talk to the Mendi headband directly — Divergence integrates via vendor SDKs only" },
       { feature: "AI cross-session pattern detector",     us: true,  them: false },
       { feature: "BIDS / SNIRF / EDF+ open export",       us: true,  them: "partial" },
       { feature: "Mature product · existing clinic base", us: false, them: true,  sub: "Their advantage today" },
     ],
-    closing: "Divergence is our nearest cloud peer. Their structural choice — multi-vendor parity — means Mendi gets equal weight with BrainBit and Muse. We can offer Mendi flagship/preferred status plus a bundled AI scribe and EHR layer, which Divergence isn't.",
+    closing: "Divergence is our nearest cloud peer. They take a multi-vendor SDK-integration approach. EEGBase builds independent BLE adapters at the hardware layer (the Myndlift model) and bundles a clinician AI scribe + EHR layer Divergence doesn't ship.",
   },
 ];
 
