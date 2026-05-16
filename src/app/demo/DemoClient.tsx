@@ -2,7 +2,8 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useTabState } from "@/hooks/useTabState";
 import { SimulatorAdapter } from "@/lib/device/simulator";
-import type { DeviceSample } from "@/lib/device/adapter";
+import { MendiBridgeAdapter } from "@/lib/device/mendi-bridge";
+import type { DeviceAdapter, DeviceSample } from "@/lib/device/adapter";
 import { LiveChart } from "@/components/LiveChart";
 import { GameFeedback } from "@/components/GameFeedback";
 import { FocusGame } from "@/components/FocusGame";
@@ -231,7 +232,19 @@ export default function DemoClient({ initialTab = "dashboard" }: { initialTab?: 
     reward.reset(); oxyL.reset(); oxyR.reset(); deoxyL.reset(); deoxyR.reset();
     thetaW.reset(); alphaW.reset(); betaW.reset();
     setSample(null); setSampleCount(0); setElapsed(0);
-    const adapter = new SimulatorAdapter({ noiseLevel: 0.35, trendStrength: 0.7 });
+
+    // Pick adapter — live Mendi via ?live=mendi, otherwise the simulator.
+    // The live path connects to the localhost Python bridge running on the
+    // user's own machine (scripts/mendi-bridge.py) which forwards real
+    // 31 Hz fNIRS frames from the headband.
+    const liveDevice =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("live")
+        : null;
+    const adapter: DeviceAdapter =
+      liveDevice === "mendi"
+        ? new MendiBridgeAdapter()
+        : new SimulatorAdapter({ noiseLevel: 0.35, trendStrength: 0.7 });
     adapterRef.current = adapter;
     adapter.onSample((s) => {
       setSample(s); setSampleCount((n) => n + 1);
