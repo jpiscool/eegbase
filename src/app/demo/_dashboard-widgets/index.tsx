@@ -2184,18 +2184,18 @@ export const DEFAULT_WIDGETS = [
 const LS_KEY_WIDGETS = "eegbase-demo-dashboard-widgets";
 const LS_KEY_NOTE = "eegbase-demo-dashboard-quick-note";
 
-export function loadWidgets(): string[] {
-  if (typeof window === "undefined") return DEFAULT_WIDGETS;
+export function loadWidgets(fallback: string[] = DEFAULT_WIDGETS): string[] {
+  if (typeof window === "undefined") return fallback;
   try {
     const raw = window.localStorage.getItem(LS_KEY_WIDGETS);
-    if (!raw) return DEFAULT_WIDGETS;
+    if (!raw) return fallback;
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return DEFAULT_WIDGETS;
+    if (!Array.isArray(parsed)) return fallback;
     // Filter to known widget ids
     const valid = parsed.filter((id: unknown): id is string => typeof id === "string" && WIDGET_CATALOG.some((w) => w.id === id));
     return valid;
   } catch {
-    return DEFAULT_WIDGETS;
+    return fallback;
   }
 }
 
@@ -2216,15 +2216,29 @@ export function saveQuickNote(s: string) {
 
 // ── small helper hook to wire localStorage state ──────────────────────────
 
-export function useDashboardState() {
-  const [widgets, setWidgetsState] = useState<string[]>(DEFAULT_WIDGETS);
+// `defaultWidgets` lets callers override the first-paint widget list.
+// The authenticated /dashboard passes `[]` so signed-in clinicians start
+// with an empty grid and explicitly add what they want via Add widget.
+// Public /demo keeps the curated DEFAULT_WIDGETS catalog (~26 widgets).
+//
+// `storageKey` lets callers scope localStorage independently — the demo
+// and the authenticated app share their own widget layout each.
+export function useDashboardState(options?: {
+  defaultWidgets?: string[];
+  storageKey?: string;
+}) {
+  const initial = options?.defaultWidgets ?? DEFAULT_WIDGETS;
+  const [widgets, setWidgetsState] = useState<string[]>(initial);
   const [quickNote, setQuickNoteState] = useState<string>("");
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setWidgetsState(loadWidgets());
+    setWidgetsState(loadWidgets(initial));
     setQuickNoteState(loadQuickNote());
     setHydrated(true);
+    // initial is intentionally captured from first render to avoid loops
+    // if a parent passes a fresh array each render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const setWidgets = (next: string[] | ((prev: string[]) => string[])) => {

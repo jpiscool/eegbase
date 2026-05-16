@@ -480,7 +480,12 @@ export default function DemoClient({
   const [quickNote, setQuickNote] = useState("");
   // Custom Dashboard tab state — widget IDs persisted to localStorage,
   // plus a separate quick-note widget value (also persisted).
-  const dashboard = useDashboardState();
+  // In 'strip' mode (authenticated /dashboard) start with NO widgets so the
+  // clinician explicitly chooses what to add via the Add widget button.
+  // Public /demo keeps the rich DEFAULT_WIDGETS preview.
+  const dashboard = useDashboardState(
+    appMode === "strip" ? { defaultWidgets: [] } : undefined
+  );
   const [dashboardPickerOpen, setDashboardPickerOpen] = useState(false);
   // Paired devices live independently of widgets — even with no widgets
   // added, the operator should see and manage their devices.
