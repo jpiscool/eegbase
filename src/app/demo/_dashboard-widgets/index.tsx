@@ -940,6 +940,96 @@ export const WIDGET_CATALOG: WidgetDef[] = [
   },
 
   {
+    id: "mendi-head-pose",
+    title: "Head pose · tilt",
+    device: "Mendi headband",
+    icon: Target,
+    blurb: "Pitch + roll from the on-board accelerometer — confirms band placement.",
+    render: ({ sample }) => {
+      const ax = sample?.accelX;
+      const ay = sample?.accelY;
+      const az = sample?.accelZ;
+      if (ax == null || ay == null || az == null) return <Waiting label="IMU" />;
+      const rollRad = Math.atan2(ax, Math.abs(ay) || 1e-6);
+      const pitchRad = Math.atan2(az, Math.abs(ay) || 1e-6);
+      const roll = (rollRad * 180) / Math.PI;
+      const pitch = (pitchRad * 180) / Math.PI;
+      const ok = Math.abs(roll) < 12 && Math.abs(pitch) < 12;
+      const color = ok ? COLORS.ok : Math.abs(roll) < 25 && Math.abs(pitch) < 25 ? COLORS.warn : COLORS.alert;
+      const label = ok ? "level · good placement" : "tilted · re-seat the band";
+      return (
+        <div style={{ padding: "8px 4px" }}>
+          <svg viewBox="0 0 120 90" style={{ width: "100%", height: 90 }}>
+            <line x1={10} y1={45} x2={110} y2={45} stroke="#1E293B" strokeWidth={1} strokeDasharray="3 3" />
+            <line x1={60} y1={6}  x2={60}  y2={84} stroke="#1E293B" strokeWidth={1} strokeDasharray="3 3" />
+            <g transform={`translate(60 45) rotate(${roll}) translate(0 ${pitch * 0.7})`}>
+              <ellipse cx={0} cy={0} rx={22} ry={28} fill="none" stroke={color} strokeWidth={2.2} />
+              <rect x={-22} y={-12} width={44} height={6} rx={2} fill={color} opacity={0.7} />
+              <circle cx={-10} cy={-9} r={1.6} fill="#0F172A" />
+              <circle cx={ 10} cy={-9} r={1.6} fill="#0F172A" />
+              <circle cx={  0} cy={-9} r={1.6} fill="#0F172A" />
+            </g>
+          </svg>
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, fontSize: 10, color: COLORS.muted, fontFamily: NUM }}>
+            <span>roll <span style={{ color }}>{roll >= 0 ? "+" : ""}{roll.toFixed(1)}°</span></span>
+            <span>pitch <span style={{ color }}>{pitch >= 0 ? "+" : ""}{pitch.toFixed(1)}°</span></span>
+          </div>
+          <div style={{ fontSize: 11, color, marginTop: 6, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>· {label}</div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "mendi-workload",
+    title: "Cognitive workload",
+    device: "Mendi headband",
+    icon: Brain,
+    blurb: "HbO/HHb gap mapped to a semantic load score (idle · low · moderate · high · peak).",
+    render: ({ sample }) => {
+      const oxyL = sample?.oxyHbLeft;
+      const oxyR = sample?.oxyHbRight;
+      const hhbL = sample?.deoxyHbLeft;
+      const hhbR = sample?.deoxyHbRight;
+      if (oxyL == null || oxyR == null || hhbL == null || hhbR == null) return <Waiting label="Mendi feed" />;
+      const oxyMean = (oxyL + oxyR) / 2;
+      const hhbMean = (hhbL + hhbR) / 2;
+      const gap = oxyMean - hhbMean;
+      const score = Math.max(0, Math.min(100, 50 + gap * 60));
+      const tier =
+        score >= 80 ? { c: COLORS.violet, l: "peak load" }
+        : score >= 60 ? { c: COLORS.ok, l: "high load" }
+        : score >= 40 ? { c: COLORS.cyan, l: "moderate" }
+        : score >= 20 ? { c: COLORS.warn, l: "low" }
+        : { c: COLORS.muted, l: "idle" };
+      return (
+        <div style={{ padding: "8px 4px" }}>
+          <div style={{ fontFamily: NUM, fontSize: 38, fontWeight: 800, color: tier.c, letterSpacing: "-0.02em", lineHeight: 1 }}>{Math.round(score)}</div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 2, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>workload · 0–100</div>
+          <div style={{ marginTop: 10 }}>
+            <MiniBar pct={score} color={tier.c} />
+          </div>
+          <div style={{ fontSize: 11, color: tier.c, marginTop: 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            · {tier.l}
+          </div>
+          <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 6, lineHeight: 1.4, fontFamily: NUM }}>
+            ΔHbO {fmtSigned(oxyMean, 3)} · ΔHHb {fmtSigned(hhbMean, 3)}
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    id: "mendi-session-arc",
+    title: "Session arc",
+    device: "Mendi headband",
+    icon: LineChart,
+    blurb: "Trend of the last 30 s vs the first 30 s of the session.",
+    render: ({ sample }) => <MendiSessionArc rewardScore={sample?.rewardScore} />,
+  },
+
+  {
     id: "mendi-pulse-hrv",
     title: "Mendi pulse · HRV",
     device: "Mendi headband",
@@ -1064,6 +1154,74 @@ function MendiPulseWaveform({ value }: { value: number | undefined }) {
       <div style={{ display: "flex", gap: 10, marginTop: 6, fontSize: 9.5, color: COLORS.muted, fontFamily: NUM }}>
         <span>pulse PPG · ir_p − amb_p · AC</span>
         <span style={{ marginLeft: "auto" }}>{data.length} samples</span>
+      </div>
+    </div>
+  );
+}
+
+// Session arc widget — compares the mean reward over the most recent ~30s
+// against the first ~30s of the session lifetime. Reports a trend bucket
+// (improving / steady / declining) plus the delta. Self-buffered because
+// the existing reward window is only 60 samples.
+function MendiSessionArc({ rewardScore }: { rewardScore: number | undefined }) {
+  // Keep the entire session-long reward stream (up to ~30 min = 18000 samples
+  // at 10 Hz; in practice we only need the first 300 + last 300 windows).
+  const headRef = useRef<number[]>([]);  // first 300 samples (~30 s)
+  const tailRef = useRef<number[]>([]);  // most recent 300 samples
+  const totalRef = useRef(0);
+  const [, force] = useState(0);
+  useEffect(() => {
+    if (rewardScore == null) return;
+    totalRef.current += 1;
+    if (headRef.current.length < 300) headRef.current.push(rewardScore);
+    tailRef.current.push(rewardScore);
+    if (tailRef.current.length > 300) tailRef.current.shift();
+    if (totalRef.current % 5 === 0) force((t) => (t + 1) & 0xffff);
+  }, [rewardScore]);
+
+  if (headRef.current.length < 30 || tailRef.current.length < 30) {
+    return <Waiting label={`${tailRef.current.length}/30 samples`} />;
+  }
+
+  const mean = (arr: number[]) => arr.reduce((a, b) => a + b, 0) / arr.length;
+  const headMean = mean(headRef.current);
+  const tailMean = mean(tailRef.current);
+  const delta = tailMean - headMean;
+
+  const tier =
+    delta > 6 ? { c: COLORS.ok, l: "improving", arrow: "↗" }
+    : delta < -6 ? { c: COLORS.alert, l: "declining", arrow: "↘" }
+    : { c: COLORS.warn, l: "steady", arrow: "→" };
+
+  // Mini sparkline of head segment vs tail segment overlay
+  const sparkData = headRef.current.concat(tailRef.current.slice(-Math.min(tailRef.current.length, 300)));
+  const W = 300, H = 40;
+  const min = Math.min(...sparkData);
+  const max = Math.max(...sparkData);
+  const range = max - min || 1;
+  const pts = sparkData.map((v, i) => {
+    const x = (i / Math.max(1, sparkData.length - 1)) * W;
+    const y = H - ((v - min) / range) * H;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(" ");
+
+  const seconds = Math.round(totalRef.current / 10);
+  return (
+    <div style={{ padding: "8px 4px" }}>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+        <span style={{ fontFamily: NUM, fontSize: 32, fontWeight: 800, color: tier.c, letterSpacing: "-0.02em" }}>
+          {tier.arrow} {delta >= 0 ? "+" : ""}{delta.toFixed(1)}
+        </span>
+        <span style={{ fontSize: 11, color: COLORS.muted }}>reward Δ</span>
+      </div>
+      <div style={{ fontSize: 11, color: tier.c, marginTop: 4, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>· {tier.l}</div>
+      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ width: "100%", height: H, marginTop: 8, background: "#1E293B", borderRadius: 6 }}>
+        <polyline points={pts} fill="none" stroke={tier.c} strokeWidth={1.5} />
+      </svg>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9.5, color: COLORS.muted, fontFamily: NUM, marginTop: 4 }}>
+        <span>first 30s · {headMean.toFixed(1)}</span>
+        <span>last 30s · {tailMean.toFixed(1)}</span>
+        <span>{seconds}s</span>
       </div>
     </div>
   );
@@ -1449,6 +1607,9 @@ export const DEFAULT_WIDGETS = [
   "mendi-coherence",
   "mendi-mayer-wave",
   "mendi-engagement-time",
+  "mendi-head-pose",
+  "mendi-workload",
+  "mendi-session-arc",
   "mendi-ambient-light",
 ];
 

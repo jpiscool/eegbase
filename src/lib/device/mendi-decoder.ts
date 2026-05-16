@@ -151,8 +151,14 @@ export class MendiPacketDecoder {
     const ay = numericField(fields, MENDI_FIELDS.ACC_Y);
     const az = numericField(fields, MENDI_FIELDS.ACC_Z);
     let accelMag: number | undefined;
+    let accelX: number | undefined;
+    let accelY: number | undefined;
+    let accelZ: number | undefined;
     if (ax != null && ay != null && az != null) {
       accelMag = Math.sqrt(ax * ax + ay * ay + az * az) / 16384;
+      accelX = ax / 16384;
+      accelY = ay / 16384;
+      accelZ = az / 16384;
     }
 
     // Stillness 0–100. We track the deviation of |a| from the per-session
@@ -268,6 +274,9 @@ export class MendiPacketDecoder {
       rewardScore,
       temperatureC,
       accelMag,
+      accelX,
+      accelY,
+      accelZ,
       stillness,
       pulsePpg,
       pulseHrBpm,

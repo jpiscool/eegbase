@@ -55,6 +55,9 @@ export class SimulatorAdapter implements DeviceAdapter {
   private _temperatureC = 33.4;        // typical scalp temp ~33–35 °C
   private _accelMag = 1.001;           // ~1.0 g at rest
   private _stillness = 92.0;
+  private _accelXSim = 0.05;           // axis components in g (Y carries gravity)
+  private _accelYSim = 0.998;
+  private _accelZSim = -0.03;
   private _ppgPhase = 0;               // radians, for sinusoidal pulse
   private _pulseBpm = 66.0;
   private _pulseRmssd = 42.0;          // ms — typical resting RMSSD
@@ -98,6 +101,14 @@ export class SimulatorAdapter implements DeviceAdapter {
       this._accelMag = randWalk(this._accelMag, 0.96, 1.06, 0.012);
       const accelDev = Math.abs(this._accelMag - 1.0);
       this._stillness = Math.max(0, Math.min(100, 100 - accelDev * 800));
+      // Synthetic accel components: gravity primarily on Y (headband upright),
+      // small drift on X (pitch) and Z (roll) to make head-pose widget move.
+      this._accelXSim = randWalk(this._accelXSim, -0.18, 0.18, 0.01);
+      this._accelZSim = randWalk(this._accelZSim, -0.18, 0.18, 0.01);
+      // Y axis carries gravity, the remainder accounted for by jitter
+      const ySign = Math.sign(this._accelYSim || 1);
+      const yMag = Math.sqrt(Math.max(0, this._accelMag * this._accelMag - this._accelXSim * this._accelXSim - this._accelZSim * this._accelZSim));
+      this._accelYSim = ySign * yMag;
       // Synthetic PPG: ~1 Hz sine plus tiny noise, modulated by pulseBpm
       this._pulseBpm = randWalk(this._pulseBpm, 55, 78, 0.2);
       this._pulseRmssd = randWalk(this._pulseRmssd, 22, 75, 0.8);
@@ -129,6 +140,9 @@ export class SimulatorAdapter implements DeviceAdapter {
         hrvRmssd: Math.round(this._rmssd * 10) / 10,
         temperatureC: Math.round(this._temperatureC * 100) / 100,
         accelMag: Math.round(this._accelMag * 1000) / 1000,
+        accelX: Math.round(this._accelXSim * 1000) / 1000,
+        accelY: Math.round(this._accelYSim * 1000) / 1000,
+        accelZ: Math.round(this._accelZSim * 1000) / 1000,
         stillness: Math.round(this._stillness),
         pulsePpg: Math.round(ppg * 1000) / 1000,
         pulseHrBpm: Math.round(this._pulseBpm),

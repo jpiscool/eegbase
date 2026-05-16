@@ -22,6 +22,9 @@ export interface DeviceSample {
   // widgets keyed to these fields render in demo mode without hardware).
   temperatureC?: number;        // Scalp temperature from Mendi temp sensor
   accelMag?: number;            // Acceleration magnitude in g (1.0 = at rest)
+  accelX?: number;              // Accelerometer X axis in g (Mendi IMU)
+  accelY?: number;              // Accelerometer Y axis in g
+  accelZ?: number;              // Accelerometer Z axis in g
   stillness?: number;           // 0-100 derived stillness score (100 = motionless)
   pulsePpg?: number;            // AC-component of forehead PPG (unitless, centred at 0)
   pulseHrBpm?: number;          // BPM derived from the pulse optode
