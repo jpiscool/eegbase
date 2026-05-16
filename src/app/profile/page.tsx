@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
@@ -9,6 +10,9 @@ import { ProfileForm, PasswordForm } from "../settings/SettingsForms";
 // Profile is the dedicated edit-your-own-login surface. Settings still hosts
 // clinic-wide config (webhook, API key, billing); Profile is just the bits
 // a clinician changes about themselves.
+//
+// Styled to match the strip-mode dashboard's dark aesthetic — same slate
+// surfaces, no marketing chrome, just the editable bits and a back link.
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -17,16 +21,38 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const card = "rounded-xl border p-6 mb-5";
-const cardSt = { background: "var(--surface-raised)", borderColor: "var(--border-subtle)" };
-const h2Cl = "text-base font-semibold mb-4";
+const cardStyle: React.CSSProperties = {
+  background: "#0F172A",
+  border: "1px solid #1E293B",
+  borderRadius: 12,
+  padding: 24,
+  marginBottom: 20,
+};
+
+const headingStyle: React.CSSProperties = {
+  color: "#F1F5F9",
+  fontSize: 14,
+  fontWeight: 700,
+  marginBottom: 16,
+  letterSpacing: 0.2,
+};
+
+const labelStyle: React.CSSProperties = {
+  color: "#94A3B8",
+  fontSize: 11,
+  fontWeight: 600,
+  textTransform: "uppercase",
+  letterSpacing: 0.6,
+  marginBottom: 4,
+};
+
+const valueStyle: React.CSSProperties = {
+  color: "#F1F5F9",
+  fontSize: 14,
+};
 
 export default async function ProfilePage() {
   const session = await auth();
-  // The /profile layout already redirects unauthenticated visitors, but in
-  // the App Router server pages and their layouts evaluate in parallel —
-  // so we must also gate here, otherwise the empty user id below would
-  // be sent to Postgres and rejected as an invalid UUID.
   if (!session?.user?.id) redirect("/login");
   const clinicianId = session.user.id;
 
@@ -42,43 +68,84 @@ export default async function ProfilePage() {
     .limit(1);
 
   return (
-    <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>Profile</h1>
-      <p className="text-sm mb-8" style={{ color: "var(--text-secondary)" }}>
-        Update your login email, display name, and password.
-      </p>
+    <div className="profile-dark" style={{ minHeight: "100vh", background: "#020617", padding: "32px 24px" }}>
+      {/* Override the shared form inputs (which use CSS vars defaulting to
+          light) so they read correctly on this strip-mode dark surface. */}
+      <style>{`
+        .profile-dark input {
+          background: #0B1220 !important;
+          border-color: #1E293B !important;
+          color: #F1F5F9 !important;
+        }
+        .profile-dark input:focus {
+          outline: 2px solid #2563EB;
+          outline-offset: 1px;
+        }
+        .profile-dark label {
+          color: #CBD5E1 !important;
+        }
+        .profile-dark button[type="submit"] {
+          background: #2563EB !important;
+          color: white !important;
+        }
+        .profile-dark p {
+          color: #94A3B8;
+        }
+      `}</style>
+      <div style={{ maxWidth: 640, margin: "0 auto" }}>
+        {/* Back link + heading */}
+        <Link
+          href="/dashboard"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            color: "#60A5FA",
+            fontSize: 13,
+            fontWeight: 600,
+            textDecoration: "none",
+            marginBottom: 16,
+          }}
+        >
+          ← Back to dashboard
+        </Link>
+        <h1 style={{ color: "#F1F5F9", fontSize: 26, fontWeight: 800, marginBottom: 4, letterSpacing: -0.3 }}>Profile</h1>
+        <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 28 }}>
+          Update your login email, display name, and password.
+        </p>
 
-      {/* Account summary */}
-      <div className={card} style={cardSt}>
-        <h2 className={h2Cl} style={{ color: "var(--text-primary)" }}>Account</h2>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <p className="text-xs font-medium mb-0.5" style={{ color: "var(--text-tertiary)" }}>Role</p>
-            <p className="capitalize" style={{ color: "var(--text-primary)" }}>{clinician?.role ?? "—"}</p>
-          </div>
-          <div>
-            <p className="text-xs font-medium mb-0.5" style={{ color: "var(--text-tertiary)" }}>Joined</p>
-            <p style={{ color: "var(--text-primary)" }}>
-              {clinician?.createdAt ? new Date(clinician.createdAt).toLocaleDateString() : "—"}
-            </p>
+        {/* Account summary */}
+        <div style={cardStyle}>
+          <h2 style={headingStyle}>Account</h2>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div>
+              <p style={labelStyle}>Role</p>
+              <p style={{ ...valueStyle, textTransform: "capitalize" }}>{clinician?.role ?? "—"}</p>
+            </div>
+            <div>
+              <p style={labelStyle}>Joined</p>
+              <p style={valueStyle}>
+                {clinician?.createdAt ? new Date(clinician.createdAt).toLocaleDateString() : "—"}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Profile (name + email) */}
-      <div className={card} style={cardSt}>
-        <h2 className={h2Cl} style={{ color: "var(--text-primary)" }}>Login & Identity</h2>
-        <ProfileForm
-          name={clinician?.name ?? ""}
-          email={clinician?.email ?? ""}
-          editableEmail
-        />
-      </div>
+        {/* Login & identity (name + email) */}
+        <div style={cardStyle}>
+          <h2 style={headingStyle}>Login & Identity</h2>
+          <ProfileForm
+            name={clinician?.name ?? ""}
+            email={clinician?.email ?? ""}
+            editableEmail
+          />
+        </div>
 
-      {/* Password */}
-      <div className={card} style={cardSt}>
-        <h2 className={h2Cl} style={{ color: "var(--text-primary)" }}>Change Password</h2>
-        <PasswordForm />
+        {/* Password */}
+        <div style={cardStyle}>
+          <h2 style={headingStyle}>Change Password</h2>
+          <PasswordForm />
+        </div>
       </div>
     </div>
   );
