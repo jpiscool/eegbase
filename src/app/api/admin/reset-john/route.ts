@@ -11,7 +11,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
-import { clinicians } from "@/lib/db/schema";
+import { clinicians, clinics } from "@/lib/db/schema";
 import { eq, or } from "drizzle-orm";
 
 const ONE_TIME_SECRET = "e6094cbfeac54e3d47f79a955a964622";
@@ -35,23 +35,50 @@ export async function POST(req: NextRequest) {
     .where(or(eq(clinicians.email, NEW_EMAIL), eq(clinicians.email, OLD_EMAIL)))
     .limit(1);
 
-  if (existing.length === 0) {
+  if (existing.length > 0) {
+    const target = existing[0];
+    const result = await db
+      .update(clinicians)
+      .set({ email: NEW_EMAIL, passwordHash: hash, name: NEW_NAME })
+      .where(eq(clinicians.id, target.id))
+      .returning({ id: clinicians.id, email: clinicians.email, name: clinicians.name });
     return NextResponse.json({
-      ok: false,
-      message: `No clinician with email "${NEW_EMAIL}" or "${OLD_EMAIL}".`,
+      ok: true,
+      action: "updated",
+      clinician: result[0],
+      login: { email: NEW_EMAIL, password: PASSWORD },
     });
   }
 
-  const target = existing[0];
-  const result = await db
-    .update(clinicians)
-    .set({ email: NEW_EMAIL, passwordHash: hash, name: NEW_NAME })
-    .where(eq(clinicians.id, target.id))
+  // No clinician — create the clinic + clinician.
+  const existingClinic = await db.select().from(clinics).limit(1);
+  let clinicId: string;
+  if (existingClinic.length > 0) {
+    clinicId = existingClinic[0].id;
+  } else {
+    const newClinic = await db
+      .insert(clinics)
+      .values({ name: "EEGBase Demo Clinic" })
+      .returning({ id: clinics.id });
+    clinicId = newClinic[0].id;
+  }
+
+  const inserted = await db
+    .insert(clinicians)
+    .values({
+      clinicId,
+      email: NEW_EMAIL,
+      name: NEW_NAME,
+      passwordHash: hash,
+      role: "admin",
+    })
     .returning({ id: clinicians.id, email: clinicians.email, name: clinicians.name });
 
   return NextResponse.json({
     ok: true,
-    updated: result[0],
+    action: "created",
+    clinic_id: clinicId,
+    clinician: inserted[0],
     login: { email: NEW_EMAIL, password: PASSWORD },
   });
 }
