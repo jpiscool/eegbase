@@ -3,79 +3,30 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import {
-  LayoutDashboard,
-  Activity,
-  Settings,
-  ChevronRight,
-  UserCircle,
-} from "lucide-react";
+import { LayoutDashboard, Activity, Settings, UserCircle, ChevronRight } from "lucide-react";
 import { clsx } from "clsx";
 import { SignOutButton } from "./SignOutButton";
 
-// ── STRIPPED MAIN NAV ──────────────────────────────────────────────────────
-// Per scripts/mendi-capture/live-site-test-priorities.md, the authenticated
-// app is stripped to the minimum surface needed to validate Tier 0 (pair
-// Mendi + see live frames) and Tier 1 (save a session) against real
-// hardware. Everything else is hidden from the sidebar until its tier
-// passes hardware validation against eegbase.com with a Mendi V4 on.
-//
-// Routes themselves are still mounted under src/app/ — the link is just
-// removed from the nav. Restoring an item is one line: move it from the
-// HIDDEN_NAV list back into `nav`.
-const nav: { href: string; label: string; icon: LucideIcon; badge?: string; tier?: number }[] = [
-  // Tier 0 — smoke test
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, tier: 0 },
-  // Tier 1 — save a session end-to-end
-  { href: "/sessions",  label: "Sessions",  icon: Activity, tier: 1 },
+// Minimal authenticated-app sidebar. Per scripts/mendi-capture/
+// live-site-test-priorities.md, the clinician app is stripped to the
+// minimum surface needed to validate Tier 0–1 against real Mendi hardware.
+// As each tier ships, add its routes back to NAV.
+const NAV: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/sessions",  label: "Sessions",  icon: Activity },
+  { href: "/profile",   label: "Profile",   icon: UserCircle },
+  { href: "/settings",  label: "Settings",  icon: Settings },
 ];
-
-// Hidden until their tier is green on real hardware. Don't delete — this
-// list is the re-enable queue. As you validate each item against the
-// runbook, move it into `nav` above.
-//
-//   Tier 2 — Multi-session + client context:
-//     { href: "/clients",                label: "Clients",      icon: Users },
-//
-//   Tier 3 — Exports + AI:
-//     (no nav entries — exports happen from the session detail page)
-//
-//   Tier 4 — Clinical workflow:
-//     { href: "/protocols",              label: "Protocols",    icon: BookOpen },
-//     { href: "/protocols/marketplace",  label: "Marketplace",  icon: ShoppingBag },
-//
-//   Tier 5 — Communications + admin:
-//     { href: "/sessions/review",        label: "Review Queue", icon: ClipboardCheck },
-//     { href: "/messages",               label: "Messages",     icon: MessageSquare },
-//     { href: "/schedule",               label: "Schedule",     icon: CalendarDays },
-//
-//   Tier 6 — Operations:
-//     { href: "/analytics",              label: "Analytics",    icon: BarChart3 },
-//     { href: "/billing",                label: "Billing",      icon: Receipt },
-//     { href: "/community",              label: "Community",    icon: UsersRound },
-//     { href: "/docs",                   label: "API Docs",     icon: FileText },
-//     { href: "/docs/mendi-sdk",         label: "Mendi BLE",    icon: Code2 },
-//     { href: "/devices",                label: "Devices",      icon: Bluetooth },
-//     { href: "/settings/inventory",     label: "Inventory",    icon: Package },
-
-// Bottom nav also trimmed — keep only Settings. Audit Log is hidden until
-// the audit_logs table migration ships in prod (drizzle/0014).
-const bottomNav = [
-  { href: "/profile",  label: "Profile",  icon: UserCircle },
-  { href: "/settings", label: "Settings", icon: Settings },
-];
-// Hidden bottom-nav re-enable queue:
-//   { href: "/settings/audit-log", label: "Audit Log", icon: Shield },
 
 export function Sidebar({
   userName,
   userEmail,
-  unreadMessages = 0,
-  notificationCount = 0,
-  reviewQueueCount = 0,
 }: {
   userName?: string;
   userEmail?: string;
+  // Kept as optional pass-throughs so existing layout callers compile
+  // unchanged. They're intentionally ignored — no notification/queue UI
+  // is rendered in the stripped surface.
   unreadMessages?: number;
   notificationCount?: number;
   reviewQueueCount?: number;
@@ -95,16 +46,17 @@ export function Sidebar({
       }}
     >
       {/* Logo */}
-      <div className="px-5 py-5 flex items-center gap-2.5" style={{ borderBottom: "1px solid var(--sidebar-border)" }}>
+      <div
+        className="px-5 py-5 flex items-center gap-2.5"
+        style={{ borderBottom: "1px solid var(--sidebar-border)" }}
+      >
         <div
           className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
           style={{ background: "var(--brand)" }}
         >
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
-            <path d="M3 12 Q6 6 12 6 Q18 6 21 12 Q18 18 12 18 Q6 18 3 12Z" stroke="white" strokeWidth="1.5" fill="none"/>
-            <circle cx="12" cy="12" r="2.5" fill="white"/>
-            <path d="M8 9.5 Q10 7 12 7" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
-            <path d="M16 9.5 Q14 7 12 7" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+            <path d="M3 12 Q6 6 12 6 Q18 6 21 12 Q18 18 12 18 Q6 18 3 12Z" stroke="white" strokeWidth="1.5" fill="none" />
+            <circle cx="12" cy="12" r="2.5" fill="white" />
           </svg>
         </div>
         <span className="text-[15px] font-semibold tracking-tight" style={{ color: "var(--text-inverse)" }}>
@@ -112,28 +64,17 @@ export function Sidebar({
         </span>
       </div>
 
-      {/* Stripped: Start Session CTA + Search are intentionally omitted
-          while we validate Tier 0 — see live-site-test-priorities.md. */}
-
-      {/* Main Nav */}
-      <nav className="flex-1 px-3 pt-3 space-y-0.5 overflow-y-auto pb-4">
-        {nav.map(({ href, label, icon: Icon, badge: staticBadge }) => {
-          const active = pathname.startsWith(href);
-          const badge =
-            href === "/messages" && unreadMessages > 0
-              ? String(unreadMessages > 99 ? "99+" : unreadMessages)
-              : href === "/sessions/review" && reviewQueueCount > 0
-              ? String(reviewQueueCount > 99 ? "99+" : reviewQueueCount)
-              : staticBadge ?? null;
+      {/* Nav */}
+      <nav className="flex-1 px-3 pt-3 space-y-0.5">
+        {NAV.map(({ href, label, icon: Icon }) => {
+          const active = pathname === href || pathname.startsWith(href + "/");
           return (
             <Link
               key={href}
               href={href}
               className={clsx(
-                "group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all relative",
-                active
-                  ? "border-l-2"
-                  : "border-l-2 border-transparent"
+                "group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all border-l-2",
+                active ? "" : "border-transparent",
               )}
               style={
                 active
@@ -142,95 +83,47 @@ export function Sidebar({
                       color: "var(--text-inverse)",
                       borderLeftColor: "var(--sidebar-accent)",
                     }
-                  : {
-                      color: "var(--sidebar-text)",
-                      borderLeftColor: "transparent",
-                    }
+                  : { color: "var(--sidebar-text)", borderLeftColor: "transparent" }
               }
             >
               <Icon
                 size={16}
-                className="shrink-0 transition-colors"
+                className="shrink-0"
                 style={{ color: active ? "var(--sidebar-accent)" : "var(--sidebar-text-muted)" }}
               />
               <span className="flex-1">{label}</span>
-              {badge && (
-                <span
-                  className="min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full flex items-center justify-center"
-                  style={{ background: "var(--danger)", color: "var(--text-inverse)" }}
-                >
-                  {badge}
-                </span>
-              )}
-              {active && (
-                <ChevronRight size={12} style={{ color: "var(--sidebar-text-muted)" }} />
-              )}
-            </Link>
-          );
-        })}
-
-        {/* Separator */}
-        <div className="my-2" style={{ borderTop: "1px solid var(--sidebar-border)" }} />
-
-        {/* Bottom nav items (settings group) */}
-        {bottomNav.map(({ href, label, icon: Icon }) => {
-          const active = pathname.startsWith(href);
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={clsx(
-                "group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all relative",
-                active
-                  ? "border-l-2"
-                  : "border-l-2 border-transparent"
-              )}
-              style={
-                active
-                  ? {
-                      background: "var(--sidebar-surface)",
-                      color: "var(--text-inverse)",
-                      borderLeftColor: "var(--sidebar-accent)",
-                    }
-                  : {
-                      color: "var(--sidebar-text)",
-                      borderLeftColor: "transparent",
-                    }
-              }
-            >
-              <Icon
-                size={16}
-                className="shrink-0 transition-colors"
-                style={{ color: active ? "var(--sidebar-accent)" : "var(--sidebar-text-muted)" }}
-              />
-              <span className="flex-1">{label}</span>
-              {active && (
-                <ChevronRight size={12} style={{ color: "var(--sidebar-text-muted)" }} />
-              )}
+              {active && <ChevronRight size={12} style={{ color: "var(--sidebar-text-muted)" }} />}
             </Link>
           );
         })}
       </nav>
 
-      {/* Bottom: User + Sign Out (Notifications + DarkMode toggle hidden
-          until their tiers are validated). */}
-      <div className="px-3 py-4 space-y-1" style={{ borderTop: "1px solid var(--sidebar-border)" }}>
-        {/* User row */}
+      {/* User row + Sign Out */}
+      <div className="px-3 py-4" style={{ borderTop: "1px solid var(--sidebar-border)" }}>
         {userName && (
-          <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg mt-1">
+          <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg mb-1">
             <div
               className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-              style={{ background: "var(--sidebar-surface)", color: "var(--sidebar-accent)", border: "1px solid var(--sidebar-border)" }}
+              style={{
+                background: "var(--sidebar-surface)",
+                color: "var(--sidebar-accent)",
+                border: "1px solid var(--sidebar-border)",
+              }}
             >
               {initials}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium truncate" style={{ color: "var(--text-inverse)" }}>{userName}</p>
-              {userEmail && <p className="text-[10px] truncate" style={{ color: "var(--sidebar-text-muted)" }}>{userEmail}</p>}
+              <p className="text-xs font-medium truncate" style={{ color: "var(--text-inverse)" }}>
+                {userName}
+              </p>
+              {userEmail && (
+                <p className="text-[10px] truncate" style={{ color: "var(--sidebar-text-muted)" }}>
+                  {userEmail}
+                </p>
+              )}
             </div>
           </div>
         )}
-
         <SignOutButton />
       </div>
     </aside>
