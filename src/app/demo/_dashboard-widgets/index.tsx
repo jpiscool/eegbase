@@ -1953,6 +1953,25 @@ export function WidgetPicker({
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <Icon size={14} />
           <span style={{ fontSize: 13, fontWeight: 700 }}>{def.title}</span>
+          {!def.verified && (
+            <span
+              title="Not yet verified against live hardware"
+              style={{
+                fontSize: 9,
+                fontWeight: 800,
+                color: "#FBBF24",
+                background: "rgba(245,158,11,0.12)",
+                border: "1px solid rgba(245,158,11,0.4)",
+                borderRadius: 4,
+                padding: "1px 5px",
+                letterSpacing: "0.06em",
+                flexShrink: 0,
+                textTransform: "uppercase",
+              }}
+            >
+              Demo
+            </span>
+          )}
           {already && <span style={{ marginLeft: "auto", fontSize: 9, color: COLORS.ok, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>added</span>}
         </div>
         <div style={{ fontSize: 11, color: COLORS.muted, lineHeight: 1.4 }}>{def.blurb}</div>
