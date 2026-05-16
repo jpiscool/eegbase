@@ -1557,27 +1557,33 @@ export default function DemoClient({
         );
       })()}
 
-      {/* Clinician control toast — ARIA live region for screen readers (WCAG 4.1.3) */}
-      <div role="status" aria-live="polite" aria-atomic="true" style={{ position: "fixed", bottom: 80, right: 20, zIndex: 999, pointerEvents: toast ? "auto" : "none" }}>
-        {toast && (
-          <div style={{ background: "#0F172A", border: "1px solid #14B8A6", color: "#F1F5F9", borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, boxShadow: "0 8px 32px rgba(0,0,0,0.4)", animation: "fadeIn 0.2s ease", display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#14B8A6" }} aria-hidden="true" />
-            {toast}
+      {/* Clinician control toast + Peak achievement flash. Both are
+          demo-only popups — silenced in 'strip' mode (the authenticated
+          /dashboard should be quiet by default until we add the real
+          clinician notification surface). */}
+      {appMode !== "strip" && (
+        <>
+          <div role="status" aria-live="polite" aria-atomic="true" style={{ position: "fixed", bottom: 80, right: 20, zIndex: 999, pointerEvents: toast ? "auto" : "none" }}>
+            {toast && (
+              <div style={{ background: "#0F172A", border: "1px solid #14B8A6", color: "#F1F5F9", borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, boxShadow: "0 8px 32px rgba(0,0,0,0.4)", animation: "fadeIn 0.2s ease", display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#14B8A6" }} aria-hidden="true" />
+                {toast}
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
-      {/* Peak achievement flash */}
-      {peakFlash && (
-        <div style={{ position: "fixed", top: 72, left: "50%", transform: "translateX(-50%)", zIndex: 998, animation: "fadeIn 0.3s ease", pointerEvents: "none" }}>
-          <div style={{ background: "linear-gradient(135deg, #065F46, #059669)", color: "white", borderRadius: 14, padding: "14px 24px", boxShadow: "0 8px 40px rgba(16,185,129,0.4)", display: "flex", alignItems: "center", gap: 12, whiteSpace: "nowrap" }}>
-            <span style={{ fontSize: 22 }}>🌟</span>
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: "-0.01em" }}>Peak focus achieved!</div>
-              <div style={{ fontSize: 12, opacity: 0.85, marginTop: 1 }}>Score crossed 70 — excellent brain state</div>
+          {peakFlash && (
+            <div style={{ position: "fixed", top: 72, left: "50%", transform: "translateX(-50%)", zIndex: 998, animation: "fadeIn 0.3s ease", pointerEvents: "none" }}>
+              <div style={{ background: "linear-gradient(135deg, #065F46, #059669)", color: "white", borderRadius: 14, padding: "14px 24px", boxShadow: "0 8px 40px rgba(16,185,129,0.4)", display: "flex", alignItems: "center", gap: 12, whiteSpace: "nowrap" }}>
+                <span style={{ fontSize: 22 }}>🌟</span>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: "-0.01em" }}>Peak focus achieved!</div>
+                  <div style={{ fontSize: 12, opacity: 0.85, marginTop: 1 }}>Score crossed 70 — excellent brain state</div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          )}
+        </>
       )}
 
       {/* Mobile tab nav (visible <640px only) */}
