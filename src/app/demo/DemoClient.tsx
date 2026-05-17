@@ -296,6 +296,19 @@ export default function DemoClient({
     };
   }, [appMode]);
 
+  // Sliding window of the last N device samples — only collected in strip
+  // mode and used by the diagnostic panel to compute min/max/avg per field.
+  // Refs (not state) because every sample push would otherwise re-render.
+  const mendiSamplesRef = useRef<DeviceSample[]>([]);
+  const [mendiStatsTick, setMendiStatsTick] = useState(0);
+  useEffect(() => {
+    if (appMode !== "strip") return;
+    // Tick the stats panel once per second so it refreshes without
+    // re-rendering on every sample (~30/s would be wasteful).
+    const iv = setInterval(() => setMendiStatsTick((t) => t + 1), 1000);
+    return () => clearInterval(iv);
+  }, [appMode]);
+
   // Attach the sample callback to whichever adapter is current. Pulled out
   // so both the primary start path and the simulator-fallback path stay in
   // sync without duplicating the push-into-sliding-window logic.
@@ -311,6 +324,11 @@ export default function DemoClient({
       if (s.theta != null) thetaW.push(s.theta);
       if (s.alpha != null) alphaW.push(s.alpha);
       if (s.beta != null)  betaW.push(s.beta);
+      // Diagnostic ring buffer for the strip-mode Mendi values panel.
+      // Keep the last 300 samples (~10 s at 30 Hz).
+      const buf = mendiSamplesRef.current;
+      buf.push(s);
+      if (buf.length > 300) buf.shift();
     });
   }, [reward, oxyL, oxyR, deoxyL, deoxyR, thetaW, alphaW, betaW]);
 
@@ -1959,6 +1977,79 @@ export default function DemoClient({
                   </div>
                 ))}
               </div>
+            )}
+
+            {/* Mendi widget values — strip-mode only, refreshes once per
+                second from the sliding window in mendiSamplesRef.
+                Operator can copy-paste the text to verify values fall in
+                physiologically plausible ranges. */}
+            {appMode === "strip" && mendiStatsTick > 0 && mendiSamplesRef.current.length > 0 && (
+              (() => {
+                const buf = mendiSamplesRef.current;
+                const last = buf[buf.length - 1];
+                const stat = (sel: (s: DeviceSample) => number | null | undefined) => {
+                  const vals = buf.map(sel).filter((v): v is number => typeof v === "number" && Number.isFinite(v));
+                  if (vals.length === 0) return null;
+                  const min = Math.min(...vals), max = Math.max(...vals);
+                  const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+                  return { min, max, avg, n: vals.length };
+                };
+                const fmt = (v: number | null | undefined, d = 2) =>
+                  v == null || !Number.isFinite(v) ? "—" : v.toFixed(d);
+                const fields: Array<{ label: string; sel: (s: DeviceSample) => number | null | undefined; digits?: number; range?: string }> = [
+                  { label: "rewardScore",      sel: (s) => s.rewardScore,      digits: 1, range: "30–90 wearing still" },
+                  { label: "oxyHbLeft",        sel: (s) => s.oxyHbLeft,        digits: 2, range: "−10 to +10" },
+                  { label: "oxyHbRight",       sel: (s) => s.oxyHbRight,       digits: 2, range: "−10 to +10" },
+                  { label: "deoxyHbLeft",      sel: (s) => s.deoxyHbLeft,      digits: 2, range: "−10 to +10" },
+                  { label: "deoxyHbRight",     sel: (s) => s.deoxyHbRight,     digits: 2, range: "−10 to +10" },
+                  { label: "temperatureC",     sel: (s) => s.temperatureC,     digits: 2, range: "30–36 °C on skin" },
+                  { label: "accelMag",         sel: (s) => s.accelMag,         digits: 3 },
+                  { label: "stillness",        sel: (s) => s.stillness,        digits: 3, range: "0=still, 1=moving" },
+                  { label: "pulseHrBpm",       sel: (s) => s.pulseHrBpm,       digits: 1, range: "50–100 resting" },
+                  { label: "pulseHrvRmssd",    sel: (s) => s.pulseHrvRmssd,    digits: 1, range: "15–80 ms" },
+                  { label: "pulsePpg",         sel: (s) => s.pulsePpg,         digits: 0 },
+                  { label: "signalQualityL",   sel: (s) => s.signalQualityL,   digits: 0, range: "0–100, ≥75 good" },
+                  { label: "signalQualityR",   sel: (s) => s.signalQualityR,   digits: 0, range: "0–100, ≥75 good" },
+                  { label: "signalQualityP",   sel: (s) => s.signalQualityP,   digits: 0, range: "0–100, ≥75 good" },
+                  { label: "ambientLevel",     sel: (s) => s.ambientLevel,     digits: 0 },
+                ];
+                return (
+                  <div style={{
+                    background: "#020617", border: "1px solid #1E293B", borderRadius: 12,
+                    padding: "12px 14px", marginBottom: 16,
+                    fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+                    fontSize: 11, lineHeight: 1.5,
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                      <span style={{ color: "#94A3B8", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", fontSize: 10 }}>
+                        Mendi widget values · {buf.length} samples · refresh #{mendiStatsTick}
+                      </span>
+                      <button
+                        onClick={() => { mendiSamplesRef.current = []; setMendiStatsTick(0); }}
+                        style={{ background: "transparent", border: "1px solid #334155", color: "#94A3B8", borderRadius: 6, padding: "2px 8px", fontSize: 10, cursor: "pointer", fontFamily: "inherit" }}
+                      >
+                        Reset
+                      </button>
+                    </div>
+                    <pre style={{ margin: 0, color: "#CBD5E1", whiteSpace: "pre-wrap" }}>
+{`FIELD            CURRENT       MIN          MAX          AVG          N    EXPECTED`}
+{fields.map((f) => {
+  const s = stat(f.sel);
+  const cur = f.sel(last);
+  const row =
+    f.label.padEnd(16) +
+    fmt(cur, f.digits).padStart(12) + " " +
+    (s ? fmt(s.min, f.digits).padStart(12) : "—".padStart(12)) + " " +
+    (s ? fmt(s.max, f.digits).padStart(12) : "—".padStart(12)) + " " +
+    (s ? fmt(s.avg, f.digits).padStart(12) : "—".padStart(12)) + " " +
+    String(s ? s.n : 0).padStart(4) + "  " +
+    (f.range ?? "");
+  return "\n" + row;
+})}
+                    </pre>
+                  </div>
+                );
+              })()
             )}
 
             {/* My Devices — sits above widgets so the operator can manage
