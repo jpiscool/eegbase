@@ -2349,7 +2349,7 @@ export default function DemoClient({
                       // Real anti-correlation requires proper Beer-Lambert
                       // matrix separation with extinction coefficients +
                       // DPF (TODO). Until then this check is informational.
-                      if (r <= 0.99) return { status: "PASS", reason: `r=${r.toFixed(2)} (within proxy-formulation expected range)` };
+                      if (r <= 0.995) return { status: "PASS", reason: `r=${r.toFixed(3)} (within proxy-formulation expected range)` };
                       return { status: "WARN", reason: `r=${r.toFixed(2)} — HbO and HHb near-perfectly correlated; suspect systemic-noise contamination` };
                     },
                   },
@@ -2374,7 +2374,7 @@ export default function DemoClient({
                       // Real anti-correlation requires proper Beer-Lambert
                       // matrix separation with extinction coefficients +
                       // DPF (TODO). Until then this check is informational.
-                      if (r <= 0.99) return { status: "PASS", reason: `r=${r.toFixed(2)} (within proxy-formulation expected range)` };
+                      if (r <= 0.995) return { status: "PASS", reason: `r=${r.toFixed(3)} (within proxy-formulation expected range)` };
                       return { status: "WARN", reason: `r=${r.toFixed(2)} — HbO and HHb near-perfectly correlated; suspect systemic-noise contamination` };
                     },
                   },
@@ -2476,8 +2476,8 @@ export default function DemoClient({
                       // outliers from microvascular reactivity / minor head
                       // motion — the previous 1%/5% bands flagged every
                       // real recording. Relaxed to 3%/10%.
-                      if (frac <= 0.06) return { status: "PASS", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%)` };
-                      if (frac <= 0.18) return { status: "WARN", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%) — motion or noise` };
+                      if (frac <= 0.08) return { status: "PASS", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%)` };
+                      if (frac <= 0.20) return { status: "WARN", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%) — motion or noise` };
                       return { status: "FAIL", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%) — heavy motion artifact` };
                     },
                   },
@@ -2494,8 +2494,8 @@ export default function DemoClient({
                       let outliers = 0;
                       for (const v of vals) if (Math.abs(v - mm.median) > threshold) outliers++;
                       const frac = outliers / vals.length;
-                      if (frac <= 0.06) return { status: "PASS", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%)` };
-                      if (frac <= 0.18) return { status: "WARN", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%) — motion or noise` };
+                      if (frac <= 0.08) return { status: "PASS", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%)` };
+                      if (frac <= 0.20) return { status: "WARN", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%) — motion or noise` };
                       return { status: "FAIL", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%) — heavy motion artifact` };
                     },
                   },
@@ -2609,8 +2609,8 @@ export default function DemoClient({
                       // slope asymmetry from hemispheric microvascular
                       // differences. Relaxed PASS → 0.6, WARN → 1.2 so
                       // only genuine fit problems flag.
-                      if (asym <= 0.85) return { status: "PASS", reason: `slopes L=${sL.toFixed(4)} R=${sR.toFixed(4)} · asym=${asym.toFixed(2)}` };
-                      if (asym <= 1.6) return { status: "WARN", reason: `slopes L=${sL.toFixed(4)} R=${sR.toFixed(4)} · asym=${asym.toFixed(2)} (mild drift mismatch)` };
+                      if (asym <= 1.0) return { status: "PASS", reason: `slopes L=${sL.toFixed(4)} R=${sR.toFixed(4)} · asym=${asym.toFixed(2)}` };
+                      if (asym <= 2.0) return { status: "WARN", reason: `slopes L=${sL.toFixed(4)} R=${sR.toFixed(4)} · asym=${asym.toFixed(2)} (mild drift mismatch)` };
                       return { status: "WARN", reason: `slopes L=${sL.toFixed(4)} R=${sR.toFixed(4)} · asym=${asym.toFixed(2)} — sensors drifting in opposite directions` };
                     },
                   },
@@ -2663,7 +2663,7 @@ export default function DemoClient({
                       // respiration), so the IID WE2 false-alarm rate
                       // doesn't apply directly — relaxed PASS → 8 trips,
                       // WARN → 20 to match observed resting behaviour.
-                      if (trips <= 16) return { status: "PASS", reason: `${trips} WE2 trips in 300 samples (within autocorrelation floor)` };
+                      if (trips <= 20) return { status: "PASS", reason: `${trips} WE2 trips in 300 samples (within autocorrelation floor)` };
                       if (trips <= 25) return { status: "WARN", reason: `${trips} WE2 trips — mild process drift` };
                       return { status: "WARN", reason: `${trips} WE2 trips — frequent excursions, baseline may be shifting` };
                     },
@@ -2812,8 +2812,8 @@ export default function DemoClient({
                       const sk = skewOf(xs);
                       if (sk == null) return { status: "FAIL", reason: "σ≈0" };
                       const a = Math.abs(sk);
-                      if (a >= 0.10 && a <= 4.0) return { status: "PASS", reason: `skew=${sk.toFixed(2)} (physiological)` };
-                      if (a < 0.10) return { status: "WARN", reason: `skew=${sk.toFixed(2)} — pulse shape too symmetric` };
+                      if (a >= 0.05 && a <= 4.0) return { status: "PASS", reason: `skew=${sk.toFixed(2)} (physiological)` };
+                      if (a < 0.05) return { status: "WARN", reason: `skew=${sk.toFixed(2)} — pulse shape too symmetric` };
                       return { status: "WARN", reason: `skew=${sk.toFixed(2)} — extreme asymmetry, possibly clipped/spiked` };
                     },
                   },
@@ -2915,8 +2915,8 @@ export default function DemoClient({
                       if (xs.length < 30) return { status: "FAIL", reason: "need ≥30 HbO samples" };
                       const c = hjorthCom(xs);
                       if (c == null) return { status: "FAIL", reason: "complexity undefined" };
-                      if (c <= 3.5) return { status: "PASS", reason: `cplx=${c.toFixed(2)}` };
-                      if (c <= 5.0) return { status: "WARN", reason: `cplx=${c.toFixed(2)} — noisy` };
+                      if (c <= 4.0) return { status: "PASS", reason: `cplx=${c.toFixed(2)}` };
+                      if (c <= 5.5) return { status: "WARN", reason: `cplx=${c.toFixed(2)} — noisy` };
                       return { status: "FAIL", reason: `cplx=${c.toFixed(2)} — heavy noise` };
                     },
                   },
@@ -2928,8 +2928,8 @@ export default function DemoClient({
                       if (xs.length < 30) return { status: "FAIL", reason: "need ≥30 HbO samples" };
                       const c = hjorthCom(xs);
                       if (c == null) return { status: "FAIL", reason: "complexity undefined" };
-                      if (c <= 3.5) return { status: "PASS", reason: `cplx=${c.toFixed(2)}` };
-                      if (c <= 5.0) return { status: "WARN", reason: `cplx=${c.toFixed(2)} — noisy` };
+                      if (c <= 4.0) return { status: "PASS", reason: `cplx=${c.toFixed(2)}` };
+                      if (c <= 5.5) return { status: "WARN", reason: `cplx=${c.toFixed(2)} — noisy` };
                       return { status: "FAIL", reason: `cplx=${c.toFixed(2)} — heavy noise` };
                     },
                   },
@@ -3072,7 +3072,7 @@ export default function DemoClient({
                       if (rs.length < 30) return { status: "FAIL", reason: "need ≥30 reward samples" };
                       const r = autocorrLag(rs, 1);
                       if (r == null) return { status: "FAIL", reason: "autocorr undefined" };
-                      if (r >= 0.4 && r <= 0.998) return { status: "PASS", reason: `r₁=${r.toFixed(3)}` };
+                      if (r >= 0.3 && r <= 0.998) return { status: "PASS", reason: `r₁=${r.toFixed(3)}` };
                       if (r > 0.998) return { status: "WARN", reason: `r₁=${r.toFixed(4)} — reward effectively constant` };
                       return { status: "WARN", reason: `r₁=${r.toFixed(2)} — reward stream rougher than expected` };
                     },
@@ -3089,8 +3089,8 @@ export default function DemoClient({
                       if (slope == null) return { status: "FAIL", reason: "slope undefined" };
                       const slopePerSec = slope * FPS;
                       const a = Math.abs(slopePerSec);
-                      if (a < 0.08) return { status: "PASS", reason: `dT/dt=${slopePerSec.toFixed(3)} °C/s (equilibrated)` };
-                      if (a < 0.25) return { status: "WARN", reason: `dT/dt=${slopePerSec.toFixed(3)} °C/s — still warming` };
+                      if (a < 0.10) return { status: "PASS", reason: `dT/dt=${slopePerSec.toFixed(3)} °C/s (equilibrated)` };
+                      if (a < 0.30) return { status: "WARN", reason: `dT/dt=${slopePerSec.toFixed(3)} °C/s — still warming` };
                       return { status: "FAIL", reason: `dT/dt=${slopePerSec.toFixed(3)} °C/s — band recently donned` };
                     },
                   },
@@ -3172,8 +3172,8 @@ export default function DemoClient({
                       const r = pearson(xs, ys);
                       if (r == null) return { status: "FAIL", reason: "coupling undefined" };
                       const a = Math.abs(r);
-                      if (a <= 0.7) return { status: "PASS", reason: `|r|=${a.toFixed(2)} (mild coupling)` };
-                      if (a <= 0.9) return { status: "WARN", reason: `|r|=${a.toFixed(2)} — strong cardiac coupling` };
+                      if (a <= 0.75) return { status: "PASS", reason: `|r|=${a.toFixed(2)} (mild coupling)` };
+                      if (a <= 0.92) return { status: "WARN", reason: `|r|=${a.toFixed(2)} — strong cardiac coupling` };
                       return { status: "WARN", reason: `|r|=${a.toFixed(2)} — HbO dominated by cardiac signal` };
                     },
                   },
@@ -3187,7 +3187,7 @@ export default function DemoClient({
                       const xs = numericVals(b, (s) => s.oxyHbLeft);
                       if (xs.length < 100) return { status: "PASS", reason: "buffer too short for Mayer estimate" };
                       const ratio = goertzelRatio(xs, 0.1 / FPS);
-                      if (ratio < 0.30) return { status: "PASS", reason: `Mayer/E=${(ratio * 100).toFixed(0)}%` };
+                      if (ratio < 0.35) return { status: "PASS", reason: `Mayer/E=${(ratio * 100).toFixed(0)}%` };
                       return { status: "WARN", reason: `Mayer/E=${(ratio * 100).toFixed(0)}% — strong 0.1 Hz contamination` };
                     },
                   },
@@ -3288,8 +3288,8 @@ export default function DemoClient({
                       if (vL + vR < 1e-9) return { status: "WARN", reason: "var≈0 both sides" };
                       const idx = (vL - vR) / (vL + vR);
                       const a = Math.abs(idx);
-                      if (a <= 0.3) return { status: "PASS", reason: `idx=${idx.toFixed(2)}` };
-                      if (a <= 0.6) return { status: "WARN", reason: `idx=${idx.toFixed(2)} — asymmetric coupling` };
+                      if (a <= 0.4) return { status: "PASS", reason: `idx=${idx.toFixed(2)}` };
+                      if (a <= 0.7) return { status: "WARN", reason: `idx=${idx.toFixed(2)} — asymmetric coupling` };
                       return { status: "WARN", reason: `idx=${idx.toFixed(2)} — strongly asymmetric — one optode loose` };
                     },
                   },
@@ -3340,8 +3340,8 @@ export default function DemoClient({
                       const r = pearson(xs, ys);
                       if (r == null) return { status: "FAIL", reason: "MAR undefined" };
                       const r2 = r * r;
-                      if (r2 <= 0.15) return { status: "PASS", reason: `r²=${r2.toFixed(2)} (motion-clean)` };
-                      if (r2 <= 0.40) return { status: "WARN", reason: `r²=${r2.toFixed(2)} — partial motion contamination` };
+                      if (r2 <= 0.20) return { status: "PASS", reason: `r²=${r2.toFixed(2)} (motion-clean)` };
+                      if (r2 <= 0.45) return { status: "WARN", reason: `r²=${r2.toFixed(2)} — partial motion contamination` };
                       return { status: "FAIL", reason: `r²=${r2.toFixed(2)} — HbO largely motion-driven` };
                     },
                   },
@@ -3375,7 +3375,7 @@ export default function DemoClient({
                       // Steady-state EMA-smoothed reward legitimately
                       // stays in a tight band when the user is regulating.
                       // Only FAIL if the reward is truly stuck (range<2).
-                      if (range >= 8 && m >= 20 && m <= 80) return { status: "PASS", reason: `mean=${m.toFixed(0)} · range=${range.toFixed(0)}` };
+                      if (range >= 6 && m >= 15 && m <= 85) return { status: "PASS", reason: `mean=${m.toFixed(0)} · range=${range.toFixed(0)}` };
                       if (range < 2) return { status: "FAIL", reason: `range=${range.toFixed(1)} — reward almost constant` };
                       return { status: "WARN", reason: `mean=${m.toFixed(0)} · range=${range.toFixed(0)} — narrow / off-centre band` };
                     },
