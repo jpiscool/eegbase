@@ -220,10 +220,15 @@ export class MendiPacketDecoder {
       pulsePpg = corrected - mean;
     }
 
-    // Heart rate from PPG: simple zero-crossing peak detector on the AC
-    // signal. We track time between successive upward crossings; the
-    // rolling average of inter-beat intervals → BPM. Bounded to 35–180 BPM
+    // Heart rate from PPG: zero-crossing peak detector on the AC signal.
+    // We track time between successive upward crossings; the rolling
+    // average of inter-beat intervals → BPM. Bounded to 35–180 BPM
     // physiological range. Stays undefined until ≥ 3 beats have arrived.
+    //
+    // Refractory period: ignore zero-crossings within 333 ms of the last
+    // beat — at 180 BPM the IBI is 333 ms, so anything shorter is noise
+    // (double-detection on a rising edge). Previously we kept the short
+    // IBI in the history, which polluted RMSSD.
     let pulseHrBpm: number | undefined;
     if (pulsePpg != null) {
       const nowMs = Date.now();
@@ -231,14 +236,20 @@ export class MendiPacketDecoder {
       this._pulsePrev = pulsePpg;
       if (prev != null && prev <= 0 && pulsePpg > 0) {
         const last = this._lastBeatMs;
-        if (last != null) {
+        if (last == null) {
+          this._lastBeatMs = nowMs;
+        } else {
           const ibi = nowMs - last;
-          if (ibi >= 333 && ibi <= 1714) { // 180–35 BPM
+          // Hard physiological gate: only accept IBIs in [333, 1714] ms.
+          // Anything outside that window is rejected as noise — and we
+          // do NOT advance _lastBeatMs in that case, so the next valid
+          // beat measures from the previous good beat.
+          if (ibi >= 333 && ibi <= 1714) {
             this._ibiHistory.push(ibi);
             if (this._ibiHistory.length > 8) this._ibiHistory.shift();
+            this._lastBeatMs = nowMs;
           }
         }
-        this._lastBeatMs = nowMs;
       }
       if (this._ibiHistory.length >= 3) {
         const meanIbi =
@@ -251,16 +262,31 @@ export class MendiPacketDecoder {
     // short-term HRV metric used in autonomic-state monitoring. Higher
     // RMSSD = more parasympathetic activity = calmer state. Needs at
     // least 4 IBIs to compute 3 successive differences.
+    //
+    // Outlier rejection: a single false beat detection can produce an
+    // IBI half the median; the (this_ibi - prev_ibi)² term then blows up
+    // RMSSD to physiologically impossible values (>400 ms). We filter
+    // the IBI history to entries within ±30% of the median before
+    // computing differences. Physiological HRV variability is typically
+    // a few percent of IBI, so a 30% threshold is generous but still
+    // catches gross outliers.
     let pulseHrvRmssd: number | undefined;
     if (this._ibiHistory.length >= 4) {
-      let sumSq = 0;
-      for (let i = 1; i < this._ibiHistory.length; i++) {
-        const d = this._ibiHistory[i] - this._ibiHistory[i - 1];
-        sumSq += d * d;
+      const sorted = [...this._ibiHistory].sort((a, b) => a - b);
+      const median = sorted[Math.floor(sorted.length / 2)];
+      const lo = median * 0.7;
+      const hi = median * 1.3;
+      const filtered = this._ibiHistory.filter((ibi) => ibi >= lo && ibi <= hi);
+      if (filtered.length >= 4) {
+        let sumSq = 0;
+        for (let i = 1; i < filtered.length; i++) {
+          const d = filtered[i] - filtered[i - 1];
+          sumSq += d * d;
+        }
+        pulseHrvRmssd = Math.round(
+          Math.sqrt(sumSq / (filtered.length - 1))
+        );
       }
-      pulseHrvRmssd = Math.round(
-        Math.sqrt(sumSq / (this._ibiHistory.length - 1))
-      );
     }
 
     // Per-optode signal quality: magnitude of (red − amb) relative to the
