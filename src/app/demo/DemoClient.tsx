@@ -2531,11 +2531,29 @@ export default function DemoClient({
                 const now = Date.now();
                 const hist = mendiHistoryRef.current;
                 const recordIssue = (level: "WARN" | "FAIL", label: string, reason: string) => {
-                  const key = `${level}|${label}|${reason}`;
+                  // Skip warm-up "only N samples — wait longer" entries.
+                  // These fire dozens of times during the first ~10 s of a
+                  // session as the buffer fills; they aren't real issues.
+                  if (reason.startsWith("only ") && reason.includes(" samples — wait longer")) return;
+                  if (reason.startsWith("need ≥") && reason.includes("samples")) return;
+                  if (reason === "no samples yet") return;
+                  if (
+                    reason === "insufficient HbO/HHb pairs" ||
+                    reason === "insufficient HbO L+R pairs" ||
+                    reason === "insufficient TSI samples" ||
+                    reason === "no paired pulse/accel data"
+                  ) return;
+                  // Dedup by LABEL+LEVEL only (not reason). The reason text
+                  // varies sample-to-sample because of floating-point
+                  // statistics; dedupping on full text would produce
+                  // thousands of near-duplicate entries. We track only the
+                  // most recent reason so the user sees current state.
+                  const key = `${level}|${label}`;
                   const existing = hist.get(key);
                   if (existing) {
                     existing.lastAt = now;
                     existing.count += 1;
+                    existing.reason = reason; // keep most recent reason text
                   } else {
                     hist.set(key, { level, label, reason, firstAt: now, lastAt: now, count: 1 });
                   }
@@ -2644,7 +2662,11 @@ export default function DemoClient({
             {appMode === "strip" && mendiStatsTick > 0 && mendiHistoryRef.current.size > 0 && (
               (() => {
                 const entries = Array.from(mendiHistoryRef.current.values())
-                  .sort((a, b) => b.lastAt - a.lastAt); // most-recent first
+                  // FAIL above WARN; within a level, most-frequent first.
+                  .sort((a, b) => {
+                    if (a.level !== b.level) return a.level === "FAIL" ? -1 : 1;
+                    return b.count - a.count;
+                  });
                 const counts = { WARN: 0, FAIL: 0 } as Record<"WARN" | "FAIL", number>;
                 for (const e of entries) counts[e.level]++;
                 const rows = entries.map((e) => {
