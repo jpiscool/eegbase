@@ -1997,21 +1997,48 @@ export default function DemoClient({
                 const fmt = (v: number | null | undefined, d = 2) =>
                   v == null || !Number.isFinite(v) ? "—" : v.toFixed(d);
                 const fields: Array<{ label: string; sel: (s: DeviceSample) => number | null | undefined; digits?: number; range?: string }> = [
+                  // ── Reward / focus ─────────────────────────────────
                   { label: "rewardScore",      sel: (s) => s.rewardScore,      digits: 1, range: "30–90 wearing still" },
-                  { label: "oxyHbLeft",        sel: (s) => s.oxyHbLeft,        digits: 2, range: "−10 to +10" },
-                  { label: "oxyHbRight",       sel: (s) => s.oxyHbRight,       digits: 2, range: "−10 to +10" },
-                  { label: "deoxyHbLeft",      sel: (s) => s.deoxyHbLeft,      digits: 2, range: "−10 to +10" },
-                  { label: "deoxyHbRight",     sel: (s) => s.deoxyHbRight,     digits: 2, range: "−10 to +10" },
+                  // ── Optical channels (Beer-Lambert HbO/HHb) ────────
+                  { label: "oxyHbLeft",        sel: (s) => s.oxyHbLeft,        digits: 3, range: "−10 to +10" },
+                  { label: "oxyHbRight",       sel: (s) => s.oxyHbRight,       digits: 3, range: "−10 to +10" },
+                  { label: "deoxyHbLeft",      sel: (s) => s.deoxyHbLeft,      digits: 3, range: "−10 to +10" },
+                  { label: "deoxyHbRight",     sel: (s) => s.deoxyHbRight,     digits: 3, range: "−10 to +10" },
+                  // ── Derived optical (TSI, asymmetry, total HbO) ────
+                  { label: "totalHbO (L+R)",   sel: (s) => (s.oxyHbLeft ?? 0) + (s.oxyHbRight ?? 0), digits: 3, range: "−20 to +20" },
+                  { label: "asymmetry (L−R)",  sel: (s) => (s.oxyHbLeft ?? 0) - (s.oxyHbRight ?? 0), digits: 3, range: "≈0 at rest" },
+                  { label: "TSI proxy",        sel: (s) => {
+                    const hbo = ((s.oxyHbLeft ?? 0) + (s.oxyHbRight ?? 0)) / 2;
+                    const hhb = ((s.deoxyHbLeft ?? 0) + (s.deoxyHbRight ?? 0)) / 2;
+                    const denom = Math.abs(hbo) + Math.abs(hhb);
+                    return denom > 0 ? hbo / denom : null;
+                  }, digits: 3, range: "−1 to +1" },
+                  // ── Temperature ────────────────────────────────────
                   { label: "temperatureC",     sel: (s) => s.temperatureC,     digits: 2, range: "30–36 °C on skin" },
-                  { label: "accelMag",         sel: (s) => s.accelMag,         digits: 3 },
-                  { label: "stillness",        sel: (s) => s.stillness,        digits: 3, range: "0=still, 1=moving" },
+                  // ── IMU ────────────────────────────────────────────
+                  { label: "accelMag",         sel: (s) => s.accelMag,         digits: 3, range: "≈1.0 g at rest" },
+                  { label: "accelX",           sel: (s) => s.accelX,           digits: 3, range: "−2 to +2 g" },
+                  { label: "accelY",           sel: (s) => s.accelY,           digits: 3, range: "−2 to +2 g" },
+                  { label: "accelZ",           sel: (s) => s.accelZ,           digits: 3, range: "−2 to +2 g" },
+                  { label: "stillness",        sel: (s) => s.stillness,        digits: 1, range: "0–100, 100=motionless" },
+                  // ── Pulse / heart-rate (forehead PPG optode) ───────
+                  { label: "pulsePpg",         sel: (s) => s.pulsePpg,         digits: 1, range: "AC-centred ≈0" },
                   { label: "pulseHrBpm",       sel: (s) => s.pulseHrBpm,       digits: 1, range: "50–100 resting" },
                   { label: "pulseHrvRmssd",    sel: (s) => s.pulseHrvRmssd,    digits: 1, range: "15–80 ms" },
-                  { label: "pulsePpg",         sel: (s) => s.pulsePpg,         digits: 0 },
+                  { label: "heartRate",        sel: (s) => s.heartRate,        digits: 1, range: "BPM (chest strap path)" },
+                  { label: "hrvRmssd",         sel: (s) => s.hrvRmssd,         digits: 1, range: "ms (chest strap path)" },
+                  // ── Signal-quality / coupling per optode ───────────
                   { label: "signalQualityL",   sel: (s) => s.signalQualityL,   digits: 0, range: "0–100, ≥75 good" },
                   { label: "signalQualityR",   sel: (s) => s.signalQualityR,   digits: 0, range: "0–100, ≥75 good" },
                   { label: "signalQualityP",   sel: (s) => s.signalQualityP,   digits: 0, range: "0–100, ≥75 good" },
-                  { label: "ambientLevel",     sel: (s) => s.ambientLevel,     digits: 0 },
+                  // ── Ambient interference ───────────────────────────
+                  { label: "ambientLevel",     sel: (s) => s.ambientLevel,     digits: 0, range: "0–100, lower=cleaner" },
+                  // ── Effective frame rate (derived from timestamps) ─
+                  { label: "frameRate (Hz)",   sel: (_s) => {
+                    if (buf.length < 2) return null;
+                    const span = buf[buf.length - 1].timestampMs - buf[0].timestampMs;
+                    return span > 0 ? ((buf.length - 1) * 1000) / span : null;
+                  }, digits: 1, range: "29–31 fps" },
                 ];
                 return (
                   <div style={{
