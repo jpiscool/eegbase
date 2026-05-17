@@ -2075,6 +2075,124 @@ export default function DemoClient({
                   }
                   return out;
                 };
+                // ── extended statistical helpers ──────────────────────
+                // All helpers tolerate short/empty input — they return
+                // null when a meaningful statistic can't be computed.
+                const FPS = 31; // Mendi V4 effective sample rate
+                const meanOf = (xs: number[]) => xs.length ? xs.reduce((a, c) => a + c, 0) / xs.length : 0;
+                const varOf = (xs: number[]) => {
+                  if (xs.length < 2) return 0;
+                  const m = meanOf(xs);
+                  let s = 0;
+                  for (const v of xs) s += (v - m) * (v - m);
+                  return s / xs.length;
+                };
+                const stdOf = (xs: number[]) => Math.sqrt(varOf(xs));
+                const diffOf = (xs: number[]): number[] => {
+                  const out: number[] = [];
+                  for (let i = 1; i < xs.length; i++) out.push(xs[i] - xs[i - 1]);
+                  return out;
+                };
+                // Third central moment normalised — Elgendi 2016 SQI.
+                const skewOf = (xs: number[]): number | null => {
+                  if (xs.length < 10) return null;
+                  const m = meanOf(xs);
+                  const s = stdOf(xs);
+                  if (s < 1e-12) return null;
+                  let sum = 0;
+                  for (const v of xs) sum += ((v - m) / s) ** 3;
+                  return sum / xs.length;
+                };
+                // Fourth standardised moment (excess kurtosis NOT applied —
+                // Elgendi uses raw kurtosis where Gaussian = 3).
+                const kurtOf = (xs: number[]): number | null => {
+                  if (xs.length < 10) return null;
+                  const m = meanOf(xs);
+                  const s = stdOf(xs);
+                  if (s < 1e-12) return null;
+                  let sum = 0;
+                  for (const v of xs) sum += ((v - m) / s) ** 4;
+                  return sum / xs.length;
+                };
+                // Hjorth mobility — sqrt(var(diff)/var). Multiplied by
+                // FPS / (2π) to express in Hz units.
+                const hjorthMobHz = (xs: number[]): number | null => {
+                  if (xs.length < 10) return null;
+                  const vx = varOf(xs);
+                  if (vx < 1e-12) return null;
+                  const vd = varOf(diffOf(xs));
+                  const mob = Math.sqrt(vd / vx);
+                  return mob * FPS / (2 * Math.PI);
+                };
+                // Hjorth complexity — mobility(diff)/mobility(x). Pure
+                // sinusoid → 1; noise → much greater. Unitless.
+                const hjorthCom = (xs: number[]): number | null => {
+                  if (xs.length < 10) return null;
+                  const vx = varOf(xs);
+                  const d1 = diffOf(xs);
+                  const vd1 = varOf(d1);
+                  if (vx < 1e-12 || vd1 < 1e-12) return null;
+                  const mob1 = Math.sqrt(vd1 / vx);
+                  const d2 = diffOf(d1);
+                  const vd2 = varOf(d2);
+                  const mob2 = Math.sqrt(vd2 / vd1);
+                  return mob1 > 0 ? mob2 / mob1 : null;
+                };
+                // Goertzel single-bin power probe. fNorm is the normalised
+                // frequency (0 < fNorm < 0.5, i.e. fraction of FPS).
+                // Returns power at that frequency.
+                const goertzel = (xs: number[], fNorm: number): number => {
+                  if (xs.length < 8 || fNorm <= 0 || fNorm >= 0.5) return 0;
+                  const omega = 2 * Math.PI * fNorm;
+                  const coeff = 2 * Math.cos(omega);
+                  let q0 = 0, q1 = 0, q2 = 0;
+                  for (const x of xs) {
+                    q0 = coeff * q1 - q2 + x;
+                    q2 = q1; q1 = q0;
+                  }
+                  return q1 * q1 + q2 * q2 - q1 * q2 * coeff;
+                };
+                // Pearson autocorrelation at integer lag k (in samples).
+                const autocorrLag = (xs: number[], k: number): number | null => {
+                  if (xs.length < k + 10 || k < 1) return null;
+                  const a = xs.slice(0, xs.length - k);
+                  const b = xs.slice(k);
+                  return pearson(a, b);
+                };
+                // Linear regression slope of xs as a function of sample index.
+                const linRegSlope = (xs: number[]): number | null => {
+                  const n = xs.length;
+                  if (n < 10) return null;
+                  let sx = 0, sy = 0, sxy = 0, sxx = 0;
+                  for (let i = 0; i < n; i++) {
+                    sx += i; sy += xs[i]; sxy += i * xs[i]; sxx += i * i;
+                  }
+                  const denom = n * sxx - sx * sx;
+                  return denom > 0 ? (n * sxy - sx * sy) / denom : null;
+                };
+                // Count of upward zero crossings (mean-crossings) in xs.
+                const zeroCrossings = (xs: number[]): number => {
+                  if (xs.length < 2) return 0;
+                  const m = meanOf(xs);
+                  let n = 0;
+                  for (let i = 1; i < xs.length; i++) {
+                    if (xs[i - 1] <= m && xs[i] > m) n++;
+                  }
+                  return n;
+                };
+                // Approximate inter-beat-interval series from per-sample HR.
+                // We don't have raw IBIs in the buffer; this returns one
+                // IBI per HR sample (60000 / bpm).
+                const ibiSeriesFromHr = (buf: DeviceSample[]): number[] => {
+                  const out: number[] = [];
+                  for (const s of buf) {
+                    const hr = s.pulseHrBpm;
+                    if (typeof hr === "number" && Number.isFinite(hr) && hr >= 35 && hr <= 180) {
+                      out.push(60000 / hr);
+                    }
+                  }
+                  return out;
+                };
                 // One row per widget ID that depends on Mendi-derived
                 // DeviceSample fields. Catalogue has ~35 such widgets;
                 // whichever the user has installed on /dashboard will appear
@@ -2573,6 +2691,688 @@ export default function DemoClient({
                       return { status: "PASS", reason: `accel σ=${accelStd.toFixed(3)} g · stillness=${meanS.toFixed(0)}` };
                     },
                   },
+                  // ═════════════════════════════════════════════════════
+                  // TIER 1 — high clinical value, low implementation cost
+                  // (Pollonini, Elgendi, Hjorth, Berntson, Masimo, etc.)
+                  // ═════════════════════════════════════════════════════
+
+                  // SCI (Scalp Coupling Index, single-wavelength variant).
+                  // True dual-wavelength SCI is unavailable on Mendi; we
+                  // adapt to cardiac-band autocorrelation: correlate HbO L
+                  // against itself at a lag matching the current heart-rate
+                  // period. A well-coupled forehead optode shows strong
+                  // cardiac pulsation embedded in HbO; coupling failure
+                  // collapses this autocorrelation.
+                  {
+                    label: "SCI — cardiac-coupling (HbO L)",
+                    source: "Pollonini 2014/2016 (PHOEBE)",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.oxyHbLeft);
+                      const hrs = numericVals(b, (s) => s.pulseHrBpm);
+                      if (xs.length < 60 || hrs.length < 10) return { status: "FAIL", reason: "need ≥60 HbO + HR samples" };
+                      const hr = meanOf(hrs);
+                      if (hr <= 0) return { status: "FAIL", reason: "HR not yet valid" };
+                      const lag = Math.round(FPS * 60 / hr);
+                      if (lag < 2 || lag >= xs.length / 2) return { status: "FAIL", reason: `lag ${lag} out of range` };
+                      const r = autocorrLag(xs, lag);
+                      if (r == null) return { status: "FAIL", reason: "autocorr null" };
+                      // Pollonini threshold: SCI ≥ 0.75 = good coupling.
+                      if (r >= 0.75) return { status: "PASS", reason: `r@HR=${r.toFixed(2)} (good coupling)` };
+                      if (r >= 0.50) return { status: "WARN", reason: `r@HR=${r.toFixed(2)} — mild decoupling` };
+                      return { status: "FAIL", reason: `r@HR=${r.toFixed(2)} — poor optode coupling` };
+                    },
+                  },
+                  {
+                    label: "SCI — cardiac-coupling (HbO R)",
+                    source: "Pollonini 2014/2016 (PHOEBE)",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.oxyHbRight);
+                      const hrs = numericVals(b, (s) => s.pulseHrBpm);
+                      if (xs.length < 60 || hrs.length < 10) return { status: "FAIL", reason: "need ≥60 HbO + HR samples" };
+                      const hr = meanOf(hrs);
+                      if (hr <= 0) return { status: "FAIL", reason: "HR not yet valid" };
+                      const lag = Math.round(FPS * 60 / hr);
+                      if (lag < 2 || lag >= xs.length / 2) return { status: "FAIL", reason: `lag ${lag} out of range` };
+                      const r = autocorrLag(xs, lag);
+                      if (r == null) return { status: "FAIL", reason: "autocorr null" };
+                      if (r >= 0.75) return { status: "PASS", reason: `r@HR=${r.toFixed(2)} (good coupling)` };
+                      if (r >= 0.50) return { status: "WARN", reason: `r@HR=${r.toFixed(2)} — mild decoupling` };
+                      return { status: "FAIL", reason: `r@HR=${r.toFixed(2)} — poor optode coupling` };
+                    },
+                  },
+                  // PSP — Peak Spectral Power at the cardiac frequency.
+                  // Single-bin Goertzel at f = HR/60 Hz on HbO L. Provides
+                  // an absolute magnitude (paired with SCI's relative
+                  // correlation), distinguishing "rolling but flat" from
+                  // "rolling with real pulsatile content".
+                  {
+                    label: "PSP — cardiac band power (HbO L)",
+                    source: "Pollonini 2016",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.oxyHbLeft);
+                      const hrs = numericVals(b, (s) => s.pulseHrBpm);
+                      if (xs.length < 60 || hrs.length < 10) return { status: "FAIL", reason: "need ≥60 HbO + HR samples" };
+                      const hr = meanOf(hrs);
+                      if (hr <= 0) return { status: "FAIL", reason: "HR not yet valid" };
+                      const fNorm = hr / 60 / FPS;
+                      const pw = goertzel(xs, fNorm);
+                      const total = varOf(xs) * xs.length;
+                      const ratio = total > 0 ? pw / total : 0;
+                      if (ratio >= 0.10) return { status: "PASS", reason: `PSP/var=${(ratio * 100).toFixed(1)}% at ${hr.toFixed(0)} BPM` };
+                      if (ratio >= 0.05) return { status: "WARN", reason: `PSP/var=${(ratio * 100).toFixed(1)}% — weak cardiac power` };
+                      return { status: "FAIL", reason: `PSP/var=${(ratio * 100).toFixed(1)}% — no cardiac content` };
+                    },
+                  },
+                  // Elgendi 2016 — skewness was the single best PPG SQI
+                  // (F1 ≈ 0.86), beating perfusion / kurtosis / entropy.
+                  // Healthy PPG is asymmetric (rising edge faster than
+                  // decay), so |skew| should not be tiny.
+                  {
+                    label: "PPG skewness SQI",
+                    source: "Elgendi 2016 — Optimal PPG SQI",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.pulsePpg);
+                      if (xs.length < 60) return { status: "FAIL", reason: "need ≥60 pulse samples" };
+                      const sk = skewOf(xs);
+                      if (sk == null) return { status: "FAIL", reason: "σ≈0" };
+                      const a = Math.abs(sk);
+                      if (a >= 0.2 && a <= 3) return { status: "PASS", reason: `skew=${sk.toFixed(2)} (physiological)` };
+                      if (a < 0.2) return { status: "WARN", reason: `skew=${sk.toFixed(2)} — pulse shape too symmetric` };
+                      return { status: "WARN", reason: `skew=${sk.toFixed(2)} — extreme asymmetry, possibly clipped/spiked` };
+                    },
+                  },
+                  // Elgendi kurtosis SQI — clean PPG kurtosis is in
+                  // 2–8; extreme values flag motion or saturation.
+                  {
+                    label: "PPG kurtosis SQI",
+                    source: "Elgendi 2016",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.pulsePpg);
+                      if (xs.length < 60) return { status: "FAIL", reason: "need ≥60 pulse samples" };
+                      const k = kurtOf(xs);
+                      if (k == null) return { status: "FAIL", reason: "σ≈0" };
+                      if (k >= 2 && k <= 8) return { status: "PASS", reason: `kurt=${k.toFixed(2)} (physiological)` };
+                      if (k > 8 && k <= 20) return { status: "WARN", reason: `kurt=${k.toFixed(2)} — heavy-tailed (motion?)` };
+                      if (k < 2) return { status: "WARN", reason: `kurt=${k.toFixed(2)} — flat / saturated` };
+                      return { status: "FAIL", reason: `kurt=${k.toFixed(2)} — severe motion artifact` };
+                    },
+                  },
+                  // PPG zero-crossing rate — expect ≈ 2× HR per minute
+                  // (one zero crossing per half-cycle).
+                  {
+                    label: "PPG zero-crossing rate vs HR",
+                    source: "Elgendi 2016 SQI suite",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.pulsePpg);
+                      const hrs = numericVals(b, (s) => s.pulseHrBpm);
+                      if (xs.length < 60 || hrs.length < 10) return { status: "FAIL", reason: "need ≥60 pulse + HR samples" };
+                      const zc = zeroCrossings(xs);
+                      const seconds = xs.length / FPS;
+                      const ratePerMin = (zc / seconds) * 60;
+                      const expectedRate = meanOf(hrs);
+                      if (expectedRate <= 0) return { status: "FAIL", reason: "HR not valid" };
+                      const dev = Math.abs(ratePerMin - expectedRate) / expectedRate;
+                      if (dev <= 0.30) return { status: "PASS", reason: `${ratePerMin.toFixed(0)} zc/min vs HR=${expectedRate.toFixed(0)} (Δ=${(dev * 100).toFixed(0)}%)` };
+                      if (dev <= 0.60) return { status: "WARN", reason: `${ratePerMin.toFixed(0)} zc/min vs HR=${expectedRate.toFixed(0)} (Δ=${(dev * 100).toFixed(0)}%)` };
+                      return { status: "FAIL", reason: `${ratePerMin.toFixed(0)} zc/min vs HR=${expectedRate.toFixed(0)} — detector mismatch` };
+                    },
+                  },
+                  // Perfusion Index proxy — std(pulsePpg) / mean(signalQualityP).
+                  // Real perfusion uses raw IR DC, which we don't expose;
+                  // signalQualityP (red/ambient ratio, 0–100) is a fair
+                  // monotonic stand-in. Used as a relative QC trend.
+                  {
+                    label: "Perfusion index (proxy)",
+                    source: "Masimo PI · Mendi proxy",
+                    compute: (b) => {
+                      const ac = numericVals(b, (s) => s.pulsePpg);
+                      const dc = numericVals(b, (s) => s.signalQualityP);
+                      if (ac.length < 60 || dc.length < 60) return { status: "FAIL", reason: "need ≥60 pulse + SQP samples" };
+                      const acAmp = stdOf(ac);
+                      const dcLevel = meanOf(dc);
+                      if (dcLevel < 1) return { status: "FAIL", reason: "DC proxy ≈ 0" };
+                      const pi = acAmp / dcLevel * 100;
+                      if (pi >= 100) return { status: "PASS", reason: `PI≈${pi.toFixed(0)} (strong pulsation)` };
+                      if (pi >= 30) return { status: "PASS", reason: `PI≈${pi.toFixed(0)} (adequate)` };
+                      if (pi >= 10) return { status: "WARN", reason: `PI≈${pi.toFixed(0)} — low pulsation` };
+                      return { status: "FAIL", reason: `PI≈${pi.toFixed(0)} — no detectable pulse` };
+                    },
+                  },
+                  // Hjorth mobility — dominant frequency proxy. Drift-only
+                  // signals → very low Hz; noise → high.
+                  {
+                    label: "Hjorth mobility (HbO L)",
+                    source: "Hjorth 1970",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.oxyHbLeft);
+                      if (xs.length < 30) return { status: "FAIL", reason: "need ≥30 HbO samples" };
+                      const f = hjorthMobHz(xs);
+                      if (f == null) return { status: "FAIL", reason: "mobility undefined" };
+                      if (f >= 0.02 && f <= 5) return { status: "PASS", reason: `f≈${f.toFixed(2)} Hz (physiological band)` };
+                      if (f < 0.02) return { status: "WARN", reason: `f≈${f.toFixed(3)} Hz — drift-dominated` };
+                      return { status: "WARN", reason: `f≈${f.toFixed(2)} Hz — high-frequency noise` };
+                    },
+                  },
+                  {
+                    label: "Hjorth mobility (HbO R)",
+                    source: "Hjorth 1970",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.oxyHbRight);
+                      if (xs.length < 30) return { status: "FAIL", reason: "need ≥30 HbO samples" };
+                      const f = hjorthMobHz(xs);
+                      if (f == null) return { status: "FAIL", reason: "mobility undefined" };
+                      if (f >= 0.02 && f <= 5) return { status: "PASS", reason: `f≈${f.toFixed(2)} Hz (physiological band)` };
+                      if (f < 0.02) return { status: "WARN", reason: `f≈${f.toFixed(3)} Hz — drift-dominated` };
+                      return { status: "WARN", reason: `f≈${f.toFixed(2)} Hz — high-frequency noise` };
+                    },
+                  },
+                  // Hjorth complexity — sinusoid ≈ 1; noise much greater.
+                  {
+                    label: "Hjorth complexity (HbO L)",
+                    source: "Hjorth 1970",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.oxyHbLeft);
+                      if (xs.length < 30) return { status: "FAIL", reason: "need ≥30 HbO samples" };
+                      const c = hjorthCom(xs);
+                      if (c == null) return { status: "FAIL", reason: "complexity undefined" };
+                      if (c <= 2.5) return { status: "PASS", reason: `cplx=${c.toFixed(2)}` };
+                      if (c <= 4) return { status: "WARN", reason: `cplx=${c.toFixed(2)} — noisy` };
+                      return { status: "FAIL", reason: `cplx=${c.toFixed(2)} — heavy noise` };
+                    },
+                  },
+                  {
+                    label: "Hjorth complexity (HbO R)",
+                    source: "Hjorth 1970",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.oxyHbRight);
+                      if (xs.length < 30) return { status: "FAIL", reason: "need ≥30 HbO samples" };
+                      const c = hjorthCom(xs);
+                      if (c == null) return { status: "FAIL", reason: "complexity undefined" };
+                      if (c <= 2.5) return { status: "PASS", reason: `cplx=${c.toFixed(2)}` };
+                      if (c <= 4) return { status: "WARN", reason: `cplx=${c.toFixed(2)} — noisy` };
+                      return { status: "FAIL", reason: `cplx=${c.toFixed(2)} — heavy noise` };
+                    },
+                  },
+                  // Berntson / Kubios IBI Z-score outliers. Approximated
+                  // from per-sample HR (true IBI series not in buffer).
+                  {
+                    label: "IBI Z-score outlier rate",
+                    source: "Berntson 1990 / Kubios",
+                    compute: (b) => {
+                      const ibis = ibiSeriesFromHr(b);
+                      if (ibis.length < 30) return { status: "FAIL", reason: "need ≥30 IBIs" };
+                      const mm = medianMad(ibis);
+                      if (!mm || mm.mad < 1e-6) return { status: "PASS", reason: "IBI distribution ~flat" };
+                      let bad = 0;
+                      for (const v of ibis) if (Math.abs(v - mm.median) > 3 * 1.4826 * mm.mad) bad++;
+                      const frac = bad / ibis.length;
+                      if (frac <= 0.05) return { status: "PASS", reason: `${bad}/${ibis.length} ectopics (${(frac * 100).toFixed(1)}%)` };
+                      if (frac <= 0.15) return { status: "WARN", reason: `${bad}/${ibis.length} ectopics (${(frac * 100).toFixed(1)}%)` };
+                      return { status: "FAIL", reason: `${bad}/${ibis.length} ectopics (${(frac * 100).toFixed(1)}%) — noisy beat detector` };
+                    },
+                  },
+                  // Poincaré SD1/SD2 — short/long-term variability ratio.
+                  {
+                    label: "Poincaré SD1/SD2 ratio",
+                    source: "Brennan / Tulppo 2001",
+                    compute: (b) => {
+                      const ibis = ibiSeriesFromHr(b);
+                      if (ibis.length < 30) return { status: "FAIL", reason: "need ≥30 IBIs" };
+                      const d = diffOf(ibis);
+                      const sd1 = stdOf(d) / Math.SQRT2;
+                      const sd2 = stdOf(ibis);
+                      if (sd2 < 1e-6) return { status: "WARN", reason: "SD2≈0 (HR locked / no variability)" };
+                      const ratio = sd1 / sd2;
+                      if (ratio >= 0.2 && ratio <= 0.8) return { status: "PASS", reason: `SD1/SD2=${ratio.toFixed(2)} (healthy)` };
+                      if (ratio < 0.05 || ratio > 1.5) return { status: "FAIL", reason: `SD1/SD2=${ratio.toFixed(2)} — unphysiological` };
+                      return { status: "WARN", reason: `SD1/SD2=${ratio.toFixed(2)} — outside typical band` };
+                    },
+                  },
+                  // BLE single-stall gap detector — largest inter-frame gap
+                  // in the window. Existing dropout check counts gaps;
+                  // this surfaces the single worst-case gap.
+                  {
+                    label: "BLE max inter-frame gap",
+                    source: "BLE supervision-timeout QA",
+                    compute: (b) => {
+                      if (b.length < 30) return { status: "FAIL", reason: "need ≥30 samples" };
+                      let mx = 0;
+                      for (let i = 1; i < b.length; i++) {
+                        const g = b[i].timestampMs - b[i - 1].timestampMs;
+                        if (g > mx) mx = g;
+                      }
+                      if (mx < 200) return { status: "PASS", reason: `max gap=${mx} ms` };
+                      if (mx < 500) return { status: "WARN", reason: `max gap=${mx} ms — sub-second stall` };
+                      return { status: "FAIL", reason: `max gap=${mx} ms — approaching supervision timeout` };
+                    },
+                  },
+                  // HR rail-stuck persistence — consecutive frames pinned
+                  // at the physiological floor or ceiling.
+                  {
+                    label: "HR rail-stuck persistence",
+                    source: "General PPG QA",
+                    compute: (b) => {
+                      const hrs = numericVals(b, (s) => s.pulseHrBpm);
+                      if (hrs.length < 30) return { status: "FAIL", reason: "need ≥30 HR samples" };
+                      let maxRun = 0, curRun = 0;
+                      for (const h of hrs) {
+                        if (h <= 36 || h >= 178) { curRun++; if (curRun > maxRun) maxRun = curRun; }
+                        else curRun = 0;
+                      }
+                      if (maxRun < 5) return { status: "PASS", reason: `max edge-run=${maxRun} frames` };
+                      if (maxRun < 30) return { status: "WARN", reason: `${maxRun} consecutive frames at edge — possible lost lock` };
+                      return { status: "FAIL", reason: `${maxRun} frames at edge (~${(maxRun / FPS).toFixed(1)} s) — sensor lock lost` };
+                    },
+                  },
+                  // pNN50 — % of successive IBI diffs > 50 ms.
+                  {
+                    label: "pNN50 sanity",
+                    source: "Task Force HRV 1996",
+                    compute: (b) => {
+                      const ibis = ibiSeriesFromHr(b);
+                      if (ibis.length < 30) return { status: "FAIL", reason: "need ≥30 IBIs" };
+                      let n = 0;
+                      for (let i = 1; i < ibis.length; i++) if (Math.abs(ibis[i] - ibis[i - 1]) > 50) n++;
+                      const pct = (n / (ibis.length - 1)) * 100;
+                      if (pct >= 1 && pct <= 60) return { status: "PASS", reason: `pNN50=${pct.toFixed(1)}%` };
+                      if (pct === 0) return { status: "WARN", reason: `pNN50=0% — HR too flat` };
+                      return { status: "WARN", reason: `pNN50=${pct.toFixed(1)}% — likely motion / ectopics` };
+                    },
+                  },
+                  // Reward responsivity — does the reward stream actually
+                  // move when HbO moves? The single most-clinical NF
+                  // pipeline integrity check.
+                  {
+                    label: "Reward ⟷ HbO responsivity",
+                    source: "NF engagement validity",
+                    compute: (b) => {
+                      const xs: number[] = []; const ys: number[] = [];
+                      for (const s of b) {
+                        const hbo = ((s.oxyHbLeft ?? 0) + (s.oxyHbRight ?? 0)) / 2;
+                        const rw = s.rewardScore;
+                        if (typeof rw === "number" && Number.isFinite(rw) && Number.isFinite(hbo)) {
+                          xs.push(hbo); ys.push(rw);
+                        }
+                      }
+                      if (xs.length < 30) return { status: "FAIL", reason: "need ≥30 paired samples" };
+                      const dx = diffOf(xs);
+                      const dy = diffOf(ys);
+                      const r = pearson(dx, dy);
+                      if (r == null) return { status: "FAIL", reason: "no responsivity computable" };
+                      const a = Math.abs(r);
+                      if (a >= 0.3) return { status: "PASS", reason: `|r|=${a.toFixed(2)} — reward tracks HbO` };
+                      if (a >= 0.1) return { status: "WARN", reason: `|r|=${a.toFixed(2)} — weak coupling` };
+                      return { status: "FAIL", reason: `|r|=${a.toFixed(2)} — reward decoupled from HbO!` };
+                    },
+                  },
+                  // Reward score rail-stuck persistence (0 or 100).
+                  {
+                    label: "Reward score saturation persistence",
+                    source: "NF engagement validity",
+                    compute: (b) => {
+                      const rs = numericVals(b, (s) => s.rewardScore);
+                      if (rs.length < 30) return { status: "FAIL", reason: "need ≥30 reward samples" };
+                      let maxRun = 0, curRun = 0;
+                      for (const v of rs) {
+                        if (v <= 0.5 || v >= 99.5) { curRun++; if (curRun > maxRun) maxRun = curRun; }
+                        else curRun = 0;
+                      }
+                      if (maxRun < 30) return { status: "PASS", reason: `max edge-run=${maxRun}` };
+                      if (maxRun < 90) return { status: "WARN", reason: `${maxRun} frames at edge — baseline drifting` };
+                      return { status: "FAIL", reason: `${maxRun} frames pinned at edge — baseline collapsed` };
+                    },
+                  },
+                  // Reward autocorrelation lag-1 — should be smooth, not
+                  // constant and not white.
+                  {
+                    label: "Reward autocorrelation (lag-1)",
+                    source: "NF dynamics sanity",
+                    compute: (b) => {
+                      const rs = numericVals(b, (s) => s.rewardScore);
+                      if (rs.length < 30) return { status: "FAIL", reason: "need ≥30 reward samples" };
+                      const r = autocorrLag(rs, 1);
+                      if (r == null) return { status: "FAIL", reason: "autocorr undefined" };
+                      if (r >= 0.5 && r <= 0.998) return { status: "PASS", reason: `r₁=${r.toFixed(3)}` };
+                      if (r > 0.998) return { status: "WARN", reason: `r₁=${r.toFixed(4)} — reward effectively constant` };
+                      return { status: "WARN", reason: `r₁=${r.toFixed(2)} — reward stream rougher than expected` };
+                    },
+                  },
+                  // Temperature drift slope — bands still equilibrating
+                  // thermally will produce non-physiological HbO drift.
+                  {
+                    label: "Temperature drift slope",
+                    source: "fNIRS warm-up QA",
+                    compute: (b) => {
+                      const ts = numericVals(b, (s) => s.temperatureC);
+                      if (ts.length < 30) return { status: "FAIL", reason: "need ≥30 temp samples" };
+                      const slope = linRegSlope(ts);
+                      if (slope == null) return { status: "FAIL", reason: "slope undefined" };
+                      const slopePerSec = slope * FPS;
+                      const a = Math.abs(slopePerSec);
+                      if (a < 0.05) return { status: "PASS", reason: `dT/dt=${slopePerSec.toFixed(3)} °C/s (equilibrated)` };
+                      if (a < 0.20) return { status: "WARN", reason: `dT/dt=${slopePerSec.toFixed(3)} °C/s — still warming` };
+                      return { status: "FAIL", reason: `dT/dt=${slopePerSec.toFixed(3)} °C/s — band recently donned` };
+                    },
+                  },
+                  // Accel gravity-vector check — at rest, accelMag should
+                  // be ≈ 1 g; deviation flags accelerometer miscal.
+                  {
+                    label: "Accel gravity vector at rest",
+                    source: "IMU calibration QA",
+                    compute: (b) => {
+                      // Restrict to samples where stillness > 80.
+                      const stills: number[] = []; const accs: number[] = [];
+                      for (const s of b) {
+                        if (typeof s.stillness === "number" && s.stillness > 80 && typeof s.accelMag === "number") {
+                          stills.push(s.stillness); accs.push(s.accelMag);
+                        }
+                      }
+                      if (accs.length < 20) return { status: "PASS", reason: "not enough still samples to assess" };
+                      const g = meanOf(accs);
+                      if (g >= 0.95 && g <= 1.05) return { status: "PASS", reason: `|a|=${g.toFixed(3)} g at rest` };
+                      if (g >= 0.85 && g <= 1.15) return { status: "WARN", reason: `|a|=${g.toFixed(3)} g — minor accel offset` };
+                      return { status: "FAIL", reason: `|a|=${g.toFixed(3)} g — accel out of calibration` };
+                    },
+                  },
+                  // Head-tilt orientation — atan2(accelX, accelZ) when
+                  // still. Sustained large tilt = band askew.
+                  {
+                    label: "Head-tilt orientation (at rest)",
+                    source: "IMU posture QA",
+                    compute: (b) => {
+                      const tilts: number[] = [];
+                      for (const s of b) {
+                        if (typeof s.stillness === "number" && s.stillness > 80
+                            && typeof s.accelX === "number" && typeof s.accelZ === "number") {
+                          tilts.push(Math.atan2(s.accelX, s.accelZ) * 180 / Math.PI);
+                        }
+                      }
+                      if (tilts.length < 20) return { status: "PASS", reason: "not enough still samples to assess" };
+                      const t = meanOf(tilts);
+                      const a = Math.abs(t);
+                      if (a < 15) return { status: "PASS", reason: `tilt=${t.toFixed(0)}° (level)` };
+                      if (a < 30) return { status: "WARN", reason: `tilt=${t.toFixed(0)}° — slightly tipped` };
+                      return { status: "FAIL", reason: `tilt=${t.toFixed(0)}° — band mounted askew` };
+                    },
+                  },
+                  // Ambient light ↔ signal-quality coupling — strongly
+                  // negative r → ambient is degrading signal.
+                  {
+                    label: "Ambient ⟷ signalQuality coupling",
+                    source: "Brigadoi 2014 ambient contamination",
+                    compute: (b) => {
+                      const { xs, ys } = pluckPairs(b, (s) => s.ambientLevel, (s) => s.signalQualityP);
+                      const r = pearson(xs, ys);
+                      if (r == null) return { status: "FAIL", reason: "no paired ambient/SQP samples" };
+                      if (r > -0.3) return { status: "PASS", reason: `r=${r.toFixed(2)} (ambient compensation working)` };
+                      if (r > -0.6) return { status: "WARN", reason: `r=${r.toFixed(2)} — ambient degrading signal` };
+                      return { status: "FAIL", reason: `r=${r.toFixed(2)} — ambient overwhelming optode` };
+                    },
+                  },
+
+                  // ═════════════════════════════════════════════════════
+                  // TIER 2 — medium effort, deeper physiology / transport
+                  // ═════════════════════════════════════════════════════
+
+                  // HbO ↔ HR low-freq coupling. Persistent strong r = HbO
+                  // signal is dominated by cardiac contamination.
+                  {
+                    label: "HbO ⟷ HR coupling (vasomotor)",
+                    source: "Yücel 2021 best-practices",
+                    compute: (b) => {
+                      const xs: number[] = []; const ys: number[] = [];
+                      for (const s of b) {
+                        const hbo = ((s.oxyHbLeft ?? 0) + (s.oxyHbRight ?? 0)) / 2;
+                        const hr = s.pulseHrBpm;
+                        if (typeof hr === "number" && Number.isFinite(hr) && Number.isFinite(hbo)) {
+                          xs.push(hbo); ys.push(hr);
+                        }
+                      }
+                      if (xs.length < 30) return { status: "FAIL", reason: "need ≥30 paired HbO/HR samples" };
+                      const r = pearson(xs, ys);
+                      if (r == null) return { status: "FAIL", reason: "coupling undefined" };
+                      const a = Math.abs(r);
+                      if (a < 0.5) return { status: "PASS", reason: `|r|=${a.toFixed(2)} (mild coupling)` };
+                      if (a < 0.8) return { status: "WARN", reason: `|r|=${a.toFixed(2)} — strong cardiac coupling` };
+                      return { status: "WARN", reason: `|r|=${a.toFixed(2)} — HbO dominated by cardiac signal` };
+                    },
+                  },
+                  // Mayer-wave band power at 0.1 Hz — advisory only on
+                  // 10-second buffer (only 1 Mayer cycle captured), so
+                  // never FAIL; surface as informational metric.
+                  {
+                    label: "Mayer-wave band power (0.1 Hz, HbO L)",
+                    source: "Yücel 2016 / Pinti 2021",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.oxyHbLeft);
+                      if (xs.length < 100) return { status: "PASS", reason: "buffer too short for Mayer estimate" };
+                      const pw = goertzel(xs, 0.1 / FPS);
+                      const total = varOf(xs) * xs.length;
+                      const ratio = total > 0 ? pw / total : 0;
+                      if (ratio < 0.30) return { status: "PASS", reason: `Mayer/var=${(ratio * 100).toFixed(0)}%` };
+                      return { status: "WARN", reason: `Mayer/var=${(ratio * 100).toFixed(0)}% — strong 0.1 Hz contamination` };
+                    },
+                  },
+                  // Respiration band power (~0.25 Hz) on pulse PPG.
+                  {
+                    label: "Respiration band power (PPG, 0.25 Hz)",
+                    source: "Scholkmann 2019",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.pulsePpg);
+                      if (xs.length < 60) return { status: "FAIL", reason: "need ≥60 pulse samples" };
+                      const pw = goertzel(xs, 0.25 / FPS);
+                      const total = varOf(xs) * xs.length;
+                      const ratio = total > 0 ? pw / total : 0;
+                      if (ratio >= 0.005) return { status: "PASS", reason: `resp/var=${(ratio * 100).toFixed(1)}% (modulation present)` };
+                      return { status: "PASS", reason: `resp/var=${(ratio * 100).toFixed(2)}% — minimal RSA` };
+                    },
+                  },
+                  // TDDR-style spike detector (without applying correction):
+                  // mark frames whose Δ exceeds median(|Δ|) by ≥ k MADs.
+                  {
+                    label: "TDDR spike-rate detector (HbO L)",
+                    source: "Fishburn 2019 (TDDR)",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.oxyHbLeft);
+                      if (xs.length < 60) return { status: "FAIL", reason: "need ≥60 HbO samples" };
+                      const d = diffOf(xs).map(Math.abs);
+                      const mm = medianMad(d);
+                      if (!mm || mm.mad < 1e-9) return { status: "PASS", reason: "Δ near constant" };
+                      const k = 5; const thr = mm.median + k * 1.4826 * mm.mad;
+                      let n = 0;
+                      for (const v of d) if (v > thr) n++;
+                      const frac = n / d.length;
+                      if (frac <= 0.02) return { status: "PASS", reason: `${n} spikes (${(frac * 100).toFixed(1)}%)` };
+                      if (frac <= 0.10) return { status: "WARN", reason: `${n} spikes (${(frac * 100).toFixed(1)}%) — moderate motion` };
+                      return { status: "FAIL", reason: `${n} spikes (${(frac * 100).toFixed(1)}%) — many MA candidates` };
+                    },
+                  },
+                  // Cooper/Molavi wavelet-MA proxy: count frames where a
+                  // local-window std exceeds k× the global std.
+                  {
+                    label: "MA flagger (window-std spikes, HbO L)",
+                    source: "Cooper 2012 / Molavi 2012 (proxy)",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.oxyHbLeft);
+                      if (xs.length < 60) return { status: "FAIL", reason: "need ≥60 HbO samples" };
+                      const gStd = stdOf(xs);
+                      if (gStd < 1e-9) return { status: "PASS", reason: "σ≈0 — signal flat" };
+                      const W = 8;
+                      let spikes = 0;
+                      for (let i = W; i < xs.length; i++) {
+                        const w = xs.slice(i - W, i);
+                        if (stdOf(w) > 3 * gStd) spikes++;
+                      }
+                      const frac = spikes / Math.max(1, xs.length - W);
+                      if (frac <= 0.05) return { status: "PASS", reason: `${spikes} MA windows (${(frac * 100).toFixed(1)}%)` };
+                      if (frac <= 0.15) return { status: "WARN", reason: `${spikes} MA windows (${(frac * 100).toFixed(1)}%)` };
+                      return { status: "FAIL", reason: `${spikes} MA windows (${(frac * 100).toFixed(1)}%) — heavy artifact` };
+                    },
+                  },
+                  // Homer3 SNR — channel viability proxy.
+                  {
+                    label: "Homer3 SNR (HbO L)",
+                    source: "Homer3 hmrR_PruneChannels",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.oxyHbLeft);
+                      if (xs.length < 30) return { status: "FAIL", reason: "need ≥30 HbO samples" };
+                      const m = Math.abs(meanOf(xs));
+                      const s = stdOf(xs);
+                      if (s < 1e-9) return { status: "WARN", reason: "σ≈0 — channel flat" };
+                      const snr = m / s;
+                      if (snr >= 1.5) return { status: "PASS", reason: `SNR=${snr.toFixed(2)}` };
+                      if (snr >= 0.5) return { status: "PASS", reason: `SNR=${snr.toFixed(2)} (acceptable)` };
+                      return { status: "WARN", reason: `SNR=${snr.toFixed(2)} — noisy channel` };
+                    },
+                  },
+                  {
+                    label: "Homer3 SNR (HbO R)",
+                    source: "Homer3 hmrR_PruneChannels",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.oxyHbRight);
+                      if (xs.length < 30) return { status: "FAIL", reason: "need ≥30 HbO samples" };
+                      const m = Math.abs(meanOf(xs));
+                      const s = stdOf(xs);
+                      if (s < 1e-9) return { status: "WARN", reason: "σ≈0 — channel flat" };
+                      const snr = m / s;
+                      if (snr >= 1.5) return { status: "PASS", reason: `SNR=${snr.toFixed(2)}` };
+                      if (snr >= 0.5) return { status: "PASS", reason: `SNR=${snr.toFixed(2)} (acceptable)` };
+                      return { status: "WARN", reason: `SNR=${snr.toFixed(2)} — noisy channel` };
+                    },
+                  },
+                  // L/R HbO power-asymmetry index.
+                  {
+                    label: "L/R HbO power-asymmetry",
+                    source: "Bilateral-fit symmetry",
+                    compute: (b) => {
+                      const L = numericVals(b, (s) => s.oxyHbLeft);
+                      const R = numericVals(b, (s) => s.oxyHbRight);
+                      if (L.length < 30 || R.length < 30) return { status: "FAIL", reason: "need ≥30 samples per side" };
+                      const vL = varOf(L); const vR = varOf(R);
+                      if (vL + vR < 1e-9) return { status: "WARN", reason: "var≈0 both sides" };
+                      const idx = (vL - vR) / (vL + vR);
+                      const a = Math.abs(idx);
+                      if (a <= 0.3) return { status: "PASS", reason: `idx=${idx.toFixed(2)}` };
+                      if (a <= 0.6) return { status: "WARN", reason: `idx=${idx.toFixed(2)} — asymmetric coupling` };
+                      return { status: "WARN", reason: `idx=${idx.toFixed(2)} — strongly asymmetric — one optode loose` };
+                    },
+                  },
+                  // Lag-1 autocorr whiteness on HbO L.
+                  {
+                    label: "HbO L whiteness (lag-1 autocorr)",
+                    source: "Ljung-Box / general TS",
+                    compute: (b) => {
+                      const xs = numericVals(b, (s) => s.oxyHbLeft);
+                      if (xs.length < 30) return { status: "FAIL", reason: "need ≥30 HbO samples" };
+                      const r = autocorrLag(xs, 1);
+                      if (r == null) return { status: "FAIL", reason: "autocorr undefined" };
+                      if (r >= 0.6 && r <= 0.999) return { status: "PASS", reason: `r₁=${r.toFixed(3)}` };
+                      if (r > 0.999) return { status: "WARN", reason: `r₁=${r.toFixed(4)} — channel flat` };
+                      return { status: "WARN", reason: `r₁=${r.toFixed(2)} — white-noise-like (decoder?)` };
+                    },
+                  },
+                  // log(IBI) skewness — healthy IBI distribution is log-normal.
+                  {
+                    label: "log(IBI) skewness",
+                    source: "IBI distribution literature",
+                    compute: (b) => {
+                      const ibis = ibiSeriesFromHr(b);
+                      if (ibis.length < 30) return { status: "FAIL", reason: "need ≥30 IBIs" };
+                      const log = ibis.map(Math.log);
+                      const sk = skewOf(log);
+                      if (sk == null) return { status: "FAIL", reason: "skew undefined" };
+                      const a = Math.abs(sk);
+                      if (a <= 1) return { status: "PASS", reason: `skew(log(IBI))=${sk.toFixed(2)}` };
+                      if (a <= 2) return { status: "WARN", reason: `skew(log(IBI))=${sk.toFixed(2)}` };
+                      return { status: "WARN", reason: `skew(log(IBI))=${sk.toFixed(2)} — heavy-tailed (ectopic-laden)` };
+                    },
+                  },
+                  // Motion-Artifact Ratio — Pearson²(HbO_mean, accelMag).
+                  // Explicit "how much HbO variance is explained by motion".
+                  {
+                    label: "MAR — HbO² ↔ accel correlation",
+                    source: "Metz / Wolf 2015",
+                    compute: (b) => {
+                      const xs: number[] = []; const ys: number[] = [];
+                      for (const s of b) {
+                        const hbo = ((s.oxyHbLeft ?? 0) + (s.oxyHbRight ?? 0)) / 2;
+                        if (typeof s.accelMag === "number" && Number.isFinite(hbo)) {
+                          xs.push(hbo); ys.push(s.accelMag);
+                        }
+                      }
+                      if (xs.length < 30) return { status: "FAIL", reason: "need ≥30 paired samples" };
+                      const r = pearson(xs, ys);
+                      if (r == null) return { status: "FAIL", reason: "MAR undefined" };
+                      const r2 = r * r;
+                      if (r2 <= 0.1) return { status: "PASS", reason: `r²=${r2.toFixed(2)} (motion-clean)` };
+                      if (r2 <= 0.3) return { status: "WARN", reason: `r²=${r2.toFixed(2)} — partial motion contamination` };
+                      return { status: "FAIL", reason: `r²=${r2.toFixed(2)} — HbO largely motion-driven` };
+                    },
+                  },
+                  // Free-fall / impact spike detector.
+                  {
+                    label: "Free-fall / impact spike count",
+                    source: "Accelerometer practice",
+                    compute: (b) => {
+                      const acs = numericVals(b, (s) => s.accelMag);
+                      if (acs.length < 30) return { status: "FAIL", reason: "need ≥30 accel samples" };
+                      let ff = 0, impact = 0;
+                      for (const a of acs) {
+                        if (a < 0.3) ff++;
+                        else if (a > 3.0) impact++;
+                      }
+                      const total = ff + impact;
+                      if (total === 0) return { status: "PASS", reason: "no FF/impact events" };
+                      if (total <= 1) return { status: "WARN", reason: `${ff} free-fall + ${impact} impact frames` };
+                      return { status: "FAIL", reason: `${ff} free-fall + ${impact} impact frames — band may have dropped/knocked` };
+                    },
+                  },
+                  // Reward distribution health.
+                  {
+                    label: "Reward distribution health",
+                    source: "NF design heuristic",
+                    compute: (b) => {
+                      const rs = numericVals(b, (s) => s.rewardScore);
+                      if (rs.length < 30) return { status: "FAIL", reason: "need ≥30 reward samples" };
+                      const m = meanOf(rs);
+                      const range = Math.max(...rs) - Math.min(...rs);
+                      if (range >= 20 && m >= 30 && m <= 70) return { status: "PASS", reason: `mean=${m.toFixed(0)} · range=${range.toFixed(0)}` };
+                      if (range < 5) return { status: "FAIL", reason: `range=${range.toFixed(1)} — reward almost constant` };
+                      return { status: "WARN", reason: `mean=${m.toFixed(0)} · range=${range.toFixed(0)} — outside healthy NF band` };
+                    },
+                  },
+                  // Postural sway band — Goertzel at 0.5 Hz on accelMag.
+                  {
+                    label: "Postural sway power (0.5 Hz on accel)",
+                    source: "Posturography literature",
+                    compute: (b) => {
+                      const acs = numericVals(b, (s) => s.accelMag);
+                      if (acs.length < 60) return { status: "FAIL", reason: "need ≥60 accel samples" };
+                      const pw = goertzel(acs, 0.5 / FPS);
+                      const total = varOf(acs) * acs.length;
+                      const ratio = total > 0 ? pw / total : 0;
+                      if (ratio < 0.10) return { status: "PASS", reason: `sway/var=${(ratio * 100).toFixed(1)}%` };
+                      if (ratio < 0.30) return { status: "WARN", reason: `sway/var=${(ratio * 100).toFixed(0)}% — moderate sway` };
+                      return { status: "WARN", reason: `sway/var=${(ratio * 100).toFixed(0)}% — heavy postural sway` };
+                    },
+                  },
+                  // Pulse vs accel energy session-class — single composite
+                  // "clean session" metric.
+                  {
+                    label: "Pulse / accel energy session-class",
+                    source: "General signal-energy QA",
+                    compute: (b) => {
+                      const ppg = numericVals(b, (s) => s.pulsePpg);
+                      const acs = numericVals(b, (s) => s.accelMag);
+                      if (ppg.length < 30 || acs.length < 30) return { status: "FAIL", reason: "need ≥30 paired samples" };
+                      let pE = 0; for (const v of ppg) pE += v * v;
+                      let aE = 0; for (const v of acs) aE += (v - 1) * (v - 1);
+                      const ratio = aE > 1e-9 ? pE / aE : Infinity;
+                      if (ratio >= 5) return { status: "PASS", reason: `pulse/accel E=${ratio.toExponential(2)} (clean)` };
+                      if (ratio >= 1) return { status: "WARN", reason: `pulse/accel E=${ratio.toFixed(2)} — motion-mixed` };
+                      return { status: "FAIL", reason: `pulse/accel E=${ratio.toFixed(2)} — motion-dominated session` };
+                    },
+                  },
                 ];
                 const physResults = physChecks.map((p) => ({ check: p, result: p.compute(buf) }));
 
@@ -2659,27 +3459,63 @@ export default function DemoClient({
                   "── Physiology / signal-quality checks ──",
                   ...physRows,
                 ];
-                // Composite Recording Quality Score (RQS) — a single 0–1
-                // number rolling up the most clinically meaningful SQIs.
-                // Inspired by the recording-acceptable composite from the
-                // research pass; weights chosen so any one severe failure
-                // moves the score noticeably but no single check dominates.
-                const totalChecks = counts.PASS + counts.WARN + counts.FAIL;
-                const passFrac = totalChecks > 0 ? counts.PASS / totalChecks : 0;
-                const warnPenalty = totalChecks > 0 ? counts.WARN / totalChecks * 0.5 : 0;
-                const failPenalty = totalChecks > 0 ? counts.FAIL / totalChecks * 1.0 : 0;
-                const rqs = Math.max(0, Math.min(1, passFrac + (1 - passFrac) - warnPenalty - failPenalty));
+                // Composite Pollonini-style "session usability" gate.
+                // Replaces the previous flat PASS/WARN/FAIL fraction with
+                // a weighted score over the most clinically meaningful
+                // SQIs. Mirrors the Pollonini/PHOEBE 2016 binarisation
+                // convention (≥ 75% good frames per channel = USABLE).
+                //
+                // Each contributing check gets a weight (1–3); a PASS
+                // earns full weight, a WARN half, FAIL zero. Score is
+                // (sum earned / sum max-weight) × 100.
+                const RQS_WEIGHTS: Record<string, number> = {
+                  // Pollonini-style coupling
+                  "SCI — cardiac-coupling (HbO L)": 3,
+                  "SCI — cardiac-coupling (HbO R)": 3,
+                  "PSP — cardiac band power (HbO L)": 2,
+                  // PPG signal quality (Elgendi)
+                  "PPG skewness SQI": 2,
+                  "PPG kurtosis SQI": 1,
+                  // Motion
+                  "GVTD-lite head motion detector": 2,
+                  "MAR — HbO² ↔ accel correlation": 2,
+                  "TDDR spike-rate detector (HbO L)": 1,
+                  "MA flagger (window-std spikes, HbO L)": 1,
+                  // Outlier robustness
+                  "HbO L Hampel outlier rate": 1,
+                  "HbO R Hampel outlier rate": 1,
+                  // Drift / fit
+                  "L/R HbO drift-slope symmetry": 1,
+                  "L/R HbO power-asymmetry": 1,
+                  // Transport
+                  "Stream freshness (time-since-last-frame)": 1,
+                  "BLE max inter-frame gap": 1,
+                  // Perfusion / pulse
+                  "Perfusion index (proxy)": 2,
+                  // Pipeline integrity
+                  "Reward ⟷ HbO responsivity": 2,
+                };
+                let earned = 0; let totalWeight = 0;
+                for (const r of physResults) {
+                  const w = RQS_WEIGHTS[r.check.label];
+                  if (!w) continue;
+                  totalWeight += w;
+                  if (r.result.status === "PASS") earned += w;
+                  else if (r.result.status === "WARN") earned += w * 0.5;
+                }
+                const rqs = totalWeight > 0 ? earned / totalWeight : 0;
                 const rqsPct = Math.round(rqs * 100);
+                // Labels follow Pollonini binarisation: ≥ 80 USABLE (good
+                // for clinical recording), 50–80 MARGINAL (acceptable for
+                // research / consumer NF), < 50 REJECT.
                 const rqsLabel =
-                  rqs >= 0.85 ? "EXCELLENT" :
-                  rqs >= 0.70 ? "ACCEPTABLE" :
-                  rqs >= 0.50 ? "MARGINAL" : "UNUSABLE";
+                  rqs >= 0.80 ? "USABLE" :
+                  rqs >= 0.50 ? "MARGINAL" : "REJECT";
                 const rqsColor =
-                  rqs >= 0.85 ? "#34D399" :
-                  rqs >= 0.70 ? "#A7F3D0" :
+                  rqs >= 0.80 ? "#34D399" :
                   rqs >= 0.50 ? "#FBBF24" : "#F87171";
                 const fullText = `Widget test report · ${buf.length} samples · refresh #${mendiStatsTick}\n` +
-                  `Recording Quality Score: ${rqsPct}/100 (${rqsLabel})\n` +
+                  `Session Quality Index (Pollonini-style): ${rqsPct}/100 (${rqsLabel})\n` +
                   `${counts.PASS} PASS · ${counts.WARN} WARN · ${counts.FAIL} FAIL · ${counts["N/A"]} N/A\n\n${rows.join("\n")}`;
                 return (
                   <div style={{
@@ -2690,7 +3526,7 @@ export default function DemoClient({
                   }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, flexWrap: "wrap", gap: 8 }}>
                       <span style={{ color: "#94A3B8", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", fontSize: 10 }}>
-                        Widget test report · RQS{" "}
+                        Widget test report · SQI{" "}
                         <span style={{ color: rqsColor, fontWeight: 800 }}>{rqsPct}/100 {rqsLabel}</span> ·{" "}
                         <span style={{ color: "#34D399" }}>{counts.PASS} PASS</span> ·{" "}
                         <span style={{ color: "#FBBF24" }}>{counts.WARN} WARN</span> ·{" "}
