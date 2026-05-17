@@ -211,35 +211,17 @@ export class MendiAdapter implements DeviceAdapter {
         }
       }
 
-      // ── 4. Write Calibration to ABB6 ──────────────────────────────────
-      // Full {offset_l:0, offset_r:0, offset_p:0, enable:true,
-      // low_power_mode:false} payload — explicit-all-fields. V4 firmware
-      // appears to silently accept the proto3-minimal form without engaging
-      // streaming, so we mirror the eugenehp CLI `c` command's literal
-      // call site shape. Don't gate on `properties.write` — V4 misreports
-      // it sometimes (same as Diagnostics).
-      if (calibChar) {
-        const calibPayload = MENDI_ENABLE_CALIBRATION_BYTES as unknown as BufferSource;
-        try {
-          await calibChar.writeValueWithResponse(calibPayload);
-          console.info("[Mendi] calibration enable write OK (withResponse, full payload)");
-        } catch (errC) {
-          console.warn("[Mendi] calibration writeWithResponse failed; trying withoutResponse:", errC);
-          try {
-            await calibChar.writeValueWithoutResponse(calibPayload);
-            console.info("[Mendi] calibration enable write OK (withoutResponse, full payload)");
-          } catch (errC2) {
-            console.warn("[Mendi] calibration enable write failed entirely:", errC2);
-          }
-        }
-      }
-
-      // Settling delay so the device can process the calibration
-      // command before we issue the sensor enable. The previous 200 ms
-      // appeared too aggressive — the device stopped ACKing subsequent
-      // writes. 1 second matches the cadence of eugenehp's interactive
-      // CLI (human keystrokes between `c` and `e`).
-      await new Promise((r) => setTimeout(r, 1000));
+      // ── 4. Calibration write — DISABLED for this firmware ────────────
+      // Empirical: adding the Calibration write to the handshake makes
+      // this V4 firmware revision go completely silent (0 sensor ACKs,
+      // 0 frames). Without it, the same device produces a sensor ACK to
+      // the enable_sensor write. So the Calibration write is actively
+      // interfering — opposite of what the eugenehp/mendi reference
+      // suggests. Skip it. The characteristic was still acquired and
+      // notification-subscribed above so we'll see any calibration
+      // events the device emits independently.
+      void calibChar; // intentionally unused for now
+      void MENDI_ENABLE_CALIBRATION_BYTES;
 
       // ── 5. Write Sensor{read:true,address:0,data:0} to ABB2 ───────────
       const sensorPayload = MENDI_ENABLE_SENSOR_BYTES as unknown as BufferSource;
