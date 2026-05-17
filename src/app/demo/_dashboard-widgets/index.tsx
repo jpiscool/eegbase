@@ -2465,9 +2465,11 @@ interface ConnectDeviceModalProps {
   onClose: () => void;
   pairedIds: string[];
   onPair: (id: string) => void;
+  /** Forget a saved device — drops it from the paired list. */
+  onUnpair?: (id: string) => void;
 }
 
-export function ConnectDeviceModal({ open, onClose, pairedIds, onPair }: ConnectDeviceModalProps) {
+export function ConnectDeviceModal({ open, onClose, pairedIds, onPair, onUnpair }: ConnectDeviceModalProps) {
   const [scanning, setScanning] = useState(false);
 
   // Trigger a brief "scanning…" animation on open, then reveal the device list.
@@ -2543,7 +2545,14 @@ export function ConnectDeviceModal({ open, onClose, pairedIds, onPair }: Connect
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ fontSize: 13, fontWeight: 700, color: COLORS.ink }}>{d.name}</span>
-                  {paired && <span style={{ marginLeft: "auto", fontSize: 9, color: COLORS.ok, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", padding: "2px 6px", background: "rgba(16,185,129,0.15)", borderRadius: 99 }}>Paired ✓</span>}
+                  {paired && (
+                    <span
+                      title="This device is remembered from a previous pairing. It is NOT necessarily connected right now — re-tap Connect to start a live session."
+                      style={{ marginLeft: "auto", fontSize: 9, color: COLORS.ok, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", padding: "2px 6px", background: "rgba(16,185,129,0.15)", borderRadius: 99 }}
+                    >
+                      Saved
+                    </span>
+                  )}
                 </div>
                 <div style={{ fontSize: 10, color: COLORS.muted, fontFamily: NUM, letterSpacing: "0.04em" }}>
                   {d.vendor} · {d.modality} · {d.spec}
@@ -2552,15 +2561,26 @@ export function ConnectDeviceModal({ open, onClose, pairedIds, onPair }: Connect
                   {d.blurb}
                 </div>
                 {!scanning && (
-                  <button
-                    onClick={() => onPair(d.id)}
-                    style={{ marginTop: 4, padding: "6px 12px", background: COLORS.blue, color: "#0F172A", border: "none", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer", alignSelf: "flex-start" }}
-                    title={paired
-                      ? "Re-open the browser's Bluetooth chooser and reconnect for a fresh session."
-                      : "Pair this device for the first time."}
-                  >
-                    {paired ? "Connect →" : "Pair →"}
-                  </button>
+                  <div style={{ marginTop: 4, display: "flex", gap: 6, alignItems: "center" }}>
+                    <button
+                      onClick={() => onPair(d.id)}
+                      style={{ padding: "6px 12px", background: COLORS.blue, color: "#0F172A", border: "none", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer" }}
+                      title={paired
+                        ? "Re-open the browser's Bluetooth chooser and reconnect for a fresh session."
+                        : "Pair this device for the first time."}
+                    >
+                      {paired ? "Connect →" : "Pair →"}
+                    </button>
+                    {paired && onUnpair && (
+                      <button
+                        onClick={() => onUnpair(d.id)}
+                        style={{ padding: "6px 10px", background: "transparent", color: COLORS.muted, border: "1px solid #334155", borderRadius: 8, fontSize: 10, fontWeight: 600, cursor: "pointer" }}
+                        title="Forget this device — drops it from the saved list."
+                      >
+                        Unpair
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             );

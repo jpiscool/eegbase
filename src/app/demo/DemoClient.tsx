@@ -1923,22 +1923,48 @@ export default function DemoClient({
               open={connectDeviceOpen}
               onClose={() => setConnectDeviceOpen(false)}
               pairedIds={devices.pairedIds}
-              onPair={(id) => {
-                devices.setPairedIds((prev) => prev.includes(id) ? prev : [...prev, id]);
+              onUnpair={(id) => {
+                devices.setPairedIds((prev) => prev.filter((x) => x !== id));
                 const d = DEVICE_REGISTRY.find((x) => x.id === id);
-                if (d) showToast(`Paired: ${d.name}`);
+                if (d) showToast(`Unpaired: ${d.name}`);
+              }}
+              onPair={async (id) => {
+                const d = DEVICE_REGISTRY.find((x) => x.id === id);
                 setConnectDeviceOpen(false);
-                // For Mendi specifically, kick the live BLE-bridge connection
-                // so the dashboard switches from simulator data to real fNIRS
-                // frames. For Muse, open the Web Bluetooth chooser via the
-                // direct MuseAdapter.connect() path. Other devices stay
-                // simulator-fed until their adapters land.
+                // For real BLE devices we ONLY mark them "paired" after the
+                // Web Bluetooth handshake actually succeeds. Otherwise the
+                // badge would lie: it would say "Paired ✓" even when the
+                // device is off, never reachable, or the chooser was
+                // dismissed. Stub devices (Oura, Apple Watch — no adapter
+                // yet) get marked paired immediately since there's nothing
+                // to verify.
                 if (id === "mendi") {
-                  showToast("Starting Mendi bridge connection…");
-                  void switchLiveSource("mendi");
+                  showToast("Opening Bluetooth chooser…");
+                  await switchLiveSource("mendi");
+                  const ok = adapterRef.current instanceof MendiAdapter
+                    && (adapterRef.current as MendiAdapter).isConnected();
+                  if (ok) {
+                    devices.setPairedIds((prev) => prev.includes(id) ? prev : [...prev, id]);
+                    if (d) showToast(`Paired: ${d.name}`);
+                  } else if (d) {
+                    showToast(`Could not pair ${d.name} — see console for details.`);
+                  }
                 } else if (id === "muse2" || id === "muse-s") {
-                  showToast("Opening Muse pairing chooser…");
-                  void switchLiveSource("muse");
+                  showToast("Opening Bluetooth chooser…");
+                  await switchLiveSource("muse");
+                  // MuseAdapter exposes isConnected() via the shared
+                  // DeviceAdapter contract.
+                  const ok = !!adapterRef.current && adapterRef.current.deviceType === "muse";
+                  if (ok) {
+                    devices.setPairedIds((prev) => prev.includes(id) ? prev : [...prev, id]);
+                    if (d) showToast(`Paired: ${d.name}`);
+                  } else if (d) {
+                    showToast(`Could not pair ${d.name} — see console for details.`);
+                  }
+                } else {
+                  // Stub vendor — no live adapter, just remember it.
+                  devices.setPairedIds((prev) => prev.includes(id) ? prev : [...prev, id]);
+                  if (d) showToast(`Paired: ${d.name}`);
                 }
               }}
             />
