@@ -61,16 +61,32 @@ const MENDI_CALIBRATION_CHAR_UUID = "fc3eabb6-c6c4-49e6-922a-6e551c455af5"; // w
 // Legacy alias retained so other modules importing the name still compile.
 const MENDI_FNIRS_CHAR_UUID = MENDI_FRAME_CHAR_UUID;
 
-// `Sensor{read:true}` — canonical proto3 minimal form. prost (the Rust
-// protobuf encoder eugenehp/mendi uses) omits default-valued fields, so
-// the actual bytes eugenehp writes are just `08 01` (2 bytes), not the
-// 6-byte form we'd been sending.
-const MENDI_ENABLE_SENSOR_BYTES = new Uint8Array([0x08, 0x01]);
-// `Calibration{enable:true}` — also minimal form. eugenehp's CLI `c`
-// command calls write_calibration(0.0, 0.0, 0.0, true, false); every field
-// except `enable` is at its default so only field 4 survives prost
-// encoding → `20 01` (2 bytes).
+// `Sensor{address: 30, data: 256}` — the REAL V4 firmware 1.0.2 streaming
+// trigger, reverse-engineered from a PacketLogger capture of the official
+// Mendi iOS app on 2026-05-15. Writes value 256 to internal register 30
+// of the optical front-end. Frame notifications begin within ~80 ms and
+// stream at ~31 fps for the duration of the session.
+//
+// Wire bytes:
+//   10 1e             — field 2 (address, uint32 varint) = 30 (0x1e)
+//   1d 00 01 00 00    — field 3 (data, fixed32 LE)       = 256 (0x00000100)
+//
+// `read` (field 1) is omitted → defaults to false, so this is a WRITE
+// to a control register, NOT a read poll. The eugenehp/mendi reference's
+// `Sensor{read:true, address:0}` (`08 01`) does not engage streaming on
+// this firmware — empirically it returns a single ACK frame and stops.
+const MENDI_ENABLE_SENSOR_BYTES = new Uint8Array([0x10, 0x1e, 0x1d, 0x00, 0x01, 0x00, 0x00]);
+// `Sensor{address: 30}` — stop streaming. Same address, data field omitted
+// (defaults to 0) tells the device to disable register 30. Sent by the
+// official app at session end. Currently unused (no stop-session UI yet).
+const MENDI_DISABLE_SENSOR_BYTES = new Uint8Array([0x10, 0x1e]);
+void MENDI_DISABLE_SENSOR_BYTES; // pending stop-session wiring
+// Calibration enable write. The official iOS app does NOT send a
+// Calibration write during the streaming start (confirmed via the same
+// PacketLogger capture). Kept here for a hypothetical future use case
+// that needs to engage auto-calibration explicitly.
 const MENDI_ENABLE_CALIBRATION_BYTES = new Uint8Array([0x20, 0x01]);
+void MENDI_ENABLE_CALIBRATION_BYTES; // intentionally NOT written during connect
 
 // Standard BLE Device Information service + Firmware/Hardware Revision
 // characteristics. eugenehp's setup() reads BOTH before touching the
@@ -280,31 +296,14 @@ export class MendiAdapter implements DeviceAdapter {
         }
       }
 
-      // ── 4. Write Calibration{enable:true} to ABB6 ────────────────────
-      // Canonical 2-byte payload `20 01` (only field 4 enable=true; all
-      // other fields default to 0/false and prost omits them).
-      //
-      // First single Frame frame already arrived from just the
-      // enable_sensor write — Calibration is what unlocks CONTINUOUS
-      // streaming. eugenehp's CLI calls both `c` then `e` for this
-      // reason. Our earlier "Calibration breaks streaming" observation
-      // was actually caused by the wrong 19-byte explicit-fields
-      // payload — the canonical short form is fine.
-      if (calibChar) {
-        const calibPayload = MENDI_ENABLE_CALIBRATION_BYTES as unknown as BufferSource;
-        try {
-          await calibChar.writeValueWithResponse(calibPayload);
-          console.info("[Mendi] calibration enable write OK (withResponse, canonical 2-byte payload)");
-        } catch (errC) {
-          console.warn("[Mendi] calibration writeWithResponse failed; trying withoutResponse:", errC);
-          try {
-            await calibChar.writeValueWithoutResponse(calibPayload);
-            console.info("[Mendi] calibration enable write OK (withoutResponse, canonical 2-byte payload)");
-          } catch (errC2) {
-            console.warn("[Mendi] calibration enable write failed entirely:", errC2);
-          }
-        }
-      }
+      // ── 4. Calibration write — NOT done by the official iOS app ─────
+      // PacketLogger capture of the V4 firmware 1.0.2 official iOS app
+      // (2026-05-15) shows zero writes to the Calibration characteristic
+      // during the streaming-start sequence. The streaming trigger is
+      // the single Sensor write (step 5 below). We keep the Calibration
+      // char subscribed so we'll catch any spontaneous calibration
+      // events, but don't issue a write here.
+      void calibChar; // kept for cleanup; intentionally not written
 
       // Settling delay so the device can process the calibration
       // command before we issue the sensor enable.
