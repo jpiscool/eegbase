@@ -201,7 +201,17 @@ export class MendiAdapter implements DeviceAdapter {
       let diagChar: BluetoothRemoteGATTCharacteristic | null = null;
       try { adcChar = await service.getCharacteristic(MENDI_ADC_CHAR_UUID); console.info("[Mendi] adc characteristic acquired"); } catch (e) { console.warn("[Mendi] adc characteristic missing:", e); }
       try { calibChar = await service.getCharacteristic(MENDI_CALIBRATION_CHAR_UUID); console.info("[Mendi] calibration characteristic acquired"); } catch (e) { console.warn("[Mendi] calibration characteristic missing:", e); }
-      try { diagChar = await service.getCharacteristic(MENDI_DIAGNOSTICS_CHAR_UUID); console.info("[Mendi] diagnostics characteristic acquired"); } catch (e) { console.warn("[Mendi] diagnostics characteristic missing:", e); }
+      try {
+        diagChar = await service.getCharacteristic(MENDI_DIAGNOSTICS_CHAR_UUID);
+        console.info("[Mendi] diagnostics characteristic acquired", {
+          properties: {
+            read: diagChar.properties.read,
+            notify: diagChar.properties.notify,
+            indicate: diagChar.properties.indicate,
+            write: diagChar.properties.write,
+          },
+        });
+      } catch (e) { console.warn("[Mendi] diagnostics characteristic missing:", e); }
 
       // ── 2. Subscribe to the four notify chars in eugenehp's order ─────
       // Insert short delays between each subscribe so the BLE stack
@@ -234,18 +244,38 @@ export class MendiAdapter implements DeviceAdapter {
         await settle();
       }
 
-      // ── 3. Read Diagnostics once ──────────────────────────────────────
-      // Force the read even if properties.read reports false — V4
-      // characteristics often misreport their read flag through Web
-      // Bluetooth (we get false-negatives). The read itself is part of
-      // the device's "client looks ready" signal, even if we discard
-      // the bytes. If it really isn't readable the catch handles it.
+      // ── 3. Diagnostics — read AND (if notify/indicate) subscribe ────
+      // The read itself contributes to the V4 firmware's "client looks
+      // ready" signal. If our previous reads failed with an empty error,
+      // try subscribing instead — some characteristics expose diagnostics
+      // as a notification rather than a read.
       if (diagChar) {
-        try {
-          const diag = await diagChar.readValue();
-          console.info("[Mendi] diagnostics read", { bytes: diag.byteLength });
-        } catch (e) {
-          console.warn("[Mendi] diagnostics read failed:", e);
+        if (diagChar.properties.read) {
+          try {
+            const diag = await diagChar.readValue();
+            const head = Array.from(new Uint8Array(diag.buffer.slice(0, Math.min(16, diag.byteLength))))
+              .map((b) => b.toString(16).padStart(2, "0")).join(" ");
+            console.info("[Mendi] diagnostics read", { bytes: diag.byteLength, head });
+          } catch (e) {
+            console.warn("[Mendi] diagnostics read failed:", e);
+          }
+        } else {
+          console.info("[Mendi] diagnostics characteristic is not readable per properties — skipping read");
+        }
+        if (diagChar.properties.notify || diagChar.properties.indicate) {
+          try {
+            diagChar.addEventListener("characteristicvaluechanged", (event: Event) => {
+              const value = (event.target as BluetoothRemoteGATTCharacteristic).value;
+              if (!value) return;
+              const head = Array.from(new Uint8Array(value.buffer.slice(0, Math.min(16, value.byteLength))))
+                .map((b) => b.toString(16).padStart(2, "0")).join(" ");
+              console.info("[Mendi] diagnostics notification", { bytes: value.byteLength, head });
+            });
+            await diagChar.startNotifications();
+            console.info("[Mendi] diagnostics notifications subscribed");
+          } catch (e) {
+            console.warn("[Mendi] diagnostics startNotifications failed:", e);
+          }
         }
       }
 

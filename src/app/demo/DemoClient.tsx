@@ -270,6 +270,13 @@ export default function DemoClient({
         const text = args
           .map((a) => {
             if (typeof a === "string") return a;
+            // Error objects don't survive JSON.stringify (their props are
+            // non-enumerable). Unpack name/message/code explicitly so the
+            // user can SEE why something failed instead of an empty `{}`.
+            if (a instanceof Error) {
+              const code = (a as Error & { code?: unknown }).code;
+              return `${a.name}: ${a.message}` + (code != null ? ` (code: ${String(code)})` : "");
+            }
             try { return JSON.stringify(a); } catch { return String(a); }
           })
           .join(" ");
