@@ -280,14 +280,21 @@ export default function DemoClient({
     thetaW.reset(); alphaW.reset(); betaW.reset();
     setSample(null); setSampleCount(0); setElapsed(0);
 
-    // Source priority: explicit override > URL ?live= > simulator default.
-    const urlLive =
-      typeof window !== "undefined"
-        ? new URLSearchParams(window.location.search).get("live")
-        : null;
-    const urlSource: LiveSource | null =
-      urlLive === "mendi" ? "mendi" : urlLive === "muse" ? "muse" : null;
-    const source: LiveSource = sourceOverride ?? urlSource ?? "simulator";
+    // Source priority: explicit override > simulator default.
+    //
+    // We do NOT auto-restore from `?live=mendi` / `?live=muse` on initial
+    // load: Web Bluetooth's requestDevice() requires a user gesture, so
+    // a page refresh would silently fail and dump us into the "pairing
+    // failed" error state. Strip the URL param if present so the next
+    // refresh is clean — the user re-pairs via Connect device when ready.
+    if (typeof window !== "undefined" && !sourceOverride) {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has("live")) {
+        url.searchParams.delete("live");
+        window.history.replaceState({}, "", url.toString());
+      }
+    }
+    const source: LiveSource = sourceOverride ?? "simulator";
     setLiveSource(source);
 
     const fallbackToSimulator = async () => {
