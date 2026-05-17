@@ -298,6 +298,15 @@ export default function DemoClient({
     setLiveSource(source);
 
     const fallbackToSimulator = async () => {
+      // Never feed the authenticated clinician dashboard synthetic data.
+      // In strip mode a failed live connection should leave widgets in
+      // their "Waiting for feed…" state, NOT pretend the device is alive.
+      if (appMode === "strip") {
+        adapterRef.current = null;
+        setLiveSource("simulator");
+        setRunning(false);
+        return;
+      }
       const sim = new SimulatorAdapter({ noiseLevel: 0.35, trendStrength: 0.7 });
       attachAdapter(sim);
       await sim.connect();
@@ -323,7 +332,8 @@ export default function DemoClient({
         setMendiError(msg);
         // Last-resort: try the localhost Python bridge if it happens to
         // be running. Most users won't have it — that's fine, we go
-        // straight to simulator below.
+        // straight to fallbackToSimulator below (which in strip mode
+        // means leaving the pipeline idle).
         const bridge = new MendiBridgeAdapter();
         attachAdapter(bridge);
         try {
@@ -340,7 +350,8 @@ export default function DemoClient({
     } else if (source === "muse") {
       // Muse uses Web Bluetooth directly — no bridge. The first call will
       // open the browser pairing chooser; if the user dismisses it or the
-      // platform doesn't support Web Bluetooth we fall back to simulator.
+      // platform doesn't support Web Bluetooth we fall back (to simulator
+      // on /demo, or to idle on the authenticated /dashboard).
       const muse = new MuseAdapter();
       attachAdapter(muse);
       try {
@@ -372,7 +383,17 @@ export default function DemoClient({
     await start(next);
   }, [stop, start]);
 
-  useEffect(() => { start(); return () => { stop(); }; }, []);
+  // Auto-start the data pipeline on mount EXCEPT in 'strip' mode — the
+  // authenticated /dashboard should sit idle until the operator pairs a
+  // real device, so widgets show 'Waiting for mendi feed…' instead of
+  // simulator-driven activity that could be mistaken for live data.
+  useEffect(() => {
+    if (appMode !== "strip") {
+      void start();
+    }
+    return () => { void stop(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // While in Mendi mode, poll the adapter's BLE state every 500 ms so the
   // status badge reflects the actual link to the headband (the Python
