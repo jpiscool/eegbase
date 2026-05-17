@@ -302,6 +302,7 @@ export default function DemoClient({
   const mendiSamplesRef = useRef<DeviceSample[]>([]);
   const [mendiStatsTick, setMendiStatsTick] = useState(0);
   const [mendiCopiedAt, setMendiCopiedAt] = useState<number | null>(null);
+  const [mendiReportCopiedAt, setMendiReportCopiedAt] = useState<number | null>(null);
   useEffect(() => {
     if (appMode !== "strip") return;
     // Tick the stats panel once per second so it refreshes without
@@ -2130,6 +2131,150 @@ export default function DemoClient({
                     <pre style={{ margin: 0, color: "#CBD5E1", whiteSpace: "pre-wrap" }}>
 {header}
 {rows.map((r) => "\n" + r)}
+                    </pre>
+                  </div>
+                );
+              })()
+            )}
+
+            {/* Mendi widget TEST REPORT — runs PASS/WARN/FAIL checks per
+                widget against the live sample buffer. Each widget is mapped
+                to its underlying DeviceSample field(s) + an expected range +
+                a liveness floor. Strip mode only, after first sample. */}
+            {appMode === "strip" && mendiStatsTick > 0 && mendiSamplesRef.current.length > 0 && (
+              (() => {
+                const buf = mendiSamplesRef.current;
+                const stat = (sel: (s: DeviceSample) => number | null | undefined) => {
+                  const vals = buf.map(sel).filter((v): v is number => typeof v === "number" && Number.isFinite(v));
+                  if (vals.length === 0) return null;
+                  const min = Math.min(...vals), max = Math.max(...vals);
+                  const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+                  const variance = vals.reduce((acc, v) => acc + (v - avg) * (v - avg), 0) / vals.length;
+                  const std = Math.sqrt(variance);
+                  return { min, max, avg, std, n: vals.length };
+                };
+                type Check = {
+                  widget: string;
+                  sel: (s: DeviceSample) => number | null | undefined;
+                  expectedMin: number;
+                  expectedMax: number;
+                  // Min std-dev relative to the expected range (0–1) below
+                  // which the field counts as "static" → WARN.
+                  livenessFrac?: number;
+                  // True if the user must have added this widget to /dashboard.
+                  // We can't introspect which widgets are present here so we
+                  // run all checks unconditionally — the test report shows
+                  // every widget's data-source status whether or not the
+                  // widget tile is on screen.
+                };
+                const checks: Check[] = [
+                  // Optical channels
+                  { widget: "live-score / reward-trace / mendi-workload", sel: (s) => s.rewardScore,    expectedMin: 0,   expectedMax: 100, livenessFrac: 0.005 },
+                  { widget: "hbo-trace (HbO L)",                          sel: (s) => s.oxyHbLeft,     expectedMin: -10, expectedMax: 10,  livenessFrac: 0.005 },
+                  { widget: "hbo-trace (HbO R)",                          sel: (s) => s.oxyHbRight,    expectedMin: -10, expectedMax: 10,  livenessFrac: 0.005 },
+                  { widget: "hhb-trace (HHb L)",                          sel: (s) => s.deoxyHbLeft,   expectedMin: -10, expectedMax: 10,  livenessFrac: 0.005 },
+                  { widget: "hhb-trace (HHb R)",                          sel: (s) => s.deoxyHbRight,  expectedMin: -10, expectedMax: 10,  livenessFrac: 0.005 },
+                  { widget: "total-hbo",                                  sel: (s) => (s.oxyHbLeft ?? 0) + (s.oxyHbRight ?? 0), expectedMin: -20, expectedMax: 20, livenessFrac: 0.005 },
+                  { widget: "asymmetry / mendi-laterality",               sel: (s) => (s.oxyHbLeft ?? 0) - (s.oxyHbRight ?? 0), expectedMin: -5,  expectedMax: 5,  livenessFrac: 0.005 },
+                  { widget: "tsi-gauge / brain-mini",                     sel: (s) => {
+                    const hbo = ((s.oxyHbLeft ?? 0) + (s.oxyHbRight ?? 0)) / 2;
+                    const hhb = ((s.deoxyHbLeft ?? 0) + (s.deoxyHbRight ?? 0)) / 2;
+                    const denom = Math.abs(hbo) + Math.abs(hhb);
+                    return denom > 0 ? hbo / denom : null;
+                  }, expectedMin: -1,  expectedMax: 1,  livenessFrac: 0.005 },
+                  // Temperature
+                  { widget: "mendi-temperature",   sel: (s) => s.temperatureC, expectedMin: 20, expectedMax: 40, livenessFrac: 0.001 },
+                  // IMU
+                  { widget: "mendi-stillness",     sel: (s) => s.stillness,    expectedMin: 0,  expectedMax: 100, livenessFrac: 0.005 },
+                  { widget: "mendi-head-pose (X)", sel: (s) => s.accelX,       expectedMin: -2, expectedMax: 2,   livenessFrac: 0.005 },
+                  { widget: "mendi-head-pose (Y)", sel: (s) => s.accelY,       expectedMin: -2, expectedMax: 2,   livenessFrac: 0.005 },
+                  { widget: "mendi-head-pose (Z)", sel: (s) => s.accelZ,       expectedMin: -2, expectedMax: 2,   livenessFrac: 0.005 },
+                  // Pulse / HRV
+                  { widget: "mendi-pulse-waveform", sel: (s) => s.pulsePpg,       expectedMin: -50000, expectedMax: 50000, livenessFrac: 0.005 },
+                  { widget: "mendi-pulse-hr",       sel: (s) => s.pulseHrBpm,     expectedMin: 35,     expectedMax: 180,   livenessFrac: 0 },
+                  { widget: "mendi-pulse-hrv",      sel: (s) => s.pulseHrvRmssd,  expectedMin: 5,      expectedMax: 150,   livenessFrac: 0 },
+                  { widget: "hrv-live (chest strap path)", sel: (s) => s.hrvRmssd, expectedMin: 5, expectedMax: 150, livenessFrac: 0 },
+                  { widget: "heart-rate / hr-zone (chest strap path)", sel: (s) => s.heartRate, expectedMin: 35, expectedMax: 220, livenessFrac: 0 },
+                  // Signal quality
+                  { widget: "mendi-signal-quality (L)", sel: (s) => s.signalQualityL, expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
+                  { widget: "mendi-signal-quality (R)", sel: (s) => s.signalQualityR, expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
+                  { widget: "mendi-signal-quality (P)", sel: (s) => s.signalQualityP, expectedMin: 0, expectedMax: 100, livenessFrac: 0 },
+                  // Ambient
+                  { widget: "mendi-ambient-light", sel: (s) => s.ambientLevel, expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
+                ];
+                const runCheck = (c: Check): { status: "PASS" | "WARN" | "FAIL"; reason: string } => {
+                  const s = stat(c.sel);
+                  if (!s) return { status: "FAIL", reason: "no data — field never populated" };
+                  if (s.n < 30) return { status: "WARN", reason: `only ${s.n} samples — wait longer` };
+                  const inRange = s.avg >= c.expectedMin && s.avg <= c.expectedMax;
+                  if (!inRange) return {
+                    status: "FAIL",
+                    reason: `avg ${s.avg.toFixed(2)} outside expected [${c.expectedMin}, ${c.expectedMax}]`,
+                  };
+                  if (c.livenessFrac && c.livenessFrac > 0) {
+                    const span = c.expectedMax - c.expectedMin;
+                    const minStd = span * c.livenessFrac;
+                    if (s.std < minStd) return {
+                      status: "WARN",
+                      reason: `σ=${s.std.toFixed(3)} below liveness floor ${minStd.toFixed(3)} — value may be static`,
+                    };
+                  }
+                  return { status: "PASS", reason: `avg ${s.avg.toFixed(2)} ± ${s.std.toFixed(2)} (n=${s.n})` };
+                };
+                const results = checks.map((c) => ({ check: c, result: runCheck(c) }));
+                const counts = { PASS: 0, WARN: 0, FAIL: 0 };
+                for (const r of results) counts[r.result.status]++;
+                const rows = results.map((r) => {
+                  const icon = r.result.status === "PASS" ? "✓" : r.result.status === "WARN" ? "⚠" : "✗";
+                  return `${icon} ${r.result.status.padEnd(4)}  ${r.check.widget.padEnd(40)}  ${r.result.reason}`;
+                });
+                const fullText = `Widget test report · ${buf.length} samples · refresh #${mendiStatsTick}\n` +
+                  `${counts.PASS} PASS · ${counts.WARN} WARN · ${counts.FAIL} FAIL\n\n${rows.join("\n")}`;
+                return (
+                  <div style={{
+                    background: "#020617", border: "1px solid #1E293B", borderRadius: 12,
+                    padding: "12px 14px", marginBottom: 16,
+                    fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+                    fontSize: 11, lineHeight: 1.5,
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, flexWrap: "wrap", gap: 8 }}>
+                      <span style={{ color: "#94A3B8", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", fontSize: 10 }}>
+                        Widget test report ·{" "}
+                        <span style={{ color: "#34D399" }}>{counts.PASS} PASS</span> ·{" "}
+                        <span style={{ color: "#FBBF24" }}>{counts.WARN} WARN</span> ·{" "}
+                        <span style={{ color: "#F87171" }}>{counts.FAIL} FAIL</span>
+                      </span>
+                      <button
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(fullText);
+                            setMendiReportCopiedAt(Date.now());
+                          } catch {
+                            const ta = document.createElement("textarea");
+                            ta.value = fullText;
+                            document.body.appendChild(ta);
+                            ta.select();
+                            try { document.execCommand("copy"); setMendiReportCopiedAt(Date.now()); } catch {}
+                            document.body.removeChild(ta);
+                          }
+                        }}
+                        style={{
+                          background: mendiReportCopiedAt && Date.now() - mendiReportCopiedAt < 1500 ? "#065F46" : "transparent",
+                          border: `1px solid ${mendiReportCopiedAt && Date.now() - mendiReportCopiedAt < 1500 ? "#10B981" : "#334155"}`,
+                          color: mendiReportCopiedAt && Date.now() - mendiReportCopiedAt < 1500 ? "#34D399" : "#94A3B8",
+                          borderRadius: 6, padding: "2px 10px", fontSize: 10, cursor: "pointer", fontFamily: "inherit", fontWeight: 700,
+                        }}
+                      >
+                        {mendiReportCopiedAt && Date.now() - mendiReportCopiedAt < 1500 ? "Copied ✓" : "Copy"}
+                      </button>
+                    </div>
+                    <pre style={{ margin: 0, color: "#CBD5E1", whiteSpace: "pre-wrap" }}>
+                      {rows.map((r) => {
+                        const color = r.startsWith("✓") ? "#34D399" : r.startsWith("⚠") ? "#FBBF24" : "#F87171";
+                        return (
+                          <div key={r} style={{ color }}>{r}</div>
+                        );
+                      })}
                     </pre>
                   </div>
                 );
