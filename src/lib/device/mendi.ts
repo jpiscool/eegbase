@@ -64,11 +64,18 @@ const MENDI_FNIRS_CHAR_UUID = MENDI_FRAME_CHAR_UUID;
 // protobuf-encoded `Sensor{read:true, address:0, data:0}` — kicks Sensor
 // channel into the read state.
 const MENDI_ENABLE_SENSOR_BYTES = new Uint8Array([0x08, 0x01, 0x10, 0x00, 0x18, 0x00]);
-// protobuf-encoded `Calibration{enable:true}` (proto3 zero-value floats
-// omitted; field 4 = bool true → tag `0x20`, value `0x01`).
-// Per eugenehp's CLI `c` command, this is the trigger that engages the
-// internal sensor loop. Frame notifications start streaming after this.
-const MENDI_ENABLE_CALIBRATION_BYTES = new Uint8Array([0x20, 0x01]);
+// protobuf-encoded `Calibration{offset_l:0.0, offset_r:0.0, offset_p:0.0,
+// enable:true, low_power_mode:false}` — explicit-all-fields form. The
+// minimal proto3 form (`20 01`) appears to be accepted by V4 firmware
+// without engaging streaming, so we send the full payload that mirrors
+// the eugenehp CLI `c` command's literal call site.
+const MENDI_ENABLE_CALIBRATION_BYTES = new Uint8Array([
+  0x0d, 0x00, 0x00, 0x00, 0x00, // field 1 (offset_l, fixed32 float) = 0.0
+  0x15, 0x00, 0x00, 0x00, 0x00, // field 2 (offset_r, fixed32 float) = 0.0
+  0x1d, 0x00, 0x00, 0x00, 0x00, // field 3 (offset_p, fixed32 float) = 0.0
+  0x20, 0x01,                   // field 4 (enable, bool varint)     = true
+  0x28, 0x00,                   // field 5 (low_power_mode, varint)  = false
+]);
 
 // ── Types ─────────────────────────────────────────────────────────────────
 type SampleCallback = (sample: DeviceSample) => void;
@@ -180,9 +187,12 @@ export class MendiAdapter implements DeviceAdapter {
       }
 
       // ── 3. Read Diagnostics once ──────────────────────────────────────
-      // Even if we don't parse the protobuf, the read itself contributes to
-      // the device's "client looks ready" signal.
-      if (diagChar && diagChar.properties.read) {
+      // Force the read even if properties.read reports false — V4
+      // characteristics often misreport their read flag through Web
+      // Bluetooth (we get false-negatives). The read itself is part of
+      // the device's "client looks ready" signal, even if we discard
+      // the bytes. If it really isn't readable the catch handles it.
+      if (diagChar) {
         try {
           const diag = await diagChar.readValue();
           console.info("[Mendi] diagnostics read", { bytes: diag.byteLength });
@@ -191,20 +201,23 @@ export class MendiAdapter implements DeviceAdapter {
         }
       }
 
-      // ── 4. Write Calibration{enable:true} to ABB6 ─────────────────────
-      // This is the actual streaming trigger per eugenehp's CLI `c` command.
-      // The Sensor enable below is documented as "some FW versions require
-      // this" — implying Calibration is the primary trigger on V4.
-      if (calibChar && (calibChar.properties.write || calibChar.properties.writeWithoutResponse)) {
+      // ── 4. Write Calibration to ABB6 ──────────────────────────────────
+      // Full {offset_l:0, offset_r:0, offset_p:0, enable:true,
+      // low_power_mode:false} payload — explicit-all-fields. V4 firmware
+      // appears to silently accept the proto3-minimal form without engaging
+      // streaming, so we mirror the eugenehp CLI `c` command's literal
+      // call site shape. Don't gate on `properties.write` — V4 misreports
+      // it sometimes (same as Diagnostics).
+      if (calibChar) {
         const calibPayload = MENDI_ENABLE_CALIBRATION_BYTES as unknown as BufferSource;
         try {
           await calibChar.writeValueWithResponse(calibPayload);
-          console.info("[Mendi] calibration enable write OK (withResponse)");
+          console.info("[Mendi] calibration enable write OK (withResponse, full payload)");
         } catch (errC) {
           console.warn("[Mendi] calibration writeWithResponse failed; trying withoutResponse:", errC);
           try {
             await calibChar.writeValueWithoutResponse(calibPayload);
-            console.info("[Mendi] calibration enable write OK (withoutResponse)");
+            console.info("[Mendi] calibration enable write OK (withoutResponse, full payload)");
           } catch (errC2) {
             console.warn("[Mendi] calibration enable write failed entirely:", errC2);
           }
@@ -229,6 +242,26 @@ export class MendiAdapter implements DeviceAdapter {
       this._decoder.resetBaseline();
       this._connected = true;
       console.info("[Mendi] ready — awaiting frames");
+
+      // Watchdog — if no frame notifications arrive within 5 seconds,
+      // log the post-handshake state so we can see whether the device
+      // is dead-silent on Frame, or whether something is arriving but
+      // failing to decode.
+      setTimeout(() => {
+        if (this._notifCount === 0) {
+          console.warn(
+            `[Mendi] WATCHDOG: 5 s elapsed, NO frame notifications received. ` +
+              `sensor notifications: ${this._sensorNotifCount}, ` +
+              `decoded samples: ${this._sampleCount}, ` +
+              `decoder dropped: ${this._decoder.droppedPackets}. ` +
+              `If the headband is worn and powered, the V4 firmware may need a different handshake than eugenehp documents.`
+          );
+        } else {
+          console.info(
+            `[Mendi] WATCHDOG: streaming alive — ${this._notifCount} frame notifications received in 5 s (${this._sampleCount} decoded).`
+          );
+        }
+      }, 5000);
     } catch (err) {
       this._cleanup();
       throw new Error(
