@@ -244,6 +244,10 @@ export default function DemoClient({
   type LiveSource = "simulator" | "mendi" | "muse";
   const [liveSource, setLiveSource] = useState<LiveSource>("simulator");
   const [mendiStatus, setMendiStatus] = useState<"idle" | "connecting" | "connected" | "error">("idle");
+  // Last Mendi pairing error message — surfaced as a toast + via the button
+  // tooltip so the operator knows WHY the connect attempt failed instead
+  // of seeing a generic "bridge offline" label.
+  const [mendiError, setMendiError] = useState<string | null>(null);
   const [mendiBle, setMendiBle] = useState(false);
 
   const stop = useCallback(async () => {
@@ -300,6 +304,7 @@ export default function DemoClient({
       // user dismisses or Web Bluetooth is unavailable we fall back to
       // the legacy bridge transport (for capture work), then simulator.
       setMendiStatus("connecting");
+      setMendiError(null);
       const direct = new MendiAdapter();
       attachAdapter(direct);
       try {
@@ -308,6 +313,7 @@ export default function DemoClient({
       } catch (e) {
         const msg = e instanceof Error ? e.message : "Failed to pair with Mendi over Web Bluetooth.";
         console.warn("[Mendi] WebBluetooth connect failed:", msg);
+        setMendiError(msg);
         // Last-resort: try the localhost Python bridge if it happens to
         // be running. Most users won't have it — that's fine, we go
         // straight to simulator below.
@@ -316,8 +322,11 @@ export default function DemoClient({
         try {
           await bridge.connect();
           setMendiStatus("connected");
-        } catch {
+          setMendiError(null);
+        } catch (e2) {
           setMendiStatus("error");
+          const bridgeMsg = e2 instanceof Error ? e2.message : "Bridge unreachable.";
+          console.warn("[Mendi] bridge fallback also failed:", bridgeMsg);
           await fallbackToSimulator();
         }
       }
@@ -1800,11 +1809,11 @@ export default function DemoClient({
                   onClick={() => setConnectDeviceOpen(true)}
                   style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: mendiStatus === "error" ? "#7F1D1D" : "#7C3AED", color: "white", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer" }}
                   title={mendiStatus === "error"
-                    ? "Mendi bridge unreachable last time. Open the connect-device list to retry."
-                    : "Pair any supported headband, chest strap, or wearable. Mendi launches the live BLE bridge; others register as paired devices."}
+                    ? (mendiError ?? "Last connect attempt failed. Open the connect-device list to retry.")
+                    : "Pair any supported headband, chest strap, or wearable."}
                 >
                   <BluetoothIcon size={12} />
-                  {mendiStatus === "error" ? "Connect device · Mendi bridge offline" : "Connect device"}
+                  {mendiStatus === "error" ? "Connect device · pairing failed, retry" : "Connect device"}
                 </button>
               )}
               {appMode !== "strip" && (

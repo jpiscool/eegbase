@@ -2551,12 +2551,15 @@ export function ConnectDeviceModal({ open, onClose, pairedIds, onPair }: Connect
                 <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.45, marginTop: 2 }}>
                   {d.blurb}
                 </div>
-                {!paired && !scanning && (
+                {!scanning && (
                   <button
                     onClick={() => onPair(d.id)}
                     style={{ marginTop: 4, padding: "6px 12px", background: COLORS.blue, color: "#0F172A", border: "none", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer", alignSelf: "flex-start" }}
+                    title={paired
+                      ? "Re-open the browser's Bluetooth chooser and reconnect for a fresh session."
+                      : "Pair this device for the first time."}
                   >
-                    Pair →
+                    {paired ? "Connect →" : "Pair →"}
                   </button>
                 )}
               </div>
