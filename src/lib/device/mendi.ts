@@ -98,6 +98,7 @@ export class MendiAdapter implements DeviceAdapter {
   private _notifCount = 0;
   private _sampleCount = 0;
   private _sensorNotifCount = 0;
+  private _keepAliveTimer: ReturnType<typeof setInterval> | null = null;
 
   async connect(): Promise<void> {
     if (MENDI_PROTOCOL_PENDING) {
@@ -320,6 +321,24 @@ export class MendiAdapter implements DeviceAdapter {
         console.info("[Mendi] enable_sensor write OK (withoutResponse)");
       }
 
+      // Keep-alive: re-poke enable_sensor every 1 s in case the device
+      // requires periodic engagement to keep streaming alive. Stops
+      // firing once we see >50 frames (confirming continuous stream)
+      // or on disconnect.
+      this._keepAliveTimer = setInterval(() => {
+        if (this._notifCount > 50) {
+          if (this._keepAliveTimer) {
+            clearInterval(this._keepAliveTimer);
+            this._keepAliveTimer = null;
+            console.info("[Mendi] keep-alive disabled — stream is healthy");
+          }
+          return;
+        }
+        sensor.writeValueWithResponse(MENDI_ENABLE_SENSOR_BYTES as unknown as BufferSource).catch((e) => {
+          console.warn("[Mendi] keep-alive write failed:", e);
+        });
+      }, 1000);
+
       this._decoder.resetBaseline();
       this._connected = true;
       console.info("[Mendi] ready — awaiting frames");
@@ -437,6 +456,10 @@ export class MendiAdapter implements DeviceAdapter {
   };
 
   private _cleanup(): void {
+    if (this._keepAliveTimer) {
+      clearInterval(this._keepAliveTimer);
+      this._keepAliveTimer = null;
+    }
     if (this._characteristic) {
       this._characteristic
         .stopNotifications()
