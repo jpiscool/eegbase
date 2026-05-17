@@ -299,8 +299,13 @@ export class MendiPacketDecoder {
       const signal = Math.abs(red - amb);
       const noise = Math.abs(amb) + 50; // floor avoids div-by-zero
       const ratio = signal / noise;
-      // Empirical: ratio > 5 maps to ~100, ratio < 0.05 maps to ~0.
-      return Math.max(0, Math.min(100, Math.log(1 + ratio) * 40));
+      // Coefficient lowered from 40 → 20 so the very strong pulse-optode
+      // IR/Red modulation no longer clamps at a flat 100 (the previous
+      // formula saturated at ratio ≥ 11, easily exceeded by the pulse
+      // channel). With 20, saturation moves to ratio ≥ ~147, leaving
+      // headroom for the pulse optode to land in 70–95 range while
+      // still mapping forehead-coupling ratios to plausible values.
+      return Math.max(0, Math.min(100, Math.log(1 + ratio) * 20));
     };
     const signalQualityL = computeQuality(redL, ambL);
     const signalQualityR = computeQuality(redR, ambR);

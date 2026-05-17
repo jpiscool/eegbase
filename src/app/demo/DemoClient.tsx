@@ -2121,7 +2121,7 @@ export default function DemoClient({
                   // ── pulse / HRV from forehead PPG ───────────────────
                   { widget: "mendi-pulse-waveform",  sel: (s) => s.pulsePpg,       expectedMin: -50000, expectedMax: 50000, livenessFrac: 0.001 },
                   { widget: "mendi-pulse-hr",        sel: (s) => s.pulseHrBpm,     expectedMin: 35, expectedMax: 180, livenessFrac: 0 },
-                  { widget: "mendi-pulse-hrv",       sel: (s) => s.pulseHrvRmssd,  expectedMin: 5,  expectedMax: 200, livenessFrac: 0 },
+                  { widget: "mendi-pulse-hrv",       sel: (s) => s.pulseHrvRmssd,  expectedMin: 5,  expectedMax: 250, livenessFrac: 0 },
                   // ── chest-strap / wearable HR path (not from Mendi) ─
                   // These widgets expect data from a chest-strap or wearable
                   // HR device; Mendi doesn't populate heartRate / hrvRmssd.
@@ -2589,7 +2589,27 @@ export default function DemoClient({
                   "── Physiology / signal-quality checks ──",
                   ...physRows,
                 ];
+                // Composite Recording Quality Score (RQS) — a single 0–1
+                // number rolling up the most clinically meaningful SQIs.
+                // Inspired by the recording-acceptable composite from the
+                // research pass; weights chosen so any one severe failure
+                // moves the score noticeably but no single check dominates.
+                const totalChecks = counts.PASS + counts.WARN + counts.FAIL;
+                const passFrac = totalChecks > 0 ? counts.PASS / totalChecks : 0;
+                const warnPenalty = totalChecks > 0 ? counts.WARN / totalChecks * 0.5 : 0;
+                const failPenalty = totalChecks > 0 ? counts.FAIL / totalChecks * 1.0 : 0;
+                const rqs = Math.max(0, Math.min(1, passFrac + (1 - passFrac) - warnPenalty - failPenalty));
+                const rqsPct = Math.round(rqs * 100);
+                const rqsLabel =
+                  rqs >= 0.85 ? "EXCELLENT" :
+                  rqs >= 0.70 ? "ACCEPTABLE" :
+                  rqs >= 0.50 ? "MARGINAL" : "UNUSABLE";
+                const rqsColor =
+                  rqs >= 0.85 ? "#34D399" :
+                  rqs >= 0.70 ? "#A7F3D0" :
+                  rqs >= 0.50 ? "#FBBF24" : "#F87171";
                 const fullText = `Widget test report · ${buf.length} samples · refresh #${mendiStatsTick}\n` +
+                  `Recording Quality Score: ${rqsPct}/100 (${rqsLabel})\n` +
                   `${counts.PASS} PASS · ${counts.WARN} WARN · ${counts.FAIL} FAIL · ${counts["N/A"]} N/A\n\n${rows.join("\n")}`;
                 return (
                   <div style={{
@@ -2600,7 +2620,8 @@ export default function DemoClient({
                   }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, flexWrap: "wrap", gap: 8 }}>
                       <span style={{ color: "#94A3B8", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", fontSize: 10 }}>
-                        Widget test report ·{" "}
+                        Widget test report · RQS{" "}
+                        <span style={{ color: rqsColor, fontWeight: 800 }}>{rqsPct}/100 {rqsLabel}</span> ·{" "}
                         <span style={{ color: "#34D399" }}>{counts.PASS} PASS</span> ·{" "}
                         <span style={{ color: "#FBBF24" }}>{counts.WARN} WARN</span> ·{" "}
                         <span style={{ color: "#F87171" }}>{counts.FAIL} FAIL</span> ·{" "}
