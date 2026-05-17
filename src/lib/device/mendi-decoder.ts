@@ -131,21 +131,29 @@ export class MendiPacketDecoder {
         ? -((irRcor - this._baselineIrR) / this._baselineIrR) * SCALE
         : undefined;
 
-    // Reward score: derive from average HbO change. Rises with frontal
-    // activation (the user is "doing the work"). Clamped 0-100.
+    // Reward score: track DEVIATION of current HbO from a slow rolling
+    // baseline, not absolute HbO. This adapts to whatever steady-state
+    // the user is at — Beer-Lambert baseline drift (e.g. headband not
+    // initially worn flush on skin) produces HbO values in the +5..+10
+    // range at rest, which would peg any absolute-magnitude reward at 100.
     //
-    // Previous mapping (HbO × 50 + 50) pegged at 100 with HbO=1, which
-    // happens trivially when the baseline is fresh. Empirically a
-    // resting-but-worn headband shows HbO ≈ 0.5–1.0 in the ×10
-    // unitless scale, so we map a wider HbO range (−4 to +4) into
-    // 0–100 so resting reads ~60 and only sustained activation
-    // (HbO≈+2) approaches 90+.
-    const meanOxy =
-      [oxyHbLeft, oxyHbRight].filter((v) => v != null) as number[];
-    const rewardScore =
-      meanOxy.length > 0
-        ? Math.min(100, Math.max(0, 50 + (meanOxy.reduce((a, b) => a + b, 0) / meanOxy.length) * 12.5))
-        : undefined;
+    // EMA with α=0.005 ≈ 200-sample (≈ 6 s at 31 Hz) baseline window.
+    // Reward rises ~10 pts per 1-unit HbO above baseline; falls below.
+    // Clamped 0–100 and floored at 50 when no baseline yet so the gauge
+    // starts neutral.
+    const meanOxy = [oxyHbLeft, oxyHbRight].filter((v) => v != null) as number[];
+    let rewardScore: number | undefined;
+    if (meanOxy.length > 0) {
+      const currentHbo = meanOxy.reduce((a, b) => a + b, 0) / meanOxy.length;
+      if (this._rewardHboEma == null) {
+        this._rewardHboEma = currentHbo;
+        rewardScore = 50;
+      } else {
+        const dev = currentHbo - this._rewardHboEma;
+        this._rewardHboEma = this._rewardHboEma * 0.995 + currentHbo * 0.005;
+        rewardScore = Math.min(100, Math.max(0, 50 + dev * 15));
+      }
+    }
 
     // ── Mendi auxiliary derivations ──────────────────────────────────────
     // Everything below uses raw protobuf fields that the original decoder
@@ -321,6 +329,7 @@ export class MendiPacketDecoder {
     this._pulsePrev = null;
     this._lastBeatMs = null;
     this._ibiHistory = [];
+    this._rewardHboEma = null;
     this.lastSeq = null;
     this.droppedPackets = 0;
   }
@@ -337,6 +346,10 @@ export class MendiPacketDecoder {
   private _accelRest: number | null = null;
   private _pulseDc: number | null = null;
   private _pulsePrev: number | null = null;
+  // Rolling baseline of mean HbO — used so rewardScore tracks CHANGES
+  // from recent resting state, not absolute Beer-Lambert magnitude
+  // (which can be arbitrarily large after a baseline drift).
+  private _rewardHboEma: number | null = null;
   private _lastBeatMs: number | null = null;
   private _ibiHistory: number[] = [];
 
