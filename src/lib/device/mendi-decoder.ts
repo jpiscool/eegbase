@@ -199,16 +199,25 @@ export class MendiPacketDecoder {
 
     // Pulse photoplethysmogram (PPG): the forehead pulse optode picks up
     // cardiac-driven blood-volume oscillation. ir_p minus amb_p removes
-    // ambient DC. We then high-pass via subtraction of a slow EMA so the
-    // output is centred near 0 and only the AC component survives.
+    // ambient DC. We then high-pass via subtraction of a sliding-window
+    // mean (~3 s) so the output is centred near 0 with only the AC
+    // (heartbeat) component surviving.
+    //
+    // The previous slow-EMA approach didn't track DC drift fast enough
+    // on real hardware — pulsePpg ended up offset by several thousand
+    // counts, preventing the zero-crossing HR detector from firing.
+    // A short window (~90 samples = 3 s @ 31 Hz) covers > 1 cardiac
+    // cycle but is fast enough to track baseline shifts.
     const irP = numericField(fields, MENDI_FIELDS.IR_P);
     const ambP = numericField(fields, MENDI_FIELDS.AMB_P);
     let pulsePpg: number | undefined;
     if (irP != null && ambP != null) {
       const corrected = irP - ambP;
-      if (this._pulseDc == null) this._pulseDc = corrected;
-      this._pulseDc = this._pulseDc * 0.95 + corrected * 0.05; // slow EMA
-      pulsePpg = corrected - this._pulseDc;
+      this._pulseWindow.push(corrected);
+      if (this._pulseWindow.length > 90) this._pulseWindow.shift();
+      const mean =
+        this._pulseWindow.reduce((a, b) => a + b, 0) / this._pulseWindow.length;
+      pulsePpg = corrected - mean;
     }
 
     // Heart rate from PPG: simple zero-crossing peak detector on the AC
@@ -325,7 +334,7 @@ export class MendiPacketDecoder {
     this._baselineRedR = null;
     this._accelHistory = [];
     this._accelRest = null;
-    this._pulseDc = null;
+    this._pulseWindow = [];
     this._pulsePrev = null;
     this._lastBeatMs = null;
     this._ibiHistory = [];
@@ -344,7 +353,8 @@ export class MendiPacketDecoder {
   // Auxiliary state for derived fields (accel/stillness, pulse PPG, HR).
   private _accelHistory: number[] = [];
   private _accelRest: number | null = null;
-  private _pulseDc: number | null = null;
+  // Sliding-window DC tracker for the pulse PPG signal (≈3 s).
+  private _pulseWindow: number[] = [];
   private _pulsePrev: number | null = null;
   // Rolling baseline of mean HbO — used so rewardScore tracks CHANGES
   // from recent resting state, not absolute Beer-Lambert magnitude
