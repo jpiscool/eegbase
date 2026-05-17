@@ -301,6 +301,7 @@ export default function DemoClient({
   // Refs (not state) because every sample push would otherwise re-render.
   const mendiSamplesRef = useRef<DeviceSample[]>([]);
   const [mendiStatsTick, setMendiStatsTick] = useState(0);
+  const [mendiCopiedAt, setMendiCopiedAt] = useState<number | null>(null);
   useEffect(() => {
     if (appMode !== "strip") return;
     // Tick the stats panel once per second so it refreshes without
@@ -2062,6 +2063,24 @@ export default function DemoClient({
                     return span > 0 ? ((buf.length - 1) * 1000) / span : null;
                   }, digits: 1, range: "29–31 fps" },
                 ];
+                // Build the full text body once so the Copy button can ship
+                // the SAME bytes the user is looking at.
+                const header = `FIELD            CURRENT       MIN          MAX          AVG          σ     LAST 30 SAMPLES (last is right)  EXPECTED`;
+                const rows = fields.map((f) => {
+                  const s = stat(f.sel);
+                  const cur = f.sel(last);
+                  return (
+                    f.label.padEnd(16) +
+                    fmt(cur, f.digits).padStart(12) + " " +
+                    (s ? fmt(s.min, f.digits).padStart(12) : "—".padStart(12)) + " " +
+                    (s ? fmt(s.max, f.digits).padStart(12) : "—".padStart(12)) + " " +
+                    (s ? fmt(s.avg, f.digits).padStart(12) : "—".padStart(12)) + " " +
+                    (s ? fmt(s.std, Math.max(2, (f.digits ?? 2))).padStart(8) : "—".padStart(8)) + "  " +
+                    (s ? sparkline(s.vals).padEnd(32) : "".padEnd(32)) +
+                    (f.range ?? "")
+                  );
+                });
+                const fullText = `Mendi widget values · ${buf.length} samples · refresh #${mendiStatsTick}\n\n${header}\n${rows.join("\n")}`;
                 return (
                   <div style={{
                     background: "#020617", border: "1px solid #1E293B", borderRadius: 12,
@@ -2073,29 +2092,44 @@ export default function DemoClient({
                       <span style={{ color: "#94A3B8", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", fontSize: 10 }}>
                         Mendi widget values · {buf.length} samples · refresh #{mendiStatsTick}
                       </span>
-                      <button
-                        onClick={() => { mendiSamplesRef.current = []; setMendiStatsTick(0); }}
-                        style={{ background: "transparent", border: "1px solid #334155", color: "#94A3B8", borderRadius: 6, padding: "2px 8px", fontSize: 10, cursor: "pointer", fontFamily: "inherit" }}
-                      >
-                        Reset
-                      </button>
+                      <div style={{ display: "flex", gap: 6 }}>
+                        <button
+                          onClick={async () => {
+                            try {
+                              await navigator.clipboard.writeText(fullText);
+                              setMendiCopiedAt(Date.now());
+                            } catch {
+                              // clipboard may be blocked (e.g. http:// localhost
+                              // without a user gesture); fall back to a textarea
+                              // select-all so user can ⌘C manually.
+                              const ta = document.createElement("textarea");
+                              ta.value = fullText;
+                              document.body.appendChild(ta);
+                              ta.select();
+                              try { document.execCommand("copy"); setMendiCopiedAt(Date.now()); } catch {}
+                              document.body.removeChild(ta);
+                            }
+                          }}
+                          style={{
+                            background: mendiCopiedAt && Date.now() - mendiCopiedAt < 1500 ? "#065F46" : "transparent",
+                            border: `1px solid ${mendiCopiedAt && Date.now() - mendiCopiedAt < 1500 ? "#10B981" : "#334155"}`,
+                            color: mendiCopiedAt && Date.now() - mendiCopiedAt < 1500 ? "#34D399" : "#94A3B8",
+                            borderRadius: 6, padding: "2px 10px", fontSize: 10, cursor: "pointer", fontFamily: "inherit", fontWeight: 700,
+                          }}
+                        >
+                          {mendiCopiedAt && Date.now() - mendiCopiedAt < 1500 ? "Copied ✓" : "Copy"}
+                        </button>
+                        <button
+                          onClick={() => { mendiSamplesRef.current = []; setMendiStatsTick(0); }}
+                          style={{ background: "transparent", border: "1px solid #334155", color: "#94A3B8", borderRadius: 6, padding: "2px 8px", fontSize: 10, cursor: "pointer", fontFamily: "inherit" }}
+                        >
+                          Reset
+                        </button>
+                      </div>
                     </div>
                     <pre style={{ margin: 0, color: "#CBD5E1", whiteSpace: "pre-wrap" }}>
-{`FIELD            CURRENT       MIN          MAX          AVG          σ     LAST 30 SAMPLES (last is right)  EXPECTED`}
-{fields.map((f) => {
-  const s = stat(f.sel);
-  const cur = f.sel(last);
-  const row =
-    f.label.padEnd(16) +
-    fmt(cur, f.digits).padStart(12) + " " +
-    (s ? fmt(s.min, f.digits).padStart(12) : "—".padStart(12)) + " " +
-    (s ? fmt(s.max, f.digits).padStart(12) : "—".padStart(12)) + " " +
-    (s ? fmt(s.avg, f.digits).padStart(12) : "—".padStart(12)) + " " +
-    (s ? fmt(s.std, Math.max(2, (f.digits ?? 2))).padStart(8) : "—".padStart(8)) + "  " +
-    (s ? sparkline(s.vals).padEnd(32) : "".padEnd(32)) +
-    (f.range ?? "");
-  return "\n" + row;
-})}
+{header}
+{rows.map((r) => "\n" + r)}
                     </pre>
                   </div>
                 );
