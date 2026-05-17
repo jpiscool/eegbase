@@ -257,6 +257,38 @@ export default function DemoClient({
     setRunning(false);
   }, []);
 
+  // Capture [Mendi] console messages and render them in the strip-mode
+  // dashboard so the operator can see what happened during pairing
+  // WITHOUT opening DevTools. Only active in strip mode.
+  const [mendiLog, setMendiLog] = useState<Array<{ level: "info" | "warn" | "error"; text: string; ts: number }>>([]);
+  useEffect(() => {
+    if (appMode !== "strip") return;
+    const origInfo = console.info, origWarn = console.warn, origError = console.error;
+    const capture = (level: "info" | "warn" | "error") => (...args: unknown[]) => {
+      const first = args[0];
+      if (typeof first === "string" && first.startsWith("[Mendi]")) {
+        const text = args
+          .map((a) => {
+            if (typeof a === "string") return a;
+            try { return JSON.stringify(a); } catch { return String(a); }
+          })
+          .join(" ");
+        setMendiLog((prev) => [...prev.slice(-49), { level, text, ts: Date.now() }]);
+      }
+      // Always forward to the original console so DevTools still shows it.
+      const orig = level === "info" ? origInfo : level === "warn" ? origWarn : origError;
+      orig.apply(console, args);
+    };
+    console.info = capture("info");
+    console.warn = capture("warn");
+    console.error = capture("error");
+    return () => {
+      console.info = origInfo;
+      console.warn = origWarn;
+      console.error = origError;
+    };
+  }, [appMode]);
+
   // Attach the sample callback to whichever adapter is current. Pulled out
   // so both the primary start path and the simulator-fallback path stay in
   // sync without duplicating the push-into-sliding-window logic.
@@ -1873,6 +1905,54 @@ export default function DemoClient({
                 <Plus size={14} /> Add widget
               </button>
             </div>
+
+            {/* Mendi diagnostic panel — strip mode only, shows the same
+                [Mendi] log lines as DevTools so the operator can screenshot
+                instead of opening DevTools. Empty until a pair attempt fires. */}
+            {appMode === "strip" && mendiLog.length > 0 && (
+              <div
+                style={{
+                  background: "#020617",
+                  border: "1px solid #1E293B",
+                  borderRadius: 12,
+                  padding: "12px 14px",
+                  marginBottom: 16,
+                  fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+                  fontSize: 11,
+                  lineHeight: 1.5,
+                  maxHeight: 240,
+                  overflowY: "auto",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                  <span style={{ color: "#94A3B8", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", fontSize: 10 }}>
+                    Mendi pairing log
+                  </span>
+                  <button
+                    onClick={() => setMendiLog([])}
+                    style={{ background: "transparent", border: "1px solid #334155", color: "#94A3B8", borderRadius: 6, padding: "2px 8px", fontSize: 10, cursor: "pointer", fontFamily: "inherit" }}
+                  >
+                    Clear
+                  </button>
+                </div>
+                {mendiLog.map((entry, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      color: entry.level === "error" ? "#FCA5A5" : entry.level === "warn" ? "#FBBF24" : "#CBD5E1",
+                      whiteSpace: "pre-wrap",
+                      wordBreak: "break-word",
+                      paddingBottom: 2,
+                    }}
+                  >
+                    <span style={{ color: "#475569" }}>
+                      {new Date(entry.ts).toLocaleTimeString("en-US", { hour12: false })}{" "}
+                    </span>
+                    {entry.text}
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* My Devices — sits above widgets so the operator can manage
                 what's paired before composing the dashboard around it.
