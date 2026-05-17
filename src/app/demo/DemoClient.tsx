@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useTabState } from "@/hooks/useTabState";
 import { SimulatorAdapter } from "@/lib/device/simulator";
 import { MendiBridgeAdapter } from "@/lib/device/mendi-bridge";
+import { MendiAdapter } from "@/lib/device/mendi";
 import { MuseAdapter } from "@/lib/device/muse";
 import type { DeviceAdapter, DeviceSample } from "@/lib/device/adapter";
 import { LiveChart } from "@/components/LiveChart";
@@ -293,19 +294,32 @@ export default function DemoClient({
     };
 
     if (source === "mendi") {
+      // Direct Web Bluetooth connection — no local Python bridge required.
+      // Works on eegbase.com (HTTPS) in Chrome/Edge desktop. The browser
+      // shows its pairing chooser on the first connect attempt. If the
+      // user dismisses or Web Bluetooth is unavailable we fall back to
+      // the legacy bridge transport (for capture work), then simulator.
       setMendiStatus("connecting");
-      const bridge = new MendiBridgeAdapter();
-      attachAdapter(bridge);
+      const direct = new MendiAdapter();
+      attachAdapter(direct);
       try {
-        await bridge.connect();
+        await direct.connect();
         setMendiStatus("connected");
       } catch (e) {
-        // Bridge unreachable — fall back to simulator so the dashboard
-        // keeps moving, and surface a clear toast with the start command.
-        setMendiStatus("error");
-        const msg = e instanceof Error ? e.message : "Failed to connect to Mendi bridge.";
-        console.warn("[Mendi] bridge connect failed:", msg);
-        await fallbackToSimulator();
+        const msg = e instanceof Error ? e.message : "Failed to pair with Mendi over Web Bluetooth.";
+        console.warn("[Mendi] WebBluetooth connect failed:", msg);
+        // Last-resort: try the localhost Python bridge if it happens to
+        // be running. Most users won't have it — that's fine, we go
+        // straight to simulator below.
+        const bridge = new MendiBridgeAdapter();
+        attachAdapter(bridge);
+        try {
+          await bridge.connect();
+          setMendiStatus("connected");
+        } catch {
+          setMendiStatus("error");
+          await fallbackToSimulator();
+        }
       }
     } else if (source === "muse") {
       // Muse uses Web Bluetooth directly — no bridge. The first call will
@@ -353,6 +367,10 @@ export default function DemoClient({
     const tick = () => {
       const a = adapterRef.current;
       if (a && a instanceof MendiBridgeAdapter) setMendiBle(a.isBleConnected());
+      // Direct Web Bluetooth path: if the MendiAdapter is attached and
+      // we reached "connected" status, the BLE link itself is the
+      // connection — surface that to the badge.
+      else if (a instanceof MendiAdapter) setMendiBle(mendiStatus === "connected");
     };
     tick();
     const iv = setInterval(tick, 500);
