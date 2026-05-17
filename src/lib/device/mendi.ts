@@ -44,15 +44,31 @@ export const MENDI_PROTOCOL_PENDING = false;
 // Single primary service hosting all Mendi V4 functional characteristics.
 const MENDI_SERVICE_UUID = "fc3eabb0-c6c4-49e6-922a-6e551c455af5";
 
-// Frame characteristic (notify) — emits the ~31 Hz protobuf-encoded fNIRS stream.
-const MENDI_FNIRS_CHAR_UUID = "fc3eabb1-c6c4-49e6-922a-6e551c455af5";
+// Mendi V4 exposes SIX characteristics on this service. We must enumerate
+// them all — Web Bluetooth only resolves characteristics declared up-front,
+// and on V4 firmware the Frame stream only engages after the client has
+// performed the full warm-up (subscribe to 4 notify chars, read diagnostics,
+// write Calibration{enable:true}, write Sensor{read:true}). Reference:
+// https://github.com/eugenehp/mendi (Rust crate that successfully streams
+// from V4 firmware).
+const MENDI_FRAME_CHAR_UUID       = "fc3eabb1-c6c4-49e6-922a-6e551c455af5"; // notify — fNIRS+IMU stream
+const MENDI_SENSOR_CHAR_UUID      = "fc3eabb2-c6c4-49e6-922a-6e551c455af5"; // write+notify — optical sensor register I/O
+const MENDI_IMU_CHAR_UUID         = "fc3eabb3-c6c4-49e6-922a-6e551c455af5"; // write+notify — IMU register I/O
+const MENDI_ADC_CHAR_UUID         = "fc3eabb4-c6c4-49e6-922a-6e551c455af5"; // notify — battery/charging/USB
+const MENDI_DIAGNOSTICS_CHAR_UUID = "fc3eabb5-c6c4-49e6-922a-6e551c455af5"; // read — power-on self-test
+const MENDI_CALIBRATION_CHAR_UUID = "fc3eabb6-c6c4-49e6-922a-6e551c455af5"; // write+notify — LED current offsets, auto-cal, low-power
 
-// Sensor characteristic (write/notify) — must be written to before Frame
-// notifications start on Mendi V4 firmware. The official app does this as part
-// of its handshake. The expected payload is a protobuf Sensor{read:true,
-// address:0, data:0} message which encodes to bytes 08 01 10 00 18 00.
-const MENDI_SENSOR_CHAR_UUID: string = "fc3eabb2-c6c4-49e6-922a-6e551c455af5";
+// Legacy alias retained so other modules importing the name still compile.
+const MENDI_FNIRS_CHAR_UUID = MENDI_FRAME_CHAR_UUID;
+
+// protobuf-encoded `Sensor{read:true, address:0, data:0}` — kicks Sensor
+// channel into the read state.
 const MENDI_ENABLE_SENSOR_BYTES = new Uint8Array([0x08, 0x01, 0x10, 0x00, 0x18, 0x00]);
+// protobuf-encoded `Calibration{enable:true}` (proto3 zero-value floats
+// omitted; field 4 = bool true → tag `0x20`, value `0x01`).
+// Per eugenehp's CLI `c` command, this is the trigger that engages the
+// internal sensor loop. Frame notifications start streaming after this.
+const MENDI_ENABLE_CALIBRATION_BYTES = new Uint8Array([0x20, 0x01]);
 
 // ── Types ─────────────────────────────────────────────────────────────────
 type SampleCallback = (sample: DeviceSample) => void;
@@ -114,7 +130,11 @@ export class MendiAdapter implements DeviceAdapter {
       console.info("[Mendi] GATT connected");
       const service = await this._server.getPrimaryService(MENDI_SERVICE_UUID);
       console.info("[Mendi] primary service acquired");
-      this._characteristic = await service.getCharacteristic(MENDI_FNIRS_CHAR_UUID);
+
+      // ── 1. Acquire all six characteristics ────────────────────────────
+      // Mendi V4 firmware gates streaming on the client having performed
+      // the full warm-up against all six. eugenehp/mendi confirmed flow.
+      this._characteristic = await service.getCharacteristic(MENDI_FRAME_CHAR_UUID);
       console.info("[Mendi] frame characteristic acquired", {
         properties: {
           notify: this._characteristic.properties.notify,
@@ -123,113 +143,87 @@ export class MendiAdapter implements DeviceAdapter {
         },
       });
 
-      this._characteristic.addEventListener(
-        "characteristicvaluechanged",
-        this._onNotification
-      );
+      const sensor = await service.getCharacteristic(MENDI_SENSOR_CHAR_UUID);
+      this._sensorChar = sensor;
+      console.info("[Mendi] sensor characteristic acquired");
+
+      // The ADC, Calibration, and Diagnostics characteristics are optional
+      // in the sense that the eugenehp client gracefully degrades if any
+      // one of them is missing — but on V4 firmware the device watches for
+      // the client to touch them as part of "client ready" detection.
+      let adcChar: BluetoothRemoteGATTCharacteristic | null = null;
+      let calibChar: BluetoothRemoteGATTCharacteristic | null = null;
+      let diagChar: BluetoothRemoteGATTCharacteristic | null = null;
+      try { adcChar = await service.getCharacteristic(MENDI_ADC_CHAR_UUID); console.info("[Mendi] adc characteristic acquired"); } catch (e) { console.warn("[Mendi] adc characteristic missing:", e); }
+      try { calibChar = await service.getCharacteristic(MENDI_CALIBRATION_CHAR_UUID); console.info("[Mendi] calibration characteristic acquired"); } catch (e) { console.warn("[Mendi] calibration characteristic missing:", e); }
+      try { diagChar = await service.getCharacteristic(MENDI_DIAGNOSTICS_CHAR_UUID); console.info("[Mendi] diagnostics characteristic acquired"); } catch (e) { console.warn("[Mendi] diagnostics characteristic missing:", e); }
+
+      // ── 2. Subscribe to the four notify chars in eugenehp's order ─────
+      this._characteristic.addEventListener("characteristicvaluechanged", this._onNotification);
       await this._characteristic.startNotifications();
       console.info("[Mendi] frame notifications subscribed");
 
-      // Mendi V4 firmware requires a write to the Sensor characteristic on
-      // the same primary service before it begins emitting Frame notifications.
-      // The eugenehp/mendi crate documents this as the "enable_sensor" step.
-      //
-      // Some V4 firmware revisions only accept write-without-response on this
-      // characteristic, so we try withResponse first (more reliable when it
-      // works) and fall back to withoutResponse before giving up.
-      //
-      // The sensor characteristic ALSO has notify:true on V4 — newer firmware
-      // may stream the actual sensor data on this char instead of (or in
-      // addition to) the Frame char. We subscribe to both so neither path
-      // is missed, and log every incoming byte so we can diagnose where
-      // data actually arrives.
-      try {
-        const sensor = await service.getCharacteristic(MENDI_SENSOR_CHAR_UUID);
-        this._sensorChar = sensor;
-        console.info("[Mendi] sensor characteristic acquired", {
-          properties: {
-            write: sensor.properties.write,
-            writeWithoutResponse: sensor.properties.writeWithoutResponse,
-            notify: sensor.properties.notify,
-          },
-        });
+      if (adcChar && adcChar.properties.notify) {
+        try { await adcChar.startNotifications(); console.info("[Mendi] adc notifications subscribed"); }
+        catch (e) { console.warn("[Mendi] adc startNotifications failed:", e); }
+      }
 
-        // Subscribe to sensor char notifications too — log what arrives.
-        if (sensor.properties.notify) {
-          sensor.addEventListener("characteristicvaluechanged", this._onSensorNotification);
-          try {
-            await sensor.startNotifications();
-            console.info("[Mendi] sensor notifications subscribed");
-          } catch (e) {
-            console.warn("[Mendi] sensor startNotifications failed:", e);
-          }
-        }
+      if (calibChar && calibChar.properties.notify) {
+        try { await calibChar.startNotifications(); console.info("[Mendi] calibration notifications subscribed"); }
+        catch (e) { console.warn("[Mendi] calibration startNotifications failed:", e); }
+      }
 
-        // Small delay so the BLE stack has settled after subscribing.
-        await new Promise((r) => setTimeout(r, 150));
+      if (sensor.properties.notify) {
+        sensor.addEventListener("characteristicvaluechanged", this._onSensorNotification);
+        try { await sensor.startNotifications(); console.info("[Mendi] sensor notifications subscribed"); }
+        catch (e) { console.warn("[Mendi] sensor startNotifications failed:", e); }
+      }
+
+      // ── 3. Read Diagnostics once ──────────────────────────────────────
+      // Even if we don't parse the protobuf, the read itself contributes to
+      // the device's "client looks ready" signal.
+      if (diagChar && diagChar.properties.read) {
         try {
-          await sensor.writeValueWithResponse(MENDI_ENABLE_SENSOR_BYTES);
-          console.info("[Mendi] enable_sensor write OK (withResponse)");
-        } catch (errWith) {
-          console.warn("[Mendi] writeValueWithResponse failed; trying withoutResponse:", errWith);
-          await sensor.writeValueWithoutResponse(MENDI_ENABLE_SENSOR_BYTES);
-          console.info("[Mendi] enable_sensor write OK (withoutResponse)");
+          const diag = await diagChar.readValue();
+          console.info("[Mendi] diagnostics read", { bytes: diag.byteLength });
+        } catch (e) {
+          console.warn("[Mendi] diagnostics read failed:", e);
         }
+      }
 
-        // Schedule alternate-handshake attempts if the first write doesn't
-        // start frames arriving. Tries different protobuf payloads — some
-        // V4 firmware revisions need data:1 to actually engage streaming,
-        // or address:1 for a different sensor index.
-        // The 'read:true' Sensor message we send first only triggers a
-        // single 2-byte ACK on V4 firmware (`08 01`). It does NOT engage
-        // continuous Frame streaming. Try a series of 'write' commands
-        // — one of them is hopefully the "enable streaming" register.
-        const altPayloads: { name: string; bytes: Uint8Array }[] = [
-          { name: "Sensor{write reg 0 = 1} — 08 00 10 00 18 01",         bytes: new Uint8Array([0x08, 0x00, 0x10, 0x00, 0x18, 0x01]) },
-          { name: "Sensor{write reg 0 = 0xff (all-sensors mask)}",       bytes: new Uint8Array([0x08, 0x00, 0x10, 0x00, 0x18, 0xff]) },
-          { name: "Sensor{write reg 1 = 1}",                             bytes: new Uint8Array([0x08, 0x00, 0x10, 0x01, 0x18, 0x01]) },
-          { name: "Sensor{write reg 2 = 1}",                             bytes: new Uint8Array([0x08, 0x00, 0x10, 0x02, 0x18, 0x01]) },
-          { name: "Sensor{data=1 only} — 18 01",                         bytes: new Uint8Array([0x18, 0x01]) },
-          { name: "Sensor{data=0xff only}",                              bytes: new Uint8Array([0x18, 0xff]) },
-          { name: "Sensor{read:false only} — 08 00",                     bytes: new Uint8Array([0x08, 0x00]) },
-          { name: "Sensor{read:true, address:1}",                        bytes: new Uint8Array([0x08, 0x01, 0x10, 0x01, 0x18, 0x00]) },
-          { name: "Sensor{read:true, address:2}",                        bytes: new Uint8Array([0x08, 0x01, 0x10, 0x02, 0x18, 0x00]) },
-          { name: "Sensor{read:true, data:1}",                           bytes: new Uint8Array([0x08, 0x01, 0x10, 0x00, 0x18, 0x01]) },
-        ];
-        let altIdx = 0;
-        // Streaming detector: if we've received MORE than 1 Sensor notification
-        // (the first one is just the initial ACK) OR any Frame notifications,
-        // streaming is engaged and we can stop firing alternates.
-        const streaming = () => this._notifCount > 0 || this._sensorNotifCount > 1;
-        const tryAlt = async () => {
-          if (streaming()) {
-            console.info("[Mendi] streaming engaged — stopping handshake variants");
-            return;
-          }
-          if (altIdx >= altPayloads.length) {
-            console.warn(
-              "[Mendi] all enable_sensor payload variants exhausted — no notifications arrived. " +
-                "The V4 firmware on your headband may use a different handshake than the eugenehp/mendi reference. " +
-                "Power-cycle Mendi and try again; if it still fails, capture the official app's BLE traffic for protocol diff."
-            );
-            return;
-          }
-          const next = altPayloads[altIdx++];
-          console.info(`[Mendi] no frames yet — trying alternate handshake: ${next.name}`);
-          const payload = next.bytes as unknown as BufferSource;
+      // ── 4. Write Calibration{enable:true} to ABB6 ─────────────────────
+      // This is the actual streaming trigger per eugenehp's CLI `c` command.
+      // The Sensor enable below is documented as "some FW versions require
+      // this" — implying Calibration is the primary trigger on V4.
+      if (calibChar && (calibChar.properties.write || calibChar.properties.writeWithoutResponse)) {
+        const calibPayload = MENDI_ENABLE_CALIBRATION_BYTES as unknown as BufferSource;
+        try {
+          await calibChar.writeValueWithResponse(calibPayload);
+          console.info("[Mendi] calibration enable write OK (withResponse)");
+        } catch (errC) {
+          console.warn("[Mendi] calibration writeWithResponse failed; trying withoutResponse:", errC);
           try {
-            await sensor.writeValueWithResponse(payload);
-          } catch {
-            try { await sensor.writeValueWithoutResponse(payload); } catch {}
+            await calibChar.writeValueWithoutResponse(calibPayload);
+            console.info("[Mendi] calibration enable write OK (withoutResponse)");
+          } catch (errC2) {
+            console.warn("[Mendi] calibration enable write failed entirely:", errC2);
           }
-          setTimeout(tryAlt, 1500);
-        };
-        setTimeout(tryAlt, 1500);
-      } catch (err) {
-        console.error(
-          "[Mendi] enable_sensor handshake failed — Frame notifications likely won't arrive:",
-          err
-        );
+        }
+      }
+
+      // Brief settling delay so the device can process the calibration
+      // command before we issue the sensor enable.
+      await new Promise((r) => setTimeout(r, 200));
+
+      // ── 5. Write Sensor{read:true,address:0,data:0} to ABB2 ───────────
+      const sensorPayload = MENDI_ENABLE_SENSOR_BYTES as unknown as BufferSource;
+      try {
+        await sensor.writeValueWithResponse(sensorPayload);
+        console.info("[Mendi] enable_sensor write OK (withResponse)");
+      } catch (errWith) {
+        console.warn("[Mendi] writeValueWithResponse failed; trying withoutResponse:", errWith);
+        await sensor.writeValueWithoutResponse(sensorPayload);
+        console.info("[Mendi] enable_sensor write OK (withoutResponse)");
       }
 
       this._decoder.resetBaseline();
