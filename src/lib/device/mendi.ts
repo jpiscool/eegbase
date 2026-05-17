@@ -61,21 +61,24 @@ const MENDI_CALIBRATION_CHAR_UUID = "fc3eabb6-c6c4-49e6-922a-6e551c455af5"; // w
 // Legacy alias retained so other modules importing the name still compile.
 const MENDI_FNIRS_CHAR_UUID = MENDI_FRAME_CHAR_UUID;
 
-// protobuf-encoded `Sensor{read:true, address:0, data:0}` — kicks Sensor
-// channel into the read state.
-const MENDI_ENABLE_SENSOR_BYTES = new Uint8Array([0x08, 0x01, 0x10, 0x00, 0x18, 0x00]);
-// protobuf-encoded `Calibration{offset_l:0.0, offset_r:0.0, offset_p:0.0,
-// enable:true, low_power_mode:false}` — explicit-all-fields form. The
-// minimal proto3 form (`20 01`) appears to be accepted by V4 firmware
-// without engaging streaming, so we send the full payload that mirrors
-// the eugenehp CLI `c` command's literal call site.
-const MENDI_ENABLE_CALIBRATION_BYTES = new Uint8Array([
-  0x0d, 0x00, 0x00, 0x00, 0x00, // field 1 (offset_l, fixed32 float) = 0.0
-  0x15, 0x00, 0x00, 0x00, 0x00, // field 2 (offset_r, fixed32 float) = 0.0
-  0x1d, 0x00, 0x00, 0x00, 0x00, // field 3 (offset_p, fixed32 float) = 0.0
-  0x20, 0x01,                   // field 4 (enable, bool varint)     = true
-  0x28, 0x00,                   // field 5 (low_power_mode, varint)  = false
-]);
+// `Sensor{read:true}` — canonical proto3 minimal form. prost (the Rust
+// protobuf encoder eugenehp/mendi uses) omits default-valued fields, so
+// the actual bytes eugenehp writes are just `08 01` (2 bytes), not the
+// 6-byte form we'd been sending.
+const MENDI_ENABLE_SENSOR_BYTES = new Uint8Array([0x08, 0x01]);
+// `Calibration{enable:true}` — also minimal form. eugenehp's CLI `c`
+// command calls write_calibration(0.0, 0.0, 0.0, true, false); every field
+// except `enable` is at its default so only field 4 survives prost
+// encoding → `20 01` (2 bytes).
+const MENDI_ENABLE_CALIBRATION_BYTES = new Uint8Array([0x20, 0x01]);
+
+// Standard BLE Device Information service + Firmware/Hardware Revision
+// characteristics. eugenehp's setup() reads BOTH before touching the
+// Mendi vendor service — likely the "client looks ready" signal V4
+// firmware waits on before engaging streaming.
+const BLE_DEVICE_INFO_SERVICE   = "0000180a-0000-1000-8000-00805f9b34fb";
+const BLE_FIRMWARE_REV_CHAR     = "00002a26-0000-1000-8000-00805f9b34fb";
+const BLE_HARDWARE_REV_CHAR     = "00002a27-0000-1000-8000-00805f9b34fb";
 
 // ── Types ─────────────────────────────────────────────────────────────────
 type SampleCallback = (sample: DeviceSample) => void;
@@ -119,7 +122,12 @@ export class MendiAdapter implements DeviceAdapter {
           { namePrefix: "Mendi" },
           { services: [MENDI_SERVICE_UUID] },
         ],
-        optionalServices: [MENDI_SERVICE_UUID],
+        // Declare both the vendor service AND the standard Device Information
+        // service. eugenehp's setup reads Firmware/Hardware Revision from
+        // the latter as part of the V4 client-readiness handshake — Web
+        // Bluetooth requires every service we'll access to be declared up
+        // front, else getPrimaryService() throws SecurityError.
+        optionalServices: [MENDI_SERVICE_UUID, BLE_DEVICE_INFO_SERVICE],
       });
     } catch (err) {
       if ((err as Error).name === "NotFoundError") {
@@ -135,6 +143,36 @@ export class MendiAdapter implements DeviceAdapter {
     try {
       this._server = await this._device.gatt!.connect();
       console.info("[Mendi] GATT connected");
+
+      // ── 0. Read Device Information BEFORE touching the vendor service ─
+      // eugenehp/mendi's setup() reads Firmware Revision (0x2A26) and
+      // Hardware Revision (0x2A27) from the standard Device Information
+      // service FIRST, before any vendor-service interaction. We mirror
+      // that order — these reads may be the "client looks ready" signal
+      // V4 firmware watches for. Wrapped in try/catch so missing chars
+      // don't abort the whole connect.
+      try {
+        const infoSvc = await this._server.getPrimaryService(BLE_DEVICE_INFO_SERVICE);
+        try {
+          const fwChar = await infoSvc.getCharacteristic(BLE_FIRMWARE_REV_CHAR);
+          const fw = await fwChar.readValue();
+          const fwStr = new TextDecoder().decode(fw);
+          console.info("[Mendi] firmware revision read", { bytes: fw.byteLength, value: fwStr });
+        } catch (e) {
+          console.warn("[Mendi] firmware revision read failed:", e);
+        }
+        try {
+          const hwChar = await infoSvc.getCharacteristic(BLE_HARDWARE_REV_CHAR);
+          const hw = await hwChar.readValue();
+          const hwStr = new TextDecoder().decode(hw);
+          console.info("[Mendi] hardware revision read", { bytes: hw.byteLength, value: hwStr });
+        } catch (e) {
+          console.warn("[Mendi] hardware revision read failed:", e);
+        }
+      } catch (e) {
+        console.warn("[Mendi] device information service not found — skipping FW/HW reads:", e);
+      }
+
       const service = await this._server.getPrimaryService(MENDI_SERVICE_UUID);
       console.info("[Mendi] primary service acquired");
 
