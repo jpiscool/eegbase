@@ -68,6 +68,8 @@ export class MendiAdapter implements DeviceAdapter {
   private _connected = false;
   private _callbacks: Set<SampleCallback> = new Set();
   private _decoder = new MendiPacketDecoder();
+  private _notifCount = 0;
+  private _sampleCount = 0;
 
   async connect(): Promise<void> {
     if (MENDI_PROTOCOL_PENDING) {
@@ -107,30 +109,61 @@ export class MendiAdapter implements DeviceAdapter {
 
     try {
       this._server = await this._device.gatt!.connect();
+      console.info("[Mendi] GATT connected");
       const service = await this._server.getPrimaryService(MENDI_SERVICE_UUID);
+      console.info("[Mendi] primary service acquired");
       this._characteristic = await service.getCharacteristic(MENDI_FNIRS_CHAR_UUID);
+      console.info("[Mendi] frame characteristic acquired", {
+        properties: {
+          notify: this._characteristic.properties.notify,
+          indicate: this._characteristic.properties.indicate,
+          read: this._characteristic.properties.read,
+        },
+      });
 
       this._characteristic.addEventListener(
         "characteristicvaluechanged",
         this._onNotification
       );
       await this._characteristic.startNotifications();
+      console.info("[Mendi] frame notifications subscribed");
 
-      // Mendi V4 firmware requires a write to the Sensor characteristic on the
-      // same primary service before it begins emitting Frame notifications.
+      // Mendi V4 firmware requires a write to the Sensor characteristic on
+      // the same primary service before it begins emitting Frame notifications.
       // The eugenehp/mendi crate documents this as the "enable_sensor" step.
+      //
+      // Some V4 firmware revisions only accept write-without-response on this
+      // characteristic, so we try withResponse first (more reliable when it
+      // works) and fall back to withoutResponse before giving up.
       try {
         const sensor = await service.getCharacteristic(MENDI_SENSOR_CHAR_UUID);
-        await sensor.writeValueWithResponse(MENDI_ENABLE_SENSOR_BYTES);
+        console.info("[Mendi] sensor characteristic acquired", {
+          properties: {
+            write: sensor.properties.write,
+            writeWithoutResponse: sensor.properties.writeWithoutResponse,
+            notify: sensor.properties.notify,
+          },
+        });
+        // Small delay so the BLE stack has settled after subscribing.
+        await new Promise((r) => setTimeout(r, 150));
+        try {
+          await sensor.writeValueWithResponse(MENDI_ENABLE_SENSOR_BYTES);
+          console.info("[Mendi] enable_sensor write OK (withResponse)");
+        } catch (errWith) {
+          console.warn("[Mendi] writeValueWithResponse failed; trying withoutResponse:", errWith);
+          await sensor.writeValueWithoutResponse(MENDI_ENABLE_SENSOR_BYTES);
+          console.info("[Mendi] enable_sensor write OK (withoutResponse)");
+        }
       } catch (err) {
-        // Some firmware versions don't require the enable write — log but
-        // don't fail the whole connect. If notifications never arrive, the
-        // user will see an empty chart and we can revisit.
-        console.warn("Mendi enable_sensor write failed (continuing):", err);
+        console.error(
+          "[Mendi] enable_sensor handshake failed — Frame notifications likely won't arrive:",
+          err
+        );
       }
 
       this._decoder.resetBaseline();
       this._connected = true;
+      console.info("[Mendi] ready — awaiting frames");
     } catch (err) {
       this._cleanup();
       throw new Error(
@@ -165,8 +198,27 @@ export class MendiAdapter implements DeviceAdapter {
     const value = target.value;
     if (!value) return;
 
+    this._notifCount++;
+    // Log the first frame (proves notifications are alive) and every 100th
+    // afterwards so the console doesn't drown but operators get a heartbeat.
+    if (this._notifCount === 1) {
+      console.info("[Mendi] first frame received", {
+        bytes: value.byteLength,
+        head: Array.from(new Uint8Array(value.buffer.slice(0, Math.min(8, value.byteLength))))
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join(" "),
+      });
+    } else if (this._notifCount % 100 === 0) {
+      console.info(
+        `[Mendi] ${this._notifCount} frames received · ${this._sampleCount} decoded samples · dropped=${this._decoder.droppedPackets}`
+      );
+    }
+
     const sample = this._decoder.decode(value);
-    if (sample) this._callbacks.forEach((cb) => cb(sample));
+    if (sample) {
+      this._sampleCount++;
+      this._callbacks.forEach((cb) => cb(sample));
+    }
   };
 
   private _onDisconnect = (): void => {
