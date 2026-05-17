@@ -1992,10 +1992,32 @@ export default function DemoClient({
                   if (vals.length === 0) return null;
                   const min = Math.min(...vals), max = Math.max(...vals);
                   const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
-                  return { min, max, avg, n: vals.length };
+                  // Standard deviation — shows how much the field FLUCTUATES.
+                  // Near-zero σ → static (decoder stuck / sensor dead).
+                  // Large σ → noisy or rapidly changing.
+                  const variance = vals.reduce((acc, v) => acc + (v - avg) * (v - avg), 0) / vals.length;
+                  const std = Math.sqrt(variance);
+                  return { min, max, avg, std, n: vals.length, vals };
                 };
                 const fmt = (v: number | null | undefined, d = 2) =>
                   v == null || !Number.isFinite(v) ? "—" : v.toFixed(d);
+                // ASCII sparkline of the last 30 samples mapped into 8 bands.
+                // Lets you see direction + variance in a tight text column.
+                const SPARK_CHARS = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"];
+                const sparkline = (vals: number[]): string => {
+                  const tail = vals.slice(-30);
+                  if (tail.length === 0) return "";
+                  let lo = Infinity, hi = -Infinity;
+                  for (const v of tail) { if (v < lo) lo = v; if (v > hi) hi = v; }
+                  const span = hi - lo;
+                  if (!Number.isFinite(span) || span === 0) return SPARK_CHARS[4].repeat(tail.length);
+                  let out = "";
+                  for (const v of tail) {
+                    const idx = Math.min(7, Math.max(0, Math.floor(((v - lo) / span) * 8)));
+                    out += SPARK_CHARS[idx];
+                  }
+                  return out;
+                };
                 const fields: Array<{ label: string; sel: (s: DeviceSample) => number | null | undefined; digits?: number; range?: string }> = [
                   // ── Reward / focus ─────────────────────────────────
                   { label: "rewardScore",      sel: (s) => s.rewardScore,      digits: 1, range: "30–90 wearing still" },
@@ -2059,7 +2081,7 @@ export default function DemoClient({
                       </button>
                     </div>
                     <pre style={{ margin: 0, color: "#CBD5E1", whiteSpace: "pre-wrap" }}>
-{`FIELD            CURRENT       MIN          MAX          AVG          N    EXPECTED`}
+{`FIELD            CURRENT       MIN          MAX          AVG          σ     LAST 30 SAMPLES (last is right)  EXPECTED`}
 {fields.map((f) => {
   const s = stat(f.sel);
   const cur = f.sel(last);
@@ -2069,7 +2091,8 @@ export default function DemoClient({
     (s ? fmt(s.min, f.digits).padStart(12) : "—".padStart(12)) + " " +
     (s ? fmt(s.max, f.digits).padStart(12) : "—".padStart(12)) + " " +
     (s ? fmt(s.avg, f.digits).padStart(12) : "—".padStart(12)) + " " +
-    String(s ? s.n : 0).padStart(4) + "  " +
+    (s ? fmt(s.std, Math.max(2, (f.digits ?? 2))).padStart(8) : "—".padStart(8)) + "  " +
+    (s ? sparkline(s.vals).padEnd(32) : "".padEnd(32)) +
     (f.range ?? "");
   return "\n" + row;
 })}
