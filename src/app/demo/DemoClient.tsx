@@ -489,7 +489,11 @@ export default function DemoClient({
   const [dashboardPickerOpen, setDashboardPickerOpen] = useState(false);
   // Paired devices live independently of widgets — even with no widgets
   // added, the operator should see and manage their devices.
-  const devices = usePairedDevices();
+  const devices = usePairedDevices(
+    appMode === "strip"
+      ? { defaultPaired: false, storageKey: "eegbase-clinician-paired-devices" }
+      : undefined
+  );
   const [connectDeviceOpen, setConnectDeviceOpen] = useState(false);
   const [noteSavedFlash, setNoteSavedFlash] = useState(false);
   const [audioReward, setAudioReward] = useState(true);

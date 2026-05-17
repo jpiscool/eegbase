@@ -2337,37 +2337,46 @@ export const DEVICE_REGISTRY: DeviceMeta[] = [
 
 const LS_KEY_DEVICES = "eegbase-demo-paired-devices";
 
-function loadPairedDeviceIds(): string[] {
-  if (typeof window === "undefined") return DEVICE_REGISTRY.filter((d) => d.defaultPaired).map((d) => d.id);
+function loadPairedDeviceIds(storageKey: string, fallback: string[]): string[] {
+  if (typeof window === "undefined") return fallback;
   try {
-    const raw = window.localStorage.getItem(LS_KEY_DEVICES);
-    if (!raw) return DEVICE_REGISTRY.filter((d) => d.defaultPaired).map((d) => d.id);
+    const raw = window.localStorage.getItem(storageKey);
+    if (!raw) return fallback;
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return DEVICE_REGISTRY.filter((d) => d.defaultPaired).map((d) => d.id);
+    if (!Array.isArray(parsed)) return fallback;
     return parsed.filter((id: unknown): id is string => typeof id === "string" && DEVICE_REGISTRY.some((d) => d.id === id));
   } catch {
-    return DEVICE_REGISTRY.filter((d) => d.defaultPaired).map((d) => d.id);
+    return fallback;
   }
 }
 
-function savePairedDeviceIds(ids: string[]) {
+function savePairedDeviceIds(storageKey: string, ids: string[]) {
   if (typeof window === "undefined") return;
-  try { window.localStorage.setItem(LS_KEY_DEVICES, JSON.stringify(ids)); } catch {}
+  try { window.localStorage.setItem(storageKey, JSON.stringify(ids)); } catch {}
 }
 
-export function usePairedDevices() {
-  const [pairedIds, setPairedIdsState] = useState<string[]>(() => DEVICE_REGISTRY.filter((d) => d.defaultPaired).map((d) => d.id));
+export function usePairedDevices(opts?: { defaultPaired?: boolean; storageKey?: string }) {
+  const storageKey = opts?.storageKey ?? LS_KEY_DEVICES;
+  // In strip mode the clinician dashboard starts empty so the Connect
+  // device button has real work to do. Public /demo keeps pre-paired
+  // devices for narrative polish.
+  const fallback = opts?.defaultPaired === false
+    ? []
+    : DEVICE_REGISTRY.filter((d) => d.defaultPaired).map((d) => d.id);
+
+  const [pairedIds, setPairedIdsState] = useState<string[]>(() => fallback);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setPairedIdsState(loadPairedDeviceIds());
+    setPairedIdsState(loadPairedDeviceIds(storageKey, fallback));
     setHydrated(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const setPairedIds = (next: string[] | ((prev: string[]) => string[])) => {
     setPairedIdsState((prev) => {
       const computed = typeof next === "function" ? next(prev) : next;
-      savePairedDeviceIds(computed);
+      savePairedDeviceIds(storageKey, computed);
       return computed;
     });
   };
