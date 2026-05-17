@@ -133,11 +133,18 @@ export class MendiPacketDecoder {
 
     // Reward score: derive from average HbO change. Rises with frontal
     // activation (the user is "doing the work"). Clamped 0-100.
+    //
+    // Previous mapping (HbO × 50 + 50) pegged at 100 with HbO=1, which
+    // happens trivially when the baseline is fresh. Empirically a
+    // resting-but-worn headband shows HbO ≈ 0.5–1.0 in the ×10
+    // unitless scale, so we map a wider HbO range (−4 to +4) into
+    // 0–100 so resting reads ~60 and only sustained activation
+    // (HbO≈+2) approaches 90+.
     const meanOxy =
       [oxyHbLeft, oxyHbRight].filter((v) => v != null) as number[];
     const rewardScore =
       meanOxy.length > 0
-        ? Math.min(100, Math.max(0, 50 + (meanOxy.reduce((a, b) => a + b, 0) / meanOxy.length) * 50))
+        ? Math.min(100, Math.max(0, 50 + (meanOxy.reduce((a, b) => a + b, 0) / meanOxy.length) * 12.5))
         : undefined;
 
     // ── Mendi auxiliary derivations ──────────────────────────────────────
@@ -239,16 +246,21 @@ export class MendiPacketDecoder {
       );
     }
 
-    // Per-optode signal quality: fraction of red - amb that sits above the
-    // ambient noise floor, scaled 0–100. A well-coupled optode produces
-    // large positive (red − amb) compared to |amb|. A loose optode → ratio
-    // collapses.
+    // Per-optode signal quality: magnitude of (red − amb) relative to the
+    // ambient noise floor, scaled 0–100. A well-coupled optode produces a
+    // large |red − amb| compared to |amb|. A loose optode → ratio collapses.
+    //
+    // Previous version used max(0, red - amb) which silently zeroed out any
+    // sample where amb > red (extremely common on real hardware — the
+    // photodetector picks up more ambient than reflected LED on a typical
+    // forehead). Switched to |red − amb| so direction doesn't matter; what
+    // matters is whether the LED modulation is detectable above ambient.
     const computeQuality = (red?: number, amb?: number): number | undefined => {
       if (red == null || amb == null) return undefined;
-      const signal = red - amb;
+      const signal = Math.abs(red - amb);
       const noise = Math.abs(amb) + 50; // floor avoids div-by-zero
-      const ratio = Math.max(0, signal) / noise;
-      // Empirical: ratio > 5 maps to ~100, ratio < 0.2 maps to ~0.
+      const ratio = signal / noise;
+      // Empirical: ratio > 5 maps to ~100, ratio < 0.05 maps to ~0.
       return Math.max(0, Math.min(100, Math.log(1 + ratio) * 40));
     };
     const signalQualityL = computeQuality(redL, ambL);
@@ -260,14 +272,18 @@ export class MendiPacketDecoder {
 
     // Ambient light interference 0–100. We compare the absolute amb
     // readings across the three optodes — bright rooms drive amb upward.
+    // Empirical calibration from a Mendi V4 (firmware 1.0.2) on 2026-05-15:
+    // worn indoors under normal lighting, |amb| settles around 60k–80k.
+    // The previous 8k threshold saturated at 100 under any real lighting;
+    // we now map 0..200000 → 0..100 so worn-indoors reads ≈30–50 and
+    // direct sunlight pushes >80.
     let ambientLevel: number | undefined;
     const ambVals = [ambL, numericField(fields, MENDI_FIELDS.AMB_R), ambP]
       .filter((v): v is number => v != null)
       .map(Math.abs);
     if (ambVals.length > 0) {
       const meanAbs = ambVals.reduce((a, b) => a + b, 0) / ambVals.length;
-      // Empirical: 1k = clean, 8k = bright. Map 0..8000 → 0..100.
-      ambientLevel = Math.max(0, Math.min(100, (meanAbs / 8000) * 100));
+      ambientLevel = Math.max(0, Math.min(100, (meanAbs / 200000) * 100));
     }
 
     return {
