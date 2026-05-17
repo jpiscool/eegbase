@@ -65,11 +65,13 @@ export class MendiAdapter implements DeviceAdapter {
   private _device: BluetoothDevice | null = null;
   private _server: BluetoothRemoteGATTServer | null = null;
   private _characteristic: BluetoothRemoteGATTCharacteristic | null = null;
+  private _sensorChar: BluetoothRemoteGATTCharacteristic | null = null;
   private _connected = false;
   private _callbacks: Set<SampleCallback> = new Set();
   private _decoder = new MendiPacketDecoder();
   private _notifCount = 0;
   private _sampleCount = 0;
+  private _sensorNotifCount = 0;
 
   async connect(): Promise<void> {
     if (MENDI_PROTOCOL_PENDING) {
@@ -135,8 +137,15 @@ export class MendiAdapter implements DeviceAdapter {
       // Some V4 firmware revisions only accept write-without-response on this
       // characteristic, so we try withResponse first (more reliable when it
       // works) and fall back to withoutResponse before giving up.
+      //
+      // The sensor characteristic ALSO has notify:true on V4 — newer firmware
+      // may stream the actual sensor data on this char instead of (or in
+      // addition to) the Frame char. We subscribe to both so neither path
+      // is missed, and log every incoming byte so we can diagnose where
+      // data actually arrives.
       try {
         const sensor = await service.getCharacteristic(MENDI_SENSOR_CHAR_UUID);
+        this._sensorChar = sensor;
         console.info("[Mendi] sensor characteristic acquired", {
           properties: {
             write: sensor.properties.write,
@@ -144,6 +153,18 @@ export class MendiAdapter implements DeviceAdapter {
             notify: sensor.properties.notify,
           },
         });
+
+        // Subscribe to sensor char notifications too — log what arrives.
+        if (sensor.properties.notify) {
+          sensor.addEventListener("characteristicvaluechanged", this._onSensorNotification);
+          try {
+            await sensor.startNotifications();
+            console.info("[Mendi] sensor notifications subscribed");
+          } catch (e) {
+            console.warn("[Mendi] sensor startNotifications failed:", e);
+          }
+        }
+
         // Small delay so the BLE stack has settled after subscribing.
         await new Promise((r) => setTimeout(r, 150));
         try {
@@ -154,6 +175,38 @@ export class MendiAdapter implements DeviceAdapter {
           await sensor.writeValueWithoutResponse(MENDI_ENABLE_SENSOR_BYTES);
           console.info("[Mendi] enable_sensor write OK (withoutResponse)");
         }
+
+        // Schedule alternate-handshake attempts if the first write doesn't
+        // start frames arriving. Tries different protobuf payloads — some
+        // V4 firmware revisions need data:1 to actually engage streaming,
+        // or address:1 for a different sensor index.
+        const altPayloads: { name: string; bytes: Uint8Array }[] = [
+          { name: "Sensor{read:true,address:0,data:1}", bytes: new Uint8Array([0x08, 0x01, 0x10, 0x00, 0x18, 0x01]) },
+          { name: "Sensor{read:true,address:1,data:0}", bytes: new Uint8Array([0x08, 0x01, 0x10, 0x01, 0x18, 0x00]) },
+          { name: "Sensor{read:true} (1-field)",        bytes: new Uint8Array([0x08, 0x01]) },
+        ];
+        let altIdx = 0;
+        const tryAlt = async () => {
+          if (this._notifCount > 0 || this._sensorNotifCount > 0) return;
+          if (altIdx >= altPayloads.length) {
+            console.warn(
+              "[Mendi] all enable_sensor payload variants exhausted — no notifications arrived. " +
+                "The V4 firmware on your headband may use a different handshake than the eugenehp/mendi reference. " +
+                "Power-cycle Mendi and try again; if it still fails, capture the official app's BLE traffic for protocol diff."
+            );
+            return;
+          }
+          const next = altPayloads[altIdx++];
+          console.info(`[Mendi] no frames yet — trying alternate handshake: ${next.name}`);
+          const payload = next.bytes as unknown as BufferSource;
+          try {
+            await sensor.writeValueWithResponse(payload);
+          } catch {
+            try { await sensor.writeValueWithoutResponse(payload); } catch {}
+          }
+          setTimeout(tryAlt, 1500);
+        };
+        setTimeout(tryAlt, 1500);
       } catch (err) {
         console.error(
           "[Mendi] enable_sensor handshake failed — Frame notifications likely won't arrive:",
@@ -221,6 +274,34 @@ export class MendiAdapter implements DeviceAdapter {
     }
   };
 
+  // Mirror handler for the Sensor characteristic in case V4 firmware
+  // streams sensor data on that char instead of the Frame char. We log
+  // the first frame loudly so the operator can see WHERE data is arriving;
+  // if it lands here consistently we'll switch the decoder over.
+  private _onSensorNotification = (event: Event): void => {
+    const target = event.target as BluetoothRemoteGATTCharacteristic;
+    const value = target.value;
+    if (!value) return;
+    this._sensorNotifCount++;
+    if (this._sensorNotifCount === 1) {
+      console.info("[Mendi] first SENSOR notification received", {
+        bytes: value.byteLength,
+        head: Array.from(new Uint8Array(value.buffer.slice(0, Math.min(8, value.byteLength))))
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join(" "),
+      });
+    } else if (this._sensorNotifCount % 100 === 0) {
+      console.info(`[Mendi] ${this._sensorNotifCount} sensor notifications received`);
+    }
+    // Try decoding as a Frame packet too — if it works, great, data is
+    // arriving on the sensor char and we're done.
+    const sample = this._decoder.decode(value);
+    if (sample) {
+      this._sampleCount++;
+      this._callbacks.forEach((cb) => cb(sample));
+    }
+  };
+
   private _onDisconnect = (): void => {
     this._connected = false;
     // Reconnect strategy is left to the UI layer — surface the
@@ -238,6 +319,16 @@ export class MendiAdapter implements DeviceAdapter {
         this._onNotification
       );
       this._characteristic = null;
+    }
+    if (this._sensorChar) {
+      this._sensorChar
+        .stopNotifications()
+        .catch(() => { /* ignore if already disconnected */ });
+      this._sensorChar.removeEventListener(
+        "characteristicvaluechanged",
+        this._onSensorNotification
+      );
+      this._sensorChar = null;
     }
     if (this._server?.connected) {
       this._server.disconnect();
