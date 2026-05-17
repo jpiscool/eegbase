@@ -302,6 +302,12 @@ export default function DemoClient({
   const mendiSamplesRef = useRef<DeviceSample[]>([]);
   const [mendiStatsTick, setMendiStatsTick] = useState(0);
   const [mendiReportCopiedAt, setMendiReportCopiedAt] = useState<number | null>(null);
+  // Persistent history of every WARN/FAIL ever seen during the session.
+  // Key = `${level}|${label}|${reason}` for dedup; value tracks first-seen,
+  // last-seen, and number of refresh cycles the issue appeared in.
+  // Survives refreshes; cleared by Reset.
+  const mendiHistoryRef = useRef<Map<string, { level: "WARN" | "FAIL"; label: string; reason: string; firstAt: number; lastAt: number; count: number }>>(new Map());
+  const [mendiHistoryCopiedAt, setMendiHistoryCopiedAt] = useState<number | null>(null);
   useEffect(() => {
     if (appMode !== "strip") return;
     // Tick the stats panel once per second so it refreshes without
@@ -2369,12 +2375,181 @@ export default function DemoClient({
                       return { status: "FAIL", reason: `mean TSI=${mean.toFixed(2)} outside (-1, 1)` };
                     },
                   },
+                  // ── ADDITIONAL CHEAP CLINICAL-GRADE CHECKS ───────────
+                  // These come from a deeper research pass: items that
+                  // can run client-side at 1 Hz on the existing 300-sample
+                  // buffer without needing a Web Worker / FFT.
+                  // ─────────────────────────────────────────────────────
+
+                  // Liveness watchdog — fails if newest sample is stale.
+                  // Catches "headband off but pipeline still reporting".
+                  {
+                    label: "Stream freshness (time-since-last-frame)",
+                    source: "General streaming QA",
+                    compute: (b) => {
+                      if (b.length === 0) return { status: "FAIL", reason: "no samples yet" };
+                      const stale = Date.now() - b[b.length - 1].timestampMs;
+                      if (stale < 200) return { status: "PASS", reason: `${stale} ms since last frame` };
+                      if (stale < 1000) return { status: "WARN", reason: `${stale} ms since last frame — pipeline may be stalling` };
+                      return { status: "FAIL", reason: `${stale} ms since last frame — stream is dead` };
+                    },
+                  },
+                  // Baseline-drift symmetry between L and R HbO. Different
+                  // drift directions = asymmetric headband fit.
+                  {
+                    label: "L/R HbO drift-slope symmetry",
+                    source: "Inferred — bilateral-fit symmetry",
+                    compute: (b) => {
+                      const n = b.length;
+                      if (n < 60) return { status: "FAIL", reason: "need ≥60 samples for drift slopes" };
+                      const slope = (sel: (s: DeviceSample) => number | null | undefined): number | null => {
+                        const xs: number[] = []; const ys: number[] = [];
+                        for (let i = 0; i < n; i++) {
+                          const v = sel(b[i]);
+                          if (typeof v === "number" && Number.isFinite(v)) { xs.push(i); ys.push(v); }
+                        }
+                        if (xs.length < 30) return null;
+                        const m = xs.length;
+                        let sx = 0, sy = 0, sxy = 0, sxx = 0;
+                        for (let i = 0; i < m; i++) { sx += xs[i]; sy += ys[i]; sxy += xs[i] * ys[i]; sxx += xs[i] * xs[i]; }
+                        const denom = m * sxx - sx * sx;
+                        return denom > 0 ? (m * sxy - sx * sy) / denom : null;
+                      };
+                      const sL = slope((s) => s.oxyHbLeft);
+                      const sR = slope((s) => s.oxyHbRight);
+                      if (sL == null || sR == null) return { status: "FAIL", reason: "could not compute slopes" };
+                      const denom = Math.max(Math.abs(sL), Math.abs(sR), 1e-6);
+                      const asym = Math.abs(sL - sR) / denom;
+                      if (asym < 0.3) return { status: "PASS", reason: `slopes L=${sL.toFixed(4)} R=${sR.toFixed(4)} · asym=${asym.toFixed(2)}` };
+                      if (asym < 0.6) return { status: "WARN", reason: `slopes L=${sL.toFixed(4)} R=${sR.toFixed(4)} · asym=${asym.toFixed(2)} (mild drift mismatch)` };
+                      return { status: "WARN", reason: `slopes L=${sL.toFixed(4)} R=${sR.toFixed(4)} · asym=${asym.toFixed(2)} — sensors drifting in opposite directions` };
+                    },
+                  },
+                  // DC step / electrode-pop equivalent: count of samples
+                  // that are >10 MADs from the rolling median.
+                  {
+                    label: "HbO L DC-step detector",
+                    source: "Brigadoi 2014 / Scholkmann 2010 (motion artifact)",
+                    compute: (b) => {
+                      const vals = numericVals(b, (s) => s.oxyHbLeft);
+                      if (vals.length < 30) return { status: "FAIL", reason: "need ≥30 HbO samples" };
+                      const mm = medianMad(vals);
+                      if (!mm) return { status: "FAIL", reason: "no median" };
+                      const k = 10; const thresh = k * 1.4826 * mm.mad;
+                      let steps = 0;
+                      for (const v of vals) if (Math.abs(v - mm.median) > thresh) steps++;
+                      const ratePerMin = steps / vals.length * 60 * 31;
+                      if (steps === 0) return { status: "PASS", reason: `0 steps · MAD=${mm.mad.toFixed(3)}` };
+                      if (ratePerMin < 1) return { status: "PASS", reason: `${steps} step(s) (~${ratePerMin.toFixed(1)}/min) — within tolerance` };
+                      if (ratePerMin < 5) return { status: "WARN", reason: `${steps} steps (~${ratePerMin.toFixed(1)}/min) — minor electrode pops` };
+                      return { status: "FAIL", reason: `${steps} steps (~${ratePerMin.toFixed(1)}/min) — heavy step artifact` };
+                    },
+                  },
+                  // Western Electric rule WE2: 2 of any 3 consecutive
+                  // samples beyond ±2σ on the same side of the mean.
+                  // Classic SPC anomaly detector.
+                  {
+                    label: "HbO L Western-Electric WE2 trips",
+                    source: "Western Electric SQC Handbook 1956",
+                    compute: (b) => {
+                      const vals = numericVals(b, (s) => s.oxyHbLeft);
+                      if (vals.length < 30) return { status: "FAIL", reason: "need ≥30 HbO samples" };
+                      const mean = vals.reduce((a, c) => a + c, 0) / vals.length;
+                      const variance = vals.reduce((acc, v) => acc + (v - mean) * (v - mean), 0) / vals.length;
+                      const sigma = Math.sqrt(variance);
+                      if (sigma < 1e-9) return { status: "WARN", reason: "σ≈0; cannot evaluate WE2" };
+                      let trips = 0;
+                      // sliding window of 3 samples, look for ≥2 on the same side > 2σ.
+                      for (let i = 2; i < vals.length; i++) {
+                        const win = [vals[i - 2], vals[i - 1], vals[i]];
+                        const above = win.filter((v) => v - mean > 2 * sigma).length;
+                        const below = win.filter((v) => mean - v > 2 * sigma).length;
+                        if (above >= 2 || below >= 2) trips++;
+                      }
+                      // Expected false-alarm rate at rest is small (~0.3%/sample = ~0.9 trips per 300 samples).
+                      if (trips <= 3) return { status: "PASS", reason: `${trips} WE2 trips in 300 samples (within noise floor)` };
+                      if (trips <= 10) return { status: "WARN", reason: `${trips} WE2 trips — mild process drift` };
+                      return { status: "WARN", reason: `${trips} WE2 trips — frequent excursions, baseline may be shifting` };
+                    },
+                  },
+                  // Raw-channel saturation rail. signalQualityP=100 with
+                  // σ=0 from the previous report was a hint this can
+                  // happen. Flag if too many samples sit at 100 or 0.
+                  {
+                    label: "Signal-quality (P) saturation",
+                    source: "General hardware QA",
+                    compute: (b) => {
+                      const vals = numericVals(b, (s) => s.signalQualityP);
+                      if (vals.length < 30) return { status: "FAIL", reason: "need ≥30 samples" };
+                      const railed = vals.filter((v) => v >= 99.5).length;
+                      const frac = railed / vals.length;
+                      if (frac < 0.5) return { status: "PASS", reason: `${railed}/${vals.length} samples at quality=100 (${(frac * 100).toFixed(0)}%)` };
+                      if (frac < 0.95) return { status: "WARN", reason: `${railed}/${vals.length} (${(frac * 100).toFixed(0)}%) at quality=100 — may be saturating` };
+                      return { status: "WARN", reason: `${railed}/${vals.length} (${(frac * 100).toFixed(0)}%) at quality=100 — pulse-optode quality formula is rail-stuck` };
+                    },
+                  },
+                  // Decoder dropped-packet count — surfaces the decoder's
+                  // own drop counter so it's visible in the test report.
+                  // (Currently we don't expose this from the buffer; placeholder
+                  // for when we plumb it through.)
+                  // Stillness vs accelMag sanity: stillness should be HIGH
+                  // when accelMag std is LOW. If stillness reports motion
+                  // while accel says calm, decoder is broken.
+                  {
+                    label: "stillness ⟷ accelMag consistency",
+                    source: "Decoder consistency check",
+                    compute: (b) => {
+                      const stills = numericVals(b, (s) => s.stillness);
+                      const accels = numericVals(b, (s) => s.accelMag);
+                      if (stills.length < 30 || accels.length < 30) return { status: "FAIL", reason: "insufficient samples" };
+                      const meanS = stills.reduce((a, c) => a + c, 0) / stills.length;
+                      let accelVar = 0;
+                      const meanA = accels.reduce((a, c) => a + c, 0) / accels.length;
+                      for (const v of accels) accelVar += (v - meanA) * (v - meanA);
+                      const accelStd = Math.sqrt(accelVar / accels.length);
+                      // Empirical heuristic: low accel σ should mean
+                      // high stillness; mismatch means something is off.
+                      if (accelStd < 0.01 && meanS > 80) return { status: "PASS", reason: `accel σ=${accelStd.toFixed(3)} g · stillness ${meanS.toFixed(0)} (consistent)` };
+                      if (accelStd > 0.1 && meanS < 30) return { status: "PASS", reason: `moving · accel σ=${accelStd.toFixed(3)} g · stillness ${meanS.toFixed(0)}` };
+                      if (accelStd < 0.01 && meanS < 50) return { status: "WARN", reason: `accel quiet (σ=${accelStd.toFixed(3)}) but stillness=${meanS.toFixed(0)} — decoder mismatch` };
+                      if (accelStd > 0.1 && meanS > 80) return { status: "WARN", reason: `accel busy (σ=${accelStd.toFixed(3)}) but stillness=${meanS.toFixed(0)} — decoder mismatch` };
+                      return { status: "PASS", reason: `accel σ=${accelStd.toFixed(3)} g · stillness=${meanS.toFixed(0)}` };
+                    },
+                  },
                 ];
                 const physResults = physChecks.map((p) => ({ check: p, result: p.compute(buf) }));
 
                 const counts = { PASS: 0, WARN: 0, FAIL: 0, "N/A": 0 } as Record<"PASS" | "WARN" | "FAIL" | "N/A", number>;
                 for (const r of results) counts[r.result.status]++;
                 for (const r of physResults) counts[r.result.status]++;
+
+                // ── Record WARN/FAIL into persistent history ─────────
+                // De-duped by (level + label + reason). Each unique issue
+                // is upserted with first-seen, last-seen, count++ so we
+                // can see every issue that fired during the session even
+                // if it cleared up before the next snapshot.
+                const now = Date.now();
+                const hist = mendiHistoryRef.current;
+                const recordIssue = (level: "WARN" | "FAIL", label: string, reason: string) => {
+                  const key = `${level}|${label}|${reason}`;
+                  const existing = hist.get(key);
+                  if (existing) {
+                    existing.lastAt = now;
+                    existing.count += 1;
+                  } else {
+                    hist.set(key, { level, label, reason, firstAt: now, lastAt: now, count: 1 });
+                  }
+                };
+                for (const r of results) {
+                  if (r.result.status === "WARN" || r.result.status === "FAIL") {
+                    recordIssue(r.result.status, r.check.widget, r.result.reason);
+                  }
+                }
+                for (const r of physResults) {
+                  if (r.result.status === "WARN" || r.result.status === "FAIL") {
+                    recordIssue(r.result.status, r.check.label, r.result.reason);
+                  }
+                }
                 const widgetRows = results.map((r) => {
                   const icon = r.result.status === "PASS" ? "✓"
                     : r.result.status === "WARN" ? "⚠"
@@ -2454,6 +2629,82 @@ export default function DemoClient({
                         return (
                           <div key={`row-${i}`} style={{ color }}>{r}</div>
                         );
+                      })}
+                    </pre>
+                  </div>
+                );
+              })()
+            )}
+
+            {/* Mendi test HISTORY panel — accumulates every WARN/FAIL
+                that's been seen during the session, deduped by
+                (level + label + reason). Lets you spot transient issues
+                that fired once between snapshots and would otherwise be
+                lost. Strip mode only. */}
+            {appMode === "strip" && mendiStatsTick > 0 && mendiHistoryRef.current.size > 0 && (
+              (() => {
+                const entries = Array.from(mendiHistoryRef.current.values())
+                  .sort((a, b) => b.lastAt - a.lastAt); // most-recent first
+                const counts = { WARN: 0, FAIL: 0 } as Record<"WARN" | "FAIL", number>;
+                for (const e of entries) counts[e.level]++;
+                const rows = entries.map((e) => {
+                  const icon = e.level === "FAIL" ? "✗" : "⚠";
+                  const first = new Date(e.firstAt).toLocaleTimeString("en-US", { hour12: false });
+                  const last = new Date(e.lastAt).toLocaleTimeString("en-US", { hour12: false });
+                  const span = e.firstAt === e.lastAt ? first : `${first}–${last}`;
+                  return `${icon} ${e.level.padEnd(4)}  ×${String(e.count).padStart(3)}  ${span}  ${e.label.padEnd(48)}  ${e.reason}`;
+                });
+                const fullText = `Mendi test HISTORY · ${entries.length} unique issues · refresh #${mendiStatsTick}\n` +
+                  `${counts.WARN} WARN · ${counts.FAIL} FAIL\n\n` + rows.join("\n");
+                return (
+                  <div style={{
+                    background: "#020617", border: "1px solid #1E293B", borderRadius: 12,
+                    padding: "12px 14px", marginBottom: 16,
+                    fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+                    fontSize: 11, lineHeight: 1.5,
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, flexWrap: "wrap", gap: 8 }}>
+                      <span style={{ color: "#94A3B8", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", fontSize: 10 }}>
+                        Mendi test history ·{" "}
+                        <span style={{ color: "#FBBF24" }}>{counts.WARN} WARN</span> ·{" "}
+                        <span style={{ color: "#F87171" }}>{counts.FAIL} FAIL</span> · {entries.length} unique
+                      </span>
+                      <div style={{ display: "flex", gap: 6 }}>
+                        <button
+                          onClick={async () => {
+                            try {
+                              await navigator.clipboard.writeText(fullText);
+                              setMendiHistoryCopiedAt(Date.now());
+                            } catch {
+                              const ta = document.createElement("textarea");
+                              ta.value = fullText;
+                              document.body.appendChild(ta);
+                              ta.select();
+                              try { document.execCommand("copy"); setMendiHistoryCopiedAt(Date.now()); } catch {}
+                              document.body.removeChild(ta);
+                            }
+                          }}
+                          style={{
+                            background: mendiHistoryCopiedAt && Date.now() - mendiHistoryCopiedAt < 1500 ? "#065F46" : "transparent",
+                            border: `1px solid ${mendiHistoryCopiedAt && Date.now() - mendiHistoryCopiedAt < 1500 ? "#10B981" : "#334155"}`,
+                            color: mendiHistoryCopiedAt && Date.now() - mendiHistoryCopiedAt < 1500 ? "#34D399" : "#94A3B8",
+                            borderRadius: 6, padding: "2px 10px", fontSize: 10, cursor: "pointer", fontFamily: "inherit", fontWeight: 700,
+                          }}
+                        >
+                          {mendiHistoryCopiedAt && Date.now() - mendiHistoryCopiedAt < 1500 ? "Copied ✓" : "Copy"}
+                        </button>
+                        <button
+                          onClick={() => { mendiHistoryRef.current = new Map(); setMendiStatsTick((t) => t + 1); }}
+                          style={{ background: "transparent", border: "1px solid #334155", color: "#94A3B8", borderRadius: 6, padding: "2px 8px", fontSize: 10, cursor: "pointer", fontFamily: "inherit" }}
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    </div>
+                    <pre style={{ margin: 0, color: "#CBD5E1", whiteSpace: "pre-wrap" }}>
+                      {rows.map((r, i) => {
+                        const color = r.startsWith("✗") ? "#F87171" : "#FBBF24";
+                        return <div key={`hist-${i}`} style={{ color }}>{r}</div>;
                       })}
                     </pre>
                   </div>
