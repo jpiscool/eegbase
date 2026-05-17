@@ -180,14 +180,32 @@ export class MendiAdapter implements DeviceAdapter {
         // start frames arriving. Tries different protobuf payloads — some
         // V4 firmware revisions need data:1 to actually engage streaming,
         // or address:1 for a different sensor index.
+        // The 'read:true' Sensor message we send first only triggers a
+        // single 2-byte ACK on V4 firmware (`08 01`). It does NOT engage
+        // continuous Frame streaming. Try a series of 'write' commands
+        // — one of them is hopefully the "enable streaming" register.
         const altPayloads: { name: string; bytes: Uint8Array }[] = [
-          { name: "Sensor{read:true,address:0,data:1}", bytes: new Uint8Array([0x08, 0x01, 0x10, 0x00, 0x18, 0x01]) },
-          { name: "Sensor{read:true,address:1,data:0}", bytes: new Uint8Array([0x08, 0x01, 0x10, 0x01, 0x18, 0x00]) },
-          { name: "Sensor{read:true} (1-field)",        bytes: new Uint8Array([0x08, 0x01]) },
+          { name: "Sensor{write reg 0 = 1} — 08 00 10 00 18 01",         bytes: new Uint8Array([0x08, 0x00, 0x10, 0x00, 0x18, 0x01]) },
+          { name: "Sensor{write reg 0 = 0xff (all-sensors mask)}",       bytes: new Uint8Array([0x08, 0x00, 0x10, 0x00, 0x18, 0xff]) },
+          { name: "Sensor{write reg 1 = 1}",                             bytes: new Uint8Array([0x08, 0x00, 0x10, 0x01, 0x18, 0x01]) },
+          { name: "Sensor{write reg 2 = 1}",                             bytes: new Uint8Array([0x08, 0x00, 0x10, 0x02, 0x18, 0x01]) },
+          { name: "Sensor{data=1 only} — 18 01",                         bytes: new Uint8Array([0x18, 0x01]) },
+          { name: "Sensor{data=0xff only}",                              bytes: new Uint8Array([0x18, 0xff]) },
+          { name: "Sensor{read:false only} — 08 00",                     bytes: new Uint8Array([0x08, 0x00]) },
+          { name: "Sensor{read:true, address:1}",                        bytes: new Uint8Array([0x08, 0x01, 0x10, 0x01, 0x18, 0x00]) },
+          { name: "Sensor{read:true, address:2}",                        bytes: new Uint8Array([0x08, 0x01, 0x10, 0x02, 0x18, 0x00]) },
+          { name: "Sensor{read:true, data:1}",                           bytes: new Uint8Array([0x08, 0x01, 0x10, 0x00, 0x18, 0x01]) },
         ];
         let altIdx = 0;
+        // Streaming detector: if we've received MORE than 1 Sensor notification
+        // (the first one is just the initial ACK) OR any Frame notifications,
+        // streaming is engaged and we can stop firing alternates.
+        const streaming = () => this._notifCount > 0 || this._sensorNotifCount > 1;
         const tryAlt = async () => {
-          if (this._notifCount > 0 || this._sensorNotifCount > 0) return;
+          if (streaming()) {
+            console.info("[Mendi] streaming engaged — stopping handshake variants");
+            return;
+          }
           if (altIdx >= altPayloads.length) {
             console.warn(
               "[Mendi] all enable_sensor payload variants exhausted — no notifications arrived. " +
