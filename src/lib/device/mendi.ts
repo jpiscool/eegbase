@@ -279,17 +279,35 @@ export class MendiAdapter implements DeviceAdapter {
         }
       }
 
-      // ── 4. Calibration write — DISABLED for this firmware ────────────
-      // Empirical: adding the Calibration write to the handshake makes
-      // this V4 firmware revision go completely silent (0 sensor ACKs,
-      // 0 frames). Without it, the same device produces a sensor ACK to
-      // the enable_sensor write. So the Calibration write is actively
-      // interfering — opposite of what the eugenehp/mendi reference
-      // suggests. Skip it. The characteristic was still acquired and
-      // notification-subscribed above so we'll see any calibration
-      // events the device emits independently.
-      void calibChar; // intentionally unused for now
-      void MENDI_ENABLE_CALIBRATION_BYTES;
+      // ── 4. Write Calibration{enable:true} to ABB6 ────────────────────
+      // Canonical 2-byte payload `20 01` (only field 4 enable=true; all
+      // other fields default to 0/false and prost omits them).
+      //
+      // First single Frame frame already arrived from just the
+      // enable_sensor write — Calibration is what unlocks CONTINUOUS
+      // streaming. eugenehp's CLI calls both `c` then `e` for this
+      // reason. Our earlier "Calibration breaks streaming" observation
+      // was actually caused by the wrong 19-byte explicit-fields
+      // payload — the canonical short form is fine.
+      if (calibChar) {
+        const calibPayload = MENDI_ENABLE_CALIBRATION_BYTES as unknown as BufferSource;
+        try {
+          await calibChar.writeValueWithResponse(calibPayload);
+          console.info("[Mendi] calibration enable write OK (withResponse, canonical 2-byte payload)");
+        } catch (errC) {
+          console.warn("[Mendi] calibration writeWithResponse failed; trying withoutResponse:", errC);
+          try {
+            await calibChar.writeValueWithoutResponse(calibPayload);
+            console.info("[Mendi] calibration enable write OK (withoutResponse, canonical 2-byte payload)");
+          } catch (errC2) {
+            console.warn("[Mendi] calibration enable write failed entirely:", errC2);
+          }
+        }
+      }
+
+      // Settling delay so the device can process the calibration
+      // command before we issue the sensor enable.
+      await new Promise((r) => setTimeout(r, 500));
 
       // ── 5. Write Sensor{read:true,address:0,data:0} to ABB2 ───────────
       const sensorPayload = MENDI_ENABLE_SENSOR_BYTES as unknown as BufferSource;
