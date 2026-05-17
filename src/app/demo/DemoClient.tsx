@@ -2161,11 +2161,13 @@ export default function DemoClient({
                   // Min std-dev relative to the expected range (0–1) below
                   // which the field counts as "static" → WARN.
                   livenessFrac?: number;
-                  // True if the user must have added this widget to /dashboard.
-                  // We can't introspect which widgets are present here so we
-                  // run all checks unconditionally — the test report shows
-                  // every widget's data-source status whether or not the
-                  // widget tile is on screen.
+                  // If true, the widget's data source is NOT exposed by
+                  // Mendi (e.g. a chest-strap HR widget). When the field is
+                  // empty we report "n/a — not supplied by Mendi" instead of
+                  // counting it as a FAIL. If the field IS populated (e.g.
+                  // because another device is paired) we still run the
+                  // range check.
+                  notApplicableForMendi?: boolean;
                 };
                 // One row per widget ID that depends on Mendi-derived
                 // DeviceSample fields. Catalogue has ~35 such widgets;
@@ -2215,11 +2217,14 @@ export default function DemoClient({
                   { widget: "mendi-pulse-hr",        sel: (s) => s.pulseHrBpm,     expectedMin: 35, expectedMax: 180, livenessFrac: 0 },
                   { widget: "mendi-pulse-hrv",       sel: (s) => s.pulseHrvRmssd,  expectedMin: 5,  expectedMax: 150, livenessFrac: 0 },
                   // ── chest-strap / wearable HR path (not from Mendi) ─
-                  { widget: "heart-rate (chest strap)",  sel: (s) => s.heartRate,  expectedMin: 35, expectedMax: 220, livenessFrac: 0 },
-                  { widget: "hr-zone (chest strap)",     sel: (s) => s.heartRate,  expectedMin: 35, expectedMax: 220, livenessFrac: 0 },
-                  { widget: "hr-sdnn (chest strap HRV)", sel: (s) => s.hrvRmssd,   expectedMin: 5,  expectedMax: 150, livenessFrac: 0 },
-                  { widget: "hrv-live (chest strap)",    sel: (s) => s.hrvRmssd,   expectedMin: 5,  expectedMax: 150, livenessFrac: 0 },
-                  { widget: "hr-hrv (chest strap)",      sel: (s) => s.hrvRmssd,   expectedMin: 5,  expectedMax: 150, livenessFrac: 0 },
+                  // These widgets expect data from a chest-strap or wearable
+                  // HR device; Mendi doesn't populate heartRate / hrvRmssd.
+                  // They report "n/a — not supplied by Mendi" instead of FAIL.
+                  { widget: "heart-rate (chest strap)",  sel: (s) => s.heartRate,  expectedMin: 35, expectedMax: 220, livenessFrac: 0, notApplicableForMendi: true },
+                  { widget: "hr-zone (chest strap)",     sel: (s) => s.heartRate,  expectedMin: 35, expectedMax: 220, livenessFrac: 0, notApplicableForMendi: true },
+                  { widget: "hr-sdnn (chest strap HRV)", sel: (s) => s.hrvRmssd,   expectedMin: 5,  expectedMax: 150, livenessFrac: 0, notApplicableForMendi: true },
+                  { widget: "hrv-live (chest strap)",    sel: (s) => s.hrvRmssd,   expectedMin: 5,  expectedMax: 150, livenessFrac: 0, notApplicableForMendi: true },
+                  { widget: "hr-hrv (chest strap)",      sel: (s) => s.hrvRmssd,   expectedMin: 5,  expectedMax: 150, livenessFrac: 0, notApplicableForMendi: true },
                   // ── signal-quality / coupling per optode ────────────
                   { widget: "mendi-signal-quality (L)", sel: (s) => s.signalQualityL, expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
                   { widget: "mendi-signal-quality (R)", sel: (s) => s.signalQualityR, expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
@@ -2232,9 +2237,12 @@ export default function DemoClient({
                     return span > 0 ? ((buf.length - 1) * 1000) / span : null;
                   }, expectedMin: 25, expectedMax: 35, livenessFrac: 0 },
                 ];
-                const runCheck = (c: Check): { status: "PASS" | "WARN" | "FAIL"; reason: string } => {
+                const runCheck = (c: Check): { status: "PASS" | "WARN" | "FAIL" | "N/A"; reason: string } => {
                   const s = stat(c.sel);
-                  if (!s) return { status: "FAIL", reason: "no data — field never populated" };
+                  if (!s) {
+                    if (c.notApplicableForMendi) return { status: "N/A", reason: "not supplied by Mendi (pair a chest-strap / wearable HR device)" };
+                    return { status: "FAIL", reason: "no data — field never populated" };
+                  }
                   if (s.n < 30) return { status: "WARN", reason: `only ${s.n} samples — wait longer` };
                   const inRange = s.avg >= c.expectedMin && s.avg <= c.expectedMax;
                   if (!inRange) return {
@@ -2252,14 +2260,17 @@ export default function DemoClient({
                   return { status: "PASS", reason: `avg ${s.avg.toFixed(2)} ± ${s.std.toFixed(2)} (n=${s.n})` };
                 };
                 const results = checks.map((c) => ({ check: c, result: runCheck(c) }));
-                const counts = { PASS: 0, WARN: 0, FAIL: 0 };
+                const counts = { PASS: 0, WARN: 0, FAIL: 0, "N/A": 0 } as Record<"PASS" | "WARN" | "FAIL" | "N/A", number>;
                 for (const r of results) counts[r.result.status]++;
                 const rows = results.map((r) => {
-                  const icon = r.result.status === "PASS" ? "✓" : r.result.status === "WARN" ? "⚠" : "✗";
+                  const icon = r.result.status === "PASS" ? "✓"
+                    : r.result.status === "WARN" ? "⚠"
+                    : r.result.status === "N/A"  ? "·"
+                    : "✗";
                   return `${icon} ${r.result.status.padEnd(4)}  ${r.check.widget.padEnd(40)}  ${r.result.reason}`;
                 });
                 const fullText = `Widget test report · ${buf.length} samples · refresh #${mendiStatsTick}\n` +
-                  `${counts.PASS} PASS · ${counts.WARN} WARN · ${counts.FAIL} FAIL\n\n${rows.join("\n")}`;
+                  `${counts.PASS} PASS · ${counts.WARN} WARN · ${counts.FAIL} FAIL · ${counts["N/A"]} N/A\n\n${rows.join("\n")}`;
                 return (
                   <div style={{
                     background: "#020617", border: "1px solid #1E293B", borderRadius: 12,
@@ -2272,7 +2283,8 @@ export default function DemoClient({
                         Widget test report ·{" "}
                         <span style={{ color: "#34D399" }}>{counts.PASS} PASS</span> ·{" "}
                         <span style={{ color: "#FBBF24" }}>{counts.WARN} WARN</span> ·{" "}
-                        <span style={{ color: "#F87171" }}>{counts.FAIL} FAIL</span>
+                        <span style={{ color: "#F87171" }}>{counts.FAIL} FAIL</span> ·{" "}
+                        <span style={{ color: "#64748B" }}>{counts["N/A"]} N/A</span>
                       </span>
                       <button
                         onClick={async () => {
@@ -2300,7 +2312,10 @@ export default function DemoClient({
                     </div>
                     <pre style={{ margin: 0, color: "#CBD5E1", whiteSpace: "pre-wrap" }}>
                       {rows.map((r) => {
-                        const color = r.startsWith("✓") ? "#34D399" : r.startsWith("⚠") ? "#FBBF24" : "#F87171";
+                        const color = r.startsWith("✓") ? "#34D399"
+                          : r.startsWith("⚠") ? "#FBBF24"
+                          : r.startsWith("·") ? "#64748B"
+                          : "#F87171";
                         return (
                           <div key={r} style={{ color }}>{r}</div>
                         );

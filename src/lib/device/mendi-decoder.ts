@@ -225,10 +225,12 @@ export class MendiPacketDecoder {
     // average of inter-beat intervals → BPM. Bounded to 35–180 BPM
     // physiological range. Stays undefined until ≥ 3 beats have arrived.
     //
-    // Refractory period: ignore zero-crossings within 333 ms of the last
-    // beat — at 180 BPM the IBI is 333 ms, so anything shorter is noise
-    // (double-detection on a rising edge). Previously we kept the short
-    // IBI in the history, which polluted RMSSD.
+    // Always advance _lastBeatMs on every upward zero-crossing so that
+    // when DC drift causes sparse crossings the detector still re-syncs
+    // on whatever crossings DO happen. Out-of-range IBIs are still
+    // skipped from the history (so they can't pollute the mean BPM),
+    // but the IBI clock resets so the NEXT crossing measures a fresh
+    // interval. The HRV outlier filter further down catches noise.
     let pulseHrBpm: number | undefined;
     if (pulsePpg != null) {
       const nowMs = Date.now();
@@ -236,20 +238,14 @@ export class MendiPacketDecoder {
       this._pulsePrev = pulsePpg;
       if (prev != null && prev <= 0 && pulsePpg > 0) {
         const last = this._lastBeatMs;
-        if (last == null) {
-          this._lastBeatMs = nowMs;
-        } else {
+        if (last != null) {
           const ibi = nowMs - last;
-          // Hard physiological gate: only accept IBIs in [333, 1714] ms.
-          // Anything outside that window is rejected as noise — and we
-          // do NOT advance _lastBeatMs in that case, so the next valid
-          // beat measures from the previous good beat.
           if (ibi >= 333 && ibi <= 1714) {
             this._ibiHistory.push(ibi);
             if (this._ibiHistory.length > 8) this._ibiHistory.shift();
-            this._lastBeatMs = nowMs;
           }
         }
+        this._lastBeatMs = nowMs;
       }
       if (this._ibiHistory.length >= 3) {
         const meanIbi =
