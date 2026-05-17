@@ -166,24 +166,34 @@ export class MendiAdapter implements DeviceAdapter {
       try { diagChar = await service.getCharacteristic(MENDI_DIAGNOSTICS_CHAR_UUID); console.info("[Mendi] diagnostics characteristic acquired"); } catch (e) { console.warn("[Mendi] diagnostics characteristic missing:", e); }
 
       // ── 2. Subscribe to the four notify chars in eugenehp's order ─────
+      // Insert short delays between each subscribe so the BLE stack
+      // doesn't pipeline the requests faster than the headband's CCCD
+      // handler can process them. Without these delays we observed the
+      // device stop ACKing subsequent writes entirely.
+      const settle = () => new Promise((r) => setTimeout(r, 200));
+
       this._characteristic.addEventListener("characteristicvaluechanged", this._onNotification);
       await this._characteristic.startNotifications();
       console.info("[Mendi] frame notifications subscribed");
+      await settle();
 
       if (adcChar && adcChar.properties.notify) {
         try { await adcChar.startNotifications(); console.info("[Mendi] adc notifications subscribed"); }
         catch (e) { console.warn("[Mendi] adc startNotifications failed:", e); }
+        await settle();
       }
 
       if (calibChar && calibChar.properties.notify) {
         try { await calibChar.startNotifications(); console.info("[Mendi] calibration notifications subscribed"); }
         catch (e) { console.warn("[Mendi] calibration startNotifications failed:", e); }
+        await settle();
       }
 
       if (sensor.properties.notify) {
         sensor.addEventListener("characteristicvaluechanged", this._onSensorNotification);
         try { await sensor.startNotifications(); console.info("[Mendi] sensor notifications subscribed"); }
         catch (e) { console.warn("[Mendi] sensor startNotifications failed:", e); }
+        await settle();
       }
 
       // ── 3. Read Diagnostics once ──────────────────────────────────────
@@ -224,9 +234,12 @@ export class MendiAdapter implements DeviceAdapter {
         }
       }
 
-      // Brief settling delay so the device can process the calibration
-      // command before we issue the sensor enable.
-      await new Promise((r) => setTimeout(r, 200));
+      // Settling delay so the device can process the calibration
+      // command before we issue the sensor enable. The previous 200 ms
+      // appeared too aggressive — the device stopped ACKing subsequent
+      // writes. 1 second matches the cadence of eugenehp's interactive
+      // CLI (human keystrokes between `c` and `e`).
+      await new Promise((r) => setTimeout(r, 1000));
 
       // ── 5. Write Sensor{read:true,address:0,data:0} to ABB2 ───────────
       const sensorPayload = MENDI_ENABLE_SENSOR_BYTES as unknown as BufferSource;
@@ -243,25 +256,26 @@ export class MendiAdapter implements DeviceAdapter {
       this._connected = true;
       console.info("[Mendi] ready — awaiting frames");
 
-      // Watchdog — if no frame notifications arrive within 5 seconds,
-      // log the post-handshake state so we can see whether the device
-      // is dead-silent on Frame, or whether something is arriving but
-      // failing to decode.
-      setTimeout(() => {
-        if (this._notifCount === 0) {
-          console.warn(
-            `[Mendi] WATCHDOG: 5 s elapsed, NO frame notifications received. ` +
-              `sensor notifications: ${this._sensorNotifCount}, ` +
-              `decoded samples: ${this._sampleCount}, ` +
-              `decoder dropped: ${this._decoder.droppedPackets}. ` +
-              `If the headband is worn and powered, the V4 firmware may need a different handshake than eugenehp documents.`
+      // Watchdog — sample at 3 s, 8 s, 15 s so we can see if frames are
+      // delayed rather than missing. The first sensor ACK in a previous
+      // test arrived ~6 s after enable so this gives plenty of headroom.
+      const watchdog = (sec: number) => setTimeout(() => {
+        if (this._notifCount > 0) {
+          console.info(
+            `[Mendi] WATCHDOG ${sec}s: streaming alive — ${this._notifCount} frames received (${this._sampleCount} decoded, ${this._sensorNotifCount} sensor notifs).`
           );
         } else {
-          console.info(
-            `[Mendi] WATCHDOG: streaming alive — ${this._notifCount} frame notifications received in 5 s (${this._sampleCount} decoded).`
+          console.warn(
+            `[Mendi] WATCHDOG ${sec}s: NO frame notifications yet. ` +
+              `sensor notifications: ${this._sensorNotifCount}, ` +
+              `decoded samples: ${this._sampleCount}, ` +
+              `decoder dropped: ${this._decoder.droppedPackets}.`
           );
         }
-      }, 5000);
+      }, sec * 1000);
+      watchdog(3);
+      watchdog(8);
+      watchdog(15);
     } catch (err) {
       this._cleanup();
       throw new Error(
