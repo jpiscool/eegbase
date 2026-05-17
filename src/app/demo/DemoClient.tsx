@@ -2167,40 +2167,70 @@ export default function DemoClient({
                   // every widget's data-source status whether or not the
                   // widget tile is on screen.
                 };
+                // One row per widget ID that depends on Mendi-derived
+                // DeviceSample fields. Catalogue has ~35 such widgets;
+                // whichever the user has installed on /dashboard will appear
+                // in this report. Each widget is independently checked
+                // against an empirical range + liveness floor.
                 const checks: Check[] = [
-                  // Optical channels
-                  { widget: "live-score / reward-trace / mendi-workload", sel: (s) => s.rewardScore,    expectedMin: 0,   expectedMax: 100, livenessFrac: 0.005 },
-                  { widget: "hbo-trace (HbO L)",                          sel: (s) => s.oxyHbLeft,     expectedMin: -10, expectedMax: 10,  livenessFrac: 0.005 },
-                  { widget: "hbo-trace (HbO R)",                          sel: (s) => s.oxyHbRight,    expectedMin: -10, expectedMax: 10,  livenessFrac: 0.005 },
-                  { widget: "hhb-trace (HHb L)",                          sel: (s) => s.deoxyHbLeft,   expectedMin: -10, expectedMax: 10,  livenessFrac: 0.005 },
-                  { widget: "hhb-trace (HHb R)",                          sel: (s) => s.deoxyHbRight,  expectedMin: -10, expectedMax: 10,  livenessFrac: 0.005 },
-                  { widget: "total-hbo",                                  sel: (s) => (s.oxyHbLeft ?? 0) + (s.oxyHbRight ?? 0), expectedMin: -20, expectedMax: 20, livenessFrac: 0.005 },
-                  { widget: "asymmetry / mendi-laterality",               sel: (s) => (s.oxyHbLeft ?? 0) - (s.oxyHbRight ?? 0), expectedMin: -5,  expectedMax: 5,  livenessFrac: 0.005 },
-                  { widget: "tsi-gauge / brain-mini",                     sel: (s) => {
+                  // ── reward / focus ──────────────────────────────────
+                  { widget: "live-score",            sel: (s) => s.rewardScore,    expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
+                  { widget: "reward-trace",          sel: (s) => s.rewardScore,    expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
+                  { widget: "reward-histogram",      sel: (s) => s.rewardScore,    expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
+                  { widget: "mendi-workload",        sel: (s) => s.rewardScore,    expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
+                  { widget: "mendi-session-arc",     sel: (s) => s.rewardScore,    expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
+                  { widget: "mendi-reward-histogram", sel: (s) => s.rewardScore,   expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
+                  { widget: "mendi-trial-blocks",    sel: (s) => s.rewardScore,    expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
+                  { widget: "mendi-engagement-time", sel: (s) => s.rewardScore,    expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
+                  // ── optical / fNIRS (Beer-Lambert HbO + HHb) ────────
+                  { widget: "mendi-channels (HbO L)", sel: (s) => s.oxyHbLeft,     expectedMin: -10, expectedMax: 10, livenessFrac: 0.005 },
+                  { widget: "mendi-channels (HbO R)", sel: (s) => s.oxyHbRight,    expectedMin: -10, expectedMax: 10, livenessFrac: 0.005 },
+                  { widget: "hbo-trace (HbO L)",      sel: (s) => s.oxyHbLeft,     expectedMin: -10, expectedMax: 10, livenessFrac: 0.005 },
+                  { widget: "hbo-trace (HbO R)",      sel: (s) => s.oxyHbRight,    expectedMin: -10, expectedMax: 10, livenessFrac: 0.005 },
+                  { widget: "hhb-trace (HHb L)",      sel: (s) => s.deoxyHbLeft,   expectedMin: -10, expectedMax: 10, livenessFrac: 0.005 },
+                  { widget: "hhb-trace (HHb R)",      sel: (s) => s.deoxyHbRight,  expectedMin: -10, expectedMax: 10, livenessFrac: 0.005 },
+                  { widget: "total-hbo",              sel: (s) => (s.oxyHbLeft ?? 0) + (s.oxyHbRight ?? 0), expectedMin: -20, expectedMax: 20, livenessFrac: 0.005 },
+                  { widget: "asymmetry",              sel: (s) => (s.oxyHbLeft ?? 0) - (s.oxyHbRight ?? 0), expectedMin: -5,  expectedMax: 5,  livenessFrac: 0.005 },
+                  { widget: "mendi-laterality",       sel: (s) => (s.oxyHbLeft ?? 0) - (s.oxyHbRight ?? 0), expectedMin: -5,  expectedMax: 5,  livenessFrac: 0.005 },
+                  { widget: "tsi-gauge", sel: (s) => {
                     const hbo = ((s.oxyHbLeft ?? 0) + (s.oxyHbRight ?? 0)) / 2;
                     const hhb = ((s.deoxyHbLeft ?? 0) + (s.deoxyHbRight ?? 0)) / 2;
                     const denom = Math.abs(hbo) + Math.abs(hhb);
                     return denom > 0 ? hbo / denom : null;
-                  }, expectedMin: -1,  expectedMax: 1,  livenessFrac: 0.005 },
-                  // Temperature
-                  { widget: "mendi-temperature",   sel: (s) => s.temperatureC, expectedMin: 20, expectedMax: 40, livenessFrac: 0.001 },
-                  // IMU
-                  { widget: "mendi-stillness",     sel: (s) => s.stillness,    expectedMin: 0,  expectedMax: 100, livenessFrac: 0.005 },
-                  { widget: "mendi-head-pose (X)", sel: (s) => s.accelX,       expectedMin: -2, expectedMax: 2,   livenessFrac: 0.005 },
-                  { widget: "mendi-head-pose (Y)", sel: (s) => s.accelY,       expectedMin: -2, expectedMax: 2,   livenessFrac: 0.005 },
-                  { widget: "mendi-head-pose (Z)", sel: (s) => s.accelZ,       expectedMin: -2, expectedMax: 2,   livenessFrac: 0.005 },
-                  // Pulse / HRV
-                  { widget: "mendi-pulse-waveform", sel: (s) => s.pulsePpg,       expectedMin: -50000, expectedMax: 50000, livenessFrac: 0.005 },
-                  { widget: "mendi-pulse-hr",       sel: (s) => s.pulseHrBpm,     expectedMin: 35,     expectedMax: 180,   livenessFrac: 0 },
-                  { widget: "mendi-pulse-hrv",      sel: (s) => s.pulseHrvRmssd,  expectedMin: 5,      expectedMax: 150,   livenessFrac: 0 },
-                  { widget: "hrv-live (chest strap path)", sel: (s) => s.hrvRmssd, expectedMin: 5, expectedMax: 150, livenessFrac: 0 },
-                  { widget: "heart-rate / hr-zone (chest strap path)", sel: (s) => s.heartRate, expectedMin: 35, expectedMax: 220, livenessFrac: 0 },
-                  // Signal quality
+                  }, expectedMin: -1, expectedMax: 1, livenessFrac: 0.005 },
+                  { widget: "brain-mini (HbO L)",     sel: (s) => s.oxyHbLeft,     expectedMin: -10, expectedMax: 10, livenessFrac: 0.005 },
+                  { widget: "brain-mini (HbO R)",     sel: (s) => s.oxyHbRight,    expectedMin: -10, expectedMax: 10, livenessFrac: 0.005 },
+                  { widget: "mendi-coherence (HbO L)", sel: (s) => s.oxyHbLeft,    expectedMin: -10, expectedMax: 10, livenessFrac: 0.005 },
+                  { widget: "mendi-coherence (HbO R)", sel: (s) => s.oxyHbRight,   expectedMin: -10, expectedMax: 10, livenessFrac: 0.005 },
+                  { widget: "mendi-mayer-wave (HbO sum)", sel: (s) => (s.oxyHbLeft ?? 0) + (s.oxyHbRight ?? 0), expectedMin: -20, expectedMax: 20, livenessFrac: 0.005 },
+                  // ── temperature ─────────────────────────────────────
+                  { widget: "mendi-temperature",     sel: (s) => s.temperatureC,   expectedMin: 20, expectedMax: 40, livenessFrac: 0.001 },
+                  // ── IMU / motion ────────────────────────────────────
+                  { widget: "mendi-stillness",       sel: (s) => s.stillness,      expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
+                  { widget: "mendi-head-pose (accelX)", sel: (s) => s.accelX,      expectedMin: -2, expectedMax: 2, livenessFrac: 0.005 },
+                  { widget: "mendi-head-pose (accelY)", sel: (s) => s.accelY,      expectedMin: -2, expectedMax: 2, livenessFrac: 0.005 },
+                  { widget: "mendi-head-pose (accelZ)", sel: (s) => s.accelZ,      expectedMin: -2, expectedMax: 2, livenessFrac: 0.005 },
+                  // ── pulse / HRV from forehead PPG ───────────────────
+                  { widget: "mendi-pulse-waveform",  sel: (s) => s.pulsePpg,       expectedMin: -50000, expectedMax: 50000, livenessFrac: 0.005 },
+                  { widget: "mendi-pulse-hr",        sel: (s) => s.pulseHrBpm,     expectedMin: 35, expectedMax: 180, livenessFrac: 0 },
+                  { widget: "mendi-pulse-hrv",       sel: (s) => s.pulseHrvRmssd,  expectedMin: 5,  expectedMax: 150, livenessFrac: 0 },
+                  // ── chest-strap / wearable HR path (not from Mendi) ─
+                  { widget: "heart-rate (chest strap)",  sel: (s) => s.heartRate,  expectedMin: 35, expectedMax: 220, livenessFrac: 0 },
+                  { widget: "hr-zone (chest strap)",     sel: (s) => s.heartRate,  expectedMin: 35, expectedMax: 220, livenessFrac: 0 },
+                  { widget: "hr-sdnn (chest strap HRV)", sel: (s) => s.hrvRmssd,   expectedMin: 5,  expectedMax: 150, livenessFrac: 0 },
+                  { widget: "hrv-live (chest strap)",    sel: (s) => s.hrvRmssd,   expectedMin: 5,  expectedMax: 150, livenessFrac: 0 },
+                  { widget: "hr-hrv (chest strap)",      sel: (s) => s.hrvRmssd,   expectedMin: 5,  expectedMax: 150, livenessFrac: 0 },
+                  // ── signal-quality / coupling per optode ────────────
                   { widget: "mendi-signal-quality (L)", sel: (s) => s.signalQualityL, expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
                   { widget: "mendi-signal-quality (R)", sel: (s) => s.signalQualityR, expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
                   { widget: "mendi-signal-quality (P)", sel: (s) => s.signalQualityP, expectedMin: 0, expectedMax: 100, livenessFrac: 0 },
-                  // Ambient
-                  { widget: "mendi-ambient-light", sel: (s) => s.ambientLevel, expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
+                  // ── ambient + framerate ─────────────────────────────
+                  { widget: "mendi-ambient-light",   sel: (s) => s.ambientLevel,   expectedMin: 0, expectedMax: 100, livenessFrac: 0.005 },
+                  { widget: "mendi-fps (effective)", sel: (_s) => {
+                    if (buf.length < 2) return null;
+                    const span = buf[buf.length - 1].timestampMs - buf[0].timestampMs;
+                    return span > 0 ? ((buf.length - 1) * 1000) / span : null;
+                  }, expectedMin: 25, expectedMax: 35, livenessFrac: 0 },
                 ];
                 const runCheck = (c: Check): { status: "PASS" | "WARN" | "FAIL"; reason: string } => {
                   const s = stat(c.sel);
