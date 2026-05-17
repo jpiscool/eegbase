@@ -321,10 +321,14 @@ export class MendiAdapter implements DeviceAdapter {
         console.info("[Mendi] enable_sensor write OK (withoutResponse)");
       }
 
-      // Keep-alive: re-poke enable_sensor every 1 s in case the device
-      // requires periodic engagement to keep streaming alive. Stops
-      // firing once we see >50 frames (confirming continuous stream)
-      // or on disconnect.
+      // Keep-alive: empirically each enable_sensor write triggers exactly
+      // ONE Frame on the rising edge (read:false → read:true). Subsequent
+      // identical writes do nothing because the device is "already enabled".
+      // So we cycle disable → enable every 200 ms — each cycle should
+      // produce one Frame, giving ~5 frames/sec. Crude but matches the
+      // observed semantics. Stops once stream is healthy or on disconnect.
+      const DISABLE_SENSOR = new Uint8Array([0x08, 0x00]); // Sensor{read:false}
+      let cycleState: "enable" | "disable" = "disable";
       this._keepAliveTimer = setInterval(() => {
         if (this._notifCount > 50) {
           if (this._keepAliveTimer) {
@@ -334,10 +338,17 @@ export class MendiAdapter implements DeviceAdapter {
           }
           return;
         }
-        sensor.writeValueWithResponse(MENDI_ENABLE_SENSOR_BYTES as unknown as BufferSource).catch((e) => {
-          console.warn("[Mendi] keep-alive write failed:", e);
+        const payload = (cycleState === "enable" ? MENDI_ENABLE_SENSOR_BYTES : DISABLE_SENSOR) as unknown as BufferSource;
+        sensor.writeValueWithResponse(payload).catch(() => {
+          // Some firmware rejects empty writes (Sensor{read:false} encodes
+          // as zero bytes in canonical proto3). If withResponse fails, swap
+          // to withoutResponse silently.
+          sensor.writeValueWithoutResponse(payload).catch((e) => {
+            console.warn("[Mendi] keep-alive write failed:", e);
+          });
         });
-      }, 1000);
+        cycleState = cycleState === "enable" ? "disable" : "enable";
+      }, 200);
 
       this._decoder.resetBaseline();
       this._connected = true;
