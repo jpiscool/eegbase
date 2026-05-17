@@ -321,34 +321,16 @@ export class MendiAdapter implements DeviceAdapter {
         console.info("[Mendi] enable_sensor write OK (withoutResponse)");
       }
 
-      // Keep-alive: empirically each enable_sensor write triggers exactly
-      // ONE Frame on the rising edge (read:false → read:true). Subsequent
-      // identical writes do nothing because the device is "already enabled".
-      // So we cycle disable → enable every 200 ms — each cycle should
-      // produce one Frame, giving ~5 frames/sec. Crude but matches the
-      // observed semantics. Stops once stream is healthy or on disconnect.
-      const DISABLE_SENSOR = new Uint8Array([0x08, 0x00]); // Sensor{read:false}
-      let cycleState: "enable" | "disable" = "disable";
-      this._keepAliveTimer = setInterval(() => {
-        if (this._notifCount > 50) {
-          if (this._keepAliveTimer) {
-            clearInterval(this._keepAliveTimer);
-            this._keepAliveTimer = null;
-            console.info("[Mendi] keep-alive disabled — stream is healthy");
-          }
-          return;
-        }
-        const payload = (cycleState === "enable" ? MENDI_ENABLE_SENSOR_BYTES : DISABLE_SENSOR) as unknown as BufferSource;
-        sensor.writeValueWithResponse(payload).catch(() => {
-          // Some firmware rejects empty writes (Sensor{read:false} encodes
-          // as zero bytes in canonical proto3). If withResponse fails, swap
-          // to withoutResponse silently.
-          sensor.writeValueWithoutResponse(payload).catch((e) => {
-            console.warn("[Mendi] keep-alive write failed:", e);
-          });
-        });
-        cycleState = cycleState === "enable" ? "disable" : "enable";
-      }, 200);
+      // NOTE: keep-alive disabled until we have a BLE packet capture of
+      // the official Mendi app. We've confirmed empirically that V4
+      // firmware emits exactly ONE Frame on the rising edge of the
+      // enable_sensor handshake, then goes quiet — neither repeated
+      // enable_sensor writes nor disable→enable cycling produces
+      // additional frames. Mendi continues to work as a proof-of-life
+      // check (Connect → 1 frame → adapter pipeline validated).
+      // Once we have the captured "true" handshake command, replace
+      // this comment block with the real keep-alive / start-stream call.
+      void sensor; // keep BLE ref alive for cleanup
 
       this._decoder.resetBaseline();
       this._connected = true;
