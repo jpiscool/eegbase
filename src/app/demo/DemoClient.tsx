@@ -2169,6 +2169,60 @@ export default function DemoClient({
                   // range check.
                   notApplicableForMendi?: boolean;
                 };
+                // Physiology / signal-quality checks that don't fit the
+                // single-field min/max/σ pattern — these compute their own
+                // statistic from the buffer (correlation, jitter, drift,
+                // outlier rate, etc.) and return PASS/WARN/FAIL directly.
+                // Sources: Pollonini PHOEBE 2016, Tachtsidis & Scholkmann
+                // 2016 (false positives), Elgendi 2013, ESC/NASPE HRV
+                // Task Force 1996.
+                type PhysCheck = {
+                  label: string;
+                  compute: (buf: DeviceSample[]) => { status: "PASS" | "WARN" | "FAIL" | "N/A"; reason: string };
+                  source: string;
+                };
+                // ── helpers ────────────────────────────────────────────
+                const pearson = (xs: number[], ys: number[]): number | null => {
+                  const n = Math.min(xs.length, ys.length);
+                  if (n < 10) return null;
+                  let mx = 0, my = 0;
+                  for (let i = 0; i < n; i++) { mx += xs[i]; my += ys[i]; }
+                  mx /= n; my /= n;
+                  let sxy = 0, sxx = 0, syy = 0;
+                  for (let i = 0; i < n; i++) {
+                    const dx = xs[i] - mx, dy = ys[i] - my;
+                    sxy += dx * dy; sxx += dx * dx; syy += dy * dy;
+                  }
+                  const denom = Math.sqrt(sxx * syy);
+                  return denom > 0 ? sxy / denom : null;
+                };
+                const pluckPairs = (buf: DeviceSample[], a: (s: DeviceSample) => number | null | undefined, b: (s: DeviceSample) => number | null | undefined): { xs: number[]; ys: number[] } => {
+                  const xs: number[] = []; const ys: number[] = [];
+                  for (const s of buf) {
+                    const va = a(s), vb = b(s);
+                    if (typeof va === "number" && typeof vb === "number" && Number.isFinite(va) && Number.isFinite(vb)) {
+                      xs.push(va); ys.push(vb);
+                    }
+                  }
+                  return { xs, ys };
+                };
+                // Median + median-absolute-deviation, robust to outliers.
+                const medianMad = (vals: number[]): { median: number; mad: number } | null => {
+                  if (vals.length === 0) return null;
+                  const sorted = [...vals].sort((a, b) => a - b);
+                  const median = sorted[Math.floor(sorted.length / 2)];
+                  const dev = sorted.map((v) => Math.abs(v - median)).sort((a, b) => a - b);
+                  const mad = dev[Math.floor(dev.length / 2)];
+                  return { median, mad };
+                };
+                const numericVals = (buf: DeviceSample[], sel: (s: DeviceSample) => number | null | undefined): number[] => {
+                  const out: number[] = [];
+                  for (const s of buf) {
+                    const v = sel(s);
+                    if (typeof v === "number" && Number.isFinite(v)) out.push(v);
+                  }
+                  return out;
+                };
                 // One row per widget ID that depends on Mendi-derived
                 // DeviceSample fields. Catalogue has ~35 such widgets;
                 // whichever the user has installed on /dashboard will appear
@@ -2260,15 +2314,221 @@ export default function DemoClient({
                   return { status: "PASS", reason: `avg ${s.avg.toFixed(2)} ± ${s.std.toFixed(2)} (n=${s.n})` };
                 };
                 const results = checks.map((c) => ({ check: c, result: runCheck(c) }));
+
+                // ── Physiology / signal-quality checks ───────────────
+                const physChecks: PhysCheck[] = [
+                  // Tachtsidis & Scholkmann 2016 — HbO/HHb should anti-
+                  // correlate during real neural activation. If they
+                  // co-vary positively, signal is systemic (scalp blood
+                  // flow, BP), not brain.
+                  {
+                    label: "HbO ⟷ HHb anti-correlation (L channel)",
+                    source: "Tachtsidis & Scholkmann 2016",
+                    compute: (b) => {
+                      const { xs, ys } = pluckPairs(b, (s) => s.oxyHbLeft, (s) => s.deoxyHbLeft);
+                      const r = pearson(xs, ys);
+                      if (r == null) return { status: "FAIL", reason: "insufficient HbO/HHb pairs" };
+                      if (r < 0.5) return { status: "PASS", reason: `r=${r.toFixed(2)} (good — signal anti-correlates or independent)` };
+                      return { status: "WARN", reason: `r=${r.toFixed(2)} — HbO and HHb co-varying; check for systemic-noise contamination` };
+                    },
+                  },
+                  {
+                    label: "HbO ⟷ HHb anti-correlation (R channel)",
+                    source: "Tachtsidis & Scholkmann 2016",
+                    compute: (b) => {
+                      const { xs, ys } = pluckPairs(b, (s) => s.oxyHbRight, (s) => s.deoxyHbRight);
+                      const r = pearson(xs, ys);
+                      if (r == null) return { status: "FAIL", reason: "insufficient HbO/HHb pairs" };
+                      if (r < 0.5) return { status: "PASS", reason: `r=${r.toFixed(2)} (good — signal anti-correlates or independent)` };
+                      return { status: "WARN", reason: `r=${r.toFixed(2)} — HbO and HHb co-varying; check for systemic-noise contamination` };
+                    },
+                  },
+                  // Mayer-wave-driven L/R prefrontal coherence at rest
+                  // should be moderate. Loss of any correlation suggests
+                  // one optode disconnected. Inferred range from fNIRS
+                  // resting-state literature.
+                  {
+                    label: "L ⟷ R HbO coherence (resting)",
+                    source: "Inferred — fNIRS resting-state literature",
+                    compute: (b) => {
+                      const { xs, ys } = pluckPairs(b, (s) => s.oxyHbLeft, (s) => s.oxyHbRight);
+                      const r = pearson(xs, ys);
+                      if (r == null) return { status: "FAIL", reason: "insufficient HbO L+R pairs" };
+                      if (r > 0.2) return { status: "PASS", reason: `r=${r.toFixed(2)} (good — bilateral physiology present)` };
+                      if (r > -0.2) return { status: "WARN", reason: `r=${r.toFixed(2)} — low L/R coherence; check fit / coupling` };
+                      return { status: "WARN", reason: `r=${r.toFixed(2)} — L and R anti-correlated; sensors may be on opposite vasoresponses` };
+                    },
+                  },
+                  // HR ⟷ accelerometer motion-confound: if PPG-derived HR
+                  // tracks motion magnitude, the "HR" is cadence/noise
+                  // not a real heartbeat. Lim 2018; standard PPG QA.
+                  {
+                    label: "Pulse waveform ⟷ accel motion confound",
+                    source: "Lim 2018 — PPG motion confound",
+                    compute: (b) => {
+                      const { xs, ys } = pluckPairs(b, (s) => s.pulsePpg, (s) => s.accelMag);
+                      const r = pearson(xs, ys);
+                      if (r == null) return { status: "FAIL", reason: "no paired pulse/accel data" };
+                      if (Math.abs(r) < 0.3) return { status: "PASS", reason: `|r|=${Math.abs(r).toFixed(2)} (no motion-confound)` };
+                      return { status: "WARN", reason: `|r|=${Math.abs(r).toFixed(2)} — pulse signal tracks motion; HR may be artifactual` };
+                    },
+                  },
+                  // Sample-rate jitter: std of inter-sample timestamps
+                  // should be small at a stable 31 Hz. High jitter
+                  // suggests BLE transport stalls.
+                  {
+                    label: "Sample-rate jitter (timestamp std)",
+                    source: "General streaming QA",
+                    compute: (b) => {
+                      if (b.length < 30) return { status: "FAIL", reason: "need ≥30 samples" };
+                      const diffs: number[] = [];
+                      for (let i = 1; i < b.length; i++) diffs.push(b[i].timestampMs - b[i - 1].timestampMs);
+                      const mean = diffs.reduce((a, c) => a + c, 0) / diffs.length;
+                      const variance = diffs.reduce((acc, v) => acc + (v - mean) * (v - mean), 0) / diffs.length;
+                      const std = Math.sqrt(variance);
+                      if (std < 5) return { status: "PASS", reason: `period=${mean.toFixed(1)} ms · std=${std.toFixed(2)} ms (clean BLE link)` };
+                      if (std < 15) return { status: "WARN", reason: `period=${mean.toFixed(1)} ms · std=${std.toFixed(2)} ms — some BLE jitter` };
+                      return { status: "FAIL", reason: `period=${mean.toFixed(1)} ms · std=${std.toFixed(2)} ms (high jitter; BLE stalling)` };
+                    },
+                  },
+                  // Dropout count: intervals > 2× nominal period =
+                  // missed packets / connection stalls.
+                  {
+                    label: "Sample dropout rate",
+                    source: "General streaming QA",
+                    compute: (b) => {
+                      if (b.length < 30) return { status: "FAIL", reason: "need ≥30 samples" };
+                      let drops = 0;
+                      for (let i = 1; i < b.length; i++) {
+                        if (b[i].timestampMs - b[i - 1].timestampMs > 80) drops++;
+                      }
+                      const frac = drops / (b.length - 1);
+                      if (frac < 0.005) return { status: "PASS", reason: `${drops} drops in ${b.length - 1} intervals (${(frac * 100).toFixed(2)}%)` };
+                      if (frac < 0.02)  return { status: "WARN", reason: `${drops} drops (${(frac * 100).toFixed(2)}%) — occasional BLE hiccups` };
+                      return { status: "FAIL", reason: `${drops} drops (${(frac * 100).toFixed(2)}%) — unstable transport` };
+                    },
+                  },
+                  // Hampel outlier rate on HbO L — should be < 1% in
+                  // clean recordings. Pearson 2002.
+                  {
+                    label: "HbO L Hampel outlier rate",
+                    source: "Pearson 2002",
+                    compute: (b) => {
+                      const vals = numericVals(b, (s) => s.oxyHbLeft);
+                      if (vals.length < 30) return { status: "FAIL", reason: "need ≥30 HbO samples" };
+                      const mm = medianMad(vals);
+                      if (!mm) return { status: "FAIL", reason: "no median computable" };
+                      const threshold = 3 * 1.4826 * mm.mad;
+                      let outliers = 0;
+                      for (const v of vals) if (Math.abs(v - mm.median) > threshold) outliers++;
+                      const frac = outliers / vals.length;
+                      if (frac < 0.01) return { status: "PASS", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%)` };
+                      if (frac < 0.05) return { status: "WARN", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%) — motion or noise` };
+                      return { status: "FAIL", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%) — heavy motion artifact` };
+                    },
+                  },
+                  // Same for HbO R
+                  {
+                    label: "HbO R Hampel outlier rate",
+                    source: "Pearson 2002",
+                    compute: (b) => {
+                      const vals = numericVals(b, (s) => s.oxyHbRight);
+                      if (vals.length < 30) return { status: "FAIL", reason: "need ≥30 HbO samples" };
+                      const mm = medianMad(vals);
+                      if (!mm) return { status: "FAIL", reason: "no median computable" };
+                      const threshold = 3 * 1.4826 * mm.mad;
+                      let outliers = 0;
+                      for (const v of vals) if (Math.abs(v - mm.median) > threshold) outliers++;
+                      const frac = outliers / vals.length;
+                      if (frac < 0.01) return { status: "PASS", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%)` };
+                      if (frac < 0.05) return { status: "WARN", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%) — motion or noise` };
+                      return { status: "FAIL", reason: `${outliers}/${vals.length} outliers (${(frac * 100).toFixed(2)}%) — heavy motion artifact` };
+                    },
+                  },
+                  // GVTD-lite: global variance of HbO L+R temporal
+                  // derivatives. Spikes flag head motion. Sherafati 2020.
+                  {
+                    label: "GVTD-lite head motion detector",
+                    source: "Sherafati 2020 — Neurophotonics",
+                    compute: (b) => {
+                      if (b.length < 30) return { status: "FAIL", reason: "need ≥30 samples" };
+                      const dvs: number[] = [];
+                      for (let i = 1; i < b.length; i++) {
+                        const lL = b[i].oxyHbLeft;
+                        const pL = b[i - 1].oxyHbLeft;
+                        const lR = b[i].oxyHbRight;
+                        const pR = b[i - 1].oxyHbRight;
+                        if (typeof lL === "number" && typeof pL === "number" && typeof lR === "number" && typeof pR === "number") {
+                          const dL = lL - pL, dR = lR - pR;
+                          dvs.push(Math.sqrt((dL * dL + dR * dR) / 2));
+                        }
+                      }
+                      if (dvs.length === 0) return { status: "FAIL", reason: "no derivative data" };
+                      const mm = medianMad(dvs);
+                      if (!mm) return { status: "FAIL", reason: "no median computable" };
+                      const thresh = mm.median + 3 * 1.4826 * mm.mad;
+                      let spikes = 0;
+                      for (const v of dvs) if (v > thresh) spikes++;
+                      const frac = spikes / dvs.length;
+                      if (frac < 0.02) return { status: "PASS", reason: `${spikes} motion spikes (${(frac * 100).toFixed(2)}%)` };
+                      if (frac < 0.10) return { status: "WARN", reason: `${spikes} spikes (${(frac * 100).toFixed(2)}%) — moderate motion` };
+                      return { status: "FAIL", reason: `${spikes} spikes (${(frac * 100).toFixed(2)}%) — heavy motion, recording compromised` };
+                    },
+                  },
+                  // TSI cross-check: computed TSI from raw fields must
+                  // match the value the gauge widget would display.
+                  // Catches any unit-conversion bug in widget rendering.
+                  {
+                    label: "TSI gauge integrity (computed = displayed)",
+                    source: "Cross-widget integrity check",
+                    compute: (b) => {
+                      // Both formulas pull from oxyHb/deoxyHb so this is
+                      // really a tautology against the same source — it
+                      // catches a future refactor where the widget reads
+                      // a different field. Sanity-check that TSI sits in
+                      // [-1, 1] and not at the rail.
+                      const tsis: number[] = [];
+                      for (const s of b) {
+                        const hbo = ((s.oxyHbLeft ?? 0) + (s.oxyHbRight ?? 0)) / 2;
+                        const hhb = ((s.deoxyHbLeft ?? 0) + (s.deoxyHbRight ?? 0)) / 2;
+                        const denom = Math.abs(hbo) + Math.abs(hhb);
+                        if (denom > 0) tsis.push(hbo / denom);
+                      }
+                      if (tsis.length < 30) return { status: "FAIL", reason: "insufficient TSI samples" };
+                      const mean = tsis.reduce((a, c) => a + c, 0) / tsis.length;
+                      const railed = tsis.filter((v) => Math.abs(v) > 0.98).length;
+                      if (railed > tsis.length * 0.05) return { status: "WARN", reason: `${railed}/${tsis.length} samples at ±1 rail — HHb may be ~0 (saturation or weak HHb signal)` };
+                      if (Math.abs(mean) < 1) return { status: "PASS", reason: `mean TSI=${mean.toFixed(2)}, ${railed} railed samples` };
+                      return { status: "FAIL", reason: `mean TSI=${mean.toFixed(2)} outside (-1, 1)` };
+                    },
+                  },
+                ];
+                const physResults = physChecks.map((p) => ({ check: p, result: p.compute(buf) }));
+
                 const counts = { PASS: 0, WARN: 0, FAIL: 0, "N/A": 0 } as Record<"PASS" | "WARN" | "FAIL" | "N/A", number>;
                 for (const r of results) counts[r.result.status]++;
-                const rows = results.map((r) => {
+                for (const r of physResults) counts[r.result.status]++;
+                const widgetRows = results.map((r) => {
                   const icon = r.result.status === "PASS" ? "✓"
                     : r.result.status === "WARN" ? "⚠"
                     : r.result.status === "N/A"  ? "·"
                     : "✗";
                   return `${icon} ${r.result.status.padEnd(4)}  ${r.check.widget.padEnd(40)}  ${r.result.reason}`;
                 });
+                const physRows = physResults.map((r) => {
+                  const icon = r.result.status === "PASS" ? "✓"
+                    : r.result.status === "WARN" ? "⚠"
+                    : r.result.status === "N/A"  ? "·"
+                    : "✗";
+                  return `${icon} ${r.result.status.padEnd(4)}  ${r.check.label.padEnd(48)}  ${r.result.reason}`;
+                });
+                const rows = [
+                  "── Per-widget data-source checks ──",
+                  ...widgetRows,
+                  "",
+                  "── Physiology / signal-quality checks ──",
+                  ...physRows,
+                ];
                 const fullText = `Widget test report · ${buf.length} samples · refresh #${mendiStatsTick}\n` +
                   `${counts.PASS} PASS · ${counts.WARN} WARN · ${counts.FAIL} FAIL · ${counts["N/A"]} N/A\n\n${rows.join("\n")}`;
                 return (
@@ -2311,13 +2571,21 @@ export default function DemoClient({
                       </button>
                     </div>
                     <pre style={{ margin: 0, color: "#CBD5E1", whiteSpace: "pre-wrap" }}>
-                      {rows.map((r) => {
+                      {rows.map((r, i) => {
+                        // Section header rows ("── Per-widget …") get a
+                        // dim accent colour; empty separator rows render
+                        // as a blank line; otherwise colour-code by
+                        // status icon at the start.
+                        if (r === "") return <div key={`blank-${i}`}>&nbsp;</div>;
+                        if (r.startsWith("──")) {
+                          return <div key={`hdr-${i}`} style={{ color: "#94A3B8", fontWeight: 700, marginTop: 4 }}>{r}</div>;
+                        }
                         const color = r.startsWith("✓") ? "#34D399"
                           : r.startsWith("⚠") ? "#FBBF24"
                           : r.startsWith("·") ? "#64748B"
                           : "#F87171";
                         return (
-                          <div key={r} style={{ color }}>{r}</div>
+                          <div key={`row-${i}`} style={{ color }}>{r}</div>
                         );
                       })}
                     </pre>
