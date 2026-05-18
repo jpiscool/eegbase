@@ -1299,22 +1299,6 @@ export default function DemoClient({
         </div>
       )}
 
-      {/* Skip-to-content link — appears on keyboard focus only.
-          WCAG 2.4.1 'Bypass Blocks' compliance. */}
-      <a
-        href="#main-content"
-        style={{
-          position: "absolute", left: 8, top: 8, padding: "8px 14px",
-          background: "#2563EB", color: "white", borderRadius: 6,
-          fontSize: 13, fontWeight: 700, textDecoration: "none",
-          zIndex: 9999, transform: "translateY(-200%)", transition: "transform 0.15s",
-        }}
-        onFocus={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; }}
-        onBlur={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-200%)"; }}
-      >
-        Skip to main content
-      </a>
-
       {/* Top bar — dark strip with logo, Search ⌘K, Share view, LIVE timer,
           Replay, Notifications, Client selector, Get Access. Hidden in
           'strip' mode (the authenticated /dashboard relies on the clinician
