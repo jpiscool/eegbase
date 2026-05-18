@@ -705,9 +705,9 @@ export default function DemoClient({
   };
   const clinicianBtnPrimary: React.CSSProperties = {
     ...clinicianBtn,
-    background: "#2563EB",
+    background: "#0F766E",
     color: "white",
-    border: "1px solid #2563EB",
+    border: "1px solid #0F766E",
   };
 
   // setTab from useTabState already syncs URL + localStorage synchronously.
@@ -738,8 +738,8 @@ export default function DemoClient({
   const navBtn: (active: boolean) => React.CSSProperties = (active) => ({
     padding: "10px 16px", fontSize: 13, fontWeight: 600, background: "none", border: "none",
     cursor: "pointer", whiteSpace: "nowrap",
-    color: active ? "#2563EB" : "#64748B",
-    borderBottom: active ? "2px solid #2563EB" : "2px solid transparent",
+    color: active ? "#0F766E" : "#64748B",
+    borderBottom: active ? "2px solid #0F766E" : "2px solid transparent",
   });
 
   const card: React.CSSProperties = { background: "linear-gradient(180deg, #111A1F 0%, #0A1320 100%)", border: "1px solid #1F2A30", borderRadius: 18, padding: 24, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 1px 2px rgba(0,0,0,0.6), 0 8px 32px -16px rgba(0,0,0,0.7), 0 24px 48px -24px rgba(0,0,0,0.5)" };
@@ -785,7 +785,7 @@ export default function DemoClient({
 
         /* Visible focus rings — WCAG 2.4.7 compliance */
         button:focus-visible, a:focus-visible, [role="button"]:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-          outline: 2px solid #60A5FA;
+          outline: 2px solid #2DD4BF;
           outline-offset: 2px;
           border-radius: 4px;
         }
@@ -798,14 +798,14 @@ export default function DemoClient({
         button:not(:disabled):hover { transform: translateY(-1px); }
         button:not(:disabled):active { transform: translateY(0) scale(0.98); }
         /* Premium focus rings */
-        button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid #60A5FA; outline-offset: 2px; box-shadow: 0 0 0 4px rgba(96,165,250,0.15); }
+        button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid #2DD4BF; outline-offset: 2px; box-shadow: 0 0 0 4px rgba(45,212,191,0.15); }
         /* Heading typography refinement — Linear/Vercel feel */
         h1, h2, h3 { letter-spacing: -0.025em; font-feature-settings: "ss01", "cv11"; }
         /* Backdrop blur for modals */
         .demo-modal-backdrop { backdrop-filter: blur(12px) saturate(140%); -webkit-backdrop-filter: blur(12px) saturate(140%); }
         /* Premium card hover — subtle lift + glow */
         .demo-premium-card { transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease; }
-        .demo-premium-card:hover { transform: translateY(-2px); border-color: #334155; box-shadow: 0 1px 0 0 rgba(255,255,255,0.06) inset, 0 12px 32px -12px rgba(0,0,0,0.7), 0 0 0 1px rgba(96,165,250,0.1); }
+        .demo-premium-card:hover { transform: translateY(-2px); border-color: #334155; box-shadow: 0 1px 0 0 rgba(255,255,255,0.06) inset, 0 12px 32px -12px rgba(0,0,0,0.7), 0 0 0 1px rgba(45,212,191,0.1); }
         /* Subtle SVG noise/grain texture overlay (premium paper-like quality) */
         .demo-grain { position: relative; }
         .demo-grain::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.025; mix-blend-mode: overlay; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='0.4'/></svg>"); }
@@ -835,8 +835,8 @@ export default function DemoClient({
           --eb-text-quaternary: #64748B;
           --eb-text-disabled: #475569;
           /* Brand (cool indigo — premium tech feel) */
-          --eb-brand: #6366F1;
-          --eb-brand-hover: #4F46E5;
+          --eb-brand: #14B8A6;
+          --eb-brand-hover: #0D6A60;
           --eb-brand-tint: rgba(99,102,241,0.12);
           --eb-brand-glow: rgba(99,102,241,0.4);
           /* Semantic */
@@ -846,22 +846,22 @@ export default function DemoClient({
           --eb-warning-tint: rgba(245,158,11,0.12);
           --eb-danger: #F43F5E;
           --eb-danger-tint: rgba(244,63,94,0.12);
-          --eb-info: #06B6D4;
+          --eb-info: #0EA5E9;
           --eb-info-tint: rgba(6,182,212,0.12);
           /* Premium accents */
-          --eb-accent-violet: #A855F7;
+          --eb-accent-violet: #2DD4BF;
           --eb-accent-pink: #EC4899;
           --eb-accent-emerald: #10B981;
           --eb-accent-amber: #F59E0B;
-          --eb-accent-cyan: #06B6D4;
+          --eb-accent-cyan: #0EA5E9;
           /* Shadows */
           --eb-shadow-sm: 0 1px 0 0 rgba(255,255,255,0.04) inset, 0 1px 2px rgba(0,0,0,0.4);
           --eb-shadow-md: 0 1px 0 0 rgba(255,255,255,0.05) inset, 0 4px 16px -8px rgba(0,0,0,0.5), 0 8px 24px -12px rgba(0,0,0,0.4);
           --eb-shadow-lg: 0 1px 0 0 rgba(255,255,255,0.06) inset, 0 8px 32px -16px rgba(0,0,0,0.7), 0 24px 48px -24px rgba(0,0,0,0.5);
           --eb-shadow-glow: 0 0 32px -8px var(--eb-brand-glow);
           /* Gradients */
-          --eb-gradient-brand: linear-gradient(135deg, #6366F1 0%, #A855F7 50%, #06B6D4 100%);
-          --eb-gradient-success: linear-gradient(135deg, #10B981, #06B6D4);
+          --eb-gradient-brand: linear-gradient(135deg, #14B8A6 0%, #2DD4BF 50%, #0EA5E9 100%);
+          --eb-gradient-success: linear-gradient(135deg, #10B981, #0EA5E9);
           --eb-gradient-warm: linear-gradient(135deg, #F59E0B, #EC4899);
           /* Radii */
           --eb-radius-sm: 6px;
@@ -875,7 +875,7 @@ export default function DemoClient({
 
         /* Premium glow on flagship cards — outer ring + soft drop */
         .demo-flagship { position: relative; box-shadow: 0 1px 0 0 rgba(255,255,255,0.06) inset, 0 0 0 1px var(--eb-border-brand), 0 0 32px -8px var(--eb-brand-glow), 0 16px 40px -16px rgba(0,0,0,0.7) !important; transition: box-shadow 0.3s var(--eb-ease-out); }
-        .demo-flagship:hover { box-shadow: 0 1px 0 0 rgba(255,255,255,0.08) inset, 0 0 0 1px rgba(168,85,247,0.6), 0 0 48px -8px rgba(124,58,237,0.5), 0 20px 48px -16px rgba(0,0,0,0.75) !important; }
+        .demo-flagship:hover { box-shadow: 0 1px 0 0 rgba(255,255,255,0.08) inset, 0 0 0 1px rgba(45,212,191,0.6), 0 0 48px -8px rgba(124,58,237,0.5), 0 20px 48px -16px rgba(0,0,0,0.75) !important; }
 
         /* ─────────────────────────────────────────────────────────────────
            STATUS PILL SYSTEM — unified across all 11 tabs
@@ -1271,7 +1271,7 @@ export default function DemoClient({
       {appMode !== "strip" && (
         <header className="demo-site-header" style={{ background: "#fff", borderBottom: "1px solid #E5E7EB", padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
           <a href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none", minHeight: 40, paddingRight: 4 }}>
-            <span style={{ width: 32, height: 32, background: "#2563EB", borderRadius: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <span style={{ width: 32, height: 32, background: "#0F766E", borderRadius: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/></svg>
             </span>
             <span style={{ fontWeight: 700, fontSize: 16, color: "#111A1F", letterSpacing: "-0.01em" }}>EEGBase</span>
@@ -1282,7 +1282,7 @@ export default function DemoClient({
             <a href="/pricing" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Pricing</a>
             <a href="/contact" style={{ color: "#64748B", textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Contact</a>
           </nav>
-          <a href="/" className="demo-site-header-back" style={{ display: "none", color: "#2563EB", textDecoration: "none", fontSize: 13, fontWeight: 600, padding: "10px 4px", minHeight: 44, alignItems: "center" }}>
+          <a href="/" className="demo-site-header-back" style={{ display: "none", color: "#0F766E", textDecoration: "none", fontSize: 13, fontWeight: 600, padding: "10px 4px", minHeight: 44, alignItems: "center" }}>
             ← Home
           </a>
         </header>
@@ -1307,9 +1307,9 @@ export default function DemoClient({
       <div className="demo-topbar" style={{ background: "#111A1F", borderBottom: "1px solid #1F2A30", padding: "0 24px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <a href="/" className="demo-topbar-logo-text" style={{ fontSize: "1.05rem", fontWeight: 800, letterSpacing: "-0.03em", color: "white", textDecoration: "none" }}>
-            EEG<span style={{ color: "#60A5FA" }}>Base</span>
+            EEG<span style={{ color: "#2DD4BF" }}>Base</span>
           </a>
-          <span className="demo-topbar-hide-mobile" style={{ background: "rgba(96,165,250,0.12)", color: "#93C5FD", fontSize: "11px", fontWeight: 600, padding: "3px 8px", borderRadius: 6, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+          <span className="demo-topbar-hide-mobile" style={{ background: "rgba(45,212,191,0.12)", color: "#5EEAD4", fontSize: "11px", fontWeight: 600, padding: "3px 8px", borderRadius: 6, textTransform: "uppercase", letterSpacing: "0.06em" }}>
             Demo
           </span>
         </div>
@@ -1413,7 +1413,7 @@ export default function DemoClient({
             <span style={{ color: "#475569" }}>·</span>
             <span>SOC 2</span>
           </span>
-          <a href="/login" style={{ fontSize: "0.82rem", fontWeight: 700, padding: "7px 16px", background: "#2563EB", color: "white", borderRadius: 8, textDecoration: "none", letterSpacing: "0.01em", whiteSpace: "nowrap", flexShrink: 0 }}>
+          <a href="/login" style={{ fontSize: "0.82rem", fontWeight: 700, padding: "7px 16px", background: "#0F766E", color: "white", borderRadius: 8, textDecoration: "none", letterSpacing: "0.01em", whiteSpace: "nowrap", flexShrink: 0 }}>
             Get Access <span aria-hidden>→</span>
           </a>
         </div>
@@ -1423,7 +1423,7 @@ export default function DemoClient({
       {/* Progress bar — hidden in strip mode along with the dark topbar. */}
       {appMode !== "strip" && (
         <div role="progressbar" aria-label={`Session time: ${Math.floor(elapsed / 60)} of 30 minutes`} aria-valuenow={Math.min(100, Math.round((elapsed / 1800) * 100))} aria-valuemin={0} aria-valuemax={100} title={`Session progress · ${Math.floor(elapsed / 60)} of 30 min`} style={{ height: 4, background: "#1F2A30" }}>
-          <div style={{ height: "100%", background: "linear-gradient(90deg, #2563EB, #8B5CF6, #EC4899)", width: `${Math.min(100, (elapsed / 1800) * 100)}%`, transition: "width 1s linear" }} />
+          <div style={{ height: "100%", background: "linear-gradient(90deg, #0F766E, #14B8A6, #EC4899)", width: `${Math.min(100, (elapsed / 1800) * 100)}%`, transition: "width 1s linear" }} />
         </div>
       )}
 
@@ -1453,7 +1453,7 @@ export default function DemoClient({
                       { l: "θ/β Z-score", v: `+${s.thetaBeta.toFixed(2)} SD`, c: s.thetaBeta > 2 ? "#EF4444" : "#F59E0B" },
                       { l: "PHQ-9", v: String(s.phq9), c: s.phq9 < 10 ? "#10B981" : "#F59E0B" },
                       { l: "GAD-7", v: String(s.gad7), c: s.gad7 < 10 ? "#10B981" : "#F59E0B" },
-                      { l: "Protocol", v: "SMR · Cz", c: "#60A5FA" },
+                      { l: "Protocol", v: "SMR · Cz", c: "#2DD4BF" },
                     ].map((m) => (
                       <div key={m.l} style={{ background: "#1F2A30", border: "1px solid #334155", borderRadius: 10, padding: 12 }}>
                         <div style={{ fontSize: 11, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>{m.l}</div>
@@ -1536,7 +1536,7 @@ export default function DemoClient({
                       </div>
                     ))}
                   </div>
-                  <div style={{ marginTop: 16, padding: 12, background: "rgba(30,58,138,0.25)", border: "1px solid #1E40AF", borderRadius: 10, fontSize: 12, color: "#93C5FD" }}>
+                  <div style={{ marginTop: 16, padding: 12, background: "rgba(30,58,138,0.25)", border: "1px solid #134E48", borderRadius: 10, fontSize: 12, color: "#5EEAD4" }}>
                     Current overall score: <strong style={{ color: "#F1F5F9" }}>{score.toFixed(1)} / 100</strong>
                   </div>
                 </div>
@@ -1580,7 +1580,7 @@ export default function DemoClient({
               </div>
               <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 4, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>Today's Session</div>
               <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 16 }}>{demoClient.name.split(" ")[0]}'s brain training</div>
-              <div style={{ background: "linear-gradient(180deg, #1E1B4B 0%, #111A1F 100%)", borderRadius: 16, padding: 24, textAlign: "center", marginBottom: 14 }}>
+              <div style={{ background: "linear-gradient(180deg, #0A1A1F 0%, #111A1F 100%)", borderRadius: 16, padding: 24, textAlign: "center", marginBottom: 14 }}>
                 <div style={{ fontSize: 56, marginBottom: 8 }}>🧠</div>
                 <div style={{ fontSize: 36, fontWeight: 800, color: "#34D399" }}>{Math.round(rewardVal ?? 64)}</div>
                 <div style={{ fontSize: 11, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700 }}>Score</div>
@@ -1595,7 +1595,7 @@ export default function DemoClient({
                   </div>
                 ))}
               </div>
-              <button style={{ width: "100%", background: "#2563EB", color: "white", border: "none", borderRadius: 14, padding: "14px 0", fontSize: 14, fontWeight: 700, marginBottom: 8, cursor: "pointer" }}>💬 Message Dr. Chen</button>
+              <button style={{ width: "100%", background: "#0F766E", color: "white", border: "none", borderRadius: 14, padding: "14px 0", fontSize: 14, fontWeight: 700, marginBottom: 8, cursor: "pointer" }}>💬 Message Dr. Chen</button>
               <button style={{ width: "100%", background: "#1F2A30", color: "#F1F5F9", border: "1px solid #334155", borderRadius: 14, padding: "14px 0", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>📊 See your progress</button>
             </div>
           </div>
@@ -1672,10 +1672,10 @@ export default function DemoClient({
                       key={c.label}
                       onClick={c.action}
                       style={{ width: "100%", textAlign: "left", padding: "10px 14px", background: "transparent", border: "none", color: "#CBD5E1", fontSize: 13, cursor: "pointer", borderRadius: 6, display: "flex", alignItems: "center", gap: 12 }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(96,165,250,0.08)"; }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(45,212,191,0.08)"; }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                     >
-                      <span style={{ fontSize: 9, fontWeight: 700, color: c.kind === "Tab" ? "#60A5FA" : "#A78BFA", padding: "2px 7px", background: c.kind === "Tab" ? "rgba(96,165,250,0.12)" : "rgba(167,139,250,0.12)", borderRadius: 4, textTransform: "uppercase", letterSpacing: "0.06em", flexShrink: 0 }}>{c.kind}</span>
+                      <span style={{ fontSize: 9, fontWeight: 700, color: c.kind === "Tab" ? "#2DD4BF" : "#5EEAD4", padding: "2px 7px", background: c.kind === "Tab" ? "rgba(45,212,191,0.12)" : "rgba(94,234,212,0.12)", borderRadius: 4, textTransform: "uppercase", letterSpacing: "0.06em", flexShrink: 0 }}>{c.kind}</span>
                       <span>{c.label}</span>
                     </button>
                   ))
@@ -1782,8 +1782,8 @@ export default function DemoClient({
                     onClick={() => switchTab(t.id)}
                     style={{
                       width: "100%", textAlign: "left",
-                      background: isActive ? "linear-gradient(90deg, rgba(96,165,250,0.14), rgba(96,165,250,0.04))" : "transparent",
-                      border: "none", borderLeft: isActive ? "2px solid #60A5FA" : "2px solid transparent",
+                      background: isActive ? "linear-gradient(90deg, rgba(45,212,191,0.14), rgba(45,212,191,0.04))" : "transparent",
+                      border: "none", borderLeft: isActive ? "2px solid #2DD4BF" : "2px solid transparent",
                       padding: "8px 18px", fontSize: 13, fontWeight: isActive ? 600 : 500,
                       color: isActive ? "#F1F5F9" : "#94A3B8", cursor: "pointer",
                       display: "flex", alignItems: "center", gap: 10, lineHeight: 1.3,
@@ -1795,7 +1795,7 @@ export default function DemoClient({
                     <Icon size={16} strokeWidth={1.75} />
                     <span>{t.label}</span>
                     {t.badge && (
-                      <span style={{ marginLeft: "auto", fontSize: 8, fontWeight: 800, color: "#C4B5FD", background: "rgba(167,139,250,0.18)", border: "1px solid rgba(167,139,250,0.4)", borderRadius: 4, padding: "1px 5px", letterSpacing: "0.04em", flexShrink: 0 }}>{t.badge}</span>
+                      <span style={{ marginLeft: "auto", fontSize: 8, fontWeight: 800, color: "#5EEAD4", background: "rgba(94,234,212,0.18)", border: "1px solid rgba(94,234,212,0.4)", borderRadius: 4, padding: "1px 5px", letterSpacing: "0.04em", flexShrink: 0 }}>{t.badge}</span>
                     )}
                   </button>
                 </div>
@@ -1825,7 +1825,7 @@ export default function DemoClient({
           if (!cap) return null;
           return (
             <div style={{ position: "sticky", top: 0, zIndex: 10, background: "#0A1320", borderBottom: "1px solid #1F2A30", padding: "8px 20px", display: "flex", alignItems: "center", gap: 10, fontSize: 11, color: "#94A3B8", lineHeight: 1.5 }}>
-              <span style={{ fontSize: 9, fontWeight: 700, color: "#A5B4FC", padding: "2px 7px", background: "rgba(167,139,250,0.12)", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em", flexShrink: 0 }}>👀 You're seeing</span>
+              <span style={{ fontSize: 9, fontWeight: 700, color: "#A5B4FC", padding: "2px 7px", background: "rgba(94,234,212,0.12)", border: "1px solid rgba(94,234,212,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em", flexShrink: 0 }}>👀 You're seeing</span>
               <span><strong style={{ color: "#F1F5F9" }}>{cap.what}</strong> — look for {cap.lookFor}</span>
             </div>
           );
@@ -1858,7 +1858,7 @@ export default function DemoClient({
             <div style={{ background: "#111A1F", border: "1px solid #1F2A30", borderLeft: "3px solid #2DD4BF", borderRadius: 12, padding: "12px 18px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
               {appMode !== "strip" && (
                 <>
-                  <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(96,165,250,0.15)", color: "#60A5FA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(45,212,191,0.15)", color: "#2DD4BF", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <LayoutDashboard size={14} />
                   </div>
                   <span style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.5, flex: 1, minWidth: 0 }}>
@@ -1891,15 +1891,15 @@ export default function DemoClient({
               ) : mendiStatus === "connecting" ? (
                 <button
                   disabled
-                  style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: "rgba(96,165,250,0.12)", color: "#93C5FD", border: "1px solid #1E40AF", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "wait" }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: "rgba(45,212,191,0.12)", color: "#5EEAD4", border: "1px solid #134E48", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "wait" }}
                 >
-                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#60A5FA", animation: "pulse 1s infinite" }} />
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#2DD4BF", animation: "pulse 1s infinite" }} />
                   Connecting to Mendi…
                 </button>
               ) : (
                 <button
                   onClick={() => setConnectDeviceOpen(true)}
-                  style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: mendiStatus === "error" ? "#7F1D1D" : "#7C3AED", color: "white", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: mendiStatus === "error" ? "#7F1D1D" : "#0F766E", color: "white", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer" }}
                   title={mendiStatus === "error"
                     ? (mendiError ?? "Last connect attempt failed. Open the connect-device list to retry.")
                     : "Pair any supported headband, chest strap, or wearable."}
@@ -3885,17 +3885,17 @@ export default function DemoClient({
         {tab === "session" && (
           <>
             {/* Context strip */}
-            <div style={{ background: "#111A1F", border: "1px solid #1F2A30", borderLeft: "3px solid #2563EB", borderRadius: 12, padding: "12px 18px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
-              <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(37,99,235,0.15)", color: "#60A5FA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 14, fontWeight: 700 }}>i</div>
+            <div style={{ background: "#111A1F", border: "1px solid #1F2A30", borderLeft: "3px solid #0F766E", borderRadius: 12, padding: "12px 18px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(15,118,110,0.15)", color: "#2DD4BF", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 14, fontWeight: 700 }}>i</div>
               <span style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.5, flex: 1, minWidth: 0 }}>
-                <strong style={{ color: "#F1F5F9" }}>Clinician view</strong> — you're watching {demoClient.name}'s brain signals in real time (simulated). The <strong style={{ color: "#F1F5F9" }}>Reward Score</strong> rises when the client's brain is producing the target pattern. Switch to <button onClick={() => switchTab("game")} style={{ background: "none", border: "none", color: "#60A5FA", fontWeight: 700, cursor: "pointer", padding: 0, fontSize: 13, textDecoration: "underline" }}>Game Mode</button> to see what the client sees.
+                <strong style={{ color: "#F1F5F9" }}>Clinician view</strong> — you're watching {demoClient.name}'s brain signals in real time (simulated). The <strong style={{ color: "#F1F5F9" }}>Reward Score</strong> rises when the client's brain is producing the target pattern. Switch to <button onClick={() => switchTab("game")} style={{ background: "none", border: "none", color: "#2DD4BF", fontWeight: 700, cursor: "pointer", padding: 0, fontSize: 13, textDecoration: "underline" }}>Game Mode</button> to see what the client sees.
               </span>
             </div>
 
             {/* Group therapy toggle — closes Sessions Health gap, opens corporate wellness */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 14px", background: "#111A1F", border: "1px solid #1F2A30", borderRadius: 10, marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: "#A78BFA", padding: "2px 8px", background: "rgba(167,139,250,0.12)", border: "1px solid rgba(167,139,250,0.35)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Mode</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "#5EEAD4", padding: "2px 8px", background: "rgba(94,234,212,0.12)", border: "1px solid rgba(94,234,212,0.35)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Mode</span>
                 <div style={{ display: "flex", gap: 4, padding: 3, background: "#0A1320", border: "1px solid #1F2A30", borderRadius: 8 }}>
                   <button onClick={() => showToast("Switched to 1-on-1 mode")} style={{ fontSize: 11, padding: "4px 12px", background: "#1F2A30", color: "#F1F5F9", border: "none", borderRadius: 5, cursor: "pointer", fontWeight: 700 }}>1-on-1 ✓</button>
                   <button onClick={() => showToast("Group session · 8 client tiles · shared protocol · individual signal panels · CPT 90849 group psychotherapy")} style={{ fontSize: 11, padding: "4px 12px", background: "transparent", color: "#94A3B8", border: "none", borderRadius: 5, cursor: "pointer", fontWeight: 600 }}>Group (up to 8)</button>
@@ -3907,11 +3907,11 @@ export default function DemoClient({
             </div>
 
             {/* Telehealth co-feedback panel — unique combo: HIPAA video + live signals */}
-            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #111A1F 0%, #0A1A2E 100%)", border: "1px solid #2563EB", borderRadius: 14, padding: 14, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(37,99,235,0.4)" }}>
+            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #111A1F 0%, #0A1A2E 100%)", border: "1px solid #0F766E", borderRadius: 14, padding: 14, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(15,118,110,0.4)" }}>
               <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 14, alignItems: "stretch" }}>
                 {/* Video tile */}
                 <div style={{ position: "relative", borderRadius: 10, overflow: "hidden", background: "linear-gradient(135deg, #1F2A30 0%, #111A1F 100%)", aspectRatio: "4 / 3", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, #60A5FA, #A78BFA)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, fontWeight: 800, color: "white" }}>SM</div>
+                  <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, #2DD4BF, #5EEAD4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, fontWeight: 800, color: "white" }}>SM</div>
                   <span style={{ position: "absolute", top: 8, left: 8, fontSize: 9, fontWeight: 700, color: "#34D399", padding: "2px 7px", background: "rgba(0,0,0,0.6)", borderRadius: 99, display: "inline-flex", alignItems: "center", gap: 4 }}>
                     <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#EF4444", animation: "pulse 1.2s infinite" }} />REC
                   </span>
@@ -3921,7 +3921,7 @@ export default function DemoClient({
                 {/* Co-feedback overlay */}
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                    <span style={{ fontSize: 9, fontWeight: 700, color: "#60A5FA", padding: "2px 7px", background: "rgba(37,99,235,0.15)", border: "1px solid rgba(37,99,235,0.35)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.08em" }}>HIPAA Video · Co-Feedback</span>
+                    <span style={{ fontSize: 9, fontWeight: 700, color: "#2DD4BF", padding: "2px 7px", background: "rgba(15,118,110,0.15)", border: "1px solid rgba(15,118,110,0.35)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.08em" }}>HIPAA Video · Co-Feedback</span>
                     <span style={{ fontSize: 10, color: "#94A3B8" }}>Telehealth + live Mendi signals — clinician sees in real time what the at-home client's brain is doing</span>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginBottom: 8 }}>
@@ -4019,9 +4019,9 @@ export default function DemoClient({
                       ...clinicianBtn,
                       padding: "6px 10px",
                       fontSize: 12,
-                      background: chartWindow === w ? "#2563EB" : "#1F2A30",
+                      background: chartWindow === w ? "#0F766E" : "#1F2A30",
                       color: chartWindow === w ? "white" : "#F1F5F9",
-                      border: chartWindow === w ? "1px solid #2563EB" : "1px solid #334155",
+                      border: chartWindow === w ? "1px solid #0F766E" : "1px solid #334155",
                     }}
                   >
                     {w}s
@@ -4113,16 +4113,16 @@ export default function DemoClient({
                   </div>
                 </div>
                 <div style={{ flex: 1, minWidth: 180 }}>
-                  <LiveChart data={reward.data.slice(-chartWindow)} color="#60A5FA" label={`Reward score · last ${chartWindow}s`} height={80} />
+                  <LiveChart data={reward.data.slice(-chartWindow)} color="#2DD4BF" label={`Reward score · last ${chartWindow}s`} height={80} />
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
                   {[
                     { label: "Oxy L",   val: sample?.oxyHbLeft,    color: "#10B981", gloss: "Oxygen-rich blood, left forehead — higher means more brain activity in that area." },
                     { label: "Oxy R",   val: sample?.oxyHbRight,   color: "#0EA5E9", gloss: "Oxygen-rich blood, right forehead." },
-                    { label: "Deoxy L", val: sample?.deoxyHbLeft,  color: "#6366F1", gloss: "Used-up blood, left forehead. Drops when oxygen is being consumed." },
+                    { label: "Deoxy L", val: sample?.deoxyHbLeft,  color: "#14B8A6", gloss: "Used-up blood, left forehead. Drops when oxygen is being consumed." },
                     { label: "Deoxy R", val: sample?.deoxyHbRight, color: "#EC4899", gloss: "Used-up blood, right forehead." },
                     { label: "Heart",   val: sample?.heartRate,    color: "#F59E0B", suffix: " bpm", gloss: "Heart rate in beats per minute. Normal resting: 60–80 bpm." },
-                    { label: "HRV",     val: sample?.hrvRmssd,     color: "#8B5CF6", suffix: " ms", gloss: "Heart-rate variability. Higher means a calmer nervous system. Target above 50 ms." },
+                    { label: "HRV",     val: sample?.hrvRmssd,     color: "#14B8A6", suffix: " ms", gloss: "Heart-rate variability. Higher means a calmer nervous system. Target above 50 ms." },
                   ].map(({ label, val, color, suffix, gloss }) => (
                     <div key={label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 8px", borderRadius: 8, background: "rgba(255,255,255,0.04)" }}>
                       <div style={{ width: 6, height: 6, borderRadius: "50%", background: color, flexShrink: 0 }} />
@@ -4174,7 +4174,7 @@ export default function DemoClient({
                 style={{
                   fontSize: 11, fontWeight: 600, padding: "6px 12px", borderRadius: 8,
                   background: showAdvanced ? "#1F2A30" : "transparent",
-                  color: showAdvanced ? "#60A5FA" : "#94A3B8",
+                  color: showAdvanced ? "#2DD4BF" : "#94A3B8",
                   border: "1px solid #334155",
                   cursor: "pointer",
                 }}
@@ -4187,7 +4187,7 @@ export default function DemoClient({
             {showAdvanced && (
               <div style={{ background: "linear-gradient(180deg, #111A1F 0%, #0A1320 100%)", border: "1px solid #1F2A30", borderRadius: 14, padding: 20, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 8px 24px -16px rgba(0,0,0,0.5)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, paddingBottom: 12, borderBottom: "1px solid #1F2A30" }}>
-                  <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(96,165,250,0.15)", color: "#60A5FA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, border: "1px solid rgba(96,165,250,0.3)" }}>⚙</div>
+                  <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(45,212,191,0.15)", color: "#2DD4BF", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, border: "1px solid rgba(45,212,191,0.3)" }}>⚙</div>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Advanced Clinician Controls</div>
                     <div style={{ fontSize: 11, color: "#64748B" }}>Fine-tune protocol parameters · changes apply in real time</div>
@@ -4220,24 +4220,24 @@ export default function DemoClient({
 
                   {/* SIGNAL PROCESSING */}
                   <div style={{ background: "#0A1320", border: "1px solid #1F2A30", borderRadius: 10, padding: 14 }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: "#60A5FA", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>Signal processing</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#2DD4BF", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>Signal processing</div>
                     <div style={{ marginBottom: 10 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
                         <span style={{ color: "#CBD5E1", fontWeight: 600 }}>Smoothing</span>
-                        <span style={{ color: "#60A5FA", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{smoothing.toFixed(1)}s</span>
+                        <span style={{ color: "#2DD4BF", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{smoothing.toFixed(1)}s</span>
                       </div>
-                      <input type="range" min={0.5} max={5.0} step={0.1} value={smoothing} onChange={(e) => setSmoothing(Number(e.target.value))} style={{ width: "100%", accentColor: "#3B82F6" }} aria-label="Smoothing window" />
+                      <input type="range" min={0.5} max={5.0} step={0.1} value={smoothing} onChange={(e) => setSmoothing(Number(e.target.value))} style={{ width: "100%", accentColor: "#14B8A6" }} aria-label="Smoothing window" />
                       <div style={{ fontSize: 10, color: "#64748B", marginTop: 2 }}>Moving average window</div>
                     </div>
                     <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#CBD5E1", cursor: "pointer", marginTop: 8 }}>
-                      <input type="checkbox" checked={yAxisAutoscale} onChange={(e) => setYAxisAutoscale(e.target.checked)} style={{ accentColor: "#3B82F6" }} />
+                      <input type="checkbox" checked={yAxisAutoscale} onChange={(e) => setYAxisAutoscale(e.target.checked)} style={{ accentColor: "#14B8A6" }} />
                       Auto-scale chart Y-axis
                     </label>
                     <div style={{ marginTop: 10 }}>
                       <div style={{ fontSize: 11, color: "#CBD5E1", fontWeight: 600, marginBottom: 6 }}>Session duration</div>
                       <div style={{ display: "flex", gap: 6 }}>
                         {[20, 30, 45, 60].map((d) => (
-                          <button key={d} onClick={() => setSessionDuration(d)} style={{ flex: 1, fontSize: 11, fontWeight: 600, padding: "5px 0", borderRadius: 6, border: sessionDuration === d ? "1px solid #3B82F6" : "1px solid #334155", background: sessionDuration === d ? "#3B82F6" : "#1F2A30", color: sessionDuration === d ? "white" : "#94A3B8", cursor: "pointer" }}>{d}m</button>
+                          <button key={d} onClick={() => setSessionDuration(d)} style={{ flex: 1, fontSize: 11, fontWeight: 600, padding: "5px 0", borderRadius: 6, border: sessionDuration === d ? "1px solid #14B8A6" : "1px solid #334155", background: sessionDuration === d ? "#14B8A6" : "#1F2A30", color: sessionDuration === d ? "white" : "#94A3B8", cursor: "pointer" }}>{d}m</button>
                         ))}
                       </div>
                     </div>
@@ -4245,7 +4245,7 @@ export default function DemoClient({
 
                   {/* FREQUENCY BAND RANGES */}
                   <div style={{ background: "#0A1320", border: "1px solid #1F2A30", borderRadius: 10, padding: 14 }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: "#A78BFA", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>Frequency band ranges (Hz)</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#5EEAD4", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>Frequency band ranges (Hz)</div>
                     {[
                       { name: "Theta", range: thetaRange, set: setThetaRange, color: "#F59E0B", min: 1, max: 12 },
                       { name: "Alpha", range: alphaRange, set: setAlphaRange, color: "#EF4444", min: 6, max: 14 },
@@ -4291,7 +4291,7 @@ export default function DemoClient({
                   </div>
                 </div>
 
-                <div style={{ marginTop: 14, padding: "8px 12px", background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 8, fontSize: 11, color: "#93C5FD", display: "flex", gap: 8, alignItems: "center" }}>
+                <div style={{ marginTop: 14, padding: "8px 12px", background: "rgba(45,212,191,0.08)", border: "1px solid rgba(45,212,191,0.2)", borderRadius: 8, fontSize: 11, color: "#5EEAD4", display: "flex", gap: 8, alignItems: "center" }}>
                   <span style={{ fontWeight: 700 }}>Tip:</span>
                   Settings are saved to the protocol. Changes here update the live signal pipeline immediately.
                 </div>
@@ -4365,9 +4365,9 @@ export default function DemoClient({
               return (
                 <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr", gap: 12, marginBottom: 14 }} className="demo-grid-3">
                   {/* Prefrontal Asymmetry — Mendi flagship metric */}
-                  <div style={{ background: "linear-gradient(180deg, #111A1F 0%, #0A1320 100%)", border: "1px solid #1F2A30", borderLeft: "3px solid #A855F7", borderRadius: 12, padding: 14, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+                  <div style={{ background: "linear-gradient(180deg, #111A1F 0%, #0A1320 100%)", border: "1px solid #1F2A30", borderLeft: "3px solid #2DD4BF", borderRadius: 12, padding: 14, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA", textTransform: "uppercase", letterSpacing: "0.08em" }}>Prefrontal Asymmetry</div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#5EEAD4", textTransform: "uppercase", letterSpacing: "0.08em" }}>Prefrontal Asymmetry</div>
                       <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>L − R DLPFC</span>
                     </div>
                     <div style={{ position: "relative", height: 12, background: "linear-gradient(90deg, #EF4444 0%, #1F2A30 50%, #10B981 100%)", borderRadius: 6, marginBottom: 8 }}>
@@ -4381,14 +4381,14 @@ export default function DemoClient({
                       <span>L-dominant</span>
                     </div>
                     <div style={{ fontSize: 10, color: "#94A3B8", lineHeight: 1.5 }}>
-                      L &gt; R indicates approach motivation · R &gt; L indicates withdrawal/anxiety state. Target zone for depression protocols: <strong style={{ color: "#A78BFA" }}>+0.05 to +0.20</strong>
+                      L &gt; R indicates approach motivation · R &gt; L indicates withdrawal/anxiety state. Target zone for depression protocols: <strong style={{ color: "#5EEAD4" }}>+0.05 to +0.20</strong>
                     </div>
                   </div>
 
                   {/* Hemodynamic Response Function (HRF) viewer */}
-                  <div style={{ background: "linear-gradient(180deg, #111A1F 0%, #0A1320 100%)", border: "1px solid #1F2A30", borderLeft: "3px solid #06B6D4", borderRadius: 12, padding: 14, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+                  <div style={{ background: "linear-gradient(180deg, #111A1F 0%, #0A1320 100%)", border: "1px solid #1F2A30", borderLeft: "3px solid #0EA5E9", borderRadius: 12, padding: 14, boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: "#06B6D4", textTransform: "uppercase", letterSpacing: "0.08em" }}>HRF Response</div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#0EA5E9", textTransform: "uppercase", letterSpacing: "0.08em" }}>HRF Response</div>
                       <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>last stim · canonical</span>
                     </div>
                     <svg viewBox="0 0 160 64" width="100%" style={{ display: "block", marginBottom: 6 }}>
@@ -4398,13 +4398,13 @@ export default function DemoClient({
                       <path
                         d="M 0,48 L 20,48 L 30,46 L 40,38 L 50,24 L 60,15 L 70,12 L 80,14 L 90,22 L 100,32 L 110,40 L 120,44 L 130,46 L 140,47 L 150,48 L 160,48"
                         fill="none"
-                        stroke="#06B6D4"
+                        stroke="#0EA5E9"
                         strokeWidth="2"
                         strokeLinecap="round"
                         filter="drop-shadow(0 0 4px rgba(6,182,212,0.4))"
                       />
-                      <circle cx="80" cy="14" r="2.5" fill="#06B6D4" />
-                      <text x="86" y="14" fontSize="7" fill="#06B6D4" fontWeight="700">peak 5s</text>
+                      <circle cx="80" cy="14" r="2.5" fill="#0EA5E9" />
+                      <text x="86" y="14" fontSize="7" fill="#0EA5E9" fontWeight="700">peak 5s</text>
                     </svg>
                     <div style={{ fontSize: 10, color: "#64748B", lineHeight: 1.4 }}>Onset 1.2s · Peak 5.0s · Return 14s · <span style={{ color: "#34D399", fontWeight: 600 }}>well-formed</span></div>
                   </div>
@@ -4639,7 +4639,7 @@ export default function DemoClient({
                   style={{
                     padding: "8px 16px", borderRadius: 8, border: "none", cursor: "pointer",
                     fontSize: 13, fontWeight: 600,
-                    background: gameMode === id ? "#2563EB" : "transparent",
+                    background: gameMode === id ? "#0F766E" : "transparent",
                     color: gameMode === id ? "white" : "#64748B",
                     transition: "background 0.15s, color 0.15s",
                   }}
@@ -4712,8 +4712,8 @@ export default function DemoClient({
                     ? gameRewardVal >= 70
                       ? "linear-gradient(-45deg, #064E3B, #065F46, #111A1F, #10B981, #34D399, #064E3B)"
                       : gameRewardVal >= 40
-                      ? "linear-gradient(-45deg, #111A1F, #1E3A5F, #1E40AF, #1D4ED8, #3B82F6, #111A1F)"
-                      : "linear-gradient(-45deg, #111A1F, #1C1018, #3B0764, #4C0519, #7C3AED, #111A1F)"
+                      ? "linear-gradient(-45deg, #111A1F, #0A2723, #134E48, #0D6A60, #14B8A6, #111A1F)"
+                      : "linear-gradient(-45deg, #111A1F, #1C1018, #0A2723, #4C0519, #0F766E, #111A1F)"
                     : "linear-gradient(-45deg, #111A1F, #1F2A30)",
                   backgroundSize: "400% 400%",
                   animation: `artShift ${gameRewardVal != null ? Math.max(2, 9 - (gameRewardVal / 100) * 7).toFixed(1) : "9"}s ease infinite`,
@@ -4754,7 +4754,7 @@ export default function DemoClient({
                   <div style={{ display: "flex", gap: 20, alignItems: "center", marginBottom: 20 }}>
                     <div style={{
                       width: 72, height: 72, borderRadius: 12, flexShrink: 0,
-                      background: "#2563EB",
+                      background: "#0F766E",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       animation: gameRewardVal != null && gameRewardVal >= 60 ? "spin 12s linear infinite" : "none",
                     }}>
@@ -4765,7 +4765,7 @@ export default function DemoClient({
                       <div style={{ fontSize: 12, color: "#94A3B8", marginBottom: 10 }}>EEGBase · Curated for neurofeedback</div>
                       <div style={{ height: 3, background: "#1F2A30", borderRadius: 99, overflow: "hidden" }}>
                         <div style={{
-                          height: "100%", background: "linear-gradient(90deg, #2563EB, #7C3AED)",
+                          height: "100%", background: "linear-gradient(90deg, #0F766E, #0F766E)",
                           width: gameRewardVal != null && gameRewardVal >= 60 ? `${Math.min(98, 8 + (elapsed / 3))}%` : "8%",
                           transition: "width 1s linear",
                         }} />
@@ -4801,7 +4801,7 @@ export default function DemoClient({
                 { label: interactiveGame ? "Score (you)" : "Score", value: gameRewardVal != null ? gameRewardVal.toFixed(1) : "—", dot: gameRewardVal == null ? "#CBD5E1" : gameRewardVal >= 70 ? "#10B981" : gameRewardVal >= 40 ? "#F59E0B" : "#EF4444" },
                 { label: "Focus band (β)", value: sample?.beta != null ? (sample.beta * 100).toFixed(1) + "%" : "—", dot: "#EC4899" },
                 { label: "Heart rate", value: sample?.heartRate != null ? sample.heartRate.toFixed(0) + " bpm" : "—", dot: "#10B981" },
-                { label: "HRV", value: sample?.hrvRmssd != null ? sample.hrvRmssd.toFixed(1) + " ms" : "—", dot: "#8B5CF6" },
+                { label: "HRV", value: sample?.hrvRmssd != null ? sample.hrvRmssd.toFixed(1) + " ms" : "—", dot: "#14B8A6" },
               ].map(({ label, value, dot }) => (
                 <div key={label} style={{ background: "linear-gradient(180deg, #111A1F 0%, #0A1320 100%)", border: "1px solid #1F2A30", borderRadius: 12, padding: "16px 18px", textAlign: "center", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 6 }}>
@@ -4827,7 +4827,7 @@ export default function DemoClient({
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }} className="demo-grid-2">
               {[
                 { label: "Heart Rate", val: sample?.heartRate, color: "#EF4444", unit: "bpm", norm: "60–80 bpm", icon: "❤️" },
-                { label: "HRV (RMSSD)", val: sample?.hrvRmssd, color: "#8B5CF6", unit: "ms", norm: "Target: >50 ms", icon: "📊" },
+                { label: "HRV (RMSSD)", val: sample?.hrvRmssd, color: "#14B8A6", unit: "ms", norm: "Target: >50 ms", icon: "📊" },
                 { label: "Coherence", val: sample?.hrvRmssd != null ? Math.min(9.9, (sample.hrvRmssd / 10)).toFixed(1) : null, color: "#10B981", unit: "/ 10", norm: "High: >8.0", icon: "🌊" },
                 { label: "Resonance Freq", val: "5.5", color: "#F59E0B", unit: "breaths/min", norm: "Lehrer/Vaschillo canonical", icon: "🫁" },
               ].map(({ label, val, color, unit, norm }) => (
@@ -4856,8 +4856,8 @@ export default function DemoClient({
               <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10 }}>
                 {[
                   { name: "Apple Health",  icon: "🍎", connected: true,  metrics: ["HRV", "Sleep", "Mindful min"], lastSync: "2 min ago", color: "#94A3B8" },
-                  { name: "Oura Ring",     icon: "💍", connected: true,  metrics: ["Sleep score", "Body temp", "HRV"], lastSync: "5 min ago", color: "#A855F7" },
-                  { name: "Whoop 4.0",     icon: "🟦", connected: true,  metrics: ["Recovery", "Strain", "Sleep need"], lastSync: "8 min ago", color: "#06B6D4" },
+                  { name: "Oura Ring",     icon: "💍", connected: true,  metrics: ["Sleep score", "Body temp", "HRV"], lastSync: "5 min ago", color: "#2DD4BF" },
+                  { name: "Whoop 4.0",     icon: "🟦", connected: true,  metrics: ["Recovery", "Strain", "Sleep need"], lastSync: "8 min ago", color: "#0EA5E9" },
                   { name: "Garmin",        icon: "🟢", connected: false, metrics: ["Stress", "Body Battery"], lastSync: "—", color: "#10B981" },
                   { name: "Fitbit",        icon: "🟣", connected: false, metrics: ["Sleep stages", "SpO₂"], lastSync: "—", color: "#EC4899" },
                 ].map((w) => (
@@ -4890,14 +4890,14 @@ export default function DemoClient({
                   ))}
                 </div>
                 <div style={{ paddingLeft: 22 }}>
-                  <LiveChart data={reward.data.map((r) => r * 0.6 + 0.3)} color="#8B5CF6" label="HRV RMSSD (ms) · last 60s" height={120} />
+                  <LiveChart data={reward.data.map((r) => r * 0.6 + 0.3)} color="#14B8A6" label="HRV RMSSD (ms) · last 60s" height={120} />
                 </div>
               </div>
               <div style={{ marginTop: 12, display: "flex", gap: 24, flexWrap: "wrap" }}>
                 {[
                   { label: "Avg RMSSD this session", val: "47 ms", color: "#10B981" },
                   { label: "Baseline (last 3 sessions)", val: "41 ms", color: "#94A3B8" },
-                  { label: "Coherence time >8.0", val: "68%", color: "#2563EB" },
+                  { label: "Coherence time >8.0", val: "68%", color: "#0F766E" },
                 ].map(({ label, val, color }) => (
                   <div key={label}>
                     <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 2 }}>{label}</div>
@@ -4922,7 +4922,7 @@ export default function DemoClient({
                   </div>
                   <div style={{ textAlign: "center", padding: "10px 14px", background: "#1F2A30", borderRadius: 10 }}>
                     <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 4 }}>HRV Coherence</div>
-                    <div style={{ fontSize: 28, fontWeight: 800, color: "#8B5CF6" }}>{sample?.hrvRmssd != null ? Math.min(9.9, sample.hrvRmssd / 10).toFixed(1) : "—"}<span style={{ fontSize: 12 }}>/ 10</span></div>
+                    <div style={{ fontSize: 28, fontWeight: 800, color: "#14B8A6" }}>{sample?.hrvRmssd != null ? Math.min(9.9, sample.hrvRmssd / 10).toFixed(1) : "—"}<span style={{ fontSize: 12 }}>/ 10</span></div>
                   </div>
                   <div style={{ textAlign: "center", padding: "10px 14px", background: "#1F2A30", borderRadius: 10 }}>
                     <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 4 }}>Overall Session Score</div>
@@ -4936,14 +4936,14 @@ export default function DemoClient({
                 <div style={{ textAlign: "center" }}>
                   <div style={{
                     width: 80, height: 80, borderRadius: "50%",
-                    background: breathPhase === "Inhale" ? "rgba(37,99,235,0.2)" : "rgba(16,185,129,0.15)",
-                    border: `4px solid ${breathPhase === "Inhale" ? "#2563EB" : "#93C5FD"}`,
+                    background: breathPhase === "Inhale" ? "rgba(15,118,110,0.2)" : "rgba(16,185,129,0.15)",
+                    border: `4px solid ${breathPhase === "Inhale" ? "#0F766E" : "#5EEAD4"}`,
                     display: "flex", alignItems: "center", justifyContent: "center",
                     margin: "0 auto 12px",
                     animation: "breathe 10s ease-in-out infinite",
                     transition: "background 0.5s, border-color 0.5s",
                   }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: "#93C5FD", transition: "opacity 0.3s" }}>{breathPhase}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "#5EEAD4", transition: "opacity 0.3s" }}>{breathPhase}</span>
                   </div>
                   <div style={{ fontSize: 11, color: "#94A3B8" }}>5.5 breaths/min · ~5.5s inhale / ~5.5s exhale (Lehrer/Vaschillo canonical)</div>
                 </div>
@@ -4951,13 +4951,13 @@ export default function DemoClient({
             </div>
 
             {/* Wearable import */}
-            <div style={{ background: "#111A1F", border: "1px solid #1F2A30", borderLeft: "3px solid #06B6D4", borderRadius: 12, padding: "16px 20px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+            <div style={{ background: "#111A1F", border: "1px solid #1F2A30", borderLeft: "3px solid #0EA5E9", borderRadius: 12, padding: "16px 20px", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 8 }}>Wearable Data Import</div>
               <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 12 }}>Import overnight HRV and sleep data from wearables. If the client slept poorly, the AI suggests a lower-intensity session today.</p>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {[
-                  { name: "Oura Ring",   abbr: "OR", color: "#A78BFA", status: "Connected · Last sync 6h ago", active: true },
-                  { name: "Apple Watch", abbr: "AW", color: "#06B6D4", status: "Connect →", active: false },
+                  { name: "Oura Ring",   abbr: "OR", color: "#5EEAD4", status: "Connected · Last sync 6h ago", active: true },
+                  { name: "Apple Watch", abbr: "AW", color: "#0EA5E9", status: "Connect →", active: false },
                   { name: "Garmin",      abbr: "G",  color: "#10B981", status: "Connect →", active: false },
                   { name: "Whoop",       abbr: "W",  color: "#F59E0B", status: "Connect →", active: false },
                 ].map(({ name, abbr, color, status, active }) => {
@@ -5052,7 +5052,7 @@ export default function DemoClient({
                 {[
                   { color: "#10B981", label: "OxyHb", desc: "Oxygen-rich blood flow" },
                   { color: "#EC4899", label: "Alpha", desc: "Relaxed attention" },
-                  { color: "#8B5CF6", label: "Theta", desc: "Deep/drowsy waves" },
+                  { color: "#14B8A6", label: "Theta", desc: "Deep/drowsy waves" },
                 ].map(({ color, label, desc }) => (
                   <div key={label} style={{ display: "flex", alignItems: "center", gap: 6, background: "#1F2A30", borderRadius: 8, padding: "5px 10px" }}>
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: color }} />
@@ -5087,7 +5087,7 @@ export default function DemoClient({
             <div style={{ background: "#111A1F", border: "1px solid #334155", borderRadius: 16, padding: 24 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4, flexWrap: "wrap" }}>
                 <span style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Real-Time Z-Score Training</span>
-                <span style={{ fontSize: 10, background: "#2563EB", color: "white", borderRadius: 99, padding: "2px 8px", fontWeight: 700 }}>LIVE</span>
+                <span style={{ fontSize: 10, background: "#0F766E", color: "white", borderRadius: 99, padding: "2px 8px", fontWeight: 700 }}>LIVE</span>
                 <span title="EEG-only feature — Mendi can't produce band-power z-scores" style={{ fontSize: 9, fontWeight: 700, padding: "2px 7px", borderRadius: 99, background: "rgba(165,243,252,0.10)", color: "#A5F3FC", border: "1px solid rgba(165,243,252,0.25)", textTransform: "uppercase", letterSpacing: "0.04em" }}>⚡ EEG (Muse)</span>
               </div>
               <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 20, lineHeight: 1.5 }}>
@@ -5135,7 +5135,7 @@ export default function DemoClient({
                 <span style={{ fontSize: 13, color: "#CBD5E1" }}>Sarah Mitchell · 20 sessions</span>
                 <span style={{ background: "#1F2A30", border: "1px solid #334155", borderRadius: 99, padding: "4px 12px", fontSize: 12, fontWeight: 600, color: "#FCD34D", display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: "#F59E0B" }} />8-session streak</span>
                 <span style={{ background: "#1F2A30", border: "1px solid #334155", borderRadius: 99, padding: "4px 12px", fontSize: 12, fontWeight: 600, color: "#34D399", display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981" }} />95% attendance</span>
-                <span style={{ background: "#1F2A30", border: "1px solid #334155", borderRadius: 99, padding: "4px 12px", fontSize: 12, fontWeight: 600, color: "#93C5FD", display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: "#3B82F6" }} />Top 12% of clients</span>
+                <span style={{ background: "#1F2A30", border: "1px solid #334155", borderRadius: 99, padding: "4px 12px", fontSize: 12, fontWeight: 600, color: "#5EEAD4", display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: "#14B8A6" }} />Top 12% of clients</span>
               </div>
             </div>
 
@@ -5197,7 +5197,7 @@ export default function DemoClient({
                 {[
                   { label: "Session 1 avg", value: SESSION_HISTORY[0].reward.toFixed(1), color: "#EF4444" },
                   { label: "Session 20 avg", value: SESSION_HISTORY[19].reward.toFixed(1), color: "#10B981" },
-                  { label: "Improvement", value: `+${(SESSION_HISTORY[19].reward - SESSION_HISTORY[0].reward).toFixed(1)}`, color: "#2563EB" },
+                  { label: "Improvement", value: `+${(SESSION_HISTORY[19].reward - SESSION_HISTORY[0].reward).toFixed(1)}`, color: "#0F766E" },
                 ].map(({ label, value, color }) => (
                   <div key={label}>
                     <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 2 }}>{label}</div>
@@ -5210,7 +5210,7 @@ export default function DemoClient({
             {/* PHQ-9 + GAD-7 + theta/beta over time */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 16 }} className="demo-grid-3">
               {[
-                { label: "PHQ-9 (Depression)", key: "phq9" as const, color: "#6366F1", max: 27, unit: "", improving: "lower" },
+                { label: "PHQ-9 (Depression)", key: "phq9" as const, color: "#14B8A6", max: 27, unit: "", improving: "lower" },
                 { label: "GAD-7 (Anxiety)", key: "gad7" as const, color: "#F59E0B", max: 21, unit: "", improving: "lower" },
                 { label: "θ/β Z-Score · EEG", key: "thetaBeta" as const, color: "#EF4444", max: 3, unit: " SD", improving: "lower" },
               ].map(({ label, key, color, max, unit }) => {
@@ -5252,7 +5252,7 @@ export default function DemoClient({
             <div style={{ background: "#111A1F", border: "1px solid #334155", borderRadius: 16, overflow: "hidden" }}>
               <div style={{ padding: "16px 20px", borderBottom: "1px solid #334155", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <h3 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Session History</h3>
-                <button style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", background: "#2563EB", color: "white", border: "none", borderRadius: 6, cursor: "pointer" }}>
+                <button style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", background: "#0F766E", color: "white", border: "none", borderRadius: 6, cursor: "pointer" }}>
                   Export PDF Report
                 </button>
               </div>
@@ -5284,7 +5284,7 @@ export default function DemoClient({
                         <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums", color: s.phq9 <= 5 ? "#10B981" : s.phq9 <= 10 ? "#F59E0B" : "#EF4444", fontWeight: 600 }}>{s.phq9}</td>
                         <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums", color: s.gad7 <= 5 ? "#10B981" : s.gad7 <= 10 ? "#F59E0B" : "#EF4444", fontWeight: 600 }}>{s.gad7}</td>
                         <td style={{ padding: "10px 16px" }}>
-                          <button onClick={(e) => { e.stopPropagation(); switchTab("ai"); }} style={{ fontSize: 11, color: "#2563EB", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>AI Note</button>
+                          <button onClick={(e) => { e.stopPropagation(); switchTab("ai"); }} style={{ fontSize: 11, color: "#0F766E", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>AI Note</button>
                         </td>
                       </tr>
                     ))}
@@ -5309,12 +5309,12 @@ export default function DemoClient({
             <div style={{ marginBottom: 16, padding: "10px 14px", background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 10, display: "flex", alignItems: "flex-start", gap: 10 }}>
               <span style={{ fontSize: 14, lineHeight: 1.4 }}>ℹ️</span>
               <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.6 }}>
-                <strong style={{ color: "#60A5FA", fontWeight: 700 }}>AI insights are decision-support tools, not medical advice.</strong> Every suggestion shown here is an aid to clinician judgment — not a replacement. The licensed clinician approves, modifies, or rejects every protocol change, every SOAP draft, and every risk flag before anything is saved to the client record. Models are trained on de-identified data from consenting EEGBase clinics and audited quarterly for bias. Powered by Claude Haiku 4.5 · OpenAI GPT-4o fallback.
+                <strong style={{ color: "#2DD4BF", fontWeight: 700 }}>AI insights are decision-support tools, not medical advice.</strong> Every suggestion shown here is an aid to clinician judgment — not a replacement. The licensed clinician approves, modifies, or rejects every protocol change, every SOAP draft, and every risk flag before anything is saved to the client record. Models are trained on de-identified data from consenting EEGBase clinics and audited quarterly for bias. Powered by Claude Haiku 4.5 · OpenAI GPT-4o fallback.
               </div>
             </div>
 
             {/* Cross-session pattern detector — Mendi data + multi-modal correlation */}
-            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #111A1F 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 14, padding: 20, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(79,70,229,0.4)" }}>
+            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #111A1F 0%, #0A1A1F 100%)", border: "1px solid #0D6A60", borderRadius: 14, padding: 20, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(79,70,229,0.4)" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, gap: 12, flexWrap: "wrap" }}>
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em" }}>Cross-Session Pattern Detector</div>
@@ -5375,7 +5375,7 @@ export default function DemoClient({
               </div>
 
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", fontSize: 11 }}>
-                <button onClick={() => showToast("Recommended: 'Sleep-coupled session' — 8 AM start after ≥85% sleep efficiency. Auto-suggested calendar slots.")} style={{ ...clinicianBtnPrimary, background: "#7C3AED", fontSize: 12 }}>Apply finding to schedule →</button>
+                <button onClick={() => showToast("Recommended: 'Sleep-coupled session' — 8 AM start after ≥85% sleep efficiency. Auto-suggested calendar slots.")} style={{ ...clinicianBtnPrimary, background: "#0F766E", fontSize: 12 }}>Apply finding to schedule →</button>
                 <button onClick={() => showToast("Pattern saved to EEGBase research registry · ready for Mendi co-publication once partnership confirmed")} style={{ ...clinicianBtn, fontSize: 12 }}>Send to research registry</button>
                 <button
                   onClick={async () => {
@@ -5390,7 +5390,7 @@ export default function DemoClient({
                     }
                   }}
                   disabled={aiInsightLoading}
-                  style={{ ...clinicianBtn, fontSize: 12, background: aiInsightLoading ? "#1F2A30" : "#111A1F", border: "1px solid #4F46E5", color: "#A5B4FC" }}
+                  style={{ ...clinicianBtn, fontSize: 12, background: aiInsightLoading ? "#1F2A30" : "#111A1F", border: "1px solid #0D6A60", color: "#A5B4FC" }}
                 >
                   {aiInsightLoading ? "Calling Claude…" : aiInsight ? "↻ Re-run with live AI" : "✨ Run with live Claude Haiku"}
                 </button>
@@ -5442,12 +5442,12 @@ export default function DemoClient({
                     <span style={{ color: "#64748B", fontWeight: 600 }}>147 lines · 91% conf</span>
                   </div>
                   <div style={{ fontSize: 11, lineHeight: 1.8, maxHeight: 180, overflowY: "auto", paddingRight: 8 }}>
-                    <div style={{ color: "#94A3B8", marginBottom: 6 }}><strong style={{ color: "#60A5FA" }}>Clinician (10:34):</strong> How has your sleep been since last week?</div>
-                    <div style={{ color: "#CBD5E1", marginBottom: 6 }}><strong style={{ color: "#A78BFA" }}>Sarah (10:34):</strong> Better most nights. I've been waking up around 4am still — maybe twice last week.</div>
-                    <div style={{ color: "#94A3B8", marginBottom: 6 }}><strong style={{ color: "#60A5FA" }}>Clinician (10:35):</strong> Any change in your overall mood?</div>
-                    <div style={{ color: "#CBD5E1", marginBottom: 6 }}><strong style={{ color: "#A78BFA" }}>Sarah (10:35):</strong> I think so. Less foggy in the mornings. Work feels less heavy.</div>
-                    <div style={{ color: "#94A3B8", marginBottom: 6 }}><strong style={{ color: "#60A5FA" }}>Clinician (10:36):</strong> Are you still tracking your check-ins in the client app daily?</div>
-                    <div style={{ color: "#CBD5E1", marginBottom: 6 }}><strong style={{ color: "#A78BFA" }}>Sarah (10:36):</strong> Most days. Missed two days last weekend when traveling.</div>
+                    <div style={{ color: "#94A3B8", marginBottom: 6 }}><strong style={{ color: "#2DD4BF" }}>Clinician (10:34):</strong> How has your sleep been since last week?</div>
+                    <div style={{ color: "#CBD5E1", marginBottom: 6 }}><strong style={{ color: "#5EEAD4" }}>Sarah (10:34):</strong> Better most nights. I've been waking up around 4am still — maybe twice last week.</div>
+                    <div style={{ color: "#94A3B8", marginBottom: 6 }}><strong style={{ color: "#2DD4BF" }}>Clinician (10:35):</strong> Any change in your overall mood?</div>
+                    <div style={{ color: "#CBD5E1", marginBottom: 6 }}><strong style={{ color: "#5EEAD4" }}>Sarah (10:35):</strong> I think so. Less foggy in the mornings. Work feels less heavy.</div>
+                    <div style={{ color: "#94A3B8", marginBottom: 6 }}><strong style={{ color: "#2DD4BF" }}>Clinician (10:36):</strong> Are you still tracking your check-ins in the client app daily?</div>
+                    <div style={{ color: "#CBD5E1", marginBottom: 6 }}><strong style={{ color: "#5EEAD4" }}>Sarah (10:36):</strong> Most days. Missed two days last weekend when traveling.</div>
                     <div style={{ background: "rgba(239,68,68,0.12)", borderLeft: "2px solid #EF4444", padding: "4px 8px", marginBottom: 6, borderRadius: 4 }}>
                       <span style={{ fontSize: 9, fontWeight: 700, color: "#FCA5A5", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 2 }}>⚠ Risk language detected</span>
                       <span style={{ color: "#CBD5E1" }}>...sometimes I feel like nothing matters but I'd never...</span>
@@ -5465,8 +5465,8 @@ export default function DemoClient({
                       { tag: "Mood", val: "Improved · less brain fog, work less heavy", color: "#10B981" },
                       { tag: "Adherence", val: "Mostly on · missed 2 check-ins (travel)", color: "#F59E0B" },
                       { tag: "Risk flag", val: "PHQ-9 item 9 phrasing — assess + document", color: "#EF4444" },
-                      { tag: "CPT suggestion", val: "90901 (biofeedback) + 90875 (psychophys 30 min)", color: "#A78BFA" },
-                      { tag: "Plan changes", val: "Continue Alpha-Theta · review sleep hygiene", color: "#60A5FA" },
+                      { tag: "CPT suggestion", val: "90901 (biofeedback) + 90875 (psychophys 30 min)", color: "#5EEAD4" },
+                      { tag: "Plan changes", val: "Continue Alpha-Theta · review sleep hygiene", color: "#2DD4BF" },
                     ].map((i) => (
                       <div key={i.tag} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
                         <span style={{ fontSize: 9, fontWeight: 700, color: i.color, padding: "2px 7px", background: `${i.color}1A`, border: `1px solid ${i.color}33`, borderRadius: 6, flexShrink: 0, textTransform: "uppercase", letterSpacing: "0.06em" }}>{i.tag}</span>
@@ -5495,7 +5495,7 @@ export default function DemoClient({
                     <button
                       key={f.fmt}
                       onClick={() => showToast(`Regenerated as ${f.fmt} · ${f.desc}`)}
-                      style={{ fontSize: 10, padding: "5px 10px", background: f.active ? "rgba(167,139,250,0.18)" : "transparent", border: `1px solid ${f.active ? "#A78BFA" : "#1F2A30"}`, color: f.active ? "#C4B5FD" : "#94A3B8", borderRadius: 6, cursor: "pointer", fontWeight: 700 }}
+                      style={{ fontSize: 10, padding: "5px 10px", background: f.active ? "rgba(94,234,212,0.18)" : "transparent", border: `1px solid ${f.active ? "#5EEAD4" : "#1F2A30"}`, color: f.active ? "#5EEAD4" : "#94A3B8", borderRadius: 6, cursor: "pointer", fontWeight: 700 }}
                       title={f.desc}
                     >
                       {f.fmt} {f.active && "✓"}
@@ -5508,12 +5508,12 @@ export default function DemoClient({
               <div style={{ marginTop: 14, padding: 12, background: "#0A1320", border: "1px solid #1F2A30", borderRadius: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                   <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em" }}>Conversation analytics · w/ fNIRS overlay</div>
-                  <span style={{ fontSize: 9, fontWeight: 700, color: "#A78BFA", padding: "2px 7px", background: "rgba(167,139,250,0.12)", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Unique combo</span>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: "#5EEAD4", padding: "2px 7px", background: "rgba(94,234,212,0.12)", border: "1px solid rgba(94,234,212,0.3)", borderRadius: 99, textTransform: "uppercase", letterSpacing: "0.06em" }}>Unique combo</span>
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginBottom: 10 }}>
                   {[
-                    { k: "Clinician talk-time", v: "38%",  bar: 38,  color: "#60A5FA" },
-                    { k: "Client talk-time",    v: "54%",  bar: 54,  color: "#A78BFA" },
+                    { k: "Clinician talk-time", v: "38%",  bar: 38,  color: "#2DD4BF" },
+                    { k: "Client talk-time",    v: "54%",  bar: 54,  color: "#5EEAD4" },
                     { k: "Silence (reflective)", v: "8%",   bar: 8,   color: "#34D399" },
                     { k: "Tone (avg valence)",  v: "+0.42", bar: 70,  color: "#FCD34D" },
                   ].map((m) => (
@@ -5529,9 +5529,9 @@ export default function DemoClient({
                 <div style={{ background: "#111A1F", border: "1px solid #1F2A30", borderRadius: 8, padding: 10 }}>
                   <div style={{ fontSize: 9, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>Topic timeline · prefrontal OxyHb overlay</div>
                   <svg viewBox="0 0 400 60" width="100%" height="60" style={{ display: "block" }}>
-                    <defs><linearGradient id="oxyG" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#A78BFA" stopOpacity="0.5"/><stop offset="100%" stopColor="#A78BFA" stopOpacity="0"/></linearGradient></defs>
+                    <defs><linearGradient id="oxyG" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#5EEAD4" stopOpacity="0.5"/><stop offset="100%" stopColor="#5EEAD4" stopOpacity="0"/></linearGradient></defs>
                     <path d="M 0,30 L 30,28 L 60,25 L 90,22 L 120,28 L 150,42 L 180,48 L 210,45 L 240,32 L 270,26 L 300,24 L 330,28 L 360,30 L 400,29 L 400,60 L 0,60 Z" fill="url(#oxyG)" />
-                    <path d="M 0,30 L 30,28 L 60,25 L 90,22 L 120,28 L 150,42 L 180,48 L 210,45 L 240,32 L 270,26 L 300,24 L 330,28 L 360,30 L 400,29" fill="none" stroke="#A78BFA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M 0,30 L 30,28 L 60,25 L 90,22 L 120,28 L 150,42 L 180,48 L 210,45 L 240,32 L 270,26 L 300,24 L 330,28 L 360,30 L 400,29" fill="none" stroke="#5EEAD4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     <line x1="150" y1="0" x2="150" y2="60" stroke="#EF4444" strokeWidth="0.8" strokeDasharray="3 3" />
                     <text x="155" y="10" fontSize="8" fill="#FCA5A5" fontWeight="700">Father topic introduced @ 12:15</text>
                   </svg>
@@ -5545,9 +5545,9 @@ export default function DemoClient({
             {/* Protocol recommendation card */}
             <div style={{ background: "linear-gradient(180deg, #111A1F 0%, #0A1320 100%)", borderRadius: 16, padding: 24, marginBottom: 16, border: "1px solid #1F2A30", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 12px 36px -16px rgba(0,0,0,0.6)" }}>
               <div style={{ display: "flex", gap: 12, marginBottom: 18, alignItems: "center" }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(124,58,237,0.18)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 14, fontWeight: 700, border: "1px solid rgba(124,58,237,0.3)" }}>AI</div>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(124,58,237,0.18)", color: "#5EEAD4", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 14, fontWeight: 700, border: "1px solid rgba(124,58,237,0.3)" }}>AI</div>
                 <span style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Protocol Recommendation Engine</span>
-                <span style={{ marginLeft: "auto", fontSize: 11, background: "rgba(124,58,237,0.18)", color: "#A78BFA", borderRadius: 99, padding: "3px 10px", fontWeight: 600 }}>Session 8 of 20</span>
+                <span style={{ marginLeft: "auto", fontSize: 11, background: "rgba(124,58,237,0.18)", color: "#5EEAD4", borderRadius: 99, padding: "3px 10px", fontWeight: 600 }}>Session 8 of 20</span>
               </div>
 
               <div style={{ background: "#0A1320", borderRadius: 12, padding: "16px 20px", marginBottom: 14, borderLeft: "3px solid #F59E0B", border: "1px solid #1F2A30", borderLeftWidth: 3, borderLeftColor: "#F59E0B" }}>
@@ -5602,7 +5602,7 @@ export default function DemoClient({
                 <div style={{ display: "flex", gap: 8 }}>
                   <button
                     onClick={() => { navigator.clipboard?.writeText(SOAP_NOTE); setSoapCopied(true); setTimeout(() => setSoapCopied(false), 2000); }}
-                    style={{ fontSize: 12, fontWeight: 700, padding: "7px 14px", background: soapCopied ? "#10B981" : "#2563EB", color: "white", border: "none", borderRadius: 6, cursor: "pointer" }}
+                    style={{ fontSize: 12, fontWeight: 700, padding: "7px 14px", background: soapCopied ? "#10B981" : "#0F766E", color: "white", border: "none", borderRadius: 6, cursor: "pointer" }}
                   >
                     {soapCopied ? "✓ Copied!" : "Copy to EHR"}
                   </button>
@@ -5613,7 +5613,7 @@ export default function DemoClient({
               </div>
 
               {[
-                { label: "S — Subjective", color: "#6366F1", lines: ["Client reports moderate difficulty concentrating this week; rated focus 4/10.", "Sleep quality 6/10 (down from 7 last visit). No medication changes.", "Reports feeling \"stuck\" on same tasks at work."] },
+                { label: "S — Subjective", color: "#14B8A6", lines: ["Client reports moderate difficulty concentrating this week; rated focus 4/10.", "Sleep quality 6/10 (down from 7 last visit). No medication changes.", "Reports feeling \"stuck\" on same tasks at work."] },
                 { label: "O — Objective",  color: "#0EA5E9", lines: ["22-minute SMR (12–15 Hz) training at Cz. Average reward score 64.2/100 (above-threshold 71% of session).", "θ/β Z-score: +2.2 SD above age/sex-matched norm (ages 28–35, eyes-open).", "HR 68 bpm · HRV-RMSSD 45 ms (baseline normal). PHQ-9: 11 (moderate) · GAD-7: 8 (mild)."] },
                 { label: "A — Assessment", color: "#F59E0B", lines: ["Client engagement improving — reward score +52% from session 1 baseline (38.2).", "Theta/beta ratio stalled above normative range (>1.5 SD) across sessions 6–8 despite compliance.", "PHQ-9 depression score trending down from 18 \u2192 12 over 8 sessions — positive trajectory.", "Alpha-theta protocol switch indicated given stalled \u03b8/\u03b2 trajectory."] },
                 { label: "P — Plan",       color: "#10B981", lines: ["1. Switch to Alpha-Theta (Pz/Oz, 8–12 Hz reward) for sessions 9–12.", "2. Reassess PHQ-9 at session 10.", "3. Discuss sleep hygiene at next appointment.", "4. Continue 22-minute weekly sessions.", "5. Client to complete daily symptom journal between sessions."] },
@@ -5651,10 +5651,10 @@ export default function DemoClient({
             </div>
 
             {/* MENDI HOME-CONTINUITY BRIDGE */}
-            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #111A1F 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 20, marginBottom: 16, boxShadow: "0 12px 36px -16px rgba(79,70,229,0.4)", position: "relative", overflow: "hidden" }}>
+            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #111A1F 0%, #0A1A1F 100%)", border: "1px solid #0D6A60", borderRadius: 18, padding: 20, marginBottom: 16, boxShadow: "0 12px 36px -16px rgba(79,70,229,0.4)", position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, color: "#FBBF24", background: "rgba(251,191,36,0.15)", padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(251,191,36,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Pending hardware capture</div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(167,139,250,0.2)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, border: "1px solid rgba(167,139,250,0.3)" }}>↔</div>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(94,234,212,0.2)", color: "#5EEAD4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, border: "1px solid rgba(94,234,212,0.3)" }}>↔</div>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Clinic ↔ Home Practice Bridge</div>
                   <div style={{ fontSize: 11, color: "#A5B4FC" }}>What becomes possible once we complete the independent BLE-protocol capture from a physical Mendi · today: simulator data only</div>
@@ -5666,19 +5666,19 @@ export default function DemoClient({
                 <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr auto 1fr", gap: 14, alignItems: "center" }}>
                   {/* Clinic */}
                   <div style={{ textAlign: "center" }}>
-                    <div style={{ width: 56, height: 56, borderRadius: 12, background: "linear-gradient(135deg, #2563EB, #4F46E5)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 8px", fontSize: 26, boxShadow: "0 4px 16px -4px rgba(79,70,229,0.5)" }}>🏥</div>
+                    <div style={{ width: 56, height: 56, borderRadius: 12, background: "linear-gradient(135deg, #0F766E, #0D6A60)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 8px", fontSize: 26, boxShadow: "0 4px 16px -4px rgba(79,70,229,0.5)" }}>🏥</div>
                     <div style={{ fontSize: 11, fontWeight: 700, color: "#F1F5F9" }}>Clinic Visit</div>
                     <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>Session 8 · today</div>
                     <div style={{ fontSize: 9, color: "#A5B4FC", marginTop: 4, fontFamily: "ui-monospace, monospace" }}>Protocol: Focus Boost</div>
                   </div>
                   {/* Arrow → */}
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-                    <svg width="48" height="20" viewBox="0 0 48 20"><defs><linearGradient id="arrowR" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#4F46E5" /><stop offset="100%" stopColor="#A78BFA" /></linearGradient></defs><line x1="2" y1="10" x2="40" y2="10" stroke="url(#arrowR)" strokeWidth="2" strokeDasharray="4 3" /><polygon points="40,5 46,10 40,15" fill="#A78BFA" /></svg>
-                    <span style={{ fontSize: 9, color: "#A78BFA", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>Push</span>
+                    <svg width="48" height="20" viewBox="0 0 48 20"><defs><linearGradient id="arrowR" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#0D6A60" /><stop offset="100%" stopColor="#5EEAD4" /></linearGradient></defs><line x1="2" y1="10" x2="40" y2="10" stroke="url(#arrowR)" strokeWidth="2" strokeDasharray="4 3" /><polygon points="40,5 46,10 40,15" fill="#5EEAD4" /></svg>
+                    <span style={{ fontSize: 9, color: "#5EEAD4", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>Push</span>
                   </div>
                   {/* Home / Mendi */}
                   <div style={{ textAlign: "center" }}>
-                    <div style={{ width: 56, height: 56, borderRadius: 12, background: "linear-gradient(135deg, #7C3AED, #A78BFA)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 8px", fontSize: 26, boxShadow: "0 4px 16px -4px rgba(167,139,250,0.5)", position: "relative" }}>
+                    <div style={{ width: 56, height: 56, borderRadius: 12, background: "linear-gradient(135deg, #0F766E, #5EEAD4)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 8px", fontSize: 26, boxShadow: "0 4px 16px -4px rgba(94,234,212,0.5)", position: "relative" }}>
                       🧠
                       <span style={{ position: "absolute", bottom: -2, right: -2, fontSize: 14 }}>📱</span>
                     </div>
@@ -5688,12 +5688,12 @@ export default function DemoClient({
                   </div>
                   {/* Arrow ← */}
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-                    <svg width="48" height="20" viewBox="0 0 48 20"><defs><linearGradient id="arrowL" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#A78BFA" /><stop offset="100%" stopColor="#10B981" /></linearGradient></defs><line x1="8" y1="10" x2="46" y2="10" stroke="url(#arrowL)" strokeWidth="2" strokeDasharray="4 3" /><polygon points="46,5 40,10 46,15" fill="none" /><polygon points="2,10 8,5 8,15" fill="#A78BFA" /></svg>
+                    <svg width="48" height="20" viewBox="0 0 48 20"><defs><linearGradient id="arrowL" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#5EEAD4" /><stop offset="100%" stopColor="#10B981" /></linearGradient></defs><line x1="8" y1="10" x2="46" y2="10" stroke="url(#arrowL)" strokeWidth="2" strokeDasharray="4 3" /><polygon points="46,5 40,10 46,15" fill="none" /><polygon points="2,10 8,5 8,15" fill="#5EEAD4" /></svg>
                     <span style={{ fontSize: 9, color: "#34D399", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>Sync back</span>
                   </div>
                   {/* Next visit */}
                   <div style={{ textAlign: "center" }}>
-                    <div style={{ width: 56, height: 56, borderRadius: 12, background: "linear-gradient(135deg, #10B981, #06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 8px", fontSize: 26, boxShadow: "0 4px 16px -4px rgba(16,185,129,0.4)" }}>📊</div>
+                    <div style={{ width: 56, height: 56, borderRadius: 12, background: "linear-gradient(135deg, #10B981, #0EA5E9)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 8px", fontSize: 26, boxShadow: "0 4px 16px -4px rgba(16,185,129,0.4)" }}>📊</div>
                     <div style={{ fontSize: 11, fontWeight: 700, color: "#F1F5F9" }}>Next Visit</div>
                     <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>Session 9 · May 12</div>
                     <div style={{ fontSize: 9, color: "#34D399", marginTop: 4, fontFamily: "ui-monospace, monospace" }}>+8 home sessions</div>
@@ -5751,7 +5751,7 @@ export default function DemoClient({
               </div>
 
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <button onClick={() => showToast("Demo: protocol PDF emailed to Sarah · 3×/week × 12 min · today: PDF; once the EEGBase mobile app ships: direct push")} style={{ ...clinicianBtnPrimary, background: "#7C3AED" }}>Send protocol → Sarah</button>
+                <button onClick={() => showToast("Demo: protocol PDF emailed to Sarah · 3×/week × 12 min · today: PDF; once the EEGBase mobile app ships: direct push")} style={{ ...clinicianBtnPrimary, background: "#0F766E" }}>Send protocol → Sarah</button>
                 <button onClick={() => showToast("Demo: SMS reminder sent · once the EEGBase mobile app ships this would be an in-app message")} style={clinicianBtn}>💬 SMS reminder</button>
                 <button onClick={() => showToast("Demo: home session screenshot opens — automatic sync requires the EEGBase mobile app (in development)")} style={clinicianBtn}>View last home session</button>
               </div>
@@ -5765,7 +5765,7 @@ export default function DemoClient({
                   <div style={{ display: "flex", gap: 6 }}>
                     <button onClick={() => showToast("March 2026 · 23 sessions scheduled · 4 evals · 2 onboarding")} aria-label="Previous month" style={{ fontSize: 12, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1F2A30", cursor: "pointer", color: "#CBD5E1" }}>‹</button>
                     <button onClick={() => showToast("May 2026 · 19 sessions scheduled · 1 eval · 3 onboarding")} aria-label="Next month" style={{ fontSize: 12, padding: "5px 10px", border: "1px solid #334155", borderRadius: 6, background: "#1F2A30", cursor: "pointer", color: "#CBD5E1" }}>›</button>
-                    <button onClick={() => showToast("New appointment · client · type · time · clinician · auto-suggests CPT 90901 + 90875")} style={{ fontSize: 12, padding: "5px 14px", border: "none", borderRadius: 6, background: "#2563EB", color: "white", cursor: "pointer", fontWeight: 600 }}>+ New</button>
+                    <button onClick={() => showToast("New appointment · client · type · time · clinician · auto-suggests CPT 90901 + 90875")} style={{ fontSize: 12, padding: "5px 14px", border: "none", borderRadius: 6, background: "#0F766E", color: "white", cursor: "pointer", fontWeight: 600 }}>+ New</button>
                   </div>
                 </div>
                 {/* Day headers */}
@@ -5786,10 +5786,10 @@ export default function DemoClient({
                     return (
                       <div key={day} onClick={() => { setSelectedDay(day); if (hasAppt) showToast(`May ${day} appointments highlighted on the right`); }} style={{
                         aspectRatio: "1", borderRadius: 8, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                        background: isSelected ? "#2563EB" : "transparent",
-                        border: isToday && !isSelected ? "2px solid #60A5FA" : isSelected ? "1px solid #3B82F6" : "1px solid transparent",
+                        background: isSelected ? "#0F766E" : "transparent",
+                        border: isToday && !isSelected ? "2px solid #2DD4BF" : isSelected ? "1px solid #14B8A6" : "1px solid transparent",
                         cursor: "pointer", fontSize: 13, fontWeight: isToday || isSelected ? 700 : 500,
-                        color: isSelected ? "white" : isToday ? "#60A5FA" : "#CBD5E1",
+                        color: isSelected ? "white" : isToday ? "#2DD4BF" : "#CBD5E1",
                         position: "relative",
                         transition: "transform 0.1s, background 0.15s",
                       }}
@@ -5797,7 +5797,7 @@ export default function DemoClient({
                       onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; if (!isSelected) e.currentTarget.style.background = "transparent"; }}
                       >
                         {day}
-                        {hasAppt && <div style={{ width: 4, height: 4, borderRadius: "50%", background: isSelected ? "white" : "#3B82F6", marginTop: 2 }} />}
+                        {hasAppt && <div style={{ width: 4, height: 4, borderRadius: "50%", background: isSelected ? "white" : "#14B8A6", marginTop: 2 }} />}
                       </div>
                     );
                   })}
@@ -5891,10 +5891,10 @@ export default function DemoClient({
             </div>
 
             {/* Mendi-Optimized Protocols (pinned) */}
-            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #111A1F 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 14, padding: 18, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(79,70,229,0.4)" }}>
+            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #111A1F 0%, #0A1A1F 100%)", border: "1px solid #0D6A60", borderRadius: 14, padding: 18, marginBottom: 16, boxShadow: "0 1px 0 0 rgba(255,255,255,0.05) inset, 0 8px 24px -16px rgba(79,70,229,0.4)" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(167,139,250,0.2)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, border: "1px solid rgba(167,139,250,0.3)" }}>M</div>
+                  <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(94,234,212,0.2)", color: "#5EEAD4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, border: "1px solid rgba(94,234,212,0.3)" }}>M</div>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Mendi-Optimized Protocols</div>
                     <div style={{ fontSize: 11, color: "#A5B4FC" }}>9 prefrontal-training protocols designed specifically for Mendi's dual-channel fNIRS</div>
@@ -5904,15 +5904,15 @@ export default function DemoClient({
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }} className="demo-grid-2">
                 {[
-                  { name: "Focus Boost",            target: "Fp1+Fp2 HbO ↑ · 12 min",     cite: "Yamashita 2021", color: "#60A5FA" },
+                  { name: "Focus Boost",            target: "Fp1+Fp2 HbO ↑ · 12 min",     cite: "Yamashita 2021", color: "#2DD4BF" },
                   { name: "Anxiety Reduction",      target: "R-DLPFC down-train",         cite: "Trambaiolli 2021", color: "#34D399" },
-                  { name: "Depression Asymmetry",   target: "L > R asymmetry training",  cite: "Ehlis 2014; Sutoko 2021", color: "#A78BFA" },
+                  { name: "Depression Asymmetry",   target: "L > R asymmetry training",  cite: "Ehlis 2014; Sutoko 2021", color: "#5EEAD4" },
                   { name: "ADHD Inhibitory Control",target: "Sustained Fp1 HbO upregulation", cite: "Marx 2015", color: "#F59E0B" },
                   { name: "Burnout Recovery",       target: "DLPFC reactivation",         cite: "KU Leuven 2026", color: "#10B981" },
                   { name: "PTSD Hyperarousal",      target: "PFC down-regulation",        cite: "Kohl 2020", color: "#EC4899" },
-                  { name: "Athletic Pre-Performance", target: "Approach motivation +",    cite: "Bishop 2022", color: "#06B6D4" },
+                  { name: "Athletic Pre-Performance", target: "Approach motivation +",    cite: "Bishop 2022", color: "#0EA5E9" },
                   { name: "Pediatric Focus (8–12)", target: "L-DLPFC sustained ↑",        cite: "Marx 2015", color: "#FBBF24" },
-                  { name: "Meditation Deepening",   target: "Bilateral PFC quietening",   cite: "Tang 2015", color: "#8B5CF6" },
+                  { name: "Meditation Deepening",   target: "Bilateral PFC quietening",   cite: "Tang 2015", color: "#14B8A6" },
                 ].map((p) => (
                   <button
                     key={p.name}
@@ -5940,7 +5940,7 @@ export default function DemoClient({
                     onClick={() => setProtocolSearch(tag === "All" ? "" : tag)}
                     style={{
                       fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 99, border: "none", cursor: "pointer",
-                      background: active ? "#2563EB" : "#1F2A30",
+                      background: active ? "#0F766E" : "#1F2A30",
                       color: active ? "white" : "#94A3B8",
                       transition: "background 0.15s, color 0.15s",
                     }}
@@ -6006,7 +6006,7 @@ export default function DemoClient({
                   bands: "Reward: 0.01–0.1 Hz (infraslow)",
                   duration: "25 min · 20–40 sessions",
                   evidence: "Emerging",
-                  evidenceColor: "#6366F1",
+                  evidenceColor: "#14B8A6",
                   protocols: ["Othmer ILF", "ANS Regulation"],
                   tags: ["Trauma", "Dysregulation", "Autonomic"],
                   device: "EEG required (multi-channel + temporal sites)",
@@ -6067,7 +6067,7 @@ export default function DemoClient({
                     <div style={{ fontSize: 32, marginBottom: 12 }}>🔍</div>
                     <div style={{ fontSize: 15, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>No protocols found</div>
                     <div style={{ fontSize: 13, color: "#94A3B8", marginBottom: 16 }}>No protocols match &ldquo;{protocolSearch}&rdquo;</div>
-                    <button onClick={() => setProtocolSearch("")} style={{ padding: "8px 20px", background: "#2563EB", color: "white", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: "pointer" }}>
+                    <button onClick={() => setProtocolSearch("")} style={{ padding: "8px 20px", background: "#0F766E", color: "white", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: "pointer" }}>
                       Clear search
                     </button>
                   </div>
@@ -6080,7 +6080,7 @@ export default function DemoClient({
                       key={p.id}
                       onClick={() => setSelectedProtocol(selectedProtocol === p.id ? null : p.id)}
                       style={{
-                        background: "#111A1F", border: selectedProtocol === p.id ? "2px solid #2563EB" : "1px solid #334155",
+                        background: "#111A1F", border: selectedProtocol === p.id ? "2px solid #0F766E" : "1px solid #334155",
                         borderRadius: 14, padding: 20, cursor: "pointer",
                         boxShadow: selectedProtocol === p.id ? "0 0 0 4px rgba(30,58,138,0.25)" : undefined,
                       }}
@@ -6122,7 +6122,7 @@ export default function DemoClient({
                           <div style={{ display: "flex", gap: 8 }}>
                             <button
                               onClick={(e) => { e.stopPropagation(); setProtocolApplied(p.id); setTimeout(() => setProtocolApplied(null), 2500); }}
-                              style={{ flex: 1, fontSize: 12, fontWeight: 700, padding: "8px", background: protocolApplied === p.id ? "#10B981" : "#2563EB", color: "white", border: "none", borderRadius: 8, cursor: "pointer" }}
+                              style={{ flex: 1, fontSize: 12, fontWeight: 700, padding: "8px", background: protocolApplied === p.id ? "#10B981" : "#0F766E", color: "white", border: "none", borderRadius: 8, cursor: "pointer" }}
                             >
                               {protocolApplied === p.id ? "✓ Applied to Sarah Mitchell!" : "▶ Apply to Sarah Mitchell"}
                             </button>
@@ -6136,7 +6136,7 @@ export default function DemoClient({
                         <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #334155", display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
                           <button
                             onClick={(e) => { e.stopPropagation(); setRecommendationApplied(true); switchTab("session"); }}
-                            style={{ fontSize: 12, fontWeight: 600, color: "#60A5FA", background: "none", border: "1px solid #334155", borderRadius: 6, padding: "4px 12px", cursor: "pointer" }}
+                            style={{ fontSize: 12, fontWeight: 600, color: "#2DD4BF", background: "none", border: "1px solid #334155", borderRadius: 6, padding: "4px 12px", cursor: "pointer" }}
                           >
                             ▶ Apply to {demoClient.name.split(" ")[0]}
                           </button>
@@ -6170,7 +6170,7 @@ export default function DemoClient({
               </span>
               <button
                 onClick={() => setProtocolSearch("")}
-                style={{ fontSize: 13, color: "#60A5FA", background: "none", border: "none", cursor: "pointer", fontWeight: 600, padding: 0, whiteSpace: "nowrap" }}
+                style={{ fontSize: 13, color: "#2DD4BF", background: "none", border: "none", cursor: "pointer", fontWeight: 600, padding: 0, whiteSpace: "nowrap" }}
               >
                 Browse full library →
               </button>
@@ -6182,10 +6182,10 @@ export default function DemoClient({
         {tab === "reports" && (
           <div style={{ animation: "fadeIn 0.3s ease" }}>
             {/* Mendi Outcomes Registry */}
-            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #111A1F 0%, #1E1B4B 100%)", border: "1px solid #4F46E5", borderRadius: 18, padding: 24, marginBottom: 20, boxShadow: "0 12px 36px -16px rgba(79,70,229,0.4)", position: "relative", overflow: "hidden" }}>
+            <div className="demo-flagship" style={{ background: "linear-gradient(135deg, #111A1F 0%, #0A1A1F 100%)", border: "1px solid #0D6A60", borderRadius: 18, padding: 24, marginBottom: 20, boxShadow: "0 12px 36px -16px rgba(79,70,229,0.4)", position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, color: "#FBBF24", background: "rgba(251,191,36,0.15)", padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(251,191,36,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Proposed · Pending Mendi Partnership</div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(79,70,229,0.25)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, border: "1px solid rgba(79,70,229,0.4)" }}>📊</div>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(79,70,229,0.25)", color: "#5EEAD4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, border: "1px solid rgba(79,70,229,0.4)" }}>📊</div>
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: "#A5B4FC", textTransform: "uppercase", letterSpacing: "0.08em" }}>Live Outcomes Registry</div>
                   <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.02em" }}>Real-world Mendi outcomes — anonymized &amp; opt-in</div>
@@ -6210,7 +6210,7 @@ export default function DemoClient({
               </div>
               {/* Pre-print citation + Co-author CTA + Registry IP */}
               <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 10, marginBottom: 14 }} className="demo-grid-2">
-                <div style={{ background: "rgba(15,23,42,0.7)", border: "1px solid rgba(167,139,250,0.35)", borderRadius: 10, padding: 12 }}>
+                <div style={{ background: "rgba(15,23,42,0.7)", border: "1px solid rgba(94,234,212,0.35)", borderRadius: 10, padding: 12 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
                     <span style={{ fontSize: 9, fontWeight: 700, color: "#FCD34D", textTransform: "uppercase", letterSpacing: "0.08em", padding: "2px 6px", background: "rgba(251,191,36,0.15)", borderRadius: 99 }}>Pre-print</span>
                     <span style={{ fontSize: 9, color: "#94A3B8", fontWeight: 600 }}>DOI pending · OSF Preprints submission</span>
@@ -6222,13 +6222,13 @@ export default function DemoClient({
                     Chen J., Reyes M., Patel M., et al. · Submitted to <em style={{ color: "#A5B4FC" }}>Frontiers in Human Neuroscience</em> · under review
                   </div>
                   <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    <button onClick={() => showToast("Pre-print PDF · 24 pages · OSF mirror")} style={{ fontSize: 10, padding: "4px 10px", background: "rgba(167,139,250,0.15)", color: "#C4B5FD", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>Download pre-print ↓</button>
+                    <button onClick={() => showToast("Pre-print PDF · 24 pages · OSF mirror")} style={{ fontSize: 10, padding: "4px 10px", background: "rgba(94,234,212,0.15)", color: "#5EEAD4", border: "1px solid rgba(94,234,212,0.3)", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>Download pre-print ↓</button>
                     <button onClick={() => showToast("Citation copied · BibTeX & APA")} style={{ fontSize: 10, padding: "4px 10px", background: "transparent", color: "#94A3B8", border: "1px solid #334155", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>Copy citation</button>
                   </div>
                 </div>
                 <div style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.18), rgba(15,23,42,0.6))", border: "1px solid rgba(124,58,237,0.4)", borderRadius: 10, padding: 12, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                   <div>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: "#C4B5FD", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Proposed: Co-author with Mendi</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#5EEAD4", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Proposed: Co-author with Mendi</div>
                     <div style={{ fontSize: 12, color: "#F1F5F9", fontWeight: 700, lineHeight: 1.4, marginBottom: 6 }}>
                       12-week multi-clinic registry · IRB-pack ready
                     </div>
@@ -6236,7 +6236,7 @@ export default function DemoClient({
                       Pre-built study protocol, IRB packet, and data pipeline. The proposal: Mendi is listed as the device, EEGBase-pilot clinics rotate as lead author. Open to discuss structure.
                     </div>
                   </div>
-                  <button onClick={() => showToast("Demo: opens our proposed IRB pack to share with Mendi · DPA template included")} style={{ fontSize: 11, padding: "6px 12px", background: "#7C3AED", color: "white", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700 }}>Open IRB packet →</button>
+                  <button onClick={() => showToast("Demo: opens our proposed IRB pack to share with Mendi · DPA template included")} style={{ fontSize: 11, padding: "6px 12px", background: "#0F766E", color: "white", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700 }}>Open IRB packet →</button>
                 </div>
               </div>
 
@@ -6250,7 +6250,7 @@ export default function DemoClient({
               </div>
 
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <button onClick={() => showToast("BIDS-compatible JSON export queued · sending to Mendi science team")} style={{ ...clinicianBtnPrimary, background: "#7C3AED" }}>Export to Mendi Science Team →</button>
+                <button onClick={() => showToast("BIDS-compatible JSON export queued · sending to Mendi science team")} style={{ ...clinicianBtnPrimary, background: "#0F766E" }}>Export to Mendi Science Team →</button>
                 <button onClick={() => showToast("Filter outcomes by condition, age, region, protocol")} style={clinicianBtn}>Filter registry</button>
                 <button onClick={() => showToast("View 14 active research studies using EEGBase + Mendi data")} style={clinicianBtn}>Active studies (14)</button>
               </div>
@@ -6266,7 +6266,7 @@ export default function DemoClient({
             <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap", alignItems: "center" }}>
               <button
                 onClick={() => { setReportExported(true); setTimeout(() => setReportExported(false), 3000); }}
-                style={{ fontSize: 13, fontWeight: 700, padding: "8px 18px", background: reportExported ? "#10B981" : "#2563EB", color: "white", border: "none", borderRadius: 8, cursor: "pointer" }}
+                style={{ fontSize: 13, fontWeight: 700, padding: "8px 18px", background: reportExported ? "#10B981" : "#0F766E", color: "white", border: "none", borderRadius: 8, cursor: "pointer" }}
               >
                 {reportExported ? "✓ PDF Downloaded!" : "⬇ Download PDF Report"}
               </button>
@@ -6287,7 +6287,7 @@ export default function DemoClient({
             {/* Report preview */}
             <div style={{ background: "white", border: "2px solid #E2E8F0", borderRadius: 16, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
               {/* Report header */}
-              <div style={{ background: "linear-gradient(135deg, #1E40AF 0%, #2563EB 100%)", padding: "24px 32px", color: "white" }}>
+              <div style={{ background: "linear-gradient(135deg, #134E48 0%, #0F766E 100%)", padding: "24px 32px", color: "white" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
                   <div>
                     <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 4 }}>EEGBase Progress Report</div>
@@ -6306,7 +6306,7 @@ export default function DemoClient({
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#111A1F", marginBottom: 16 }}>At a Glance</div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }} className="demo-grid-2">
                   {[
-                    { label: "Sessions completed", val: "20 / 30", sub: "67% of treatment plan", color: "#2563EB" },
+                    { label: "Sessions completed", val: "20 / 30", sub: "67% of treatment plan", color: "#0F766E" },
                     { label: "Reward score", val: "+131%", sub: "38.2 → 88.0 avg", color: "#10B981" },
                     { label: "PHQ-9 (depression)", val: "18 → 5", sub: "72% improvement", color: "#10B981" },
                     { label: "GAD-7 (anxiety)", val: "14 → 4", sub: "71% improvement", color: "#10B981" },
@@ -6351,7 +6351,7 @@ export default function DemoClient({
                   </div>
                   <div>
                     <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 8 }}>PHQ-9 score trend ↓ (lower is better)</div>
-                    <LiveChart data={SESSION_HISTORY.map((s) => s.phq9 / 30)} color="#6366F1" label="" height={60} />
+                    <LiveChart data={SESSION_HISTORY.map((s) => s.phq9 / 30)} color="#14B8A6" label="" height={60} />
                   </div>
                 </div>
               </div>
@@ -6361,8 +6361,8 @@ export default function DemoClient({
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#111A1F", marginBottom: 12 }}>Recommended Next Steps</div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }} className="demo-grid-3">
                   {[
-                    { num: "1", text: "Continue alpha-theta training for sessions 9–12", color: "#2563EB" },
-                    { num: "2", text: "Re-administer PHQ-9 at session 10 to track trajectory", color: "#6366F1" },
+                    { num: "1", text: "Continue alpha-theta training for sessions 9–12", color: "#0F766E" },
+                    { num: "2", text: "Re-administer PHQ-9 at session 10 to track trajectory", color: "#14B8A6" },
                     { num: "3", text: "Schedule follow-up consultation at session 15 to review goals", color: "#10B981" },
                   ].map(({ num, text, color }) => (
                     <div key={num} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
@@ -6409,8 +6409,8 @@ export default function DemoClient({
             {/* Why EEGBase summary */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }} className="demo-grid-2">
               {[
-                { label: "fNIRS + EEG + HRV in one app", sub: "Most platforms cover one modality; we unify all three with native Mendi support", color: "#06B6D4" },
-                { label: "AI cross-session pattern detector", sub: "Correlates Mendi data with sleep · mood · HRV · adherence — flags drivers", color: "#A855F7" },
+                { label: "fNIRS + EEG + HRV in one app", sub: "Most platforms cover one modality; we unify all three with native Mendi support", color: "#0EA5E9" },
+                { label: "AI cross-session pattern detector", sub: "Correlates Mendi data with sleep · mood · HRV · adherence — flags drivers", color: "#2DD4BF" },
                 { label: "Free for licensed clinicians", sub: "No card · no per-seat fees · no \u201ccontact sales\u201d · hosted on HIPAA-friendly U.S. infra", color: "#10B981" },
                 { label: "Browser-based now · Local desktop build coming", sub: "Run in any modern browser today — Mac, Windows, iPad, Chromebook · downloadable local build for fully on-device data is on the way", color: "#F59E0B" },
               ].map(({ label, sub, color }) => (
@@ -6424,9 +6424,9 @@ export default function DemoClient({
 
             {/* Category filter pills */}
             <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
-              <button onClick={() => setFeatureCategory(null)} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 99, border: "none", cursor: "pointer", background: featureCategory === null ? "#2563EB" : "#1F2A30", color: featureCategory === null ? "white" : "#94A3B8" }}>All</button>
+              <button onClick={() => setFeatureCategory(null)} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 99, border: "none", cursor: "pointer", background: featureCategory === null ? "#0F766E" : "#1F2A30", color: featureCategory === null ? "white" : "#94A3B8" }}>All</button>
               {categories.map((c) => (
-                <button key={c} onClick={() => setFeatureCategory(featureCategory === c ? null : c)} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 99, border: "none", cursor: "pointer", background: featureCategory === c ? "#2563EB" : "#1F2A30", color: featureCategory === c ? "white" : "#94A3B8" }}>
+                <button key={c} onClick={() => setFeatureCategory(featureCategory === c ? null : c)} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 99, border: "none", cursor: "pointer", background: featureCategory === c ? "#0F766E" : "#1F2A30", color: featureCategory === c ? "white" : "#94A3B8" }}>
                   {c}
                 </button>
               ))}
@@ -6441,13 +6441,13 @@ export default function DemoClient({
                       {COMPETITORS.map((c) => (
                         <th key={c.key} onClick={() => !c.highlight && setDetailModal({ type: "competitor", data: c as unknown as Record<string, unknown> })} style={{
                           padding: "12px 12px", textAlign: "center", fontSize: 11, fontWeight: 700,
-                          color: c.highlight ? "#60A5FA" : "#94A3B8",
+                          color: c.highlight ? "#2DD4BF" : "#94A3B8",
                           background: c.highlight ? "rgba(30,58,138,0.3)" : undefined,
                           minWidth: 90,
                           cursor: c.highlight ? "default" : "pointer",
                         }}>
                           {c.label}
-                          <div style={{ fontSize: 9, fontWeight: 500, color: c.highlight ? "#93C5FD" : "#94A3B8", marginTop: 2 }}>{c.sub}</div>
+                          <div style={{ fontSize: 9, fontWeight: 500, color: c.highlight ? "#5EEAD4" : "#94A3B8", marginTop: 2 }}>{c.sub}</div>
                         </th>
                       ))}
                     </tr>
@@ -6502,12 +6502,12 @@ export default function DemoClient({
           conversion bar or the bottom nav). */}
       {appMode !== "strip" && (
         <>
-          <div style={{ background: "linear-gradient(135deg, #1E1B4B 0%, #1E3A5F 100%)", borderTop: "1px solid #334155", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
-            <span style={{ fontSize: 14, color: "#C4B5FD", fontWeight: 600 }}>Ready to use with real clients?</span>
-            <a href="/login" style={{ fontSize: 14, fontWeight: 700, padding: "8px 20px", background: "#7C3AED", color: "#fff", borderRadius: 8, textDecoration: "none" }}>
+          <div style={{ background: "linear-gradient(135deg, #0A1A1F 0%, #0A2723 100%)", borderTop: "1px solid #334155", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 14, color: "#5EEAD4", fontWeight: 600 }}>Ready to use with real clients?</span>
+            <a href="/login" style={{ fontSize: 14, fontWeight: 700, padding: "8px 20px", background: "#0F766E", color: "#fff", borderRadius: 8, textDecoration: "none" }}>
               Get Access →
             </a>
-            <a href="/contact" style={{ fontSize: 13, color: "#A78BFA", textDecoration: "none", fontWeight: 600 }}>
+            <a href="/contact" style={{ fontSize: 13, color: "#5EEAD4", textDecoration: "none", fontWeight: 600 }}>
               Talk to us →
             </a>
           </div>

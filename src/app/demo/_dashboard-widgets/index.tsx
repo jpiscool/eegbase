@@ -50,9 +50,9 @@ const COLORS = {
   ok: "#10B981",
   warn: "#F59E0B",
   alert: "#EF4444",
-  blue: "#60A5FA",
+  blue: "#2DD4BF",
   cyan: "#A5F3FC",
-  violet: "#A78BFA",
+  violet: "#5EEAD4",
   pink: "#EC4899",
   muted: "#94A3B8",
   ink: "#F1F5F9",
@@ -1738,7 +1738,7 @@ function BreathingPacerWidget() {
       `}</style>
       <div style={{
         width: 90, height: 90, borderRadius: "50%",
-        background: "radial-gradient(circle at 35% 30%, rgba(165,243,252,0.6), rgba(96,165,250,0.4) 50%, rgba(96,165,250,0.05) 100%)",
+        background: "radial-gradient(circle at 35% 30%, rgba(165,243,252,0.6), rgba(45,212,191,0.4) 50%, rgba(45,212,191,0.05) 100%)",
         boxShadow: "0 0 30px rgba(165,243,252,0.3), inset 0 0 20px rgba(165,243,252,0.2)",
         animation: `${phase === "inhale" ? "pacer-inhale" : "pacer-exhale"} 5450ms ease-in-out forwards`,
         display: "flex", alignItems: "center", justifyContent: "center",
@@ -2170,7 +2170,7 @@ export function DashboardEmptyState({ onAdd }: { onAdd: () => void }) {
       ...CARD_STYLE,
       minHeight: 280, alignItems: "center", justifyContent: "center", textAlign: "center", padding: 32,
     }}>
-      <div style={{ width: 48, height: 48, borderRadius: 12, background: "rgba(96,165,250,0.15)", border: "1px solid rgba(96,165,250,0.3)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
+      <div style={{ width: 48, height: 48, borderRadius: 12, background: "rgba(45,212,191,0.15)", border: "1px solid rgba(45,212,191,0.3)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
         <Plus size={20} color={COLORS.blue} />
       </div>
       <h3 style={{ fontSize: 18, fontWeight: 800, color: COLORS.ink, margin: 0, marginBottom: 6 }}>Build your dashboard</h3>
@@ -2502,9 +2502,9 @@ export function MyDevicesSection({ pairedIds, onUnpair, onOpenConnect }: MyDevic
         </div>
         <button
           onClick={onOpenConnect}
-          style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 12px", background: "rgba(96,165,250,0.15)", color: COLORS.blue, border: "1px solid rgba(96,165,250,0.4)", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer" }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(96,165,250,0.25)"; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(96,165,250,0.15)"; }}
+          style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 12px", background: "rgba(45,212,191,0.15)", color: COLORS.blue, border: "1px solid rgba(45,212,191,0.4)", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(45,212,191,0.25)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(45,212,191,0.15)"; }}
         >
           <Plus size={12} /> Connect new device
         </button>
