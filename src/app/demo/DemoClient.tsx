@@ -308,6 +308,20 @@ export default function DemoClient({
   // Survives refreshes; cleared by Reset.
   const mendiHistoryRef = useRef<Map<string, { level: "WARN" | "FAIL"; label: string; reason: string; firstAt: number; lastAt: number; count: number }>>(new Map());
   const [mendiHistoryCopiedAt, setMendiHistoryCopiedAt] = useState<number | null>(null);
+  // Strip-mode debug surface. The diagnostic panels (pairing log,
+  // widget test report, test history) are valuable while validating
+  // hardware but distracting for clinicians during real use. Default
+  // OFF; opt back in with ?debug=1 in the URL.
+  // ?sim=1 forces the simulator on /dashboard so we can validate the
+  // SQI gate against synthetic clean data without a physical band.
+  const [debugMode, setDebugMode] = useState(false);
+  const [simMode, setSimMode] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const p = new URLSearchParams(window.location.search);
+    setDebugMode(p.has("debug"));
+    setSimMode(p.has("sim"));
+  }, []);
   useEffect(() => {
     if (appMode !== "strip") return;
     // Tick the stats panel once per second so it refreshes without
@@ -362,10 +376,12 @@ export default function DemoClient({
     setLiveSource(source);
 
     const fallbackToSimulator = async () => {
-      // Never feed the authenticated clinician dashboard synthetic data.
-      // In strip mode a failed live connection should leave widgets in
-      // their "Waiting for feed…" state, NOT pretend the device is alive.
-      if (appMode === "strip") {
+      // Never feed the authenticated clinician dashboard synthetic data
+      // UNLESS the user explicitly opted in via ?sim=1 (used for SQI
+      // gate validation against clean synthetic data). Otherwise a
+      // failed live connection leaves widgets in their "Waiting for
+      // feed…" state — never pretend the device is alive.
+      if (appMode === "strip" && !simMode) {
         adapterRef.current = null;
         setLiveSource("simulator");
         setRunning(false);
@@ -454,10 +470,14 @@ export default function DemoClient({
   useEffect(() => {
     if (appMode !== "strip") {
       void start();
+    } else if (simMode) {
+      // ?sim=1 on /dashboard — opt in to synthetic data so we can
+      // validate the SQI gate end-to-end without a physical headband.
+      void start("simulator");
     }
     return () => { void stop(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [simMode]);
 
   // While in Mendi mode, poll the adapter's BLE state every 500 ms so the
   // status badge reflects the actual link to the headband (the Python
@@ -1941,7 +1961,7 @@ export default function DemoClient({
             {/* Mendi diagnostic panel — strip mode only, shows the same
                 [Mendi] log lines as DevTools so the operator can screenshot
                 instead of opening DevTools. Empty until a pair attempt fires. */}
-            {appMode === "strip" && mendiLog.length > 0 && (
+            {appMode === "strip" && debugMode && mendiLog.length > 0 && (
               <div
                 style={{
                   background: "#020617",
@@ -2349,7 +2369,14 @@ export default function DemoClient({
                       // Real anti-correlation requires proper Beer-Lambert
                       // matrix separation with extinction coefficients +
                       // DPF (TODO). Until then this check is informational.
-                      if (r <= 0.995) return { status: "PASS", reason: `r=${r.toFixed(3)} (within proxy-formulation expected range)` };
+                      // With proper modified Beer-Lambert decomposition
+                      // (Prahl extinction + Strangman DPF + 2.5 cm SD)
+                      // HbO and HHb should anti-correlate during real
+                      // activation. Resting prefrontal r is typically
+                      // 0.3–0.7 from systemic Mayer/respiratory drivers;
+                      // r > 0.85 indicates the signal is dominated by
+                      // scalp blood flow / BP changes rather than brain.
+                      if (r <= 0.85) return { status: "PASS", reason: `r=${r.toFixed(2)} (HbO/HHb decoupled, MBLL-clean)` };
                       return { status: "WARN", reason: `r=${r.toFixed(2)} — HbO and HHb near-perfectly correlated; suspect systemic-noise contamination` };
                     },
                   },
@@ -2374,7 +2401,14 @@ export default function DemoClient({
                       // Real anti-correlation requires proper Beer-Lambert
                       // matrix separation with extinction coefficients +
                       // DPF (TODO). Until then this check is informational.
-                      if (r <= 0.995) return { status: "PASS", reason: `r=${r.toFixed(3)} (within proxy-formulation expected range)` };
+                      // With proper modified Beer-Lambert decomposition
+                      // (Prahl extinction + Strangman DPF + 2.5 cm SD)
+                      // HbO and HHb should anti-correlate during real
+                      // activation. Resting prefrontal r is typically
+                      // 0.3–0.7 from systemic Mayer/respiratory drivers;
+                      // r > 0.85 indicates the signal is dominated by
+                      // scalp blood flow / BP changes rather than brain.
+                      if (r <= 0.85) return { status: "PASS", reason: `r=${r.toFixed(2)} (HbO/HHb decoupled, MBLL-clean)` };
                       return { status: "WARN", reason: `r=${r.toFixed(2)} — HbO and HHb near-perfectly correlated; suspect systemic-noise contamination` };
                     },
                   },
@@ -3574,6 +3608,30 @@ export default function DemoClient({
                 const fullText = `Widget test report · ${buf.length} samples · refresh #${mendiStatsTick}\n` +
                   `Session Quality Index (Pollonini-style): ${rqsPct}/100 (${rqsLabel})\n` +
                   `${counts.PASS} PASS · ${counts.WARN} WARN · ${counts.FAIL} FAIL · ${counts["N/A"]} N/A\n\n${rows.join("\n")}`;
+                // When ?debug=1 is NOT set, render only a compact
+                // "Ready to record" SQI badge. Clinicians see a single
+                // pill instead of the full diagnostic dump.
+                if (!debugMode) {
+                  return (
+                    <div style={{
+                      display: "inline-flex", alignItems: "center", gap: 8,
+                      background: "#020617", border: `1px solid ${rqsColor}40`,
+                      borderRadius: 999, padding: "6px 14px", marginBottom: 16,
+                      fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+                      fontSize: 11, color: "#CBD5E1",
+                    }}>
+                      <span style={{
+                        width: 8, height: 8, borderRadius: "50%",
+                        background: rqsColor, boxShadow: `0 0 6px ${rqsColor}`,
+                      }} />
+                      <span style={{ color: "#94A3B8" }}>SQI</span>
+                      <strong style={{ color: rqsColor, fontWeight: 800 }}>{rqsPct}/100</strong>
+                      <span style={{ color: rqsColor, fontWeight: 700 }}>{rqsLabel}</span>
+                      <span style={{ color: "#475569" }}>·</span>
+                      <span style={{ color: "#94A3B8", fontSize: 10 }}>{buf.length} samples</span>
+                    </div>
+                  );
+                }
                 return (
                   <div style={{
                     background: "#020617", border: "1px solid #1E293B", borderRadius: 12,
@@ -3643,7 +3701,7 @@ export default function DemoClient({
                 (level + label + reason). Lets you spot transient issues
                 that fired once between snapshots and would otherwise be
                 lost. Strip mode only. */}
-            {appMode === "strip" && mendiStatsTick > 0 && mendiHistoryRef.current.size > 0 && (
+            {appMode === "strip" && debugMode && mendiStatsTick > 0 && mendiHistoryRef.current.size > 0 && (
               (() => {
                 const entries = Array.from(mendiHistoryRef.current.values())
                   // FAIL above WARN; within a level, most-frequent first.

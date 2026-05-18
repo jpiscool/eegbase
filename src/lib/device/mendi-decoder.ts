@@ -100,36 +100,71 @@ export class MendiPacketDecoder {
     if (irRcor != null && this._baselineIrR == null) this._baselineIrR = irRcor;
     if (redRcor != null && this._baselineRedR == null) this._baselineRedR = redRcor;
 
-    // Compute ΔHb proxies from intensity ratios. When tissue absorbs more
-    // of a wavelength, the photodiode count drops, so we negate.
-    //   HbO ↑  ⇒  red intensity drops  ⇒  oxyHb proxy =  -(red - baseline)/baseline
-    //   HHb ↑  ⇒  IR intensity drops   ⇒  deoxyHb proxy = -(ir  - baseline)/baseline
+    // ── Modified Beer-Lambert decomposition ───────────────────────────
+    // Solves the 2×2 system at red (~660 nm) and IR (~880 nm) for
+    // ΔHbO and ΔHHb concentrations in μM:
     //
-    // IMPORTANT: this is a unitless relative-change ratio, NOT modified
-    // Beer-Lambert. Real μM calibration would need per-wavelength molar
-    // extinction coefficients, differential pathlength factor (DPF), and
-    // source-detector separation — none of which are wired yet. The output
-    // is monotonic with true ΔHbO/ΔHHb so direction is meaningful, but the
-    // magnitude is on an empirical scale, not μM. See AUDIT-2026-MENDI-BLE-
-    // PROTOCOL.md and scripts/mendi-capture/validation-runbook.md (Note on
-    // units) for the full caveats.
-    const SCALE = 10;
-    const oxyHbLeft =
-      redLcor != null && this._baselineRedL && this._baselineRedL !== 0
-        ? -((redLcor - this._baselineRedL) / this._baselineRedL) * SCALE
-        : undefined;
-    const oxyHbRight =
-      redRcor != null && this._baselineRedR && this._baselineRedR !== 0
-        ? -((redRcor - this._baselineRedR) / this._baselineRedR) * SCALE
-        : undefined;
-    const deoxyHbLeft =
-      irLcor != null && this._baselineIrL && this._baselineIrL !== 0
-        ? -((irLcor - this._baselineIrL) / this._baselineIrL) * SCALE
-        : undefined;
-    const deoxyHbRight =
-      irRcor != null && this._baselineIrR && this._baselineIrR !== 0
-        ? -((irRcor - this._baselineIrR) / this._baselineIrR) * SCALE
-        : undefined;
+    //   [ΔOD_red]   [εHbO_red·DPF_red  εHHb_red·DPF_red] · L · [ΔC_HbO]
+    //   [ΔOD_ir ] = [εHbO_ir ·DPF_ir   εHHb_ir ·DPF_ir ]       [ΔC_HHb]
+    //
+    // Constants from Prahl extinction tabulation (660/880 nm), Strangman
+    // 2003 DPF values for adult forehead, and Mendi's documented short-
+    // distance optode separation (~2.5 cm).
+    //
+    // This replaces the previous single-wavelength intensity-ratio proxy
+    // (which produced strongly co-correlated HbO/HHb output, since both
+    // channels just tracked total absorption with opposite signs). With
+    // proper MBLL the two now genuinely anti-correlate during real
+    // hemodynamic activation, which the widget-test SQI rewards.
+    //
+    // εHbO (cm⁻¹·mM⁻¹), εHHb (cm⁻¹·mM⁻¹) at 660 / 880 nm:
+    const E_HBO_RED = 0.32, E_HHB_RED = 3.46;
+    const E_HBO_IR  = 1.16, E_HHB_IR  = 0.79;
+    // DPF for adult forehead (Duncan 1996 / Scholkmann 2013):
+    const DPF_RED = 6.5, DPF_IR = 5.5;
+    // Mendi documented short-distance optode separation:
+    const SD_CM = 2.5;
+    // Pre-compute the matrix A and its inverse multiplied by 1/L · 1000
+    // so the runtime path is just 2 multiply-adds per channel and the
+    // result is in μM directly.
+    const A11 = E_HBO_RED * DPF_RED;
+    const A12 = E_HHB_RED * DPF_RED;
+    const A21 = E_HBO_IR  * DPF_IR;
+    const A22 = E_HHB_IR  * DPF_IR;
+    const DET = A11 * A22 - A12 * A21;
+    // Inverse matrix elements scaled by 1000/(det · L) so the output
+    // is in μM (concentrations × 1000 to convert from mM).
+    const K = 1000 / (DET * SD_CM);
+    const INV_HBO_RED =  A22 * K;
+    const INV_HBO_IR  = -A12 * K;
+    const INV_HHB_RED = -A21 * K;
+    const INV_HHB_IR  =  A11 * K;
+
+    // Compute optical density change per wavelength: ΔOD = -log₁₀(I / I₀).
+    // Ambient-corrected intensities must be positive for the log to be
+    // valid; if either drops below a small floor we treat the sample as
+    // undefined (the test layer will surface this as a freshness issue).
+    const odRedL = redLcor != null && this._baselineRedL && this._baselineRedL > 0 && redLcor > 0
+      ? -Math.log10(redLcor / this._baselineRedL) : undefined;
+    const odIrL  = irLcor  != null && this._baselineIrL  && this._baselineIrL  > 0 && irLcor  > 0
+      ? -Math.log10(irLcor  / this._baselineIrL ) : undefined;
+    const odRedR = redRcor != null && this._baselineRedR && this._baselineRedR > 0 && redRcor > 0
+      ? -Math.log10(redRcor / this._baselineRedR) : undefined;
+    const odIrR  = irRcor  != null && this._baselineIrR  && this._baselineIrR  > 0 && irRcor  > 0
+      ? -Math.log10(irRcor  / this._baselineIrR ) : undefined;
+
+    const oxyHbLeft = (odRedL != null && odIrL != null)
+      ? INV_HBO_RED * odRedL + INV_HBO_IR * odIrL
+      : undefined;
+    const oxyHbRight = (odRedR != null && odIrR != null)
+      ? INV_HBO_RED * odRedR + INV_HBO_IR * odIrR
+      : undefined;
+    const deoxyHbLeft = (odRedL != null && odIrL != null)
+      ? INV_HHB_RED * odRedL + INV_HHB_IR * odIrL
+      : undefined;
+    const deoxyHbRight = (odRedR != null && odIrR != null)
+      ? INV_HHB_RED * odRedR + INV_HHB_IR * odIrR
+      : undefined;
 
     // Reward score: track DEVIATION of current HbO from a slow rolling
     // baseline, not absolute HbO. This adapts to whatever steady-state
