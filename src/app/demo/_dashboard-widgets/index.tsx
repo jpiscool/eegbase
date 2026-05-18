@@ -86,7 +86,7 @@ function StatRow({ label, value, color, suffix = "" }: { label: string; value: s
 
 function MiniBar({ pct, color }: { pct: number; color: string }) {
   return (
-    <div style={{ width: "100%", height: 6, background: "rgba(15,23,42,0.6)", border: "1px solid #1E293B", borderRadius: 3, overflow: "hidden" }}>
+    <div style={{ width: "100%", height: 6, background: "rgba(15,23,42,0.6)", border: "1px solid #1F2A30", borderRadius: 3, overflow: "hidden" }}>
       <div style={{ height: "100%", width: `${Math.max(2, Math.min(100, pct))}%`, background: color, transition: "width 0.3s ease" }} />
     </div>
   );
@@ -99,7 +99,7 @@ function MiniBar({ pct, color }: { pct: number; color: string }) {
 // so we draw our own simple SVG path for overlay views.
 function OverlaySpark({ series, height = 70 }: { series: { data: number[]; color: string; label: string }[]; height?: number }) {
   const all = series.flatMap((s) => s.data);
-  if (all.length === 0) return <div style={{ height, background: "#1E293B", borderRadius: 6 }} />;
+  if (all.length === 0) return <div style={{ height, background: "#1F2A30", borderRadius: 6 }} />;
   const min = Math.min(...all);
   const max = Math.max(...all);
   const range = max - min || 1;
@@ -108,7 +108,7 @@ function OverlaySpark({ series, height = 70 }: { series: { data: number[]; color
   const pad = 4;
   return (
     <div style={{ position: "relative" }}>
-      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ width: "100%", height, background: "#1E293B", borderRadius: 6, display: "block" }}>
+      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ width: "100%", height, background: "#1F2A30", borderRadius: 6, display: "block" }}>
         {/* Mid grid line */}
         <line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke="#334155" strokeWidth={1} strokeDasharray="4 4" />
         {series.map((s) => {
@@ -439,7 +439,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
           </div>
           <div style={{ display: "flex", gap: 3, marginTop: 8 }}>
             {[1, 2, 3, 4, 5].map((n) => (
-              <div key={n} style={{ flex: 1, height: 8, borderRadius: 2, background: n <= zone.n ? zone.c : "rgba(15,23,42,0.5)", border: "1px solid #1E293B" }} />
+              <div key={n} style={{ flex: 1, height: 8, borderRadius: 2, background: n <= zone.n ? zone.c : "rgba(15,23,42,0.5)", border: "1px solid #1F2A30" }} />
             ))}
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: COLORS.muted, fontFamily: NUM, marginTop: 4 }}>
@@ -516,7 +516,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
       return (
         <div style={{ padding: "2px 0" }}>
           {devices.map((d) => (
-            <div key={d.name} style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 0", borderTop: "1px solid #1E293B" }}>
+            <div key={d.name} style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 0", borderTop: "1px solid #1F2A30" }}>
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: d.color, flexShrink: 0, boxShadow: `0 0 8px ${d.color}88` }} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: COLORS.ink, lineHeight: 1.2 }}>{d.name}</div>
@@ -582,7 +582,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
             <span style={{ fontFamily: NUM, fontSize: 32, fontWeight: 800, color, lineHeight: 1, letterSpacing: "-0.02em" }}>{fmtSigned(diff)}</span>
             <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>{status}</span>
           </div>
-          <div style={{ position: "relative", width: "100%", height: 8, background: "rgba(15,23,42,0.6)", border: "1px solid #1E293B", borderRadius: 4, marginTop: 12, overflow: "visible" }}>
+          <div style={{ position: "relative", width: "100%", height: 8, background: "rgba(15,23,42,0.6)", border: "1px solid #1F2A30", borderRadius: 4, marginTop: 12, overflow: "visible" }}>
             {/* Target zone (±0.05) */}
             <div style={{ position: "absolute", left: `${((-0.05 + 0.20) / 0.40) * W}%`, width: `${(0.10 / 0.40) * W}%`, top: 0, bottom: 0, background: "rgba(16,185,129,0.18)", borderLeft: "1px solid rgba(16,185,129,0.5)", borderRight: "1px solid rgba(16,185,129,0.5)" }} />
             {/* Center line */}
@@ -712,7 +712,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
             placeholder="Type a note · saves automatically · stays here when you switch tabs"
             style={{
               flex: 1, width: "100%", resize: "none",
-              background: "rgba(15,23,42,0.5)", border: "1px solid #1E293B", borderRadius: 8,
+              background: "rgba(15,23,42,0.5)", border: "1px solid #1F2A30", borderRadius: 8,
               color: COLORS.ink, fontSize: 12, lineHeight: 1.5, padding: 10,
               fontFamily: "inherit", outline: "none",
               minHeight: 96,
@@ -878,7 +878,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
         <div style={{
           flex: 1,
           height: 110,
-          background: `radial-gradient(circle at center, ${colour(v)} 0%, ${colour(v)}88 55%, #0F172A 100%)`,
+          background: `radial-gradient(circle at center, ${colour(v)} 0%, ${colour(v)}88 55%, #111A1F 100%)`,
           border: `1px solid ${colour(v)}55`,
           borderRadius: 12,
           display: "flex",
@@ -1132,14 +1132,14 @@ export const WIDGET_CATALOG: WidgetDef[] = [
       return (
         <div style={{ padding: "8px 4px" }}>
           <svg viewBox="0 0 120 90" style={{ width: "100%", height: 90 }}>
-            <line x1={10} y1={45} x2={110} y2={45} stroke="#1E293B" strokeWidth={1} strokeDasharray="3 3" />
-            <line x1={60} y1={6}  x2={60}  y2={84} stroke="#1E293B" strokeWidth={1} strokeDasharray="3 3" />
+            <line x1={10} y1={45} x2={110} y2={45} stroke="#1F2A30" strokeWidth={1} strokeDasharray="3 3" />
+            <line x1={60} y1={6}  x2={60}  y2={84} stroke="#1F2A30" strokeWidth={1} strokeDasharray="3 3" />
             <g transform={`translate(60 45) rotate(${roll}) translate(0 ${pitch * 0.7})`}>
               <ellipse cx={0} cy={0} rx={22} ry={28} fill="none" stroke={color} strokeWidth={2.2} />
               <rect x={-22} y={-12} width={44} height={6} rx={2} fill={color} opacity={0.7} />
-              <circle cx={-10} cy={-9} r={1.6} fill="#0F172A" />
-              <circle cx={ 10} cy={-9} r={1.6} fill="#0F172A" />
-              <circle cx={  0} cy={-9} r={1.6} fill="#0F172A" />
+              <circle cx={-10} cy={-9} r={1.6} fill="#111A1F" />
+              <circle cx={ 10} cy={-9} r={1.6} fill="#111A1F" />
+              <circle cx={  0} cy={-9} r={1.6} fill="#111A1F" />
             </g>
           </svg>
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, fontSize: 10, color: COLORS.muted, fontFamily: NUM }}>
@@ -1337,8 +1337,8 @@ function MendiPulseWaveform({ value }: { value: number | undefined }) {
   }).join(" ");
   return (
     <div style={{ padding: "4px 0" }} data-tick={tick}>
-      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ width: "100%", height: H, background: "#0F172A", borderRadius: 6, display: "block", border: "1px solid #1E293B" }}>
-        <line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke="#1E293B" strokeWidth={1} strokeDasharray="3 4" />
+      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ width: "100%", height: H, background: "#111A1F", borderRadius: 6, display: "block", border: "1px solid #1F2A30" }}>
+        <line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke="#1F2A30" strokeWidth={1} strokeDasharray="3 4" />
         <polyline points={points} fill="none" stroke={COLORS.pink} strokeWidth={1.8} strokeLinejoin="round" />
       </svg>
       <div style={{ display: "flex", gap: 10, marginTop: 6, fontSize: 9.5, color: COLORS.muted, fontFamily: NUM }}>
@@ -1449,7 +1449,7 @@ function MendiTrialBlocks({ rewardScore }: { rewardScore: number | undefined }) 
           return (
             <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ width: 36, fontSize: 9.5, color: COLORS.muted, fontFamily: NUM, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em" }}>{b.label}</span>
-              <div style={{ flex: 1, height: 14, background: "rgba(15,23,42,0.6)", border: "1px solid #1E293B", borderRadius: 3, overflow: "hidden" }}>
+              <div style={{ flex: 1, height: 14, background: "rgba(15,23,42,0.6)", border: "1px solid #1F2A30", borderRadius: 3, overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${Math.max(2, Math.min(100, b.mean))}%`, background: col, opacity: b.partial ? 0.55 : 1, transition: "width 0.3s ease" }} />
               </div>
               <span style={{ width: 30, textAlign: "right", fontSize: 11, color: col, fontFamily: NUM, fontWeight: 700 }}>{b.mean.toFixed(0)}</span>
@@ -1520,7 +1520,7 @@ function MendiSessionArc({ rewardScore }: { rewardScore: number | undefined }) {
         <span style={{ fontSize: 11, color: COLORS.muted }}>reward Δ</span>
       </div>
       <div style={{ fontSize: 11, color: tier.c, marginTop: 4, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>· {tier.l}</div>
-      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ width: "100%", height: H, marginTop: 8, background: "#1E293B", borderRadius: 6 }}>
+      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ width: "100%", height: H, marginTop: 8, background: "#1F2A30", borderRadius: 6 }}>
         <polyline points={pts} fill="none" stroke={tier.c} strokeWidth={1.5} />
       </svg>
       <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9.5, color: COLORS.muted, fontFamily: NUM, marginTop: 4 }}>
@@ -1761,8 +1761,8 @@ function BreathingPacerWidget() {
 // ── widget host ───────────────────────────────────────────────────────────
 
 const CARD_STYLE: React.CSSProperties = {
-  background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)",
-  border: "1px solid #1E293B",
+  background: "linear-gradient(180deg, #111A1F 0%, #0A1320 100%)",
+  border: "1px solid #1F2A30",
   borderRadius: 14,
   padding: 14,
   boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 4px 16px -8px rgba(0,0,0,0.6)",
@@ -1946,7 +1946,7 @@ export function WidgetPicker({
     //   - corner checkmark badge in the top-right
     //   - hover on a toggle-able added card turns the rail red so the
     //     "click to remove" affordance is unmistakable
-    const baseBorder = already ? "#1E293B" : "#334155";
+    const baseBorder = already ? "#1F2A30" : "#334155";
     return (
       <button
         key={def.id}
@@ -2083,7 +2083,7 @@ export function WidgetPicker({
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: "#0F172A", border: "1px solid #1E293B", borderRadius: 18,
+          background: "#111A1F", border: "1px solid #1F2A30", borderRadius: 18,
           padding: 24, maxWidth: 720, width: "100%", maxHeight: "85vh", overflowY: "auto",
           boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
         }}
@@ -2140,14 +2140,14 @@ export function WidgetPicker({
         </div>
 
         {totalMatching === 0 && (
-          <div style={{ padding: 24, textAlign: "center", color: COLORS.muted, fontSize: 13, border: "1px dashed #1E293B", borderRadius: 10 }}>
+          <div style={{ padding: 24, textAlign: "center", color: COLORS.muted, fontSize: 13, border: "1px dashed #1F2A30", borderRadius: 10 }}>
             No widgets match <strong style={{ color: COLORS.ink }}>"{query}"</strong>. Try a different term or clear the search.
           </div>
         )}
 
         {sections.map((section) => (
           <div key={section.name} style={{ marginBottom: 24 }}>
-            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #1E293B" }}>
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, marginBottom: 10, paddingBottom: 6, borderBottom: "1px solid #1F2A30" }}>
               <h3 style={{ fontSize: 12, fontWeight: 800, color: COLORS.ink, margin: 0, textTransform: "uppercase", letterSpacing: "0.08em" }}>{section.name}</h3>
               <span style={{ fontSize: 10, color: COLORS.muted, fontFamily: NUM }}>{section.defs.length} widget{section.defs.length === 1 ? "" : "s"}</span>
             </div>
@@ -2180,7 +2180,7 @@ export function DashboardEmptyState({ onAdd }: { onAdd: () => void }) {
       </p>
       <button
         onClick={onAdd}
-        style={{ background: COLORS.blue, color: "#0F172A", border: "none", borderRadius: 10, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}
+        style={{ background: COLORS.blue, color: "#111A1F", border: "none", borderRadius: 10, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}
       >
         <Plus size={14} /> Add your first widget
       </button>
@@ -2475,8 +2475,8 @@ export function usePairedDevices(opts?: { defaultPaired?: boolean; storageKey?: 
 }
 
 const DEVICES_CARD: React.CSSProperties = {
-  background: "linear-gradient(180deg, #0F172A 0%, #0A1320 100%)",
-  border: "1px solid #1E293B",
+  background: "linear-gradient(180deg, #111A1F 0%, #0A1320 100%)",
+  border: "1px solid #1F2A30",
   borderRadius: 14,
   padding: 16,
   boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 4px 16px -8px rgba(0,0,0,0.6)",
@@ -2517,7 +2517,7 @@ export function MyDevicesSection({ pairedIds, onUnpair, onOpenConnect }: MyDevic
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 10 }}>
           {paired.map((d) => (
-            <div key={d.id} style={{ background: "rgba(15,23,42,0.6)", border: "1px solid #1E293B", borderRadius: 10, padding: "10px 12px", position: "relative" }}>
+            <div key={d.id} style={{ background: "rgba(15,23,42,0.6)", border: "1px solid #1F2A30", borderRadius: 10, padding: "10px 12px", position: "relative" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                 <span style={{ width: 8, height: 8, borderRadius: "50%", background: COLORS.ok, boxShadow: `0 0 8px ${COLORS.ok}88`, flexShrink: 0 }} />
                 <span style={{ fontSize: 12, fontWeight: 700, color: COLORS.ink, lineHeight: 1.2, flex: 1, minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{d.name}</span>
@@ -2584,7 +2584,7 @@ export function ConnectDeviceModal({ open, onClose, pairedIds, onPair, onUnpair 
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: "#0F172A", border: "1px solid #1E293B", borderRadius: 18,
+          background: "#111A1F", border: "1px solid #1F2A30", borderRadius: 18,
           padding: 24, maxWidth: 720, width: "100%", maxHeight: "85vh", overflowY: "auto",
           boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
         }}
@@ -2605,7 +2605,7 @@ export function ConnectDeviceModal({ open, onClose, pairedIds, onPair, onUnpair 
         </div>
 
         {/* Scanning indicator */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: scanning ? "rgba(165,243,252,0.10)" : "rgba(15,23,42,0.6)", border: `1px solid ${scanning ? "rgba(165,243,252,0.3)" : "#1E293B"}`, borderRadius: 8, marginBottom: 14, fontSize: 11, color: scanning ? COLORS.cyan : COLORS.muted, transition: "all 0.2s" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: scanning ? "rgba(165,243,252,0.10)" : "rgba(15,23,42,0.6)", border: `1px solid ${scanning ? "rgba(165,243,252,0.3)" : "#1F2A30"}`, borderRadius: 8, marginBottom: 14, fontSize: 11, color: scanning ? COLORS.cyan : COLORS.muted, transition: "all 0.2s" }}>
           {scanning ? (
             <>
               <Search size={12} style={{ animation: "pulse 1s ease-in-out infinite" }} />
@@ -2627,7 +2627,7 @@ export function ConnectDeviceModal({ open, onClose, pairedIds, onPair, onUnpair 
                 key={d.id}
                 style={{
                   background: paired ? "rgba(15,23,42,0.4)" : "rgba(15,23,42,0.7)",
-                  border: `1px solid ${paired ? "#1E293B" : "#334155"}`,
+                  border: `1px solid ${paired ? "#1F2A30" : "#334155"}`,
                   borderRadius: 12, padding: 14,
                   display: "flex", flexDirection: "column", gap: 6,
                   opacity: scanning ? 0.4 : 1, transition: "opacity 0.2s",
@@ -2654,7 +2654,7 @@ export function ConnectDeviceModal({ open, onClose, pairedIds, onPair, onUnpair 
                   <div style={{ marginTop: 4, display: "flex", gap: 6, alignItems: "center" }}>
                     <button
                       onClick={() => onPair(d.id)}
-                      style={{ padding: "6px 12px", background: COLORS.blue, color: "#0F172A", border: "none", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer" }}
+                      style={{ padding: "6px 12px", background: COLORS.blue, color: "#111A1F", border: "none", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer" }}
                       title={paired
                         ? "Re-open the browser's Bluetooth chooser and reconnect for a fresh session."
                         : "Pair this device for the first time."}
