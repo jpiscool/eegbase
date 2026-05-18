@@ -1,12 +1,11 @@
-// Darker cream/taupe palette options, built around the new teal accent.
-// Each tile is compact so all 5 fit in one screenshot.
+// 5 distinct page-bg color families that all pair with the teal accent.
 
 const palettes = [
-  { name: "1. Stone",       page: "#C9BDA0" },
-  { name: "2. Mocha",       page: "#B5A88A" },
-  { name: "3. Pale bronze", page: "#A89880" },
-  { name: "4. Dark sand",   page: "#8B7E66" },
-  { name: "5. Coffee",      page: "#6B5E48" },
+  { name: "1. Forest",     page: "#1F3A2E", desc: "Deep green — nature, calm" },
+  { name: "2. Burgundy",   page: "#3F1E26", desc: "Wine — bold, premium" },
+  { name: "3. Slate blue", page: "#1E2A3A", desc: "Classic, professional" },
+  { name: "4. Aubergine",  page: "#2D1F38", desc: "Plum — luxurious" },
+  { name: "5. Terracotta", page: "#3E261B", desc: "Warm clay — earthy" },
 ];
 
 const card = "#0F172A";
@@ -16,12 +15,12 @@ const teal = "#2DD4BF";
 
 export default function PalettesPage() {
   return (
-    <div style={{ minHeight: "100vh", background: "#1A1A1A", padding: 24, fontFamily: "Geist, system-ui, sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: "#0A0A0A", padding: 24, fontFamily: "Geist, system-ui, sans-serif" }}>
       <h1 style={{ color: "#F1F5F9", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 4 }}>
-        Darker palette options
+        Distinct palette options
       </h1>
       <p style={{ color: "#94A3B8", fontSize: 12, marginBottom: 16 }}>
-        Built around the teal accent. Each tile: page bg + sidebar stripe + dark card.
+        Different color families, all paired with the teal accent + dark slate cards.
       </p>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12 }}>
@@ -34,10 +33,13 @@ export default function PalettesPage() {
           }}>
             <div style={{
               background: "#0B1220", color: "#F1F5F9",
-              padding: "8px 12px", fontSize: 11, fontWeight: 600,
+              padding: "8px 12px",
               display: "flex", justifyContent: "space-between", alignItems: "center",
             }}>
-              <span>{p.name}</span>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600 }}>{p.name}</div>
+                <div style={{ fontSize: 9, color: "#94A3B8", marginTop: 1 }}>{p.desc}</div>
+              </div>
               <code style={{ color: "#94A3B8", fontSize: 9, fontFamily: "ui-monospace,monospace" }}>{p.page}</code>
             </div>
 
@@ -56,10 +58,10 @@ export default function PalettesPage() {
 
               <div style={{ flex: 1, padding: 10, display: "flex", flexDirection: "column", gap: 8 }}>
                 <div>
-                  <div style={{ color: "#1A1A1A", fontSize: 13, fontWeight: 700, letterSpacing: "-0.01em" }}>
+                  <div style={{ color: "#F1F5F9", fontSize: 13, fontWeight: 700, letterSpacing: "-0.01em" }}>
                     Clients
                   </div>
-                  <div style={{ color: "rgba(0,0,0,0.55)", fontSize: 9, marginTop: 1 }}>
+                  <div style={{ color: "rgba(255,255,255,0.55)", fontSize: 9, marginTop: 1 }}>
                     10 clients
                   </div>
                 </div>
