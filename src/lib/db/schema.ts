@@ -52,6 +52,7 @@ export const clients = pgTable("clients", {
   checkInToken: text("check_in_token").unique(), // public client check-in link token
   aiSummary: text("ai_summary"),                 // AI-generated longitudinal progress summary
   aiSummaryUpdatedAt: timestamp("ai_summary_updated_at"), // when the summary was last generated
+  dashboardWidgets: text("dashboard_widgets").array(), // per-client widget layout (array of widget IDs); null = use defaults
   createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (t) => [
   // Every clinic-scoped client list (/clients) filters by clinicId.

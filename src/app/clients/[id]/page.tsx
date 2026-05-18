@@ -13,6 +13,7 @@ import { EditClientModal } from "@/components/EditClientModal";
 import { ToggleClientActiveButton } from "@/components/ToggleClientActiveButton";
 import { SessionHeatmap } from "@/components/SessionHeatmap";
 import { ClientProgressPanel } from "@/components/ClientProgressPanel";
+import { ClientDashboardWidgets } from "@/components/ClientDashboardWidgets";
 import { logAuditEvent } from "@/lib/audit";
 
 // ── AI Protocol Recommendation Panel ─────────────────────────────────────────
@@ -617,6 +618,16 @@ export default async function ClientDetailPage({
             {action.label}
           </Link>
         ))}
+      </div>
+
+      {/* ── Custom dashboard ─────────────────────────────────────────────────
+          Per-client widget grid. Layout persists to clients.dashboard_widgets
+          so each client gets their own saved widget set. */}
+      <div style={{ marginBottom: 24 }}>
+        <ClientDashboardWidgets
+          clientId={id}
+          initialWidgets={client.dashboardWidgets ?? []}
+        />
       </div>
 
       <div className="grid grid-cols-5 gap-4 mb-6">
