@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/config";
+import { Sidebar } from "@/components/layout/sidebar";
+import { CommandMenu } from "@/components/CommandMenu";
+import { getReviewQueueCount } from "@/lib/reviewQueueCount";
+import { TrustStrip } from "@/components/shared/TrustStrip";
 
-// Auth-gate only — the stripped sidebar lives inside DemoClient (its
-// existing .demo-sidebar nav), which is the same sidebar already shown
-// on /demo. Don't wrap it in any other shell so there's exactly one
-// sidebar on the logged-in dashboard.
+// Wraps /dashboard in the same global Sidebar shell as /clients, /sessions,
+// /settings, etc. so the logged-in chrome is identical on every route.
 export default async function DashboardLayout({
   children,
 }: {
@@ -12,5 +14,22 @@ export default async function DashboardLayout({
 }) {
   const session = await auth();
   if (!session) redirect("/login");
-  return <>{children}</>;
+
+  const clinicId = (session.user as { clinicId?: string })?.clinicId ?? "";
+  const reviewQueueCount = await getReviewQueueCount(clinicId);
+
+  return (
+    <div className="flex h-full min-h-screen">
+      <Sidebar
+        userName={session.user?.name ?? undefined}
+        userEmail={session.user?.email ?? undefined}
+        reviewQueueCount={reviewQueueCount}
+      />
+      <main className="flex-1 overflow-auto">
+        <TrustStrip />
+        <div className="p-8">{children}</div>
+      </main>
+      <CommandMenu />
+    </div>
+  );
 }
