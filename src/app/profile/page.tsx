@@ -19,8 +19,8 @@ export const metadata: Metadata = {
 };
 
 const cardStyle: React.CSSProperties = {
-  background: "#0F172A",
-  border: "1px solid #1E293B",
+  background: "#111A1F",
+  border: "1px solid #1F2A30",
   borderRadius: 12,
   padding: 24,
   marginBottom: 20,
@@ -68,7 +68,7 @@ export default async function ProfilePage() {
     <div className="profile-page" style={{ maxWidth: 640, margin: "0 auto" }}>
       {/* Scoped input styling so the form inputs read on the dark cards. */}
       <style>{`
-        .profile-page input { background: #0B1220 !important; border-color: #1E293B !important; color: #F1F5F9 !important; }
+        .profile-page input { background: #07090B !important; border-color: #1F2A30 !important; color: #F1F5F9 !important; }
         .profile-page input:focus { outline: 2px solid #2DD4BF !important; outline-offset: 1px !important; }
         .profile-page input[readonly] { color: #64748B !important; }
         .profile-page label { color: #CBD5E1 !important; }

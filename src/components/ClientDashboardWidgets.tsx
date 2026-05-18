@@ -109,8 +109,8 @@ export function ClientDashboardWidgets({
       {/* Header row */}
       <div
         style={{
-          background: "#0F172A",
-          border: "1px solid #1E293B",
+          background: "#111A1F",
+          border: "1px solid #1F2A30",
           borderLeft: "3px solid #2DD4BF",
           borderRadius: 12,
           padding: "12px 18px",

@@ -4,35 +4,38 @@
    Semantic CSS custom properties. All UI components reference these so a
    single variable change cascades everywhere — including dark mode.          */
 :root {
-  /* Surfaces — cream page with dark slate cards (premium dark-on-cream pattern) */
-  --surface-base:      #D9CFB4;   /* page background — warm taupe */
-  --surface-raised:    #0F172A;   /* CARD / panel — dark slate */
-  --surface-overlay:   #1E293B;   /* modal / popover */
-  --surface-sunken:    #0B1220;   /* inset / input bg inside dark cards */
+  /* ── Surfaces — modern dark teal-forward palette ──────────────────────────
+     Near-black page with subtle teal undertone, dark slate cards.
+     The whole logged-in app reads as one seamless dark surface. */
+  --surface-base:      #0A0F12;   /* page background */
+  --surface-raised:    #111A1F;   /* cards / panels */
+  --surface-overlay:   #162126;   /* modals / popovers */
+  --surface-sunken:    #07090B;   /* inset / input bg */
 
-  /* Borders — dark slate to fit dark cards */
-  --border-subtle:     #1E293B;
-  --border-default:    #334155;
-  --border-strong:     #64748B;
+  /* Borders — dark steel, just visible against the surfaces */
+  --border-subtle:     #1F2A30;
+  --border-default:    #2A3942;
+  --border-strong:     #455862;
 
-  /* Text — LIGHT (intended for use INSIDE dark cards).
-     Page-bg headings on the cream surface explicitly override to --text-on-cream. */
-  --text-primary:      #F1F5F9;
-  --text-secondary:    #CBD5E1;
-  --text-tertiary:     #94A3B8;
+  /* Text — cool light scale optimized for the dark surfaces */
+  --text-primary:      #E8EEF2;
+  --text-secondary:    #A8B6BE;
+  --text-tertiary:     #6B7A82;
   --text-inverse:      #FFFFFF;
-  --text-on-cream:     #1A1A1A;   /* for page-level text on cream bg */
-  --text-on-cream-muted: #7A7268; /* muted page text on cream */
+  --text-on-cream:     #E8EEF2;   /* legacy alias — same as primary now */
+  --text-on-cream-muted: #6B7A82;
 
-  /* Brand / Action — bright teal that reads on dark cards AND cream */
-  --brand:             #2DD4BF;   /* teal-400 — bright on dark */
-  --brand-hover:       #14B8A6;   /* teal-500 */
-  --brand-subtle:      #0F2D2A;   /* dark teal wash inside cards */
+  /* Brand — teal accent (kept per request).
+     Add widget button uses --brand. Lighter --brand-bright for highlights. */
+  --brand:             #0F766E;   /* teal-700 — the Add widget color */
+  --brand-hover:       #0D6A60;
+  --brand-bright:      #2DD4BF;   /* teal-400 for active state / icons */
+  --brand-subtle:      #0A2723;   /* dark teal wash */
   --brand-muted:       #134E48;
 
-  /* Status — bright variants for dark cards */
+  /* Status — bright, slightly desaturated for dark bg */
   --success:           #34D399;
-  --success-subtle:    #042F1F;
+  --success-subtle:    #052E1F;
   --warning:           #FBBF24;
   --warning-subtle:    #3A2A0A;
   --warning-muted:     #78460C;
@@ -41,20 +44,20 @@
   --info:              #38BDF8;
   --info-subtle:       #082F49;
 
-  /* Sidebar — warm charcoal (less cool than pure slate, harmonizes with cream) */
-  --sidebar-bg:        #1F1A12;   /* warm near-black */
-  --sidebar-surface:   #2C261C;   /* warm slate */
-  --sidebar-border:    #3E3628;
-  --sidebar-text:      #D6CFBE;   /* warm light */
-  --sidebar-text-muted:#8A7F6B;
-  --sidebar-active-bg: #2C261C;
-  --sidebar-accent:    #4FB3A6;   /* teal-400 for highlights */
+  /* Sidebar — same family as page bg, seamless edge */
+  --sidebar-bg:        #0A0F12;
+  --sidebar-surface:   #162126;
+  --sidebar-border:    #1F2A30;
+  --sidebar-text:      #A8B6BE;
+  --sidebar-text-muted:#6B7A82;
+  --sidebar-active-bg: #162126;
+  --sidebar-accent:    #2DD4BF;   /* teal-400 for active item */
 
-  /* Shadows — warm-tinted for soft elevation on cream */
-  --shadow-sm:  0 1px 2px rgba(60, 40, 10, 0.04);
-  --shadow-md:  0 1px 2px rgba(60, 40, 10, 0.04), 0 8px 24px rgba(60, 40, 10, 0.05);
-  --shadow-lg:  0 2px 4px rgba(60, 40, 10, 0.05), 0 16px 40px rgba(60, 40, 10, 0.08);
-  --shadow-card: 0 1px 2px rgba(60, 40, 10, 0.04), 0 4px 12px rgba(60, 40, 10, 0.04);
+  /* Shadows — deep + tight (we're on near-black, soft shadows don't show) */
+  --shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md:  0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-lg:  0 16px 40px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.02);
 
   /* Radius */
   --radius-sm:  6px;
@@ -119,15 +122,9 @@ body {
 }
 html { overflow-x: hidden; }
 
-/* ── Logged-in shell — Pine #16302B page bg ───────────────────────────────
-   Any page that renders the global Sidebar (i.e. all authenticated routes)
-   gets the pine background. Marketing pages have no sidebar so they keep
-   the default --surface-base. */
-body:has(aside[data-sidebar]) {
-  background: #16302B;
-  --text-on-cream: #F1F5F9;
-  --text-on-cream-muted: #94A3B8;
-}
+/* All routes (marketing + logged-in) now share the dark teal-forward
+   palette. Marketing routes that set their own inline `bg-white` will
+   still render white. */
 
 /* Cards */
 .bg-white   { background: var(--surface-raised); }
