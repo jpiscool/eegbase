@@ -2016,45 +2016,6 @@ export default function DemoClient({
             {/* (Old per-field values panel removed — the test report below
                 already shows avg ± σ inline in its PASS rows.) */}
 
-            {/* Device-state pill — surfaces the live pipeline status so
-                clinicians know what's happening before any data flows.
-                Shows: 'No device paired' / 'Pairing...' / 'Waiting for
-                data...' until the buffer fills, then the SQI compact pill
-                takes over (see below). */}
-            {appMode === "strip" && !debugMode && (mendiStatsTick === 0 || mendiSamplesRef.current.length === 0) && (
-              <div style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                background: "#020617", border: "1px solid #1E293B",
-                borderRadius: 999, padding: "6px 14px", marginBottom: 16,
-                fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
-                fontSize: 11, color: "#94A3B8",
-              }}>
-                <span style={{
-                  width: 8, height: 8, borderRadius: "50%",
-                  background: !adapterRef.current ? "#475569" :
-                              mendiStatus === "connecting" ? "#FBBF24" :
-                              "#A78BFA",
-                  boxShadow: !adapterRef.current ? "none" :
-                             `0 0 6px ${mendiStatus === "connecting" ? "#FBBF24" : "#A78BFA"}`,
-                  animation: adapterRef.current ? "pulse 1.4s ease-in-out infinite" : "none",
-                }} />
-                <span>
-                  {!adapterRef.current ? "No device connected" :
-                   mendiStatus === "connecting" ? "Pairing Mendi…" :
-                   mendiStatus === "error" ? "Connection error" :
-                   "Waiting for data…"}
-                </span>
-                {!adapterRef.current && (
-                  <>
-                    <span style={{ color: "#475569" }}>·</span>
-                    <span style={{ fontSize: 10 }}>
-                      Pair a device above, or open <code style={{ background: "#1E293B", padding: "1px 4px", borderRadius: 3 }}>?sim=1</code> for the simulator
-                    </span>
-                  </>
-                )}
-              </div>
-            )}
-
             {/* Mendi widget TEST REPORT — runs PASS/WARN/FAIL checks per
                 widget against the live sample buffer. Each widget is mapped
                 to its underlying DeviceSample field(s) + an expected range +
