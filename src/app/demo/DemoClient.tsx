@@ -17,7 +17,7 @@ import {
   Search, Bell, Bluetooth as BluetoothIcon,
   Pause, Play, RotateCcw, Plus, Volume2, VolumeX, Smartphone,
   Mail, Building2, Download, UploadCloud,
-  LayoutDashboard, UserCircle as ProfileIcon,
+  LayoutDashboard, UserCircle as ProfileIcon, Users,
 } from "lucide-react";
 import { generateDemoInsight } from "./ai-insight-action";
 import {
@@ -1808,6 +1808,29 @@ export default function DemoClient({
                 </div>
               );
             })}
+            {/* Clients link — strip-mode only. Surfaces the existing
+                /clients chart surface so the clinician can switch into
+                any individual person's per-client dashboard / session
+                history without leaving the sidebar. */}
+            {appMode === "strip" && (
+              <a
+                href="/clients"
+                style={{
+                  display: "flex", alignItems: "center", gap: 10, lineHeight: 1.3,
+                  width: "100%", textAlign: "left",
+                  padding: "8px 18px", fontSize: 13, fontWeight: 500,
+                  color: "#94A3B8", textDecoration: "none",
+                  background: "transparent",
+                  borderLeft: "2px solid transparent",
+                  transition: "background 0.18s ease, color 0.18s ease",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "#CBD5E1"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#94A3B8"; }}
+              >
+                <Users size={16} strokeWidth={1.75} />
+                <span>Clients</span>
+              </a>
+            )}
             {/* Profile link — only in the stripped authenticated app.
                 Navigates to /profile (real route), not a tab switch. */}
             {appMode === "strip" && (
