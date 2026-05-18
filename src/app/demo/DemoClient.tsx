@@ -3842,10 +3842,17 @@ export default function DemoClient({
               onClose={() => setDashboardPickerOpen(false)}
               currentIds={dashboard.widgets}
               onAdd={(id) => {
+                // Don't auto-close — keep the picker open so the user
+                // can keep building their layout in one pass. They
+                // close it explicitly via the X / overlay click.
                 dashboard.setWidgets((prev) => [...prev, id]);
-                setDashboardPickerOpen(false);
                 const def = WIDGET_CATALOG.find((w) => w.id === id);
                 if (def) showToast(`Added: ${def.title}`);
+              }}
+              onRemove={(id) => {
+                dashboard.setWidgets((prev) => prev.filter((w) => w !== id));
+                const def = WIDGET_CATALOG.find((w) => w.id === id);
+                if (def) showToast(`Removed: ${def.title}`);
               }}
             />
 

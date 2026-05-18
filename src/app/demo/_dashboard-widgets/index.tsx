@@ -1879,11 +1879,16 @@ export function WidgetPicker({
   onClose,
   currentIds,
   onAdd,
+  onRemove,
 }: {
   open: boolean;
   onClose: () => void;
   currentIds: string[];
   onAdd: (id: string) => void;
+  // Optional toggle handler. When supplied, clicking an already-added
+  // card calls onRemove instead of being a no-op — lets the user pick
+  // their full layout in one trip through the picker.
+  onRemove?: (id: string) => void;
 }) {
   const [query, setQuery] = useState("");
 
@@ -1926,20 +1931,30 @@ export function WidgetPicker({
 
   const renderCard = (def: WidgetDef) => {
     const already = currentIds.includes(def.id);
+    // When onRemove is supplied the card is a toggle: added cards
+    // are clickable to remove. When it's not, fall back to the legacy
+    // "disabled when already added" behaviour.
+    const canToggleOff = already && !!onRemove;
+    const disabled = already && !canToggleOff;
     const Icon = def.icon;
     return (
       <button
         key={def.id}
-        onClick={() => { if (!already) onAdd(def.id); }}
-        disabled={already}
+        onClick={() => {
+          if (disabled) return;
+          if (already) onRemove?.(def.id);
+          else onAdd(def.id);
+        }}
+        disabled={disabled}
+        title={canToggleOff ? "Click to remove from dashboard" : undefined}
         style={{
           textAlign: "left",
           background: already ? "rgba(15,23,42,0.4)" : "rgba(15,23,42,0.7)",
-          border: `1px solid ${already ? "#1E293B" : "#334155"}`,
+          border: `1px solid ${already ? (canToggleOff ? "#1E293B" : "#1E293B") : "#334155"}`,
           borderRadius: 12,
           padding: 14,
-          cursor: already ? "default" : "pointer",
-          opacity: already ? 0.5 : 1,
+          cursor: disabled ? "default" : "pointer",
+          opacity: disabled ? 0.5 : already ? 0.85 : 1,
           transition: "all 0.15s ease",
           display: "flex",
           flexDirection: "column",
@@ -1947,8 +1962,13 @@ export function WidgetPicker({
           fontFamily: "inherit",
           color: COLORS.ink,
         }}
-        onMouseEnter={(e) => { if (!already) (e.currentTarget as HTMLButtonElement).style.borderColor = COLORS.blue; }}
-        onMouseLeave={(e) => { if (!already) (e.currentTarget as HTMLButtonElement).style.borderColor = "#334155"; }}
+        onMouseEnter={(e) => {
+          if (disabled) return;
+          (e.currentTarget as HTMLButtonElement).style.borderColor = canToggleOff ? "#F87171" : COLORS.blue;
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.borderColor = already ? "#1E293B" : "#334155";
+        }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <Icon size={14} />
@@ -1972,7 +1992,15 @@ export function WidgetPicker({
               Demo
             </span>
           )}
-          {already && <span style={{ marginLeft: "auto", fontSize: 9, color: COLORS.ok, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>added</span>}
+          {already && (
+            <span style={{
+              marginLeft: "auto", fontSize: 9, fontWeight: 700,
+              textTransform: "uppercase", letterSpacing: "0.08em",
+              color: canToggleOff ? COLORS.muted : COLORS.ok,
+            }}>
+              {canToggleOff ? "added · click to remove" : "added"}
+            </span>
+          )}
         </div>
         <div style={{ fontSize: 11, color: COLORS.muted, lineHeight: 1.4 }}>{def.blurb}</div>
         <div style={{ fontSize: 10, color: "#64748B", marginTop: "auto", fontFamily: NUM, letterSpacing: "0.04em" }}>{def.device}</div>
