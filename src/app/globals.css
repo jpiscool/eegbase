@@ -119,6 +119,16 @@ body {
 }
 html { overflow-x: hidden; }
 
+/* ── Logged-in shell — Pine #16302B page bg ───────────────────────────────
+   Any page that renders the global Sidebar (i.e. all authenticated routes)
+   gets the pine background. Marketing pages have no sidebar so they keep
+   the default --surface-base. */
+body:has(aside[data-sidebar]) {
+  background: #16302B;
+  --text-on-cream: #F1F5F9;
+  --text-on-cream-muted: #94A3B8;
+}
+
 /* Cards */
 .bg-white   { background: var(--surface-raised); }
 .bg-gray-50 { background: var(--surface-sunken); }

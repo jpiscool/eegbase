@@ -32,10 +32,10 @@ export default async function ClientsPage() {
     <div style={{ maxWidth: 880, margin: "0 auto", padding: "8px 4px" }}>
       <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 24, gap: 12, flexWrap: "wrap" }}>
         <div>
-          <h1 style={{ fontSize: 28, fontWeight: 700, letterSpacing: "-0.02em", color: "#1A1A1A", margin: 0 }}>
+          <h1 style={{ fontSize: 28, fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-on-cream)", margin: 0 }}>
             Clients
           </h1>
-          <p style={{ fontSize: 13, color: "#7A7268", marginTop: 4, margin: 0 }}>
+          <p style={{ fontSize: 13, color: "var(--text-on-cream-muted)", marginTop: 4, margin: 0 }}>
             {clientList.length} client{clientList.length !== 1 ? "s" : ""}
           </p>
         </div>
