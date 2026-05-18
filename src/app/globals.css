@@ -5,7 +5,7 @@
    single variable change cascades everywhere — including dark mode.          */
 :root {
   /* Surfaces — cream page with dark slate cards (premium dark-on-cream pattern) */
-  --surface-base:      #FAF7EE;   /* page background — warm cream */
+  --surface-base:      #D9CFB4;   /* page background — warm taupe */
   --surface-raised:    #0F172A;   /* CARD / panel — dark slate */
   --surface-overlay:   #1E293B;   /* modal / popover */
   --surface-sunken:    #0B1220;   /* inset / input bg inside dark cards */

@@ -67,8 +67,6 @@ const PUBLIC_PREFIXES = [
   "/share",
   "/checkin",
   "/portal",
-  // Temporary design-review surface — no PHI
-  "/palettes",
   // API routes handle auth per-endpoint
   "/api",
   // Next.js internals + static
