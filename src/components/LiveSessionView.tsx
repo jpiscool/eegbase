@@ -17,6 +17,7 @@ import { HRVPanel } from "@/components/HRVPanel";
 import { VideoFeedback } from "@/components/VideoFeedback";
 import { FractalFeedback } from "@/components/FractalFeedback";
 import { AnnotationPanel, type Annotation } from "@/components/AnnotationPanel";
+import { ProtocolBlockTimer, parseProtocolBlocks } from "@/components/ProtocolBlockTimer";
 
 function createAdapter(deviceType: string, params?: unknown): DeviceAdapter {
   if (deviceType === "mendi") {
@@ -436,6 +437,10 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
   const selectedProtocol = protocols.find((p) => p.id === selectedProtocolId);
   const targetSeconds = selectedProtocol?.durationSeconds ?? 0;
   const progressPct = targetSeconds > 0 ? Math.min(100, (elapsed / targetSeconds) * 100) : 0;
+  // Scripted protocol blocks — derived from the protocol's jsonb
+  // parameters. Empty array if the protocol hasn't been authored with
+  // block scripting yet, in which case the timer stays hidden.
+  const protocolBlocks = parseProtocolBlocks(selectedProtocol?.parameters);
 
   const noClients = clients.length === 0;
   const running = phase === "running";
@@ -648,6 +653,16 @@ export function LiveSessionView({ clients, protocols, defaultClientId, defaultPr
       )}
 
       {/* ── Clinician Controls Panel ─────────────────────────────────────────── */}
+      {/* Scripted protocol block timer — renders when the selected
+          protocol carries a `blocks` array in its jsonb parameters.
+          Drives clinical pacing (e.g. baseline 1 min → focus 5 min →
+          rest 2 min → focus 5 min). */}
+      {running && protocolBlocks.length > 0 && (
+        <div className="mb-4">
+          <ProtocolBlockTimer blocks={protocolBlocks} elapsedSeconds={elapsed} />
+        </div>
+      )}
+
       {running && (
         <div className="rounded-xl border mb-4 overflow-hidden" style={{ background: "var(--surface-raised)", borderColor: "var(--border-subtle)" }}>
           <button

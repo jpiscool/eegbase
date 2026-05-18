@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { sessions, sessionDataPoints, clients, clinics, clinicians } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
+import { logAuditEvent } from "@/lib/audit";
 
 async function fireWebhook(
   webhookUrl: string,
@@ -102,6 +103,25 @@ export async function saveSession(data: {
       postNotes: data.postSession?.notes,
     })
     .returning({ id: sessions.id });
+
+  // HIPAA: log PHI write events. Fire-and-forget; never blocks the save.
+  const clinicianForAudit = session.user as { clinicId?: string; name?: string };
+  if (clinicianForAudit.clinicId) {
+    const [clientForAudit] = await db
+      .select({ name: clients.name })
+      .from(clients)
+      .where(eq(clients.id, data.clientId))
+      .limit(1);
+    void logAuditEvent({
+      clinicId: clinicianForAudit.clinicId,
+      clinicianId: session.user.id,
+      clinicianName: clinicianForAudit.name,
+      action: "session.created",
+      resourceType: "session",
+      resourceId: saved.id,
+      resourceLabel: clientForAudit?.name ?? "(unknown client)",
+    });
+  }
 
   if (data.samples.length > 0) {
     const rows = data.samples.map((s) => ({
