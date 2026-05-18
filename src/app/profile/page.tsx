@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { clinicians } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { ProfileForm, PasswordForm } from "../settings/SettingsForms";
+import { signOutAction } from "../auth-actions";
 
 // Profile is the dedicated edit-your-own-login surface. Wrapped in a mini
 // dark slate sidebar that matches DemoClient's strip-mode sidebar so the
@@ -168,6 +169,34 @@ export default async function ProfilePage() {
           <div style={cardStyle}>
             <h2 style={headingStyle}>Change Password</h2>
             <PasswordForm />
+          </div>
+
+          {/* Sign-out card — POSTs to the signOutAction server action,
+              which clears the NextAuth cookie and redirects to /login. */}
+          <div style={cardStyle}>
+            <h2 style={headingStyle}>Sign out</h2>
+            <p style={{ color: "#94A3B8", fontSize: 13, lineHeight: 1.5, marginBottom: 16, marginTop: 0 }}>
+              Signed in as <strong style={{ color: "#F1F5F9" }}>{clinician?.email ?? "—"}</strong>.
+              Signing out will end this session and return you to the login screen.
+            </p>
+            <form action={signOutAction}>
+              <button
+                type="submit"
+                style={{
+                  background: "rgba(248,113,113,0.12)",
+                  color: "#F87171",
+                  border: "1px solid rgba(248,113,113,0.35)",
+                  borderRadius: 8,
+                  padding: "8px 16px",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+              >
+                Sign out
+              </button>
+            </form>
           </div>
         </div>
       </main>
