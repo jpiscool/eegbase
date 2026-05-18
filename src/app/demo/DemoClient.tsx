@@ -1855,7 +1855,7 @@ export default function DemoClient({
                 sessions yet; auto-dismisses after setup completes. */}
             {appMode === "strip" && onboarding}
             {/* Context strip + Add Widget */}
-            <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #60A5FA", borderRadius: 12, padding: "12px 18px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
+            <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #2DD4BF", borderRadius: 12, padding: "12px 18px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
               {appMode !== "strip" && (
                 <>
                   <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(96,165,250,0.15)", color: "#60A5FA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -1932,7 +1932,7 @@ export default function DemoClient({
               )}
               <button
                 onClick={() => setDashboardPickerOpen(true)}
-                style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: "#2563EB", color: "white", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+                style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: "#0F766E", color: "white", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer" }}
               >
                 <Plus size={14} /> Add widget
               </button>

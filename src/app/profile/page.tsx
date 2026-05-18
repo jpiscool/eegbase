@@ -69,10 +69,11 @@ export default async function ProfilePage() {
       {/* Scoped input styling so the form inputs read on the dark cards. */}
       <style>{`
         .profile-page input { background: #0B1220 !important; border-color: #1E293B !important; color: #F1F5F9 !important; }
-        .profile-page input:focus { outline: 2px solid #60A5FA !important; outline-offset: 1px !important; }
+        .profile-page input:focus { outline: 2px solid #2DD4BF !important; outline-offset: 1px !important; }
         .profile-page input[readonly] { color: #64748B !important; }
         .profile-page label { color: #CBD5E1 !important; }
-        .profile-page button[type="submit"] { background: #2563EB !important; color: white !important; }
+        .profile-page button[type="submit"] { background: #0F766E !important; color: white !important; }
+        .profile-page button[type="submit"]:hover { background: #0D6A60 !important; }
       `}</style>
 
       <div style={cardStyle}>

@@ -111,7 +111,7 @@ export function ClientDashboardWidgets({
         style={{
           background: "#0F172A",
           border: "1px solid #1E293B",
-          borderLeft: "3px solid #60A5FA",
+          borderLeft: "3px solid #2DD4BF",
           borderRadius: 12,
           padding: "12px 18px",
           marginBottom: 16,
@@ -132,7 +132,7 @@ export function ClientDashboardWidgets({
             alignItems: "center",
             gap: 6,
             padding: "8px 14px",
-            background: "#2563EB",
+            background: "#0F766E",
             color: "white",
             border: "none",
             borderRadius: 8,
