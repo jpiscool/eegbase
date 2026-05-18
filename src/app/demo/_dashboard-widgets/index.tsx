@@ -2091,12 +2091,11 @@ export function WidgetPicker({
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
           <div>
             <p style={{ fontSize: 11, fontWeight: 700, color: COLORS.blue, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Add widget</p>
-            <h2 style={{ fontSize: 18, fontWeight: 800, color: COLORS.ink, margin: 0 }}>Pick what to show</h2>
-            <p style={{ fontSize: 12, color: COLORS.muted, marginTop: 4 }}>
-              {q.length > 0
-                ? `${totalMatching} of ${WIDGET_CATALOG.length} match "${query}".`
-                : `${WIDGET_CATALOG.length} widgets across ${allSections.length} sections. Already-added widgets are dimmed.`}
-            </p>
+            {q.length > 0 && (
+              <p style={{ fontSize: 12, color: COLORS.muted, marginTop: 4 }}>
+                {totalMatching} of {WIDGET_CATALOG.length} match &ldquo;{query}&rdquo;.
+              </p>
+            )}
           </div>
           <button
             onClick={onClose}
