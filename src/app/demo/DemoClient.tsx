@@ -750,7 +750,10 @@ export default function DemoClient({
   return (
     <div className="demo-grain" style={{ fontFamily: "Inter, system-ui, sans-serif", background: "linear-gradient(180deg, #EEF2F8 0%, #F0F4F8 100%)", minHeight: "100vh" }}>
       <style>{`
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* Scoped reset — only zero out margin/padding inside DemoClient so
+           we don't strip layout from the global Sidebar / TrustStrip / etc.
+           that wrap us when DemoClient is embedded in /dashboard. */
+        .demo-grain * { box-sizing: border-box; margin: 0; padding: 0; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
