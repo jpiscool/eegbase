@@ -1874,6 +1874,64 @@ export default function DemoClient({
             via the picker. State persisted to localStorage. */}
         {tab === "dashboard" && (
           <>
+            {/* Strip-mode clinician quick actions — connect this validation
+                surface to the existing clinical session save / report /
+                protocol flows that already live elsewhere in the app. */}
+            {appMode === "strip" && (
+              <div style={{
+                display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                gap: 12, marginBottom: 16,
+              }}>
+                <a href="/sessions/live" style={{
+                  display: "flex", alignItems: "center", gap: 10,
+                  background: "linear-gradient(135deg, rgba(52,211,153,0.10), rgba(52,211,153,0.04))",
+                  border: "1px solid rgba(52,211,153,0.25)", borderRadius: 10,
+                  padding: "12px 14px", textDecoration: "none", color: "#CBD5E1",
+                  transition: "transform 0.18s ease, border-color 0.18s ease",
+                }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(52,211,153,0.6)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(52,211,153,0.25)"; e.currentTarget.style.transform = "translateY(0)"; }}
+                >
+                  <Play size={18} color="#34D399" strokeWidth={2} />
+                  <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <strong style={{ color: "#F1F5F9", fontSize: 13 }}>Start clinical session</strong>
+                    <span style={{ fontSize: 11, color: "#94A3B8" }}>Record + save to chart</span>
+                  </span>
+                </a>
+                <a href="/protocols" style={{
+                  display: "flex", alignItems: "center", gap: 10,
+                  background: "linear-gradient(135deg, rgba(167,139,250,0.10), rgba(167,139,250,0.04))",
+                  border: "1px solid rgba(167,139,250,0.25)", borderRadius: 10,
+                  padding: "12px 14px", textDecoration: "none", color: "#CBD5E1",
+                  transition: "transform 0.18s ease, border-color 0.18s ease",
+                }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(167,139,250,0.6)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(167,139,250,0.25)"; e.currentTarget.style.transform = "translateY(0)"; }}
+                >
+                  <Target size={18} color="#A78BFA" strokeWidth={2} />
+                  <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <strong style={{ color: "#F1F5F9", fontSize: 13 }}>Browse protocols</strong>
+                    <span style={{ fontSize: 11, color: "#94A3B8" }}>9 Mendi + 6 EEG ready</span>
+                  </span>
+                </a>
+                <a href="/sessions" style={{
+                  display: "flex", alignItems: "center", gap: 10,
+                  background: "linear-gradient(135deg, rgba(96,165,250,0.10), rgba(96,165,250,0.04))",
+                  border: "1px solid rgba(96,165,250,0.25)", borderRadius: 10,
+                  padding: "12px 14px", textDecoration: "none", color: "#CBD5E1",
+                  transition: "transform 0.18s ease, border-color 0.18s ease",
+                }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(96,165,250,0.6)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(96,165,250,0.25)"; e.currentTarget.style.transform = "translateY(0)"; }}
+                >
+                  <FileText size={18} color="#60A5FA" strokeWidth={2} />
+                  <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <strong style={{ color: "#F1F5F9", fontSize: 13 }}>View session reports</strong>
+                    <span style={{ fontSize: 11, color: "#94A3B8" }}>Past sessions + PDFs</span>
+                  </span>
+                </a>
+              </div>
+            )}
             {/* Context strip + Add Widget */}
             <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderLeft: "3px solid #60A5FA", borderRadius: 12, padding: "12px 18px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", boxShadow: "0 1px 0 0 rgba(255,255,255,0.04) inset" }}>
               {appMode !== "strip" && (
