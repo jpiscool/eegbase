@@ -266,13 +266,47 @@ export default async function ClientDetailPage({
   const session = await auth();
   const clinicId = (session?.user as { clinicId?: string })?.clinicId ?? "";
 
+  // Select explicit columns so the query doesn't fail if a newly-added
+  // column hasn't been migrated to prod yet. dashboardWidgets is loaded
+  // separately below with a graceful fallback.
   const [client] = await db
-    .select()
+    .select({
+      id: clients.id,
+      clinicId: clients.clinicId,
+      clinicianId: clients.clinicianId,
+      name: clients.name,
+      email: clients.email,
+      dateOfBirth: clients.dateOfBirth,
+      notes: clients.notes,
+      goals: clients.goals,
+      referralSource: clients.referralSource,
+      active: clients.active,
+      reportToken: clients.reportToken,
+      checkInToken: clients.checkInToken,
+      aiSummary: clients.aiSummary,
+      aiSummaryUpdatedAt: clients.aiSummaryUpdatedAt,
+      createdAt: clients.createdAt,
+    })
     .from(clients)
     .where(and(eq(clients.id, id), eq(clients.clinicId, clinicId)))
     .limit(1);
 
   if (!client) notFound();
+
+  // dashboardWidgets is loaded separately so missing column on prod doesn't
+  // brick the whole page. Returns null when the column hasn't been added yet.
+  let dashboardWidgets: string[] = [];
+  try {
+    const [row] = await db
+      .select({ dashboardWidgets: clients.dashboardWidgets })
+      .from(clients)
+      .where(eq(clients.id, id))
+      .limit(1);
+    dashboardWidgets = row?.dashboardWidgets ?? [];
+  } catch {
+    // Column not migrated yet — fall back to empty.
+    dashboardWidgets = [];
+  }
 
   // HIPAA: a clinician opening a client chart counts as a PHI view event.
   // Fire-and-forget so audit failures never break the page render.
@@ -626,7 +660,7 @@ export default async function ClientDetailPage({
       <div style={{ marginBottom: 24 }}>
         <ClientDashboardWidgets
           clientId={id}
-          initialWidgets={client.dashboardWidgets ?? []}
+          initialWidgets={dashboardWidgets}
         />
       </div>
 

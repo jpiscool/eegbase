@@ -15,8 +15,13 @@ export async function saveClientDashboardWidgets(clientId: string, widgetIds: st
   // Filter out anything that isn't a string to keep the column clean.
   const clean = widgetIds.filter((w): w is string => typeof w === "string");
 
-  await db
-    .update(clients)
-    .set({ dashboardWidgets: clean })
-    .where(and(eq(clients.id, clientId), eq(clients.clinicId, clinicId)));
+  try {
+    await db
+      .update(clients)
+      .set({ dashboardWidgets: clean })
+      .where(and(eq(clients.id, clientId), eq(clients.clinicId, clinicId)));
+  } catch {
+    // Column not migrated yet — silently no-op. Layout still lives in
+    // component state for the active session.
+  }
 }
