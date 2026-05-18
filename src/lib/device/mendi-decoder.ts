@@ -88,17 +88,25 @@ export class MendiPacketDecoder {
     const redR = numericField(fields, MENDI_FIELDS.RED_R);
     const ambR = numericField(fields, MENDI_FIELDS.AMB_R);
 
-    // Ambient-corrected light counts (subtract ambient noise).
-    const irLcor = irL != null && ambL != null ? irL - ambL : undefined;
-    const redLcor = redL != null && ambL != null ? redL - ambL : undefined;
-    const irRcor = irR != null && ambR != null ? irR - ambR : undefined;
-    const redRcor = redR != null && ambR != null ? redR - ambR : undefined;
+    // ── Raw photodiode counts for Beer-Lambert ──────────────────────────
+    // Use the RAW red/IR readings directly as I_current for MBLL.
+    // Previously this code did `red - ambient` first, which silently
+    // rejected ~50% of left-optode samples on real users (when ambient
+    // happens to exceed red after correction, the ratio goes <= 0 and
+    // log fails). The Mendi reference app uses raw counts; ambient is
+    // a separate QC channel logged for the "ambient interference" test,
+    // never subtracted from the optical signal.
+    //
+    // Verified with live diagnostic 2026-05-17: the right optode worked
+    // fine under subtract-ambient because `red > amb` there, but the
+    // left was uniformly null because `red ≤ amb` on every sample.
+    // Same band, same head, same firmware — software bug, not hardware.
 
-    // Establish baselines on first packet of the session.
-    if (irLcor != null && this._baselineIrL == null) this._baselineIrL = irLcor;
-    if (redLcor != null && this._baselineRedL == null) this._baselineRedL = redLcor;
-    if (irRcor != null && this._baselineIrR == null) this._baselineIrR = irRcor;
-    if (redRcor != null && this._baselineRedR == null) this._baselineRedR = redRcor;
+    // Establish baselines from the RAW intensities on the first frame.
+    if (irL  != null && this._baselineIrL  == null) this._baselineIrL  = irL;
+    if (redL != null && this._baselineRedL == null) this._baselineRedL = redL;
+    if (irR  != null && this._baselineIrR  == null) this._baselineIrR  = irR;
+    if (redR != null && this._baselineRedR == null) this._baselineRedR = redR;
 
     // ── Modified Beer-Lambert decomposition ───────────────────────────
     // Solves the 2×2 system at red (~660 nm) and IR (~880 nm) for
@@ -141,17 +149,17 @@ export class MendiPacketDecoder {
     const INV_HHB_IR  =  A11 * K;
 
     // Compute optical density change per wavelength: ΔOD = -log₁₀(I / I₀).
-    // Ambient-corrected intensities must be positive for the log to be
-    // valid; if either drops below a small floor we treat the sample as
-    // undefined (the test layer will surface this as a freshness issue).
-    const odRedL = redLcor != null && this._baselineRedL && this._baselineRedL > 0 && redLcor > 0
-      ? -Math.log10(redLcor / this._baselineRedL) : undefined;
-    const odIrL  = irLcor  != null && this._baselineIrL  && this._baselineIrL  > 0 && irLcor  > 0
-      ? -Math.log10(irLcor  / this._baselineIrL ) : undefined;
-    const odRedR = redRcor != null && this._baselineRedR && this._baselineRedR > 0 && redRcor > 0
-      ? -Math.log10(redRcor / this._baselineRedR) : undefined;
-    const odIrR  = irRcor  != null && this._baselineIrR  && this._baselineIrR  > 0 && irRcor  > 0
-      ? -Math.log10(irRcor  / this._baselineIrR ) : undefined;
+    // Both raw and baseline intensities are positive photodiode counts by
+    // construction; the only edge case is the first frame where the
+    // sample IS the baseline, yielding ΔOD = 0.
+    const odRedL = redL != null && this._baselineRedL && this._baselineRedL > 0 && redL > 0
+      ? -Math.log10(redL / this._baselineRedL) : undefined;
+    const odIrL  = irL  != null && this._baselineIrL  && this._baselineIrL  > 0 && irL  > 0
+      ? -Math.log10(irL  / this._baselineIrL ) : undefined;
+    const odRedR = redR != null && this._baselineRedR && this._baselineRedR > 0 && redR > 0
+      ? -Math.log10(redR / this._baselineRedR) : undefined;
+    const odIrR  = irR  != null && this._baselineIrR  && this._baselineIrR  > 0 && irR  > 0
+      ? -Math.log10(irR  / this._baselineIrR ) : undefined;
 
     const oxyHbLeft = (odRedL != null && odIrL != null)
       ? INV_HBO_RED * odRedL + INV_HBO_IR * odIrL
