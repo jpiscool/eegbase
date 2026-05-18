@@ -71,20 +71,22 @@
 }
 
 /* ── Dark Mode ───────────────────────────────────────────────────────────────
-   Override surface / text tokens only. Sidebar tokens stay the same.        */
+   Override surface / text tokens only. Sidebar tokens stay the same.
+   Aligned to the My Dashboard card palette so the whole logged-in app
+   reads as one premium dark surface.                                       */
 [data-theme="dark"] {
-  --surface-base:     #0b0e14;
-  --surface-raised:   #141821;
-  --surface-overlay:  #1a1f2e;
-  --surface-sunken:   #0f1319;
+  --surface-base:     #0B1220;
+  --surface-raised:   #0F172A;
+  --surface-overlay:  #1E293B;
+  --surface-sunken:   #020617;
 
-  --border-subtle:    #222838;
-  --border-default:   #2d3448;
+  --border-subtle:    #1E293B;
+  --border-default:   #334155;
   --border-strong:    #475569;
 
-  --text-primary:     #e2e8f0;
-  --text-secondary:   #94a3b8;
-  --text-tertiary:    #475569;
+  --text-primary:     #F1F5F9;
+  --text-secondary:   #CBD5E1;
+  --text-tertiary:    #94A3B8;
 
   --brand-subtle:     #0d1a35;
   --brand-muted:      #1e3a6e;

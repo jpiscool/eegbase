@@ -72,7 +72,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full" data-theme="dark">
       <body className={`${geist.className} h-full antialiased`}>
         {/* Schema.org JSON-LD · Organization + SoftwareApplication for SEO rich-results */}
         <script
