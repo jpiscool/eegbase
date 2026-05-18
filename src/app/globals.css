@@ -5,10 +5,10 @@
    single variable change cascades everywhere — including dark mode.          */
 :root {
   /* Surfaces */
-  --surface-base:      #f8f9fb;   /* page background */
+  --surface-base:      #FAF7EE;   /* page background — warm cream */
   --surface-raised:    #ffffff;   /* card / panel */
   --surface-overlay:  #ffffff;   /* modal / popover */
-  --surface-sunken:    #f1f3f7;   /* inset / input bg */
+  --surface-sunken:    #F4EFE0;   /* inset / input bg — slightly warmer cream */
 
   /* Borders */
   --border-subtle:     #e5e8ef;
