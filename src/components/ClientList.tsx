@@ -14,8 +14,9 @@ interface ClientRow {
   lastSessionAt: Date | null;
 }
 
-// Vertical list — same pattern as the demo PatientsView. No sortable table,
-// no risk badges, no 9 columns, no filter pills. Search only when needed.
+// Dark-card list matching the My Dashboard aesthetic. Same #0F172A / #1E293B
+// tokens as the dashboard widget grid so the logged-in app reads as one
+// surface across routes.
 export function ClientList({ clients }: { clients: ClientRow[] }) {
   const [query, setQuery] = useState("");
   const showSearch = clients.length > 6;
@@ -38,10 +39,18 @@ export function ClientList({ clients }: { clients: ClientRow[] }) {
     return `${Math.floor(days / 30)}mo ago`;
   }
 
+  const cardStyle: React.CSSProperties = {
+    background: "#0F172A",
+    border: "1px solid #1E293B",
+    borderRadius: 12,
+  };
+
   if (clients.length === 0) {
     return (
-      <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center">
-        <p className="text-sm text-gray-500">No clients yet. Add your first client to get started.</p>
+      <div style={{ ...cardStyle, padding: "48px 24px", textAlign: "center" }}>
+        <p style={{ color: "#94A3B8", fontSize: 13 }}>
+          No clients yet. Add your first client to get started.
+        </p>
       </div>
     );
   }
@@ -49,39 +58,107 @@ export function ClientList({ clients }: { clients: ClientRow[] }) {
   return (
     <div>
       {showSearch && (
-        <div className="mb-4">
+        <div style={{ marginBottom: 16 }}>
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search clients\u2026"
-            className="w-full px-4 py-2.5 rounded-xl text-sm bg-white border border-gray-200 focus:outline-none focus:border-blue-400"
+            style={{
+              width: "100%",
+              padding: "10px 14px",
+              borderRadius: 10,
+              background: "#0B1220",
+              border: "1px solid #1E293B",
+              color: "#F1F5F9",
+              fontSize: 13,
+              outline: "none",
+              fontFamily: "inherit",
+            }}
+            onFocus={(e) => { e.currentTarget.style.borderColor = "#60A5FA"; }}
+            onBlur={(e) => { e.currentTarget.style.borderColor = "#1E293B"; }}
           />
         </div>
       )}
 
       {filtered.length === 0 ? (
-        <p className="text-sm text-gray-500 px-1 py-3">No matches for &ldquo;{query}&rdquo;.</p>
+        <p style={{ color: "#94A3B8", fontSize: 13, padding: "12px 4px" }}>
+          No matches for &ldquo;{query}&rdquo;.
+        </p>
       ) : (
-        <ul className="bg-white border border-gray-200 rounded-2xl divide-y divide-gray-100 overflow-hidden">
-          {filtered.map((c) => (
-            <li key={c.id}>
+        <ul style={{ ...cardStyle, listStyle: "none", padding: 0, margin: 0, overflow: "hidden" }}>
+          {filtered.map((c, idx) => (
+            <li
+              key={c.id}
+              style={{
+                borderTop: idx === 0 ? "none" : "1px solid #1E293B",
+              }}
+            >
               <Link
                 href={`/clients/${c.id}`}
-                className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 14,
+                  padding: "14px 18px",
+                  textDecoration: "none",
+                  transition: "background 0.15s ease",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.025)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
               >
-                <span className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm flex items-center justify-center flex-shrink-0">
+                <span
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: "50%",
+                    background: "rgba(96,165,250,0.12)",
+                    color: "#60A5FA",
+                    fontWeight: 700,
+                    fontSize: 13,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                    border: "1px solid rgba(96,165,250,0.18)",
+                  }}
+                >
                   {initials(c.name)}
                 </span>
-                <span className="flex-1 min-w-0">
-                  <span className="block text-sm font-semibold text-gray-900">{c.name}</span>
-                  <span className="block text-xs text-gray-500 truncate">
+                <span style={{ flex: 1, minWidth: 0 }}>
+                  <span style={{ display: "block", fontSize: 14, fontWeight: 600, color: "#F1F5F9" }}>
+                    {c.name}
+                  </span>
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: 12,
+                      color: "#94A3B8",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      marginTop: 2,
+                    }}
+                  >
                     {c.goals ? c.goals : c.email ?? "No notes yet"}
                   </span>
                 </span>
-                <span className="hidden sm:block text-xs text-gray-400 tabular-nums text-right">
-                  <span className="block">{c.sessionCount} session{c.sessionCount !== 1 ? "s" : ""}</span>
-                  <span className="block">{relativeDays(c.lastSessionAt)}</span>
+                <span
+                  className="client-meta"
+                  style={{
+                    fontSize: 11,
+                    color: "#64748B",
+                    fontVariantNumeric: "tabular-nums",
+                    textAlign: "right",
+                    flexShrink: 0,
+                  }}
+                >
+                  <span style={{ display: "block", color: "#94A3B8", fontWeight: 600 }}>
+                    {c.sessionCount} session{c.sessionCount !== 1 ? "s" : ""}
+                  </span>
+                  <span style={{ display: "block", marginTop: 2 }}>
+                    {relativeDays(c.lastSessionAt)}
+                  </span>
                 </span>
               </Link>
             </li>
@@ -90,10 +167,16 @@ export function ClientList({ clients }: { clients: ClientRow[] }) {
       )}
 
       {(query && filtered.length > 0) && (
-        <p className="text-xs text-gray-400 mt-3 text-right">
+        <p style={{ fontSize: 11, color: "#64748B", marginTop: 12, textAlign: "right" }}>
           {filtered.length} of {clients.length}
         </p>
       )}
+
+      <style>{`
+        @media (max-width: 640px) {
+          .client-meta { display: none; }
+        }
+      `}</style>
     </div>
   );
 }

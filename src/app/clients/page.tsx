@@ -29,11 +29,13 @@ export default async function ClientsPage() {
     .orderBy(clients.name);
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-8">
-      <div className="flex items-end justify-between mb-6">
+    <div style={{ maxWidth: 880, margin: "0 auto", padding: "8px 4px" }}>
+      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 24, gap: 12, flexWrap: "wrap" }}>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>Clients</h1>
-          <p className="text-sm mt-0.5" style={{ color: "var(--text-tertiary)" }}>
+          <h1 style={{ fontSize: 24, fontWeight: 700, letterSpacing: "-0.02em", color: "#0F172A", margin: 0 }}>
+            Clients
+          </h1>
+          <p style={{ fontSize: 13, color: "#64748B", marginTop: 4, margin: 0 }}>
             {clientList.length} client{clientList.length !== 1 ? "s" : ""}
           </p>
         </div>
