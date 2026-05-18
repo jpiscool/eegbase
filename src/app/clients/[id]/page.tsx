@@ -13,6 +13,7 @@ import { EditClientModal } from "@/components/EditClientModal";
 import { ToggleClientActiveButton } from "@/components/ToggleClientActiveButton";
 import { SessionHeatmap } from "@/components/SessionHeatmap";
 import { ClientProgressPanel } from "@/components/ClientProgressPanel";
+import { logAuditEvent } from "@/lib/audit";
 
 // ── AI Protocol Recommendation Panel ─────────────────────────────────────────
 async function ProtocolRecommendations({
@@ -271,6 +272,18 @@ export default async function ClientDetailPage({
     .limit(1);
 
   if (!client) notFound();
+
+  // HIPAA: a clinician opening a client chart counts as a PHI view event.
+  // Fire-and-forget so audit failures never break the page render.
+  void logAuditEvent({
+    clinicId,
+    clinicianId: session?.user?.id,
+    clinicianName: (session?.user as { name?: string })?.name,
+    action: "client.viewed",
+    resourceType: "client",
+    resourceId: client.id,
+    resourceLabel: client.name,
+  });
 
   const [sessionList, activeAssignment, protocolList, avgReward, totalSessionsRow, activeGoals] = await Promise.all([
     db

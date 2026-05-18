@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import DemoClient from "../demo/DemoClient";
+import { OnboardingChecklist } from "@/components/OnboardingChecklist";
 
 // The clinician home renders the polished DemoClient (same component as
 // /demo) so the authenticated workspace and the public preview share one
@@ -24,5 +25,15 @@ export default async function DashboardPage() {
   // The public /demo route keeps the full tab surface.
   // ?tab=...  + the demo_tab cookie are intentionally ignored here — once
   // we restore additional tabs we'll re-enable the URL-driven routing.
-  return <DemoClient initialTab="dashboard" appMode="strip" />;
+  // The OnboardingChecklist is a server-rendered component passed in
+  // as a slot — DemoClient is a client component but RSC composition
+  // lets us hand it a pre-rendered tree. It auto-dismisses once the
+  // clinic has protocols + clients + sessions.
+  return (
+    <DemoClient
+      initialTab="dashboard"
+      appMode="strip"
+      onboarding={<OnboardingChecklist />}
+    />
+  );
 }

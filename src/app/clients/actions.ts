@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { clients, assignments, messages, sessions } from "@/lib/db/schema";
 import { eq, and, max } from "drizzle-orm";
+import { logAuditEvent } from "@/lib/audit";
 
 export async function addClient(formData: FormData) {
   const session = await auth();
@@ -23,7 +24,7 @@ export async function addClient(formData: FormData) {
 
   if (!name) throw new Error("Client name is required");
 
-  await db.insert(clients).values({
+  const [inserted] = await db.insert(clients).values({
     clinicId,
     clinicianId: session.user.id!,
     name,
@@ -32,6 +33,17 @@ export async function addClient(formData: FormData) {
     notes,
     referralSource,
     ...(dateOfBirth ? { dateOfBirth } : {}),
+  }).returning({ id: clients.id });
+
+  // HIPAA: every PHI create event lands in audit_logs (fire-and-forget).
+  void logAuditEvent({
+    clinicId,
+    clinicianId: session.user.id,
+    clinicianName: (session.user as { name?: string }).name,
+    action: "client.created",
+    resourceType: "client",
+    resourceId: inserted.id,
+    resourceLabel: name,
   });
 
   redirect("/clients");

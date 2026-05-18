@@ -1,7 +1,23 @@
 "use client";
 import { useState, useTransition } from "react";
-import { Settings2, Save, RotateCcw } from "lucide-react";
+import { Settings2, Save, RotateCcw, Plus, X, ArrowUp, ArrowDown, ListOrdered } from "lucide-react";
 import { updateProtocolParameters } from "@/app/protocols/actions";
+import { parseProtocolBlocks, type ProtocolBlock, type ProtocolBlockKind } from "@/components/ProtocolBlockTimer";
+
+// ── Block-authoring helpers ───────────────────────────────────────────────────
+const BLOCK_KIND_OPTIONS: { value: ProtocolBlockKind; label: string }[] = [
+  { value: "baseline", label: "Baseline" },
+  { value: "focus",    label: "Focus" },
+  { value: "rest",     label: "Rest" },
+  { value: "calm",     label: "Calm" },
+  { value: "task",     label: "Task" },
+];
+const DEFAULT_BLOCK: ProtocolBlock = { kind: "focus", label: "Focus training", durationSeconds: 300 };
+function fmtMmSs(sec: number): string {
+  const m = Math.floor(sec / 60);
+  const s = sec - m * 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
 
 // ── Type definitions ──────────────────────────────────────────────────────────
 
@@ -424,6 +440,23 @@ export function ProtocolParametersPanel({ protocolId, deviceType, savedParams }:
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Scripted block sequence (baseline → focus → rest …). Stored alongside
+  // device-specific params in the same jsonb column.
+  const [blocks, setBlocks] = useState<ProtocolBlock[]>(() => parseProtocolBlocks(savedParams));
+  const updateBlock = (i: number, patch: Partial<ProtocolBlock>) =>
+    setBlocks((prev) => prev.map((b, idx) => (idx === i ? { ...b, ...patch } : b)));
+  const moveBlock = (i: number, dir: -1 | 1) =>
+    setBlocks((prev) => {
+      const j = i + dir;
+      if (j < 0 || j >= prev.length) return prev;
+      const next = [...prev];
+      [next[i], next[j]] = [next[j], next[i]];
+      return next;
+    });
+  const removeBlock = (i: number) =>
+    setBlocks((prev) => prev.filter((_, idx) => idx !== i));
+  const totalBlockSeconds = blocks.reduce((a, b) => a + b.durationSeconds, 0);
+
   const [mendiParams, setMendiParams] = useState<MendiParams>(() =>
     mergeDefaults(savedParams, MENDI_DEFAULTS)
   );
@@ -451,7 +484,14 @@ export function ProtocolParametersPanel({ protocolId, deviceType, savedParams }:
     setSaved(false);
     startTransition(async () => {
       try {
-        await updateProtocolParameters(protocolId, getCurrentParams() as unknown as Record<string, unknown>);
+        // Merge device-specific params with the block sequence so the
+        // protocol's parameters jsonb carries both. Empty blocks array
+        // is allowed — the runtime simply hides the timer.
+        const payload: Record<string, unknown> = {
+          ...(getCurrentParams() as unknown as Record<string, unknown>),
+          blocks,
+        };
+        await updateProtocolParameters(protocolId, payload);
         setSaved(true);
         setTimeout(() => setSaved(false), 2500);
       } catch (err) {
@@ -475,6 +515,87 @@ export function ProtocolParametersPanel({ protocolId, deviceType, savedParams }:
       </div>
 
       <div className="p-6">
+        {/* ── Scripted block sequence editor ─────────────────────────────
+            Authors the protocol.parameters.blocks array consumed by the
+            ProtocolBlockTimer during a live session. Each row = one
+            timed block (baseline / focus / rest / calm / task) with a
+            human-readable label + duration. Total auto-sums below. */}
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <ListOrdered size={14} style={{ color: "var(--text-tertiary)" }} />
+            <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>
+              Block Sequence
+            </h3>
+            <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+              ({blocks.length} block{blocks.length === 1 ? "" : "s"}{blocks.length > 0 ? ` · ${fmtMmSs(totalBlockSeconds)} total` : ""})
+            </span>
+            <button
+              type="button"
+              onClick={() => setBlocks((prev) => [...prev, { ...DEFAULT_BLOCK }])}
+              className="ml-auto flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md transition-colors"
+              style={{ background: "var(--surface-sunken)", color: "var(--text-secondary)", border: "1px solid var(--border-subtle)" }}
+            >
+              <Plus size={12} /> Add block
+            </button>
+          </div>
+          {blocks.length === 0 ? (
+            <p className="text-xs italic" style={{ color: "var(--text-tertiary)" }}>
+              No blocks — the live session will run as a single open-ended training period.
+              Add blocks to script baseline / focus / rest pacing.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {blocks.map((b, i) => (
+                <div
+                  key={i}
+                  className="grid items-center gap-2"
+                  style={{ gridTemplateColumns: "auto 120px 1fr 110px auto", padding: "8px 10px", background: "var(--surface-sunken)", border: "1px solid var(--border-subtle)", borderRadius: 8 }}
+                >
+                  <span className="text-xs font-mono" style={{ color: "var(--text-tertiary)", minWidth: 22 }}>
+                    {i + 1}.
+                  </span>
+                  <Select
+                    value={b.kind}
+                    options={BLOCK_KIND_OPTIONS}
+                    onChange={(v) => updateBlock(i, { kind: v as ProtocolBlockKind })}
+                  />
+                  <input
+                    type="text"
+                    value={b.label}
+                    placeholder="Block label (e.g. Focus training)"
+                    onChange={(e) => updateBlock(i, { label: e.target.value })}
+                    className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    style={controlStyle}
+                  />
+                  <div className="flex items-center gap-1">
+                    <NumInput
+                      value={b.durationSeconds}
+                      min={5}
+                      max={3600}
+                      onChange={(v) => updateBlock(i, { durationSeconds: Math.max(5, v) })}
+                    />
+                    <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>s</span>
+                  </div>
+                  <div className="flex items-center gap-0.5">
+                    <button type="button" onClick={() => moveBlock(i, -1)} disabled={i === 0}
+                      className="p-1 rounded transition-colors disabled:opacity-30" style={{ color: "var(--text-tertiary)" }}>
+                      <ArrowUp size={13} />
+                    </button>
+                    <button type="button" onClick={() => moveBlock(i, +1)} disabled={i === blocks.length - 1}
+                      className="p-1 rounded transition-colors disabled:opacity-30" style={{ color: "var(--text-tertiary)" }}>
+                      <ArrowDown size={13} />
+                    </button>
+                    <button type="button" onClick={() => removeBlock(i)}
+                      className="p-1 rounded transition-colors ml-1" style={{ color: "var(--danger)" }}>
+                      <X size={13} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {deviceType === "mendi" && (
           <MendiForm params={mendiParams} onChange={setMendiParams} />
         )}

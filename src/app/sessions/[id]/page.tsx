@@ -17,6 +17,7 @@ import { AiInsightPanel } from "@/components/AiInsightPanel";
 import { SessionTagEditor } from "@/components/SessionTagEditor";
 import { BrainMapPanel } from "@/components/BrainMapPanel";
 import { SessionAnnotations } from "@/components/SessionAnnotations";
+import { logAuditEvent } from "@/lib/audit";
 
 function ScoreDelta({
   pre,
@@ -103,6 +104,24 @@ export default async function SessionDetailPage({
   ]);
 
   if (!row) notFound();
+
+  // HIPAA: viewing a session's PHI lands a session.viewed audit entry.
+  // Fire-and-forget so audit failures never block the page render.
+  {
+    const sessionAuth = await auth();
+    const clinicId = (sessionAuth?.user as { clinicId?: string })?.clinicId;
+    if (clinicId) {
+      void logAuditEvent({
+        clinicId,
+        clinicianId: sessionAuth?.user?.id,
+        clinicianName: (sessionAuth?.user as { name?: string })?.name,
+        action: "session.viewed",
+        resourceType: "session",
+        resourceId: row.session.id,
+        resourceLabel: row.clientName,
+      });
+    }
+  }
 
   // Downsample to at most 600 evenly-spaced points for chart rendering
   // (preserves full coverage even for high-frequency Mendi sessions)

@@ -10,6 +10,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import bcrypt from "bcryptjs";
 import * as schema from "../src/lib/db/schema";
+import { DEFAULT_PROTOCOL_SEEDS } from "../src/lib/seed/default-protocols";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool, { schema });
@@ -36,6 +37,20 @@ async function main() {
     passwordHash,
     role: "admin",
   });
+
+  // Populate the protocol library so the new clinic isn't empty on
+  // first login. Same set is used by any future signup flow.
+  console.log(`Seeding ${DEFAULT_PROTOCOL_SEEDS.length} starter protocols`);
+  await db.insert(schema.protocols).values(
+    DEFAULT_PROTOCOL_SEEDS.map((p) => ({
+      clinicId: clinic.id,
+      name: p.name,
+      description: p.description,
+      deviceType: p.deviceType,
+      durationSeconds: p.durationSeconds,
+      parameters: p.parameters,
+    }))
+  );
 
   console.log("Done. You can now sign in at /login");
   await pool.end();

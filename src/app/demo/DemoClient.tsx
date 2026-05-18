@@ -163,7 +163,10 @@ export default function DemoClient({
   //            Used to enforce the Tier 0 / Tier 1 cut-down of the logged-in
   //            app per scripts/mendi-capture/live-site-test-priorities.md.
   appMode = "demo",
-}: { initialTab?: MainTab; appMode?: "demo" | "strip" }) {
+  // Server-rendered onboarding checklist slot. Auto-dismisses once the
+  // clinic has protocols + clients + sessions. Only used in strip mode.
+  onboarding,
+}: { initialTab?: MainTab; appMode?: "demo" | "strip"; onboarding?: React.ReactNode }) {
   const adapterRef = useRef<DeviceAdapter | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -1874,6 +1877,10 @@ export default function DemoClient({
             via the picker. State persisted to localStorage. */}
         {tab === "dashboard" && (
           <>
+            {/* First-run guided onboarding — server-rendered slot.
+                Renders only when the clinic has no protocols/clients/
+                sessions yet; auto-dismisses after setup completes. */}
+            {appMode === "strip" && onboarding}
             {/* Strip-mode clinician quick actions — connect this validation
                 surface to the existing clinical session save / report /
                 protocol flows that already live elsewhere in the app. */}
