@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { sessions, clients, protocols, sessionDataPoints, clinics, clinicians } from "@/lib/db/schema";
 import { eq, and, asc } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { parseProtocolBlocks, type ProtocolBlock } from "@/components/ProtocolBlockTimer";
 
 export default async function SessionReportPage({
   params,
@@ -16,7 +17,7 @@ export default async function SessionReportPage({
 
   const [[row], dataPoints, [clinicRow], [clinicianRow]] = await Promise.all([
     db
-      .select({ session: sessions, clientName: clients.name, clientEmail: clients.email, protocolName: protocols.name })
+      .select({ session: sessions, clientName: clients.name, clientEmail: clients.email, protocolName: protocols.name, protocolParameters: protocols.parameters })
       .from(sessions)
       .innerJoin(clients, and(eq(sessions.clientId, clients.id), eq(clients.clinicId, clinicId)))
       .leftJoin(protocols, eq(sessions.protocolId, protocols.id))
@@ -74,6 +75,44 @@ export default async function SessionReportPage({
 
   const printDate = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   const sessionDate = new Date(s.startedAt).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+
+  // ── Per-block summary ──────────────────────────────────────────────
+  // When this session ran against a scripted protocol (blocks in the
+  // protocol's parameters jsonb), bucket the data points by block and
+  // compute per-block metrics. Otherwise blocks=[] and the section is
+  // simply omitted from the report.
+  const protocolBlocks: ProtocolBlock[] = parseProtocolBlocks(row.protocolParameters);
+  type BlockMetrics = { block: ProtocolBlock; index: number; avgReward: number | null; avgOxyL: number | null; avgOxyR: number | null; sampleCount: number };
+  const blockSummary: BlockMetrics[] = [];
+  if (protocolBlocks.length > 0 && dataPoints.length > 0) {
+    // Compute block boundaries (cumulative seconds, in ms).
+    const boundsMs: number[] = [];
+    let cum = 0;
+    for (const b of protocolBlocks) {
+      boundsMs.push(cum * 1000);
+      cum += b.durationSeconds;
+    }
+    boundsMs.push(cum * 1000); // sentinel end
+    // Bucket data points. timestampMs is ms-from-session-start.
+    for (let i = 0; i < protocolBlocks.length; i++) {
+      const lo = boundsMs[i];
+      const hi = boundsMs[i + 1];
+      const pts = dataPoints.filter((p) => p.timestampMs >= lo && p.timestampMs < hi);
+      blockSummary.push({
+        block: protocolBlocks[i],
+        index: i,
+        avgReward: avg(pts.map((p) => p.rewardScore)),
+        avgOxyL: avg(pts.map((p) => p.oxyHbLeft)),
+        avgOxyR: avg(pts.map((p) => p.oxyHbRight)),
+        sampleCount: pts.length,
+      });
+    }
+  }
+  const fmtBlockTime = (sec: number) => {
+    const m = Math.floor(sec / 60);
+    const s = sec - m * 60;
+    return `${m}:${String(s).padStart(2, "0")}`;
+  };
 
   return (
     <>
@@ -201,6 +240,43 @@ export default async function SessionReportPage({
                     </tr>
                   );
                 })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Protocol block breakdown — per-block reward + HbO summary
+            when the session ran a scripted protocol. */}
+        {blockSummary.length > 0 && (
+          <div className="section">
+            <h2>Protocol Block Breakdown</h2>
+            <table className="band-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Block</th>
+                  <th>Duration</th>
+                  <th>Avg Reward</th>
+                  <th>Avg HbO L</th>
+                  <th>Avg HbO R</th>
+                </tr>
+              </thead>
+              <tbody>
+                {blockSummary.map((bs) => (
+                  <tr key={bs.index}>
+                    <td style={{ fontFamily: "monospace", color: "#6b7280" }}>{bs.index + 1}</td>
+                    <td>
+                      <strong style={{ textTransform: "capitalize", color: "#111" }}>{bs.block.kind}</strong>
+                      <span style={{ color: "#6b7280" }}> — {bs.block.label}</span>
+                    </td>
+                    <td style={{ fontFamily: "monospace" }}>{fmtBlockTime(bs.block.durationSeconds)}</td>
+                    <td style={{ fontFamily: "monospace", color: bs.avgReward != null && bs.avgReward >= 55 ? "#10B981" : "#6b7280" }}>
+                      {bs.avgReward?.toFixed(1) ?? "—"}
+                    </td>
+                    <td style={{ fontFamily: "monospace" }}>{bs.avgOxyL?.toFixed(3) ?? "—"} μM</td>
+                    <td style={{ fontFamily: "monospace" }}>{bs.avgOxyR?.toFixed(3) ?? "—"} μM</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

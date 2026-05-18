@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 
 export function ErrorBoundaryUI({
   error,
@@ -11,6 +12,16 @@ export function ErrorBoundaryUI({
   title?: string;
   description?: string;
 }) {
+  // Surface every caught error to the console so the user reporting a
+  // crash has something to copy/paste. The error.digest is logged
+  // separately so server-side Sentry-style correlation is possible
+  // when we wire one up (see ROADMAP-OBSERVABILITY.md).
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      console.error("[EEGBase] Caught route error:", error, { digest: error.digest });
+    }
+  }, [error]);
+
   return (
     <div
       className="flex flex-col items-center justify-center text-center"

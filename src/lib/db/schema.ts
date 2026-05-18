@@ -345,12 +345,17 @@ export const consumables = pgTable("consumables", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-// Migration: CREATE TABLE audit_logs (...) — run `npx drizzle-kit push` to apply
 // ── Audit Logs (HIPAA PHI access tracking) ───────────────────────────────────
+// NOTE: clinic_id / clinician_id are intentionally NOT FK-constrained.
+// The original schema had `.references(() => clinics.id)` but clinics.id is
+// uuid while these columns are text, so Postgres refused the FK. We rely
+// on the auth-scoped insert path (logAuditEvent) for referential integrity.
+// Audit logs are append-only; a dangling reference is preferable to losing
+// an audit event because a clinician row was deleted.
 export const auditLogs = pgTable("audit_logs", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-  clinicId: text("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
-  clinicianId: text("clinician_id").references(() => clinicians.id, { onDelete: "set null" }),
+  clinicId: text("clinic_id").notNull(),
+  clinicianId: text("clinician_id"),
   clinicianName: text("clinician_name"), // stored at time of event for history
   action: text("action").notNull(), // e.g. "client.viewed", "session.exported", "client.created"
   resourceType: text("resource_type"), // "client", "session", "protocol", "invoice"
