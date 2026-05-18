@@ -8,6 +8,7 @@ import {
   jsonb,
   boolean,
   smallint,
+  index,
 } from "drizzle-orm/pg-core";
 
 // ── Clinics ──────────────────────────────────────────────────────────────────
@@ -52,7 +53,12 @@ export const clients = pgTable("clients", {
   aiSummary: text("ai_summary"),                 // AI-generated longitudinal progress summary
   aiSummaryUpdatedAt: timestamp("ai_summary_updated_at"), // when the summary was last generated
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (t) => [
+  // Every clinic-scoped client list (/clients) filters by clinicId.
+  index("clients_clinic_idx").on(t.clinicId),
+  // The "active clients first" sort uses (clinicId, active).
+  index("clients_clinic_active_idx").on(t.clinicId, t.active),
+]);
 
 // ── Protocols ─────────────────────────────────────────────────────────────────
 export const protocols = pgTable("protocols", {
@@ -79,7 +85,10 @@ export const assignments = pgTable("assignments", {
     .notNull(),
   assignedAt: timestamp("assigned_at").defaultNow().notNull(),
   active: boolean("active").notNull().default(true),
-});
+}, (t) => [
+  index("assignments_client_idx").on(t.clientId),
+  index("assignments_protocol_idx").on(t.protocolId),
+]);
 
 // ── Sessions ──────────────────────────────────────────────────────────────────
 export const sessions = pgTable("sessions", {
@@ -107,7 +116,13 @@ export const sessions = pgTable("sessions", {
   postNotes: text("post_notes"),
   aiSummary: text("ai_summary"),
   tags: text("tags").array(),  // clinician-assigned labels, e.g. ["baseline","week-4"]
-});
+}, (t) => [
+  // Client detail pages query sessions by clientId + sort by startedAt
+  // — composite index keeps both fast at scale.
+  index("sessions_client_started_idx").on(t.clientId, t.startedAt),
+  // Protocol detail pages join sessions on protocolId.
+  index("sessions_protocol_idx").on(t.protocolId),
+]);
 
 // ── Session Data Points ───────────────────────────────────────────────────────
 export const sessionDataPoints = pgTable("session_data_points", {
@@ -144,7 +159,13 @@ export const sessionDataPoints = pgTable("session_data_points", {
   signalQualityP: real("signal_quality_p"),  // 0-100 pulse optode SNR
   ambientLevel: real("ambient_level"),       // 0-100 ambient light interference
   raw: jsonb("raw"),
-});
+}, (t) => [
+  // Every session detail / report query bulk-fetches data points for
+  // one sessionId ordered by timestampMs. The composite makes the
+  // 'ORDER BY timestampMs' free instead of a sort step on millions of
+  // rows (a 10-min Mendi session = 18,600 points).
+  index("session_data_points_session_ts_idx").on(t.sessionId, t.timestampMs),
+]);
 
 // ── Client Goals / Milestones ─────────────────────────────────────────────────
 export const goals = pgTable("goals", {
@@ -211,7 +232,11 @@ export const appointments = pgTable("appointments", {
   notes: text("notes"),
   status: text("status").notNull().default("scheduled"), // scheduled | completed | cancelled | no_show
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (t) => [
+  // Calendar view filters by clinic + day; composite gives both.
+  index("appointments_clinic_scheduled_idx").on(t.clinicId, t.scheduledAt),
+  index("appointments_client_idx").on(t.clientId),
+]);
 
 // ── ERP / P300 Results ────────────────────────────────────────────────────────
 export const erpResults = pgTable("erp_results", {
@@ -285,7 +310,9 @@ export const sessionAnnotations = pgTable("session_annotations", {
   label: text("label").notNull(),
   category: text("category").notNull().default("note"), // observation | protocol | artefact | note
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (t) => [
+  index("session_annotations_session_ts_idx").on(t.sessionId, t.timestampMs),
+]);
 
 // ── Invoices / Billing ────────────────────────────────────────────────────────
 export const invoices = pgTable("invoices", {
@@ -364,4 +391,8 @@ export const auditLogs = pgTable("audit_logs", {
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (t) => [
+  // Audit log viewer at /settings/audit-log filters by clinic + sorts
+  // newest first. The composite covers both in one B-tree.
+  index("audit_logs_clinic_created_idx").on(t.clinicId, t.createdAt),
+]);

@@ -1,7 +1,7 @@
-// One-off script applied during the schema-sync batch to land the
-// audit_logs table (0014, partial — FKs skipped due to type mismatch)
-// and the FK-drop housekeeping (0015) on the Neon prod DB. Both use
-// IF NOT EXISTS / IF EXISTS guards so the script is idempotent.
+// One-off applier for migrations Drizzle's own migrate command refuses
+// to ship cleanly (FK type mismatch in 0014, plus hanging migrate runs).
+// Each block is idempotent (IF NOT EXISTS / IF EXISTS) so re-running is
+// safe.
 //
 // Usage: DATABASE_URL=... npx tsx scripts/apply-pending-migrations.ts
 
@@ -20,10 +20,18 @@ async function journalMigration(pool: Pool, file: string) {
   );
 }
 
+async function applyFile(pool: Pool, file: string) {
+  const sql = fs.readFileSync(path.join("drizzle", file), "utf8");
+  // Drop the drizzle statement-breakpoint sentinels; Postgres runs
+  // the whole script as a multi-statement query.
+  const cleaned = sql.replace(/--> statement-breakpoint/g, "");
+  await pool.query(cleaned);
+}
+
 (async () => {
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
   try {
-    // 0014 — audit_logs table (CREATE TABLE only, no FKs).
+    // 0014 — audit_logs CREATE TABLE only.
     await pool.query(`
       CREATE TABLE IF NOT EXISTS "audit_logs" (
         "id" text PRIMARY KEY NOT NULL,
@@ -40,15 +48,18 @@ async function journalMigration(pool: Pool, file: string) {
       );
     `);
     await journalMigration(pool, "0014_audit_logs_backfill.sql");
-    console.log("✓ 0014 audit_logs table ensured + journaled");
+    console.log("✓ 0014 audit_logs (ensured)");
 
-    // 0015 — FK-drop housekeeping. The original 0014 tried to add FKs
-    // that Postgres rejected; the schema snapshot still thinks they
-    // exist. The DROP IF EXISTS reconciles snapshot ↔ reality.
+    // 0015 — FK housekeeping.
     await pool.query(`ALTER TABLE "audit_logs" DROP CONSTRAINT IF EXISTS "audit_logs_clinic_id_clinics_id_fk";`);
     await pool.query(`ALTER TABLE "audit_logs" DROP CONSTRAINT IF EXISTS "audit_logs_clinician_id_clinicians_id_fk";`);
     await journalMigration(pool, "0015_silly_darkhawk.sql");
-    console.log("✓ 0015 FK-drop housekeeping applied + journaled");
+    console.log("✓ 0015 FK housekeeping (ensured)");
+
+    // 0016 — 11 indexes for the highest-traffic queries.
+    await applyFile(pool, "0016_wise_shadow_king.sql");
+    await journalMigration(pool, "0016_wise_shadow_king.sql");
+    console.log("✓ 0016 indexes (created)");
   } catch (e) {
     console.error("Failed:", e);
     process.exit(1);

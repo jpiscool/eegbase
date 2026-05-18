@@ -11,11 +11,18 @@ import { saveSession, type SamplePayload, type Questionnaire } from "@/app/sessi
 import Link from "next/link";
 import { ArrowLeft, Wifi, WifiOff, StopCircle, CheckCircle, SlidersHorizontal, ChevronDown, ChevronUp } from "lucide-react";
 import { RewardGauge } from "@/components/RewardGauge";
-import { GameFeedback } from "@/components/GameFeedback";
-import { BrainMapPanel } from "@/components/BrainMapPanel";
 import { HRVPanel } from "@/components/HRVPanel";
-import { VideoFeedback } from "@/components/VideoFeedback";
-import { FractalFeedback } from "@/components/FractalFeedback";
+// Heavy visual feedback components are lazy-loaded — only one of
+// GameFeedback / VideoFeedback / FractalFeedback is shown at a time,
+// and BrainMapPanel only renders after the operator opens it. Pulling
+// these out of the initial /sessions/live bundle keeps Time-to-
+// Interactive snappy. SSR is disabled because they're WebGL/Canvas-
+// driven and would hydration-mismatch.
+import dynamic from "next/dynamic";
+const GameFeedback = dynamic(() => import("@/components/GameFeedback").then((m) => m.GameFeedback), { ssr: false });
+const VideoFeedback = dynamic(() => import("@/components/VideoFeedback").then((m) => m.VideoFeedback), { ssr: false });
+const FractalFeedback = dynamic(() => import("@/components/FractalFeedback").then((m) => m.FractalFeedback), { ssr: false });
+const BrainMapPanel = dynamic(() => import("@/components/BrainMapPanel").then((m) => m.BrainMapPanel), { ssr: false });
 import { AnnotationPanel, type Annotation } from "@/components/AnnotationPanel";
 import { ProtocolBlockTimer, parseProtocolBlocks } from "@/components/ProtocolBlockTimer";
 
