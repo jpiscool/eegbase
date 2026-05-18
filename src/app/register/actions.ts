@@ -12,6 +12,7 @@ import bcrypt from "bcryptjs";
 import { signIn } from "@/lib/auth/config";
 import { DEFAULT_PROTOCOL_SEEDS } from "@/lib/seed/default-protocols";
 import { AuthError } from "next-auth";
+import { sendEmail, welcomeEmail } from "@/lib/email";
 
 export interface RegisterResult {
   error?: string;
@@ -72,6 +73,12 @@ export async function registerClinicAction(formData: FormData): Promise<Register
       parameters: p.parameters,
     })),
   );
+
+  // Fire-and-forget welcome email. Routed by src/lib/email.ts (Resend
+  // if RESEND_API_KEY is set, otherwise logged to console in dev).
+  // Wrapped in a swallow so a transport hiccup never blocks signup.
+  const welcome = welcomeEmail(clinicName, adminName);
+  void sendEmail({ to: email, ...welcome }).catch(() => {});
 
   // Sign the new admin in. signIn() with redirectTo throws a magic
   // redirect; we let it propagate so Next.js handles the navigation.

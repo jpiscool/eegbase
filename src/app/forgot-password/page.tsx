@@ -1,18 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
+import { requestPasswordReset } from "./actions";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // We always show the same success state regardless of whether the email
-    // exists, to avoid leaking which addresses have accounts (account-enumeration
-    // defense). A real reset email is sent server-side if the address matches.
-    setSubmitted(true);
+    const formData = new FormData(e.currentTarget);
+    // The server action ALWAYS returns ok regardless of whether the
+    // email is on file, to defeat account enumeration. The reset email
+    // is sent in the background only if the address matches.
+    startTransition(async () => {
+      await requestPasswordReset(formData);
+      setSubmitted(true);
+    });
   }
 
   return (
@@ -85,8 +91,10 @@ export default function ForgotPasswordPage() {
                     </label>
                     <input
                       id="email"
+                      name="email"
                       type="email"
                       required
+                      disabled={isPending}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="login-input"
