@@ -102,11 +102,18 @@ export class MendiPacketDecoder {
     // left was uniformly null because `red ≤ amb` on every sample.
     // Same band, same head, same firmware — software bug, not hardware.
 
-    // Establish baselines from the RAW intensities on the first frame.
-    if (irL  != null && this._baselineIrL  == null) this._baselineIrL  = irL;
-    if (redL != null && this._baselineRedL == null) this._baselineRedL = redL;
-    if (irR  != null && this._baselineIrR  == null) this._baselineIrR  = irR;
-    if (redR != null && this._baselineRedR == null) this._baselineRedR = redR;
+    // Establish baselines from the RAW intensities on the first frame
+    // that reports a POSITIVE value. We must NOT seed from 0 — a band
+    // that hasn't lit its LED yet can report photodiode count 0 on the
+    // very first frame, which would lock the baseline at 0 and make
+    // every subsequent ΔOD calc fail the `_baseline > 0` check forever.
+    // The old (subtract-ambient) code was accidentally protected from
+    // this by the `cor > 0` filter; the raw-intensity path needs it
+    // re-introduced here.
+    if (irL  != null && irL  > 0 && this._baselineIrL  == null) this._baselineIrL  = irL;
+    if (redL != null && redL > 0 && this._baselineRedL == null) this._baselineRedL = redL;
+    if (irR  != null && irR  > 0 && this._baselineIrR  == null) this._baselineIrR  = irR;
+    if (redR != null && redR > 0 && this._baselineRedR == null) this._baselineRedR = redR;
 
     // ── Modified Beer-Lambert decomposition ───────────────────────────
     // Solves the 2×2 system at red (~660 nm) and IR (~880 nm) for
