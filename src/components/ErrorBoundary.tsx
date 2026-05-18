@@ -13,12 +13,34 @@ export function ErrorBoundaryUI({
   description?: string;
 }) {
   // Surface every caught error to the console so the user reporting a
-  // crash has something to copy/paste. The error.digest is logged
-  // separately so server-side Sentry-style correlation is possible
-  // when we wire one up (see ROADMAP-OBSERVABILITY.md).
+  // crash has something to copy/paste, and fire a beacon to the
+  // /api/error-report endpoint so prod errors are visible in the
+  // function logs (and optionally fan out to Sentry / a webhook,
+  // see the endpoint's env config). The beacon is fire-and-forget; if
+  // it fails the console.error path still records the crash locally.
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      console.error("[EEGBase] Caught route error:", error, { digest: error.digest });
+    if (typeof window === "undefined") return;
+    console.error("[EEGBase] Caught route error:", error, { digest: error.digest });
+    const payload = JSON.stringify({
+      message: error.message,
+      stack: error.stack,
+      digest: error.digest,
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+    });
+    try {
+      // sendBeacon survives unload; fall back to keepalive fetch.
+      const blob = new Blob([payload], { type: "application/json" });
+      if (!navigator.sendBeacon?.("/api/error-report", blob)) {
+        void fetch("/api/error-report", {
+          method: "POST",
+          body: payload,
+          headers: { "Content-Type": "application/json" },
+          keepalive: true,
+        }).catch(() => {});
+      }
+    } catch {
+      // Reporting the report itself shouldn't break the page.
     }
   }, [error]);
 

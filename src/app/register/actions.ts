@@ -9,10 +9,12 @@ import { db } from "@/lib/db";
 import { clinics, clinicians, protocols } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+import { headers } from "next/headers";
 import { signIn } from "@/lib/auth/config";
 import { DEFAULT_PROTOCOL_SEEDS } from "@/lib/seed/default-protocols";
 import { AuthError } from "next-auth";
 import { sendEmail, welcomeEmail } from "@/lib/email";
+import { checkRate, clientIpFromHeaders } from "@/lib/rate-limit";
 
 export interface RegisterResult {
   error?: string;
@@ -21,6 +23,15 @@ export interface RegisterResult {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function registerClinicAction(formData: FormData): Promise<RegisterResult> {
+  // Abuse prevention: at most 5 clinic creations per IP per hour. Stops
+  // the obvious "fill the DB with junk clinics" attack without locking
+  // out real signups (a clinic + admin needs at most one signup per IP).
+  const h = await headers();
+  const ip = clientIpFromHeaders(h);
+  const rate = checkRate("register", ip, { max: 5, windowMs: 60 * 60 * 1000 });
+  if (!rate.ok) {
+    return { error: "Too many signup attempts from this network. Try again later." };
+  }
   const clinicName = String(formData.get("clinicName") ?? "").trim();
   const adminName = String(formData.get("adminName") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim().toLowerCase();

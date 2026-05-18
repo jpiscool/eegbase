@@ -10,8 +10,10 @@ import { db } from "@/lib/db";
 import { clinicians } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+import { headers } from "next/headers";
 import { sendEmail, passwordResetEmail } from "@/lib/email";
 import { signResetToken, verifyResetToken } from "@/lib/reset-token";
+import { checkRate, clientIpFromHeaders } from "@/lib/rate-limit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -22,6 +24,15 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export async function requestPasswordReset(formData: FormData): Promise<{ ok: true }> {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   if (!EMAIL_RE.test(email)) return { ok: true };
+  // Two-axis rate limit: per-IP defeats scrapers, per-email defeats
+  // a targeted reset-spam attack against one account. Both return
+  // ok to preserve the enumeration-defence — caller can't distinguish
+  // throttled vs unrecognized email.
+  const h = await headers();
+  const ip = clientIpFromHeaders(h);
+  const ipRate = checkRate("forgot-password-ip", ip, { max: 10, windowMs: 60 * 60 * 1000 });
+  const emailRate = checkRate("forgot-password-email", email, { max: 3, windowMs: 60 * 60 * 1000 });
+  if (!ipRate.ok || !emailRate.ok) return { ok: true };
 
   const [user] = await db
     .select({ id: clinicians.id, name: clinicians.name, email: clinicians.email })
