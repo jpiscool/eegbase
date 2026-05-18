@@ -3,7 +3,6 @@ import { auth } from "@/lib/auth/config";
 import { Sidebar } from "@/components/layout/sidebar";
 import { CommandMenu } from "@/components/CommandMenu";
 import { getReviewQueueCount } from "@/lib/reviewQueueCount";
-import { TrustStrip } from "@/components/shared/TrustStrip";
 
 // Wraps /profile in the global Sidebar shell so the logged-in chrome is
 // identical across every authenticated route.
@@ -22,7 +21,6 @@ export default async function ProfileLayout({ children }: { children: React.Reac
         reviewQueueCount={reviewQueueCount}
       />
       <main className="flex-1 overflow-auto">
-        <TrustStrip />
         <div className="p-8">{children}</div>
       </main>
       <CommandMenu />

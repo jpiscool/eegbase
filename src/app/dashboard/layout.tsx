@@ -3,7 +3,6 @@ import { auth } from "@/lib/auth/config";
 import { Sidebar } from "@/components/layout/sidebar";
 import { CommandMenu } from "@/components/CommandMenu";
 import { getReviewQueueCount } from "@/lib/reviewQueueCount";
-import { TrustStrip } from "@/components/shared/TrustStrip";
 
 // Wraps /dashboard in the same global Sidebar shell as /clients, /sessions,
 // /settings, etc. so the logged-in chrome is identical on every route.
@@ -26,7 +25,6 @@ export default async function DashboardLayout({
         reviewQueueCount={reviewQueueCount}
       />
       <main className="flex-1 overflow-auto">
-        <TrustStrip />
         <div className="p-8">{children}</div>
       </main>
       <CommandMenu />
