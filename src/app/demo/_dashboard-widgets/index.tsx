@@ -150,7 +150,7 @@ function tsiPct(hbo?: number, hhb?: number): number | null {
 export const WIDGET_CATALOG: WidgetDef[] = [
   {
     id: "live-score",
-    title: "Live focus score",
+    title: "Live reward score",
     device: "Any device",
     icon: Gauge,
     blurb: "Big tabular score 0-100, color-coded, with trend arrow.",
@@ -175,7 +175,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "mendi-channels",
-    title: "Mendi · 4 channels",
+    title: "Raw fNIRS (4ch HbO/HHb)",
     device: "Mendi headband",
     icon: Brain,
     blurb: "HbO L, HbO R, HHb L, HHb R — all four in one view.",
@@ -208,7 +208,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "hrv-live",
-    title: "Heart rate variability",
+    title: "Heart rate variability (RMSSD)",
     device: "Apple Watch / Oura",
     icon: HeartPulse,
     blurb: "RMSSD ms + sparkline + above/below 50 ms target.",
@@ -298,7 +298,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "eeg-theta-beta",
-    title: "Focus index (theta/beta)",
+    title: "Theta/beta ratio (inattention)",
     device: "Muse 2 / Muse S",
     icon: Sigma,
     blurb: "Classic ADHD signature — high theta-over-beta suggests reduced attention.",
@@ -331,7 +331,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "eeg-alpha-theta",
-    title: "Calm index (alpha/theta)",
+    title: "Alpha/theta ratio (relaxation)",
     device: "Muse 2 / Muse S",
     icon: Waves,
     blurb: "Used in meditation + addiction protocols. Theta-dominant suggests deep relaxation.",
@@ -364,7 +364,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "eeg-band-overlay",
-    title: "Brainwave trends (60s)",
+    title: "Brainwave bands (60s)",
     device: "Muse 2 / Muse S",
     icon: Activity,
     blurb: "Theta / Alpha / Beta as overlaid 60-second sparklines.",
@@ -385,7 +385,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "eeg-engagement",
-    title: "Cognitive engagement",
+    title: "Engagement index (Pope)",
     device: "Muse 2 / Muse S",
     icon: Brain,
     blurb: "Berka engagement index — β / (α + θ). Rises with active mental work.",
@@ -456,7 +456,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "hr-sdnn",
-    title: "Heart rate variation",
+    title: "Heart rate variability (SDNN)",
     device: "Apple Watch / Oura",
     icon: Activity,
     blurb: "Std-dev of recent HR samples. Higher variance → more autonomic flexibility.",
@@ -561,7 +561,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "asymmetry",
-    title: "Frontal asymmetry (L−R)",
+    title: "Prefrontal asymmetry (HbO L−R)",
     device: "Mendi headband",
     icon: Scale,
     blurb: "L-R HbO balance — Mendi's flagship clinical metric.",
@@ -605,7 +605,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "breathing-pacer",
-    title: "Breathing pacer",
+    title: "Resonance breathing (5.5 BPM)",
     device: "—",
     icon: Wind,
     blurb: "5.5 bpm resonance breathing (Lehrer/Vaschillo) — sync with the orb.",
@@ -735,7 +735,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "hbo-trace",
-    title: "Oxy-Hb (left vs right)",
+    title: "Oxy-Hb (prefrontal L vs R)",
     device: "Mendi headband",
     icon: Droplets,
     blurb: "60 s overlay of oxygenated-hemoglobin L and R prefrontal channels.",
@@ -760,7 +760,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "hhb-trace",
-    title: "Deoxy-Hb (left vs right)",
+    title: "Deoxy-Hb (prefrontal L vs R)",
     device: "Mendi headband",
     icon: Waves,
     blurb: "60 s overlay of deoxygenated-hemoglobin L and R channels.",
@@ -785,7 +785,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "tsi-gauge",
-    title: "Tissue oxygen (TSI)",
+    title: "Tissue saturation (TSI)",
     device: "Mendi headband",
     icon: Gauge,
     blurb: "TSI % per side — HbO / (HbO+HHb). 55–75 % is typical adult range.",
@@ -823,7 +823,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "total-hbo",
-    title: "Total brain oxygenation",
+    title: "Total prefrontal HbO (L+R)",
     device: "Mendi headband",
     icon: Sigma,
     blurb: "Sum of L + R HbO with 12 s trend arrow.",
@@ -856,7 +856,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "brain-mini",
-    title: "Forehead activity heatmap",
+    title: "Prefrontal HbO heatmap",
     device: "Mendi headband",
     icon: Brain,
     blurb: "Live L/R prefrontal HbO as a two-zone heatmap.",
@@ -920,7 +920,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "mendi-pulse-hr",
-    title: "Pulse rate (forehead)",
+    title: "Pulse rate (Mendi PPG)",
     device: "Mendi headband",
     icon: HeartPulse,
     blurb: "Heart rate from the forehead pulse optode (no chest strap needed).",
@@ -947,7 +947,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "mendi-pulse-waveform",
-    title: "Pulse waveform",
+    title: "Pulse waveform (PPG)",
     device: "Mendi headband",
     icon: Activity,
     blurb: "Live AC component of the forehead pulse photoplethysmogram.",
@@ -1051,7 +1051,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "mendi-ambient-light",
-    title: "Ambient light",
+    title: "Ambient light (interference)",
     device: "Mendi headband",
     icon: Search,
     blurb: "Room-light noise picked up by the LED-off channel. Lower = better.",
@@ -1078,7 +1078,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "mendi-laterality",
-    title: "Left/right balance",
+    title: "Laterality index (HbO)",
     device: "Mendi headband",
     icon: Scale,
     blurb: "Normalized (L−R)/(|L|+|R|) — independent of overall HbO magnitude.",
@@ -1154,7 +1154,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "mendi-workload",
-    title: "Cognitive workload",
+    title: "Workload proxy (HbO)",
     device: "Mendi headband",
     icon: Brain,
     blurb: "HbO/HHb gap mapped to a semantic load score (idle · low · moderate · high · peak).",
@@ -1221,7 +1221,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "mendi-pulse-hrv",
-    title: "Pulse HRV (forehead)",
+    title: "Pulse HRV (Mendi PPG · RMSSD)",
     device: "Mendi headband",
     icon: HeartPulse,
     blurb: "RMSSD heart-rate variability from the forehead pulse optode.",
@@ -1249,7 +1249,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "mendi-engagement-time",
-    title: "Time in focus zone",
+    title: "Time in reward zone",
     device: "Mendi headband",
     icon: Timer,
     blurb: "% of session spent above reward threshold — flow-state proxy.",
@@ -1258,7 +1258,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "mendi-mayer-wave",
-    title: "Slow oscillation (0.1 Hz)",
+    title: "Mayer-wave power (0.1 Hz)",
     device: "Mendi headband",
     icon: Sigma,
     blurb: "0.07–0.13 Hz HbO band power — vasomotor / sympathetic tone proxy.",
@@ -1267,7 +1267,7 @@ export const WIDGET_CATALOG: WidgetDef[] = [
 
   {
     id: "mendi-coherence",
-    title: "Left/right brain sync",
+    title: "Prefrontal L–R coherence (HbO)",
     device: "Mendi headband",
     icon: Waves,
     blurb: "Sliding-window Pearson correlation between L and R HbO traces.",
