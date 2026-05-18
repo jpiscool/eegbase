@@ -40,16 +40,16 @@ export function ClientList({ clients }: { clients: ClientRow[] }) {
   }
 
   const cardStyle: React.CSSProperties = {
-    background: "#FFFFFF",
-    border: "1px solid #EAE4D2",
+    background: "#0F172A",
+    border: "1px solid #1E293B",
     borderRadius: 12,
-    boxShadow: "0 1px 2px rgba(60, 40, 10, 0.04), 0 4px 12px rgba(60, 40, 10, 0.04)",
+    boxShadow: "0 1px 2px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06)",
   };
 
   if (clients.length === 0) {
     return (
       <div style={{ ...cardStyle, padding: "48px 24px", textAlign: "center" }}>
-        <p style={{ color: "#7A7268", fontSize: 13 }}>
+        <p style={{ color: "#94A3B8", fontSize: 13 }}>
           No clients yet. Add your first client to get started.
         </p>
       </div>
@@ -69,16 +69,15 @@ export function ClientList({ clients }: { clients: ClientRow[] }) {
               width: "100%",
               padding: "10px 14px",
               borderRadius: 10,
-              background: "#FFFFFF",
-              border: "1px solid #EAE4D2",
-              color: "#1A1A1A",
+              background: "#0B1220",
+              border: "1px solid #1E293B",
+              color: "#F1F5F9",
               fontSize: 13,
               outline: "none",
               fontFamily: "inherit",
-              boxShadow: "0 1px 2px rgba(60, 40, 10, 0.03)",
             }}
-            onFocus={(e) => { e.currentTarget.style.borderColor = "#0F766E"; }}
-            onBlur={(e) => { e.currentTarget.style.borderColor = "#EAE4D2"; }}
+            onFocus={(e) => { e.currentTarget.style.borderColor = "#2DD4BF"; }}
+            onBlur={(e) => { e.currentTarget.style.borderColor = "#1E293B"; }}
           />
         </div>
       )}
@@ -93,7 +92,7 @@ export function ClientList({ clients }: { clients: ClientRow[] }) {
             <li
               key={c.id}
               style={{
-                borderTop: idx === 0 ? "none" : "1px solid #EAE4D2",
+                borderTop: idx === 0 ? "none" : "1px solid #1E293B",
               }}
             >
               <Link
@@ -106,7 +105,7 @@ export function ClientList({ clients }: { clients: ClientRow[] }) {
                   textDecoration: "none",
                   transition: "background 0.15s ease",
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "#FBF8EF"; }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
               >
                 <span
@@ -114,28 +113,28 @@ export function ClientList({ clients }: { clients: ClientRow[] }) {
                     width: 40,
                     height: 40,
                     borderRadius: "50%",
-                    background: "#ECF7F4",
-                    color: "#0F766E",
+                    background: "rgba(45,212,191,0.12)",
+                    color: "#2DD4BF",
                     fontWeight: 700,
                     fontSize: 13,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     flexShrink: 0,
-                    border: "1px solid #BFE0D9",
+                    border: "1px solid rgba(45,212,191,0.22)",
                   }}
                 >
                   {initials(c.name)}
                 </span>
                 <span style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ display: "block", fontSize: 14, fontWeight: 600, color: "#1A1A1A" }}>
+                  <span style={{ display: "block", fontSize: 14, fontWeight: 600, color: "#F1F5F9" }}>
                     {c.name}
                   </span>
                   <span
                     style={{
                       display: "block",
                       fontSize: 12,
-                      color: "#7A7268",
+                      color: "#94A3B8",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
@@ -149,13 +148,13 @@ export function ClientList({ clients }: { clients: ClientRow[] }) {
                   className="client-meta"
                   style={{
                     fontSize: 11,
-                    color: "#7A7268",
+                    color: "#94A3B8",
                     fontVariantNumeric: "tabular-nums",
                     textAlign: "right",
                     flexShrink: 0,
                   }}
                 >
-                  <span style={{ display: "block", color: "#4A4640", fontWeight: 600 }}>
+                  <span style={{ display: "block", color: "#CBD5E1", fontWeight: 600 }}>
                     {c.sessionCount} session{c.sessionCount !== 1 ? "s" : ""}
                   </span>
                   <span style={{ display: "block", marginTop: 2 }}>

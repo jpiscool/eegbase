@@ -507,7 +507,7 @@ export default async function ClientDetailPage({
         </Link>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>{client.name}</h1>
+            <h1 className="text-2xl font-bold" style={{ color: "var(--text-on-cream)" }}>{client.name}</h1>
             <EditClientModal
               client={{
                 id: client.id,
@@ -520,7 +520,7 @@ export default async function ClientDetailPage({
               }}
             />
           </div>
-          <p className="text-sm flex items-center gap-3" style={{ color: "var(--text-tertiary)" }}>
+          <p className="text-sm flex items-center gap-3" style={{ color: "var(--text-on-cream-muted)" }}>
             <span>
               {client.email ?? "No email"} · Added {new Date(client.createdAt).toLocaleDateString()}
               {client.dateOfBirth && (() => {

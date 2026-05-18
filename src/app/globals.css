@@ -4,39 +4,42 @@
    Semantic CSS custom properties. All UI components reference these so a
    single variable change cascades everywhere — including dark mode.          */
 :root {
-  /* Surfaces — warm paper palette */
+  /* Surfaces — cream page with dark slate cards (premium dark-on-cream pattern) */
   --surface-base:      #FAF7EE;   /* page background — warm cream */
-  --surface-raised:    #FFFFFF;   /* card / panel */
-  --surface-overlay:   #FFFFFF;   /* modal / popover */
-  --surface-sunken:    #F4EFE0;   /* inset / input bg — slightly warmer cream */
+  --surface-raised:    #0F172A;   /* CARD / panel — dark slate */
+  --surface-overlay:   #1E293B;   /* modal / popover */
+  --surface-sunken:    #0B1220;   /* inset / input bg inside dark cards */
 
-  /* Borders — warm beige instead of cool gray so they harmonize with cream */
-  --border-subtle:     #EAE4D2;
-  --border-default:    #D7CFB9;
-  --border-strong:     #A89F87;
+  /* Borders — dark slate to fit dark cards */
+  --border-subtle:     #1E293B;
+  --border-default:    #334155;
+  --border-strong:     #64748B;
 
-  /* Text — warmer near-black + warm gray scale */
-  --text-primary:      #1A1A1A;
-  --text-secondary:    #4A4640;
-  --text-tertiary:     #7A7268;
+  /* Text — LIGHT (intended for use INSIDE dark cards).
+     Page-bg headings on the cream surface explicitly override to --text-on-cream. */
+  --text-primary:      #F1F5F9;
+  --text-secondary:    #CBD5E1;
+  --text-tertiary:     #94A3B8;
   --text-inverse:      #FFFFFF;
+  --text-on-cream:     #1A1A1A;   /* for page-level text on cream bg */
+  --text-on-cream-muted: #7A7268; /* muted page text on cream */
 
-  /* Brand / Action — deep teal for clinical + calming feel on cream */
-  --brand:             #0F766E;   /* teal-700 */
-  --brand-hover:       #0D6A60;   /* darker on hover */
-  --brand-subtle:      #ECF7F4;   /* faint teal wash */
-  --brand-muted:       #99D5CB;   /* mid-tint for borders */
+  /* Brand / Action — bright teal that reads on dark cards AND cream */
+  --brand:             #2DD4BF;   /* teal-400 — bright on dark */
+  --brand-hover:       #14B8A6;   /* teal-500 */
+  --brand-subtle:      #0F2D2A;   /* dark teal wash inside cards */
+  --brand-muted:       #134E48;
 
-  /* Status */
-  --success:           #15803D;   /* warmer green */
-  --success-subtle:    #ECF5EE;
-  --warning:           #B45309;   /* warm amber */
-  --warning-subtle:    #FBF1E2;
-  --warning-muted:     #E7C996;
-  --danger:            #B91C1C;   /* warm red */
-  --danger-subtle:     #FAEBEA;
-  --info:              #0E7490;
-  --info-subtle:       #ECF6F8;
+  /* Status — bright variants for dark cards */
+  --success:           #34D399;
+  --success-subtle:    #042F1F;
+  --warning:           #FBBF24;
+  --warning-subtle:    #3A2A0A;
+  --warning-muted:     #78460C;
+  --danger:            #F87171;
+  --danger-subtle:     #3F1414;
+  --info:              #38BDF8;
+  --info-subtle:       #082F49;
 
   /* Sidebar — warm charcoal (less cool than pure slate, harmonizes with cream) */
   --sidebar-bg:        #1F1A12;   /* warm near-black */
