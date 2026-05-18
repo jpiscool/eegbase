@@ -14,7 +14,8 @@
     "seed": "dotenv -e .env.local tsx scripts/seed.ts",
     "seed:demo": "dotenv -e .env.local tsx scripts/seed-demo.ts",
     "demo:api": "dotenv -e .env.local tsx scripts/demo-api-push.ts",
-    "test": "tsx --test $(find src -name '*.test.ts' | sort)"
+    "test": "tsx --test $(find src -name '*.test.ts' | sort)",
+    "smoke": "dotenv -e .env.local tsx scripts/smoke-test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.92.0",
