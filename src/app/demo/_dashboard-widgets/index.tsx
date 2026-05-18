@@ -1937,6 +1937,16 @@ export function WidgetPicker({
     const canToggleOff = already && !!onRemove;
     const disabled = already && !canToggleOff;
     const Icon = def.icon;
+
+    // Premium visual state for ADDED cards:
+    //   - faint teal-tinted gradient background (signals "in use")
+    //   - 2px teal left-rail (the EEGBase brand accent — same as the
+    //     dashboard's article-card hover)
+    //   - inset ring + outer glow so it sits "raised" on the grid
+    //   - corner checkmark badge in the top-right
+    //   - hover on a toggle-able added card turns the rail red so the
+    //     "click to remove" affordance is unmistakable
+    const baseBorder = already ? "#1E293B" : "#334155";
     return (
       <button
         key={def.id}
@@ -1949,28 +1959,73 @@ export function WidgetPicker({
         title={canToggleOff ? "Click to remove from dashboard" : undefined}
         style={{
           textAlign: "left",
-          background: already ? "rgba(15,23,42,0.4)" : "rgba(15,23,42,0.7)",
-          border: `1px solid ${already ? (canToggleOff ? "#1E293B" : "#1E293B") : "#334155"}`,
+          position: "relative",
+          overflow: "hidden",
+          background: already
+            ? "linear-gradient(135deg, rgba(16,185,129,0.10) 0%, rgba(16,185,129,0.04) 40%, rgba(15,23,42,0.7) 100%)"
+            : "rgba(15,23,42,0.7)",
+          border: `1px solid ${already ? "rgba(16,185,129,0.45)" : baseBorder}`,
           borderRadius: 12,
-          padding: 14,
+          padding: "14px 14px 14px 18px", // extra left padding to clear the rail
           cursor: disabled ? "default" : "pointer",
-          opacity: disabled ? 0.5 : already ? 0.85 : 1,
-          transition: "all 0.15s ease",
+          opacity: disabled ? 0.6 : 1,
+          transition: "all 0.18s ease",
           display: "flex",
           flexDirection: "column",
           gap: 6,
           fontFamily: "inherit",
           color: COLORS.ink,
+          boxShadow: already
+            ? "inset 1px 0 0 rgba(16,185,129,0.6), 0 0 0 1px rgba(16,185,129,0.10), 0 8px 24px -16px rgba(16,185,129,0.40)"
+            : "none",
         }}
         onMouseEnter={(e) => {
           if (disabled) return;
-          (e.currentTarget as HTMLButtonElement).style.borderColor = canToggleOff ? "#F87171" : COLORS.blue;
+          const el = e.currentTarget as HTMLButtonElement;
+          if (canToggleOff) {
+            el.style.borderColor = "rgba(248,113,113,0.6)";
+            el.style.boxShadow = "inset 1px 0 0 rgba(248,113,113,0.8), 0 0 0 1px rgba(248,113,113,0.15), 0 8px 24px -16px rgba(248,113,113,0.40)";
+          } else if (!already) {
+            el.style.borderColor = COLORS.blue;
+          }
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.borderColor = already ? "#1E293B" : "#334155";
+          const el = e.currentTarget as HTMLButtonElement;
+          if (already) {
+            el.style.borderColor = "rgba(16,185,129,0.45)";
+            el.style.boxShadow = "inset 1px 0 0 rgba(16,185,129,0.6), 0 0 0 1px rgba(16,185,129,0.10), 0 8px 24px -16px rgba(16,185,129,0.40)";
+          } else {
+            el.style.borderColor = baseBorder;
+          }
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        {/* Top-right CHECK badge for added cards — primary visual cue. */}
+        {already && (
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+              width: 20,
+              height: 20,
+              borderRadius: "50%",
+              background: canToggleOff
+                ? "linear-gradient(135deg, #10B981 0%, #059669 100%)"
+                : "linear-gradient(135deg, #10B981 0%, #047857 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 1px 0 0 rgba(255,255,255,0.15) inset, 0 4px 10px -2px rgba(16,185,129,0.45)",
+            }}
+          >
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+        )}
+
+        <div style={{ display: "flex", alignItems: "center", gap: 8, paddingRight: already ? 28 : 0, color: already ? COLORS.ok : COLORS.ink }}>
           <Icon size={14} />
           <span style={{ fontSize: 13, fontWeight: 700 }}>{def.title}</span>
           {!def.verified && (
@@ -1992,18 +2047,26 @@ export function WidgetPicker({
               Demo
             </span>
           )}
+        </div>
+        <div style={{ fontSize: 11, color: COLORS.muted, lineHeight: 1.4 }}>{def.blurb}</div>
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8,
+          marginTop: "auto",
+        }}>
+          <span style={{ fontSize: 10, color: "#64748B", fontFamily: NUM, letterSpacing: "0.04em" }}>{def.device}</span>
           {already && (
             <span style={{
-              marginLeft: "auto", fontSize: 9, fontWeight: 700,
-              textTransform: "uppercase", letterSpacing: "0.08em",
+              fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em",
               color: canToggleOff ? COLORS.muted : COLORS.ok,
+              background: canToggleOff ? "rgba(148,163,184,0.10)" : "rgba(16,185,129,0.12)",
+              border: `1px solid ${canToggleOff ? "rgba(148,163,184,0.25)" : "rgba(16,185,129,0.30)"}`,
+              borderRadius: 999,
+              padding: "2px 8px",
             }}>
-              {canToggleOff ? "added · click to remove" : "added"}
+              {canToggleOff ? "click to remove" : "on dashboard"}
             </span>
           )}
         </div>
-        <div style={{ fontSize: 11, color: COLORS.muted, lineHeight: 1.4 }}>{def.blurb}</div>
-        <div style={{ fontSize: 10, color: "#64748B", marginTop: "auto", fontFamily: NUM, letterSpacing: "0.04em" }}>{def.device}</div>
       </button>
     );
   };
