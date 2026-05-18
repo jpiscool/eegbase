@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import { LayoutDashboard, UserCircle, Users, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Users, ChevronRight } from "lucide-react";
 import { clsx } from "clsx";
 import { SignOutButton } from "./SignOutButton";
 
@@ -14,7 +14,6 @@ import { SignOutButton } from "./SignOutButton";
 const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/dashboard", label: "My Dashboard", icon: LayoutDashboard },
   { href: "/clients",   label: "Clients",      icon: Users },
-  { href: "/profile",   label: "Profile",      icon: UserCircle },
 ];
 
 export function Sidebar({
@@ -97,32 +96,50 @@ export function Sidebar({
         })}
       </nav>
 
-      {/* User row + Sign Out */}
+      {/* User row (clickable — navigates to /profile) + Sign Out */}
       <div className="px-3 py-4" style={{ borderTop: "1px solid var(--sidebar-border)" }}>
-        {userName && (
-          <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg mb-1">
-            <div
-              className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-              style={{
-                background: "var(--sidebar-surface)",
-                color: "var(--sidebar-accent)",
-                border: "1px solid var(--sidebar-border)",
-              }}
-            >
-              {initials}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium truncate" style={{ color: "var(--text-inverse)" }}>
-                {userName}
-              </p>
-              {userEmail && (
-                <p className="text-[10px] truncate" style={{ color: "var(--sidebar-text-muted)" }}>
-                  {userEmail}
-                </p>
+        {userName && (() => {
+          const profileActive = pathname === "/profile" || pathname.startsWith("/profile/");
+          return (
+            <Link
+              href="/profile"
+              aria-current={profileActive ? "page" : undefined}
+              className={clsx(
+                "flex items-center gap-2.5 px-3 py-2 rounded-lg mb-1 transition-all border-l-2",
+                profileActive ? "" : "border-transparent",
               )}
-            </div>
-          </div>
-        )}
+              style={
+                profileActive
+                  ? {
+                      background: "var(--sidebar-surface)",
+                      borderLeftColor: "var(--sidebar-accent)",
+                    }
+                  : { borderLeftColor: "transparent" }
+              }
+            >
+              <div
+                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+                style={{
+                  background: "var(--sidebar-surface)",
+                  color: "var(--sidebar-accent)",
+                  border: "1px solid var(--sidebar-border)",
+                }}
+              >
+                {initials}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium truncate" style={{ color: "var(--text-inverse)" }}>
+                  {userName}
+                </p>
+                {userEmail && (
+                  <p className="text-[10px] truncate" style={{ color: "var(--sidebar-text-muted)" }}>
+                    {userEmail}
+                  </p>
+                )}
+              </div>
+            </Link>
+          );
+        })()}
         <SignOutButton />
       </div>
     </aside>
