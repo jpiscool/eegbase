@@ -4,53 +4,54 @@
    Semantic CSS custom properties. All UI components reference these so a
    single variable change cascades everywhere — including dark mode.          */
 :root {
-  /* Surfaces */
+  /* Surfaces — warm paper palette */
   --surface-base:      #FAF7EE;   /* page background — warm cream */
-  --surface-raised:    #ffffff;   /* card / panel */
-  --surface-overlay:  #ffffff;   /* modal / popover */
+  --surface-raised:    #FFFFFF;   /* card / panel */
+  --surface-overlay:   #FFFFFF;   /* modal / popover */
   --surface-sunken:    #F4EFE0;   /* inset / input bg — slightly warmer cream */
 
-  /* Borders */
-  --border-subtle:     #e5e8ef;
-  --border-default:    #d0d5df;
-  --border-strong:     #9aa3b8;
+  /* Borders — warm beige instead of cool gray so they harmonize with cream */
+  --border-subtle:     #EAE4D2;
+  --border-default:    #D7CFB9;
+  --border-strong:     #A89F87;
 
-  /* Text */
-  --text-primary:      #0d1117;
-  --text-secondary:    #4b5563;
-  --text-tertiary:     #8b95a7;
-  --text-inverse:      #ffffff;
+  /* Text — warmer near-black + warm gray scale */
+  --text-primary:      #1A1A1A;
+  --text-secondary:    #4A4640;
+  --text-tertiary:     #7A7268;
+  --text-inverse:      #FFFFFF;
 
-  /* Brand / Action */
-  --brand:             #2563eb;   /* blue-600 */
-  --brand-hover:       #1d4ed8;   /* blue-700 */
-  --brand-subtle:      #eff6ff;   /* blue-50  */
-  --brand-muted:       #bfdbfe;   /* blue-200 */
+  /* Brand / Action — deep teal for clinical + calming feel on cream */
+  --brand:             #0F766E;   /* teal-700 */
+  --brand-hover:       #0D6A60;   /* darker on hover */
+  --brand-subtle:      #ECF7F4;   /* faint teal wash */
+  --brand-muted:       #99D5CB;   /* mid-tint for borders */
 
   /* Status */
-  --success:           #059669;
-  --success-subtle:    #ecfdf5;
-  --warning:           #d97706;
-  --warning-subtle:    #fffbeb;
-  --danger:            #dc2626;
-  --danger-subtle:     #fef2f2;
-  --info:              #0284c7;
-  --info-subtle:       #f0f9ff;
+  --success:           #15803D;   /* warmer green */
+  --success-subtle:    #ECF5EE;
+  --warning:           #B45309;   /* warm amber */
+  --warning-subtle:    #FBF1E2;
+  --warning-muted:     #E7C996;
+  --danger:            #B91C1C;   /* warm red */
+  --danger-subtle:     #FAEBEA;
+  --info:              #0E7490;
+  --info-subtle:       #ECF6F8;
 
-  /* Sidebar (always dark) */
-  --sidebar-bg:        #0f172a;   /* slate-900 */
-  --sidebar-surface:   #1e293b;   /* slate-800 */
-  --sidebar-border:    #334155;   /* slate-700 */
-  --sidebar-text:      #cbd5e1;   /* slate-300 */
-  --sidebar-text-muted:#64748b;   /* slate-500 */
-  --sidebar-active-bg: #1e293b;
-  --sidebar-accent:    #60a5fa;   /* blue-400 */
+  /* Sidebar — warm charcoal (less cool than pure slate, harmonizes with cream) */
+  --sidebar-bg:        #1F1A12;   /* warm near-black */
+  --sidebar-surface:   #2C261C;   /* warm slate */
+  --sidebar-border:    #3E3628;
+  --sidebar-text:      #D6CFBE;   /* warm light */
+  --sidebar-text-muted:#8A7F6B;
+  --sidebar-active-bg: #2C261C;
+  --sidebar-accent:    #4FB3A6;   /* teal-400 for highlights */
 
-  /* Shadows */
-  --shadow-sm:  0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
-  --shadow-md:  0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 6px -2px rgb(0 0 0 / 0.05);
-  --shadow-lg:  0 10px 30px -4px rgb(0 0 0 / 0.12), 0 4px 8px -4px rgb(0 0 0 / 0.06);
-  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.05), 0 0 0 1px rgb(0 0 0 / 0.04);
+  /* Shadows — warm-tinted for soft elevation on cream */
+  --shadow-sm:  0 1px 2px rgba(60, 40, 10, 0.04);
+  --shadow-md:  0 1px 2px rgba(60, 40, 10, 0.04), 0 8px 24px rgba(60, 40, 10, 0.05);
+  --shadow-lg:  0 2px 4px rgba(60, 40, 10, 0.05), 0 16px 40px rgba(60, 40, 10, 0.08);
+  --shadow-card: 0 1px 2px rgba(60, 40, 10, 0.04), 0 4px 12px rgba(60, 40, 10, 0.04);
 
   /* Radius */
   --radius-sm:  6px;

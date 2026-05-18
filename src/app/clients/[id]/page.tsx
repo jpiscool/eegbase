@@ -5,7 +5,7 @@ import { clients, sessions, assignments, protocols, goals, cptResults, erpResult
 import { eq, and, desc, avg, count } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Play, MessageSquare, ClipboardList, FileText, Download, Target, Brain, Activity, BarChart2, TrendingUp, TrendingDown, GitBranch, MoreHorizontal, ChevronDown, Lightbulb, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { ArrowLeft, Play, MessageSquare, ClipboardList, FileText, Download, Target, Brain, Activity, BarChart2, TrendingUp, TrendingDown, GitBranch, MoreHorizontal, ChevronDown, Lightbulb, AlertCircle, CheckCircle2, Clock, Flame, Star, Award, Trophy, Calendar as CalendarIcon, Waves, Sparkles } from "lucide-react";
 import { AssignProtocolModal } from "@/components/AssignProtocolModal";
 import { TrendChart } from "@/components/TrendChart";
 import { SessionMetricTrend } from "@/components/SessionMetricChart";
@@ -417,16 +417,17 @@ export default async function ClientDetailPage({
   const avgPerWeek = recentSessions.length > 0 ? (recentSessions.length / 8).toFixed(1) : null;
 
   // ── Goal Milestone Badges ────────────────────────────────────────────────────
-  const milestones: { icon: string; label: string; desc: string; earned: boolean }[] = [
-    { icon: "🎯", label: "First Session",   desc: "Completed 1st session",     earned: totalSessions >= 1 },
-    { icon: "🔥", label: "On a Roll",        desc: "5 sessions completed",       earned: totalSessions >= 5 },
-    { icon: "⭐", label: "10 Sessions",      desc: "10 sessions milestone",      earned: totalSessions >= 10 },
-    { icon: "💎", label: "25 Sessions",      desc: "25 sessions milestone",      earned: totalSessions >= 25 },
-    { icon: "🏆", label: "50 Sessions",      desc: "50 sessions milestone",      earned: totalSessions >= 50 },
-    { icon: "📅", label: "Consistent",       desc: "3-week streak",              earned: streak >= 3 },
-    { icon: "🌊", label: "Flow State",       desc: "2-month streak",             earned: streak >= 8 },
-    { icon: "🧠", label: "High Performer",   desc: "Avg reward ≥ 70",            earned: overallAvg != null && Number(overallAvg) >= 70 },
-    { icon: "✨", label: "Peak Performer",   desc: "Avg reward ≥ 85",            earned: overallAvg != null && Number(overallAvg) >= 85 },
+  // Lucide line icons replace emoji for a premium, consistent feel.
+  const milestones: { icon: React.ReactNode; label: string; desc: string; earned: boolean }[] = [
+    { icon: <Target size={13} strokeWidth={2} />,     label: "First Session",   desc: "Completed 1st session",     earned: totalSessions >= 1 },
+    { icon: <Flame size={13} strokeWidth={2} />,      label: "On a Roll",       desc: "5 sessions completed",       earned: totalSessions >= 5 },
+    { icon: <Star size={13} strokeWidth={2} />,       label: "10 Sessions",     desc: "10 sessions milestone",      earned: totalSessions >= 10 },
+    { icon: <Award size={13} strokeWidth={2} />,      label: "25 Sessions",     desc: "25 sessions milestone",      earned: totalSessions >= 25 },
+    { icon: <Trophy size={13} strokeWidth={2} />,     label: "50 Sessions",     desc: "50 sessions milestone",      earned: totalSessions >= 50 },
+    { icon: <CalendarIcon size={13} strokeWidth={2} />, label: "Consistent",    desc: "3-week streak",              earned: streak >= 3 },
+    { icon: <Waves size={13} strokeWidth={2} />,      label: "Flow State",      desc: "2-month streak",             earned: streak >= 8 },
+    { icon: <Brain size={13} strokeWidth={2} />,      label: "High Performer",  desc: "Avg reward ≥ 70",            earned: overallAvg != null && Number(overallAvg) >= 70 },
+    { icon: <Sparkles size={13} strokeWidth={2} />,   label: "Peak Performer",  desc: "Avg reward ≥ 85",            earned: overallAvg != null && Number(overallAvg) >= 85 },
   ];
   const earnedBadges = milestones.filter((m) => m.earned);
   const nextBadge = milestones.find((m) => !m.earned);
@@ -438,37 +439,37 @@ export default async function ClientDetailPage({
       keywords: ["adhd", "attention", "concentration", "hyperactive", "impulsive", "focus"],
       label: "SMR / Beta Training",
       rationale: "Sensorimotor rhythm (SMR) and beta uptraining are the most-studied protocols for attention regulation. Target: C3/Cz/C4, reward 12–15 Hz.",
-      icon: "⚡",
+      icon: <Activity size={14} strokeWidth={2} />,
     },
     {
       keywords: ["anxiety", "stress", "worry", "panic", "calm", "relax"],
       label: "Alpha / Theta Downtraining",
       rationale: "Alpha uptraining (8–12 Hz) promotes calm alertness and reduces cortical hyperarousal associated with anxiety. Inhibit high-beta (>25 Hz).",
-      icon: "🌊",
+      icon: <Waves size={14} strokeWidth={2} />,
     },
     {
       keywords: ["sleep", "insomnia", "fatigue", "tired", "rest"],
       label: "Theta / Delta Protocol",
       rationale: "Theta (4–8 Hz) uptraining supports sleep onset. Combine with frontal alpha asymmetry training for sustained effect.",
-      icon: "🌙",
+      icon: <Clock size={14} strokeWidth={2} />,
     },
     {
       keywords: ["trauma", "ptsd", "dissociation", "freeze", "flashback"],
       label: "Alpha-Theta Deep State",
       rationale: "Alpha-theta crossover training (Peniston-Kulkosky protocol) is the most-researched approach for PTSD and trauma-related presentations.",
-      icon: "🛡️",
+      icon: <Brain size={14} strokeWidth={2} />,
     },
     {
       keywords: ["depression", "mood", "sad", "hopeless", "low energy", "motivation"],
       label: "Frontal Alpha Asymmetry",
       rationale: "Right hemisphere alpha uptraining (F4) with left hemisphere alpha inhibition targets the asymmetry pattern associated with depressive mood.",
-      icon: "🧠",
+      icon: <Sparkles size={14} strokeWidth={2} />,
     },
     {
       keywords: ["tbi", "brain injury", "concussion", "headache", "migraine", "cognitive"],
       label: "LORETA / Z-score Training",
       rationale: "Z-score neurofeedback against normative database (LORETA) is indicated for TBI and acquired cognitive deficits where deviations from norms are documented.",
-      icon: "🔬",
+      icon: <Target size={14} strokeWidth={2} />,
     },
   ];
   const matchedRules = RULES.filter((r) => r.keywords.some((k) => clientText.includes(k)));
@@ -476,7 +477,7 @@ export default async function ClientDetailPage({
   const defaultRec = {
     label: "Frontal Theta Coherence",
     rationale: "A versatile first-line protocol for general mental wellness. Theta coherence training (F3-F4) supports executive function and emotional regulation.",
-    icon: "🎯",
+    icon: <Target size={14} strokeWidth={2} />,
   };
   const protocolRecs = matchedRules.length > 0 ? matchedRules.slice(0, 3) : [defaultRec];
   // Cross-reference with existing clinic protocols by name
@@ -631,7 +632,8 @@ export default async function ClientDetailPage({
       {/* ── Quick actions ribbon ─────────────────────────────────────────────── */}
       <div className="flex items-center gap-2 mb-5 flex-wrap">
         {[
-          { href: `/sessions/live?clientId=${id}${assignedProtocol ? `&protocolId=${assignedProtocol.id}` : ""}`, icon: <Play size={13} />, label: "Start Session", primary: true },
+          // Start Session lives in the header as the single primary CTA;
+          // these are secondary actions only.
           { href: `/clients/${id}/messages`, icon: <MessageSquare size={13} />, label: "Message" },
           { href: `/clients/${id}/checkins`, icon: <ClipboardList size={13} />, label: "Check-Ins" },
           { href: `/clients/${id}/goals`, icon: <Target size={13} />, label: "Goals" },
@@ -644,9 +646,7 @@ export default async function ClientDetailPage({
             key={action.href}
             href={action.href}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors"
-            style={action.primary
-              ? { background: "var(--brand)", color: "var(--text-inverse)", borderColor: "var(--brand)" }
-              : { background: "var(--surface-raised)", color: "var(--text-secondary)", borderColor: "var(--border-default)" }}
+            style={{ background: "var(--surface-raised)", color: "var(--text-secondary)", borderColor: "var(--border-subtle)" }}
           >
             {action.icon}
             {action.label}
@@ -779,7 +779,7 @@ export default async function ClientDetailPage({
           <div className="flex flex-col gap-2">
             {matchedProtocols.map((rec, i) => (
               <div key={i} className="flex items-start gap-3 p-3 rounded-lg" style={{ background: "var(--surface-sunken)" }}>
-                <span className="text-lg shrink-0">{rec.icon}</span>
+                <span className="shrink-0" style={{ color: "var(--brand)", display: "inline-flex", alignItems: "center", marginTop: 2 }}>{rec.icon}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>{rec.label}</span>
