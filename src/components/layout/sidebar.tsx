@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import { LayoutDashboard, UserCircle, ChevronRight } from "lucide-react";
+import { LayoutDashboard, UserCircle, Users, ChevronRight } from "lucide-react";
 import { clsx } from "clsx";
 import { SignOutButton } from "./SignOutButton";
 
@@ -13,6 +13,7 @@ import { SignOutButton } from "./SignOutButton";
 // As each tier ships, add its routes back to NAV.
 const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/dashboard", label: "My Dashboard", icon: LayoutDashboard },
+  { href: "/clients",   label: "Clients",      icon: Users },
   { href: "/profile",   label: "Profile",      icon: UserCircle },
 ];
 
