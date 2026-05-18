@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { clients, protocols } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
 import { LiveSessionView } from "@/components/LiveSessionView";
 
 export default async function LiveSessionPage({
@@ -10,7 +11,10 @@ export default async function LiveSessionPage({
   searchParams: Promise<{ clientId?: string; protocolId?: string }>;
 }) {
   const session = await auth();
-  const clinicId = (session?.user as { clinicId?: string })?.clinicId ?? "";
+  const clinicId = (session?.user as { clinicId?: string })?.clinicId;
+  // Unauthenticated → kick to /login. Previously we coerced clinicId
+  // to "" which then crashed the uuid cast in the clients query.
+  if (!clinicId) redirect("/login?next=/sessions/live");
   const { clientId: defaultClientId, protocolId: defaultProtocolId } = await searchParams;
 
   const [clientList, protocolList] = await Promise.all([
