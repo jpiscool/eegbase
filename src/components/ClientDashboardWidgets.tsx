@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Plus } from "lucide-react";
 import {
   WIDGET_CATALOG,
@@ -10,6 +10,31 @@ import {
   type WidgetCtx,
 } from "@/app/demo/_dashboard-widgets";
 import { saveClientDashboardWidgets } from "@/app/clients/[id]/dashboard-actions";
+
+// localStorage fallback so widget selections survive page navigations even
+// when the dashboard_widgets DB column hasn't been migrated yet. Keyed by
+// client id so each client keeps its own layout in the browser. Once the
+// column is in place the server action also fires and the layout syncs
+// across browsers from the DB.
+function lsKey(clientId: string) {
+  return `eegbase.client-dashboard.${clientId}`;
+}
+function loadLocal(clientId: string): string[] | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(lsKey(clientId));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return null;
+    return parsed.filter((x): x is string => typeof x === "string");
+  } catch {
+    return null;
+  }
+}
+function saveLocal(clientId: string, widgetIds: string[]) {
+  if (typeof window === "undefined") return;
+  try { window.localStorage.setItem(lsKey(clientId), JSON.stringify(widgetIds)); } catch {}
+}
 
 // Per-client customizable widget grid. Mirrors the My Dashboard surface
 // but is scoped to a single client and persists the widget IDs to the
@@ -29,13 +54,24 @@ export function ClientDashboardWidgets({
   const [pickerOpen, setPickerOpen] = useState(false);
   const [, startTransition] = useTransition();
 
+  // On mount, prefer the server-loaded widgets if non-empty, otherwise
+  // fall back to localStorage so users don't lose layout when the DB
+  // column isn't migrated yet.
+  useEffect(() => {
+    if (initialWidgets.length === 0) {
+      const local = loadLocal(clientId);
+      if (local && local.length > 0) setWidgets(local);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function persist(next: string[]) {
     setWidgets(next);
+    saveLocal(clientId, next);
     startTransition(() => {
       void saveClientDashboardWidgets(clientId, next).catch(() => {
-        // Server action failure is silent here — the optimistic UI keeps
-        // the new layout in memory; a refresh will refetch authoritative
-        // state from the DB.
+        // Server action failure is silent — localStorage carries the
+        // layout until the DB column migration lands.
       });
     });
   }
